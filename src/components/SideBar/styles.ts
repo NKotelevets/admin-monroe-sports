@@ -1,0 +1,49 @@
+import styled from "styled-components";
+
+export const SideBarContainer = styled.div`
+  width: 268px;
+  height: 100vh;
+  padding-top: 20px;
+  background: rgba(83, 83, 83, 0.03);
+`;
+
+export const NavigationMenu = styled.div`
+  margin-top: 90px;
+`;
+
+export const NavigationItemContainer = styled.div`
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 10px 40px;
+  margin-bottom: 15px;
+  position: relative;
+  &:hover {
+    background: rgba(247, 223, 223, 0.31);
+    cursor: pointer;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background: #c9262c;
+    }
+
+    h3 {
+      color: #c9262c;
+    }
+  }
+`;
+
+export const NavigationItemTitle = styled.h3`
+  color: #636467;
+  font-family: Inter;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%;
+  margin: 0 0 0 16px;
+`;
