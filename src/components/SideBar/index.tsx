@@ -1,5 +1,3 @@
-
-
 import { NavigationItemTitles } from '../../interfaces/index.ts'
 import Logo from '../Logo/index.tsx'
 
