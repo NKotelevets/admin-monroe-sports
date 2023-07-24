@@ -2,6 +2,11 @@ body {
   margin: 0;
 }
 
-.application {
+.application_container {
   display: flex;
+}
+
+.main_section_container {
+  /* minus sidebar width */
+  width: calc(100% - 268px);
 }

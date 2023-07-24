@@ -1,11 +1,29 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
 import SideBar from './components/SideBar/index.tsx';
+import Header from './components/Header/index.tsx';
+
+
+import Games from './components/Games/index.tsx';
 
 import './App.css'
 
 function App() {
   return (
-    <div className='application'>
-      <SideBar />
+    <div className='application_container'>
+      <Router>
+        <SideBar />
+        
+        <div className='main_section_container'>
+          <Header />
+          <Routes>
+            <Route path="/" element={null} />
+            <Route path="/teams" element={null} />
+            <Route path="/games" element={<Games />} />
+            <Route path="/availability" element={null} />
+          </Routes>
+        </div>
+      </Router>
     </div>
   )
 }
