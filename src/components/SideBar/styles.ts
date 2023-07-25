@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 export const SideBarContainer = styled.div`
   width: 268px;
@@ -16,31 +16,32 @@ export const NavigationMenu = styled.div`
   }
 `;
 
-export const NavigationItemContainer = styled.div`
+export const NavigationItemContainer = styled.div<{ selected?: boolean }>`
   display: flex;
   align-items: center;
   box-sizing: border-box;
   padding: 10px 40px;
   margin-bottom: 15px;
   position: relative;
-  &:hover {
-    background: rgba(247, 223, 223, 0.31);
-    cursor: pointer;
 
-    &::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 2px;
-      height: 100%;
-      background: #c9262c;
-    }
-
-    h3 {
-      color: #c9262c;
-    }
-  }
+  ${(props) =>
+    props.selected &&
+    css`
+      background: rgba(247, 223, 223, 0.31);
+      cursor: pointer;
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 2px;
+        height: 100%;
+        background: #c9262c;
+      }
+      h3 {
+        color: #c9262c;
+      }
+    `}
 `;
 
 export const NavigationItemTitle = styled.h3`
