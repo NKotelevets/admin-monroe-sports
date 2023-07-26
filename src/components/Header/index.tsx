@@ -5,6 +5,7 @@ import Search from "../../assets/svg/Search"
 import avatarExample from '../../assets/avatar-example.png'
 
 import { AccountContainer, Avatar, HeaderContainer, Input, InputContainer, ReminderContainer, UserContainer, UserDescription, UserName, UserRole } from "./style"
+import ColoredPlugLogo from "../../common/ColoredPlugLogo"
 
 const Header = () => {
   return (
@@ -19,9 +20,13 @@ const Header = () => {
         </ReminderContainer>
 
         <UserContainer>
-          <Avatar>
-            <img src={avatarExample} alt='avatar' />
-          </Avatar>
+          {avatarExample ? (
+            <Avatar>
+              <img src={avatarExample} alt='avatar' />
+            </Avatar>
+          ) : (
+            <ColoredPlugLogo name='Matt Damon' width={52} height={52} />
+          )}
           <UserDescription>
             <UserName>Matt Damon</UserName>
             <UserRole>Admin</UserRole>

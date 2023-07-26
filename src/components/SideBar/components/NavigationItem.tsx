@@ -1,5 +1,3 @@
-import { useState } from 'react'
-
 import { NavigationItemTitles } from '../../../interfaces/index.ts'
 
 import Basketball from '../../../assets/svg/Basketball.tsx'
@@ -11,30 +9,26 @@ import {NavigationItemContainer, NavigationItemTitle} from '../styles.ts'
 
 interface NavigationItemPropsI {
   title: string;
+  selected?: boolean;
 }
 
-const NavigationItem = ({title}: NavigationItemPropsI) => {
-  const [isHovered, setIsHovered] = useState(false);
-
-  const handleHover = () => setIsHovered(true);
-
-  const handleLeave = () => setIsHovered(false);
+const NavigationItem = ({title, selected}: NavigationItemPropsI) => {
 
   const getIconFromName = (iconName: string) => {
     switch (iconName) {
       case NavigationItemTitles.home:
-        return <Home hovered={isHovered} />;
+        return <Home hovered={selected} />;
       case NavigationItemTitles.availability:
-        return <Availability hovered={isHovered} />;
+        return <Availability hovered={selected} />;
       case NavigationItemTitles.teams:
-        return <Users hovered={isHovered} />;
+        return <Users hovered={selected} />;
       case NavigationItemTitles.games:
-        return <Basketball hovered={isHovered} />;
+        return <Basketball hovered={selected} />;
     }
   }
 
   return (
-    <NavigationItemContainer onMouseEnter={handleHover} onMouseLeave={handleLeave}>
+    <NavigationItemContainer selected={selected}>
       {getIconFromName(title)}
       <NavigationItemTitle>{title}</NavigationItemTitle>
     </NavigationItemContainer>
