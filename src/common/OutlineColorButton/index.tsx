@@ -1,15 +1,30 @@
+import Export from "../../assets/svg/Export";
 import Upload from "../../assets/svg/Upload";
 
 import { OutlineColorButtonContainer, OutlineColorButtonTitle } from "./style"
 
+type IconT = "export" | "upload"
+
 interface OutlineColorButtonI {
   title: string;
+  icon: IconT;
 }
 
-const OutlineColorButton = ({title}: OutlineColorButtonI) => {
+const OutlineColorButton = ({title, icon}: OutlineColorButtonI) => {
+  const getButtonIcon = () => {
+    switch (icon) {
+      case "export":
+        return <Export />;
+      case "upload":
+        return <Upload />;
+      default:
+        return null;
+    }
+  }
+
   return (
     <OutlineColorButtonContainer>
-      <Upload />
+      {getButtonIcon()}
       <OutlineColorButtonTitle>{title}</OutlineColorButtonTitle>
     </OutlineColorButtonContainer>
   )
