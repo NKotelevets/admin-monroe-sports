@@ -4,7 +4,7 @@ import OutlineColorButton from "../../common/OutlineColorButton"
 import { SectionContainer, SectionContainerTitle, TableBodyContainer, TableCell, TableCenterCellContainer, TableContainer, TableHeaderTitle, TableRow, HeaderFilterContainer,
   SectionHeader } from "../../common/styles"
 
-import { TeamLogo, AvailabilityButton, SearchContainer } from "./style"
+import { TeamLogo, TableAvailabilityCell, AvailabilityButton, SearchContainer } from "./style"
 
 const Availability = () => {
   const data = [
@@ -49,15 +49,15 @@ const Availability = () => {
                   <div>{item.teamName}</div>
                 </TableCenterCellContainer>
               </TableCell>
-              <TableCell>
+              <TableAvailabilityCell>
                 {item.league}
-              </TableCell>
-              <TableCell>
+              </TableAvailabilityCell>
+              <TableAvailabilityCell>
                 {item.season}
-              </TableCell>
-              <TableCell>
+              </TableAvailabilityCell>
+              <TableAvailabilityCell>
                 <AvailabilityButton>See availability</AvailabilityButton>
-              </TableCell>
+              </TableAvailabilityCell>
             </TableRow>
           ))}
         </TableBodyContainer>

@@ -11,7 +11,7 @@ export const HeaderContainer = styled.div`
 `;
 
 export const SearchContainer = styled.div`
-  width: 100%;
+  width: 290px;
 `;
 
 export const AccountContainer = styled.div`

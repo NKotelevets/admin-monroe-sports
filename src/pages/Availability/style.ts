@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { TableCell } from "../../common/styles";
 
 export const GameHeader = styled.div`
   display: flex;
@@ -6,6 +7,11 @@ export const GameHeader = styled.div`
   align-items: center;
   margin-bottom: 45px;
   width: 100%;
+`;
+
+export const TableAvailabilityCell = styled(TableCell)`
+  font-size: 16px;
+  min-width: 100px;
 `;
 
 export const AvailabilityButton = styled.div`
