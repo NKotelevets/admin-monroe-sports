@@ -1,70 +1,63 @@
-import ColoredPlugLogo from "../../common/ColoredPlugLogo"
-import Input from "../../common/Input"
-import OutlineColorButton from "../../common/OutlineColorButton"
-import { SectionContainer, SectionContainerTitle, TableBodyContainer, TableCell, TableCenterCellContainer, TableContainer, TableHeaderTitle, TableRow, HeaderFilterContainer,
-  SectionHeader } from "../../common/styles"
+import { useState } from "react";
 
-import { TeamLogo, TableAvailabilityCell, AvailabilityButton, SearchContainer } from "./style"
+import { SectionContainer } from "../../common/styles";
+
+import AvailabilityList from "./components/AvailabilityList";
+import SingleTeamAvailability from "./components/SingleTeamAvailability";
+import { AvailabilityDataI } from "../../interfaces";
+
+const data: AvailabilityDataI[] = [
+  {
+    id: 1,
+    teamLogo: "",
+    teamName: "Atlanta Hawks",
+    league: "Adult",
+    season: "Summer 2023",
+  },
+  {
+    id: 2,
+    teamLogo: "",
+    teamName: "Atlanta Hawks",
+    league: "Adult",
+    season: "Summer 2023",
+  },
+  {
+    id: 3,
+    teamLogo: "",
+    teamName: "Atlanta Hawks",
+    league: "Adult",
+    season: "Summer 2023",
+  },
+  {
+    id: 4,
+    teamLogo: "",
+    teamName: "Atlanta Hawks",
+    league: "Adult",
+    season: "Summer 2023",
+  },
+];
 
 const Availability = () => {
-  const data = [
-    { id: 1, teamLogo: '', teamName: 'Atlanta Hawks', league: 'Adult', season: 'Summer 2023' },
-    { id: 2, teamLogo: '', teamName: 'Atlanta Hawks', league: 'Adult', season: 'Summer 2023' },
-    { id: 3, teamLogo: '', teamName: 'Atlanta Hawks', league: 'Adult', season: 'Summer 2023' },
-    { id: 4, teamLogo: '', teamName: 'Atlanta Hawks', league: 'Adult', season: 'Summer 2023' }
-  ];
+  const [selectedTeamAvailability, setSelectedTeamAvailability] =
+    useState<AvailabilityDataI | null>(null);
+
+  const handleSelectTeam = (team: AvailabilityDataI) =>
+    setSelectedTeamAvailability(team);
+
+  const handleShowAllTeams = () => setSelectedTeamAvailability(null);
+
   return (
     <SectionContainer>
-    <SectionHeader>
-      <SectionContainerTitle>Availability</SectionContainerTitle>
-
-      <HeaderFilterContainer>
-        <SearchContainer>
-          <Input type="text" placeholder="Search here" icon />
-        </SearchContainer>
-        <OutlineColorButton title='Export' icon='export' />
-      </HeaderFilterContainer>
-      
-    </SectionHeader>
-
-    <div>
-      <TableContainer>
-        <thead>
-          <tr>
-          <TableHeaderTitle>Team</TableHeaderTitle>
-          <TableHeaderTitle>League</TableHeaderTitle>
-          <TableHeaderTitle>Season</TableHeaderTitle>
-          <TableHeaderTitle>Action</TableHeaderTitle>
-          </tr>
-        </thead>
-        <TableBodyContainer>
-          {data.map((item) => (
-            <TableRow key={item.id}>
-              <TableCell>
-                <TableCenterCellContainer>
-                  <TeamLogo>
-                    {item.teamLogo ? <img src={item.teamLogo} alt='team logo' /> :
-                    <ColoredPlugLogo name={item.teamName} width={32} height={32} />}
-                  </TeamLogo>
-                  <div>{item.teamName}</div>
-                </TableCenterCellContainer>
-              </TableCell>
-              <TableAvailabilityCell>
-                {item.league}
-              </TableAvailabilityCell>
-              <TableAvailabilityCell>
-                {item.season}
-              </TableAvailabilityCell>
-              <TableAvailabilityCell>
-                <AvailabilityButton>See availability</AvailabilityButton>
-              </TableAvailabilityCell>
-            </TableRow>
-          ))}
-        </TableBodyContainer>
-      </TableContainer>
-    </div>
+      {selectedTeamAvailability ? (
+        <SingleTeamAvailability
+          team={selectedTeamAvailability}
+          handleShowAllTeams={handleShowAllTeams}
+        />
+      ) : (
+        <AvailabilityList data={data} handleSelectTeam={handleSelectTeam} />
+      )}
     </SectionContainer>
-  )
-}
+  );
+};
 
-export default Availability
+export default Availability;

@@ -11,3 +11,11 @@ export enum NavigationItemTitles {
   teams = "Teams",
   games = "Games",
 }
+
+export interface AvailabilityDataI {
+  id: number;
+  teamLogo: string;
+  teamName: string;
+  league: string;
+  season: string;
+}
