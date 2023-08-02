@@ -1,19 +1,18 @@
+import Input from "../../common/Input"
+import ColoredPlugLogo from "../../common/ColoredPlugLogo"
+
 import ArrowDown from "../../assets/svg/ArrowDown"
 import Bell from "../../assets/svg/Bell"
-import Search from "../../assets/svg/Search"
-
 import avatarExample from '../../assets/avatar-example.png'
 
-import { AccountContainer, Avatar, HeaderContainer, Input, InputContainer, ReminderContainer, UserContainer, UserDescription, UserName, UserRole } from "./style"
-import ColoredPlugLogo from "../../common/ColoredPlugLogo"
+import { AccountContainer, Avatar, HeaderContainer, SearchContainer, ReminderContainer, UserContainer, UserDescription, UserName, UserRole } from "./style"
 
 const Header = () => {
   return (
     <HeaderContainer>
-      <InputContainer>
-        <Search />
-        <Input type="text" placeholder="Search team" />
-      </InputContainer>
+      <SearchContainer>
+        <Input type="text" placeholder="Search team" icon />
+      </SearchContainer>
       <AccountContainer>
         <ReminderContainer reminderExists={true}>
           <Bell />

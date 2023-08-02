@@ -7,6 +7,14 @@ export const SectionContainer = styled.div`
   box-sizing: border-box;
 `;
 
+export const SectionHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 45px;
+  width: 100%;
+`;
+
 export const SectionContainerTitle = styled.h2`
   color: #1d1e22;
   font-feature-settings: "clig" off, "liga" off;
@@ -17,6 +25,11 @@ export const SectionContainerTitle = styled.h2`
   line-height: 140%;
   text-transform: capitalize;
   margin: 0;
+`;
+
+export const HeaderFilterContainer = styled.h2`
+  display: flex;
+  align-items: center;
 `;
 
 // styles for table
@@ -31,7 +44,7 @@ export const TableBodyContainer = styled.tbody`
   border-radius: 8px;
 `;
 
-export const TableHeaderTitle = styled.th`
+export const TableHeaderTitle = styled.th<{ center?: boolean }>`
   color: #636467;
   font-family: Inter;
   font-size: 16px;
@@ -44,7 +57,7 @@ export const TableHeaderTitle = styled.th`
     padding-left: 20px;
   }
   &:last-of-type {
-    text-align: center;
+    text-align: ${(props) => (props.center ? "center" : "left")};
   }
 `;
 
@@ -62,7 +75,7 @@ export const TableRow = styled.tr`
   }
 `;
 
-export const TableCell = styled.td`
+export const TableCell = styled.td<{ center?: boolean }>`
   color: #1d1e22;
   font-family: Inter;
   font-size: 18px;
@@ -74,7 +87,7 @@ export const TableCell = styled.td`
     padding-left: 20px;
   }
   &:last-of-type {
-    text-align: center;
+    text-align: ${(props) => (props.center ? "center" : "left")};
   }
 `;
 

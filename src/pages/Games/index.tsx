@@ -6,9 +6,10 @@ import SortingIcon from "../../assets/svg/SortingIcon"
 import ColoredPlugLogo from "../../common/ColoredPlugLogo"
 import FullColorButton from "../../common/FullColorButton"
 import OutlineColorButton from "../../common/OutlineColorButton"
-import { SectionContainer, SectionContainerTitle, TableBodyContainer, TableCell, TableCenterCellContainer, TableContainer, TableHeaderTitle, TableRow } from "../../common/styles"
+import { SectionContainer, SectionContainerTitle, TableBodyContainer, TableCell, TableCenterCellContainer, TableContainer, TableHeaderTitle, TableRow, HeaderFilterContainer,
+  SectionHeader } from "../../common/styles"
 
-import { GameHeader, GameHeaderFilterContainer, TeamLogo, ScoreText } from "./style"
+import { TeamLogo, ScoreText } from "./style"
 
 const Games = () => {
   const data = [
@@ -21,15 +22,15 @@ const Games = () => {
   
   return (
     <SectionContainer>
-    <GameHeader>
+    <SectionHeader>
       <SectionContainerTitle>Games</SectionContainerTitle>
 
-      <GameHeaderFilterContainer>
-        <OutlineColorButton title='Upload schedule cSV' />
+      <HeaderFilterContainer>
+        <OutlineColorButton title='Upload schedule cSV' icon="upload" />
         <FullColorButton title='Add new game' margin='0 0 0 20px' />
-      </GameHeaderFilterContainer>
+      </HeaderFilterContainer>
       
-    </GameHeader>
+    </SectionHeader>
 
     <div>
       <TableContainer>
@@ -40,7 +41,7 @@ const Games = () => {
           <TableHeaderTitle>RSVP home team</TableHeaderTitle>
           <TableHeaderTitle>Away team</TableHeaderTitle>
           <TableHeaderTitle>RSVP away team</TableHeaderTitle>
-          <TableHeaderTitle>Action</TableHeaderTitle>
+          <TableHeaderTitle center>Action</TableHeaderTitle>
           </tr>
         </thead>
         <TableBodyContainer>
@@ -85,7 +86,7 @@ const Games = () => {
                   <ScoreText>{item.awayScore.win}</ScoreText>
                 </TableCenterCellContainer>
               </TableCell>
-              <TableCell><EditIcon /></TableCell>
+              <TableCell center><EditIcon /></TableCell>
             </TableRow>
           ))}
         </TableBodyContainer>
