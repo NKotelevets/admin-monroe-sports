@@ -1,5 +1,10 @@
 import styled from "styled-components";
 
+export const VerticalCenterContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 // styles for tabs section
 export const SectionContainer = styled.div`
   width: 100%;
