@@ -8,6 +8,7 @@ import { AvailabilityDataI } from "../../../interfaces";
 
 import {
   AvailabilityNavigation,
+  AvailabilityTableWrapper,
   CalendarArrowContainer,
   CalendarDate,
   CalendarDateContainer,
@@ -19,6 +20,7 @@ import {
   TeamNavigationName,
   TeamSeason,
 } from "../style";
+import AvailabilityTable from "./AvailabilityTable";
 
 interface SingleTeamAvailabilityI {
   team: AvailabilityDataI;
@@ -71,6 +73,10 @@ const SingleTeamAvailability = ({
           <OutlineColorButton title="Export" icon="export" />
         </VerticalCenterContainer>
       </TeamAvailabilityHeader>
+
+      <AvailabilityTableWrapper>
+        <AvailabilityTable />
+      </AvailabilityTableWrapper>
     </>
   );
 };
