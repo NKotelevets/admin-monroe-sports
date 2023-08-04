@@ -10,6 +10,7 @@ export enum NavigationItemTitles {
   availability = "Availability",
   teams = "Teams",
   games = "Games",
+  roles = "Roles",
 }
 
 export interface AvailabilityDataI {

@@ -1,40 +1,55 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from "react-router-dom";
 
-import { NavigationItemTitles } from '../../interfaces/index.ts'
-import Logout from '../../assets/svg/Logout.tsx'
+import { NavigationItemTitles } from "../../interfaces/index.ts";
+import Logout from "../../assets/svg/Logout.tsx";
 
-import Logo from '../Logo/index.tsx'
+import Logo from "../Logo/index.tsx";
 
-import NavigationItem from './components/NavigationItem.tsx'
-import {SideBarContainer, NavigationMenu, LogoutContainer, LogoutText} from './styles.ts'
-import { routesConstant } from '../../constants/appRoutesConstants.ts';
+import NavigationItem from "./components/NavigationItem.tsx";
+import {
+  SideBarContainer,
+  NavigationMenu,
+  LogoutContainer,
+  LogoutText,
+} from "./styles.ts";
+import { routesConstant } from "../../constants/appRoutesConstants.ts";
 
 const SideBar = () => {
   const { pathname } = useLocation();
-  
+
   return (
     <SideBarContainer>
       <Logo />
       <NavigationMenu>
         <Link to={routesConstant.rootPage}>
-          <NavigationItem 
+          <NavigationItem
             selected={routesConstant.rootPage === pathname}
-            title={NavigationItemTitles.home} />
+            title={NavigationItemTitles.home}
+          />
         </Link>
         <Link to={routesConstant.team}>
-          <NavigationItem 
+          <NavigationItem
             selected={routesConstant.team === pathname}
-            title={NavigationItemTitles.teams} />
+            title={NavigationItemTitles.teams}
+          />
         </Link>
         <Link to={routesConstant.game}>
           <NavigationItem
             selected={routesConstant.game === pathname}
-            title={NavigationItemTitles.games} />
+            title={NavigationItemTitles.games}
+          />
         </Link>
         <Link to={routesConstant.availability}>
           <NavigationItem
             selected={routesConstant.availability === pathname}
-            title={NavigationItemTitles.availability} />
+            title={NavigationItemTitles.availability}
+          />
+        </Link>
+        <Link to={routesConstant.role}>
+          <NavigationItem
+            selected={routesConstant.role === pathname}
+            title={NavigationItemTitles.roles}
+          />
         </Link>
       </NavigationMenu>
 
@@ -43,7 +58,7 @@ const SideBar = () => {
         <LogoutText>Log Out</LogoutText>
       </LogoutContainer>
     </SideBarContainer>
-  )
-}
+  );
+};
 
-export default SideBar
+export default SideBar;
