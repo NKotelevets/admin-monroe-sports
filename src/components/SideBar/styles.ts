@@ -56,6 +56,7 @@ export const NavigationItemTitle = styled.h3`
 
 export const LogoutContainer = styled.div`
   display: flex;
+  align-items: center;
   padding: 0 40px;
   position: absolute;
   bottom: 40px;
