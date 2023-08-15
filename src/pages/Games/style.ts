@@ -21,8 +21,10 @@ export const GameTableRow = styled(TableRow)`
   }
 `;
 
-export const GamesTableCell = styled(TableCell)`
+export const GamesTableCell = styled(TableCell)<{ noPadding?: boolean }>`
   width: 250px;
+  padding: ${({ noPadding }) => (noPadding ? "0" : "17px 0")};
+
   span {
     width: 200px;
     overflow: hidden;

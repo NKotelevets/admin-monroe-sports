@@ -1,8 +1,10 @@
+import { useState } from "react";
 import ArrowLeft from "../../assets/svg/ArrowLeft";
 import ArrowRight from "../../assets/svg/ArrowRight";
 import EditIcon from "../../assets/svg/Edit";
 import SortingIcon from "../../assets/svg/SortingIcon";
 import ColoredPlugLogo from "../../common/ColoredPlugLogo";
+import DropdownSearch from "../../common/DropdownSearch";
 import FullColorButton from "../../common/FullColorButton";
 import OutlineColorButton from "../../common/OutlineColorButton";
 import {
@@ -27,74 +29,119 @@ import {
   PaginationItemContainer,
 } from "./style";
 
+export interface CoachI {
+  id: number;
+  name: string;
+  image: string | null;
+}
+
+export interface GameI {
+  id: number;
+  date: string;
+  location: string;
+  homeTeamImage: null | string;
+  homeTeamName: string;
+  homeTeamCoach: string;
+  awayTeamImage: null | string;
+  awayTeamName: string;
+  awayTeamCoach: string;
+  referee: string;
+  score: string;
+}
+
+const data: GameI[] = [
+  {
+    id: 1,
+    date: "May 23, 5:30 PM",
+    location: "Madison Square Benjamin Thompson",
+    homeTeamImage: null,
+    homeTeamName: "Atlanta Hawks",
+    homeTeamCoach: "Matthew Collins",
+    awayTeamImage: null,
+    awayTeamName: "Atlanta Hawks",
+    awayTeamCoach: "Matthew Collins",
+    referee: "Daniel Harris",
+    score: "53-29",
+  },
+  {
+    id: 2,
+    date: "May 23, 5:30 PM",
+    location: "Madison Square Benjamin Thompson",
+    homeTeamImage: null,
+    homeTeamName: "Atlanta Hawks",
+    homeTeamCoach: "Matthew Collins",
+    awayTeamImage: null,
+    awayTeamName: "Atlanta Hawks",
+    awayTeamCoach: "Matthew Collins",
+    referee: "Daniel Harris",
+    score: "53-29",
+  },
+  {
+    id: 3,
+    date: "May 23, 5:30 PM",
+    location: "Madison Square Benjamin Thompson",
+    homeTeamImage: null,
+    homeTeamName: "Atlanta Hawks",
+    homeTeamCoach: "Matthew Collins",
+    awayTeamImage: null,
+    awayTeamName: "Atlanta Hawks",
+    awayTeamCoach: "Matthew Collins",
+    referee: "Daniel Harris",
+    score: "53-29",
+  },
+  {
+    id: 4,
+    date: "May 23, 5:30 PM",
+    location: "Madison Square Benjamin Thompson",
+    homeTeamImage: null,
+    homeTeamName: "Atlanta Hawks",
+    homeTeamCoach: "Matthew Collins",
+    awayTeamImage: null,
+    awayTeamName: "Atlanta Hawks",
+    awayTeamCoach: "Matthew Collins",
+    referee: "Daniel Harris",
+    score: "53-29",
+  },
+  {
+    id: 5,
+    date: "May 23, 5:30 PM",
+    location: "Madison Square Benjamin Thompson",
+    homeTeamImage: null,
+    homeTeamName: "Atlanta Hawks",
+    homeTeamCoach: "Matthew Collins",
+    awayTeamImage: null,
+    awayTeamName: "Atlanta Hawks",
+    awayTeamCoach: "Matthew Collins",
+    referee: "Daniel Harris",
+    score: "53-29",
+  },
+];
+
+const coachList = [
+  { id: 0, image: null, name: "Matthew Collins" },
+  { id: 1, image: null, name: "Joshua Howell" },
+  { id: 2, image: null, name: "Blake Chapman" },
+  { id: 3, image: null, name: "Mitchell Baldwin" },
+  { id: 4, image: null, name: "Vincent Knox" },
+  { id: 5, image: null, name: "Justin Anderson" },
+];
+
 const Games = () => {
-  const data = [
-    {
-      id: 1,
-      date: "May 23, 5:30 PM",
-      location: "Madison Square Benjamin Thompson",
-      homeTeamImage: null,
-      homeTeamName: "Atlanta Hawks",
-      homeTeamCoach: "Benjamin Thompson",
-      awayTeamImage: null,
-      awayTeamName: "Atlanta Hawks",
-      awayTeamCoach: "Benjamin Thompson",
-      referee: "Daniel Harris",
-      score: "53-29",
-    },
-    {
-      id: 2,
-      date: "May 23, 5:30 PM",
-      location: "Madison Square Benjamin Thompson",
-      homeTeamImage: null,
-      homeTeamName: "Atlanta Hawks",
-      homeTeamCoach: "Benjamin Thompson",
-      awayTeamImage: null,
-      awayTeamName: "Atlanta Hawks",
-      awayTeamCoach: "Benjamin Thompson",
-      referee: "Daniel Harris",
-      score: "53-29",
-    },
-    {
-      id: 3,
-      date: "May 23, 5:30 PM",
-      location: "Madison Square Benjamin Thompson",
-      homeTeamImage: null,
-      homeTeamName: "Atlanta Hawks",
-      homeTeamCoach: "Benjamin Thompson",
-      awayTeamImage: null,
-      awayTeamName: "Atlanta Hawks",
-      awayTeamCoach: "Benjamin Thompson",
-      referee: "Daniel Harris",
-      score: "53-29",
-    },
-    {
-      id: 4,
-      date: "May 23, 5:30 PM",
-      location: "Madison Square Benjamin Thompson",
-      homeTeamImage: null,
-      homeTeamName: "Atlanta Hawks",
-      homeTeamCoach: "Benjamin Thompson",
-      awayTeamImage: null,
-      awayTeamName: "Atlanta Hawks",
-      awayTeamCoach: "Benjamin Thompson",
-      referee: "Daniel Harris",
-      score: "53-29",
-    },
-    {
-      id: 5,
-      date: "May 23, 5:30 PM",
-      location: "Madison Square Benjamin Thompson",
-      homeTeamImage: null,
-      homeTeamName: "Atlanta Hawks",
-      homeTeamCoach: "Benjamin Thompson",
-      awayTeamImage: null,
-      awayTeamName: "Atlanta Hawks",
-      awayTeamCoach: "Benjamin Thompson",
-      referee: "Daniel Harris",
-      score: "53-29",
-    },
-  ];
+  const [gameData, setGameData] = useState(data);
+  const [openedDropdownIndex, setOpenedDropdownIndex] = useState(-1);
+
+  const handleOpenCoachList = (index: number) => () =>
+    setOpenedDropdownIndex(index);
+
+  const handleClosePopup = () => setOpenedDropdownIndex(-1);
+
+  const handleChangeCoach = (gameId: number, coachName: string) => {
+    setGameData(
+      gameData.map((game) =>
+        game.id === gameId ? { ...game, awayTeamCoach: coachName } : game
+      )
+    );
+  };
 
   return (
     <SectionContainer>
@@ -156,67 +203,77 @@ const Games = () => {
               </tr>
             </thead>
             <TableBodyContainer>
-              {data.map((item) => (
-                <GameTableRow key={item.id}>
-                  <GamesTableCell>
-                    <span>{item.date}</span>
-                  </GamesTableCell>
-                  <GamesTableCell>
-                    <span>{item.location}</span>
-                  </GamesTableCell>
-                  <GamesTableCell>
-                    <TableCenterCellContainer>
-                      <TeamLogo>
-                        {item.homeTeamImage ? (
-                          <img src={item.homeTeamImage} alt="team logo" />
-                        ) : (
-                          <ColoredPlugLogo
-                            name={item.homeTeamName}
-                            width={32}
-                            height={32}
-                          />
-                        )}
-                      </TeamLogo>
-                      <div>
-                        <span>{item.homeTeamName}</span>
-                      </div>
-                    </TableCenterCellContainer>
-                  </GamesTableCell>
-                  <GamesTableCell>
-                    <span>{item.homeTeamCoach}</span>
-                  </GamesTableCell>
-                  <GamesTableCell>
-                    <TableCenterCellContainer>
-                      <TeamLogo>
-                        {item.awayTeamImage ? (
-                          <img src={item.awayTeamImage} alt="team logo" />
-                        ) : (
-                          <ColoredPlugLogo
-                            name={item.awayTeamName}
-                            width={32}
-                            height={32}
-                          />
-                        )}
-                      </TeamLogo>
-                      <div>
-                        <span>{item.awayTeamName}</span>
-                      </div>
-                    </TableCenterCellContainer>
-                  </GamesTableCell>
-                  <GamesTableCell>
-                    <span>{item.awayTeamCoach}</span>
-                  </GamesTableCell>
-                  <GamesTableCell>
-                    <span>{item.referee}</span>
-                  </GamesTableCell>
-                  <GamesTableCell style={{ width: "80px" }}>
-                    {item.score}
-                  </GamesTableCell>
-                  <GamesTableCell center style={{ width: "80px" }}>
-                    <EditIcon />
-                  </GamesTableCell>
-                </GameTableRow>
-              ))}
+              {gameData.map((item) => {
+                return (
+                  <GameTableRow key={item.id}>
+                    <GamesTableCell>
+                      <span>{item.date}</span>
+                    </GamesTableCell>
+                    <GamesTableCell>
+                      <span>{item.location}</span>
+                    </GamesTableCell>
+                    <GamesTableCell>
+                      <TableCenterCellContainer>
+                        <TeamLogo>
+                          {item.homeTeamImage ? (
+                            <img src={item.homeTeamImage} alt="team logo" />
+                          ) : (
+                            <ColoredPlugLogo
+                              name={item.homeTeamName}
+                              width={32}
+                              height={32}
+                            />
+                          )}
+                        </TeamLogo>
+                        <div>
+                          <span>{item.homeTeamName}</span>
+                        </div>
+                      </TableCenterCellContainer>
+                    </GamesTableCell>
+                    <GamesTableCell noPadding>
+                      <span>{item.homeTeamCoach}</span>
+                    </GamesTableCell>
+                    <GamesTableCell>
+                      <TableCenterCellContainer>
+                        <TeamLogo>
+                          {item.awayTeamImage ? (
+                            <img src={item.awayTeamImage} alt="team logo" />
+                          ) : (
+                            <ColoredPlugLogo
+                              name={item.awayTeamName}
+                              width={32}
+                              height={32}
+                            />
+                          )}
+                        </TeamLogo>
+                        <div>
+                          <span>{item.awayTeamName}</span>
+                        </div>
+                      </TableCenterCellContainer>
+                    </GamesTableCell>
+                    <GamesTableCell noPadding>
+                      <DropdownSearch
+                        id={item.id}
+                        name={item.awayTeamCoach}
+                        list={coachList}
+                        isOpen={openedDropdownIndex === item.id}
+                        handleOpen={handleOpenCoachList(item.id)}
+                        handleClose={handleClosePopup}
+                        handleChangeCoach={handleChangeCoach}
+                      />
+                    </GamesTableCell>
+                    <GamesTableCell>
+                      <span>{item.referee}</span>
+                    </GamesTableCell>
+                    <GamesTableCell style={{ width: "80px" }}>
+                      {item.score}
+                    </GamesTableCell>
+                    <GamesTableCell center style={{ width: "80px" }}>
+                      <EditIcon />
+                    </GamesTableCell>
+                  </GameTableRow>
+                );
+              })}
             </TableBodyContainer>
           </TableContainer>
         </ScrolledTableWrapper>
