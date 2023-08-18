@@ -128,17 +128,29 @@ const coachList = [
 
 const Games = () => {
   const [gameData, setGameData] = useState(data);
-  const [openedDropdownIndex, setOpenedDropdownIndex] = useState(-1);
+  const [openedHomeDropdownIndex, setOpenedHomeDropdownIndex] = useState(-1);
+  const [openedAwayDropdownIndex, setOpenedAwayDropdownIndex] = useState(-1);
 
-  const handleOpenCoachList = (index: number) => () =>
-    setOpenedDropdownIndex(index);
+  const handleOpenHomeCoachList = (index: number) => () =>
+    setOpenedHomeDropdownIndex(index);
 
-  const handleClosePopup = () => setOpenedDropdownIndex(-1);
+  const handleOpenAwayCoachList = (index: number) => () =>
+    setOpenedAwayDropdownIndex(index);
 
-  const handleChangeCoach = (gameId: number, coachName: string) => {
+  const handleClosePopup = (rowName: string) => () => {
+    rowName === "homeTeamCoach"
+      ? setOpenedHomeDropdownIndex(-1)
+      : setOpenedAwayDropdownIndex(-1);
+  };
+
+  const handleChangeCoach = (
+    gameId: number,
+    coachTeam: string,
+    coachName: string
+  ) => {
     setGameData(
       gameData.map((game) =>
-        game.id === gameId ? { ...game, awayTeamCoach: coachName } : game
+        game.id === gameId ? { ...game, [coachTeam]: coachName } : game
       )
     );
   };
@@ -231,7 +243,17 @@ const Games = () => {
                       </TableCenterCellContainer>
                     </GamesTableCell>
                     <GamesTableCell noPadding>
-                      <span>{item.homeTeamCoach}</span>
+                      <DropdownSearch
+                        id={item.id}
+                        name={item.homeTeamCoach}
+                        list={coachList}
+                        isOpen={openedHomeDropdownIndex === item.id}
+                        handleOpen={handleOpenHomeCoachList(item.id)}
+                        handleClose={handleClosePopup("homeTeamCoach")}
+                        handleChangeCoach={(gameId, coachName) =>
+                          handleChangeCoach(gameId, "homeTeamCoach", coachName)
+                        }
+                      />
                     </GamesTableCell>
                     <GamesTableCell>
                       <TableCenterCellContainer>
@@ -256,10 +278,12 @@ const Games = () => {
                         id={item.id}
                         name={item.awayTeamCoach}
                         list={coachList}
-                        isOpen={openedDropdownIndex === item.id}
-                        handleOpen={handleOpenCoachList(item.id)}
-                        handleClose={handleClosePopup}
-                        handleChangeCoach={handleChangeCoach}
+                        isOpen={openedAwayDropdownIndex === item.id}
+                        handleOpen={handleOpenAwayCoachList(item.id)}
+                        handleClose={handleClosePopup("awayTeamCoach")}
+                        handleChangeCoach={(gameId, coachName) =>
+                          handleChangeCoach(gameId, "awayTeamCoach", coachName)
+                        }
                       />
                     </GamesTableCell>
                     <GamesTableCell>
