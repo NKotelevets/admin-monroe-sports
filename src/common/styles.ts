@@ -10,6 +10,7 @@ export const SectionContainer = styled.div`
   width: 100%;
   padding: 45px 40px;
   box-sizing: border-box;
+  overflow: hidden;
 `;
 
 export const SectionHeader = styled.div`

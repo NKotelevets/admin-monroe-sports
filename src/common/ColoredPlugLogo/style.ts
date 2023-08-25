@@ -1,9 +1,10 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 export const RandomTeamName = styled.div<{
   width: number;
   height: number;
   background: string;
+  smallText?: boolean;
 }>`
   display: flex;
   justify-content: center;
@@ -15,10 +16,23 @@ export const RandomTeamName = styled.div<{
   margin-right: 10px;
   border: 1px solid #e4e5e5;
 
-  color: #1d1e22;
-  font-family: Inter;
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 140%;
+  ${({ smallText }) =>
+    smallText
+      ? css`
+          color: #fff;
+          text-align: center;
+          font-family: Inter;
+          font-size: 12px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 140%;
+        `
+      : css`
+          color: #1d1e22;
+          font-family: Inter;
+          font-size: 18px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 140%;
+        `};
 `;
