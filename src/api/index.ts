@@ -46,11 +46,26 @@ class Api {
 
     this.instance.interceptors.response.use(
       (res) => res,
-      (error: AxiosError) => {
+      async (error: AxiosError) => {
         if (error.response?.status === 401) {
-          // store.dispatch(logout());
+          // this.token = undefined;
+          // const refresh = getRefreshToken();
+          // if (refresh) {
+          //   try {
+          //     const { data } = await this.login.refreshToken({ refresh });
+          //     setAccesToken(data.access);
+          //     this.token = data.access;
+          //   } catch (error) {
+          //     this.token = undefined;
+          //   }
+          // } else {
+          //   store.dispatch(logout());
+          // }
+          // config.headers = {
+          //   ...config.headers,
+          //   Authorization: `Bearer ${this._token}`,
+          // };
         }
-        throw error;
       }
     );
 
