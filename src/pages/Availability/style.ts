@@ -114,13 +114,14 @@ export const TeamSeason = styled(TeamName)`
 export const AvailabilityTableWrapper = styled.div`
   overflow-x: auto;
   white-space: nowrap;
-  width: 105%;
+  width: calc(100% + 40px);
   padding-bottom: 20px;
 `;
 
 export const AvailabilityTableContainer = styled.div`
   width: max-content;
   overflow: scroll hidden;
+  padding-right: 10px;
 `;
 
 export const EmptyBlock = styled.div`

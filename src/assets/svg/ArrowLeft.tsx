@@ -1,8 +1,11 @@
 interface ArrowDownI {
   disabled?: boolean;
+  color?: string;
 }
 
-const ArrowLeft = ({ disabled }: ArrowDownI) => {
+const ArrowLeft = ({ disabled, color }: ArrowDownI) => {
+  const colorValue = color || (disabled ? "#00000080" : "#000000");
+
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -13,7 +16,7 @@ const ArrowLeft = ({ disabled }: ArrowDownI) => {
     >
       <path
         d="M15 6L9 12L15 18"
-        stroke={disabled ? "#00000080" : "#000000"}
+        stroke={colorValue}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
