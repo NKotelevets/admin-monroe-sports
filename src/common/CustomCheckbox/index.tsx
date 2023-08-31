@@ -1,31 +1,33 @@
-import { useState } from "react";
-
 import { Check } from "../../assets/svg";
 
 import { CheckboxWrapper, CheckboxInput, CheckboxLabel } from "./styles";
 
 interface CustomCheckboxI {
   label: string | JSX.Element;
+  value?: boolean;
+  name?: string;
+  setFieldValue?(name: string, val: boolean): void;
 }
 
-const CustomCheckbox = ({ label }: CustomCheckboxI) => {
-  const [checked, setChecked] = useState(false);
-
+const CustomCheckbox = ({
+  label,
+  value,
+  name,
+  setFieldValue,
+}: CustomCheckboxI) => {
   const handleChange = () => {
-    console.log("click");
-    setChecked(!checked);
+    if (!(name && setFieldValue)) return;
+    setFieldValue(name, !value);
   };
 
   return (
     <CheckboxLabel>
       <CheckboxInput
         type="checkbox"
-        checked={checked}
+        checked={!!value}
         onChange={handleChange}
       />
-      <CheckboxWrapper checked={checked}>
-        {checked && <Check />}
-      </CheckboxWrapper>
+      <CheckboxWrapper checked={!!value}>{value && <Check />}</CheckboxWrapper>
 
       {label}
     </CheckboxLabel>

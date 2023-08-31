@@ -1,3 +1,4 @@
+import { FormEvent } from "react";
 import styled from "styled-components";
 
 export const VerticalCenterContainer = styled.div`
@@ -155,7 +156,12 @@ export const LinkText = styled.span`
   text-decoration-line: underline;
 `;
 
-export const FullButton = styled.button<{ disabled?: boolean }>`
+type FullButtonProps = {
+  disabled?: boolean;
+  onClick?(e?: FormEvent<HTMLFormElement> | undefined): void;
+};
+
+export const FullButton = styled.button<FullButtonProps>`
   display: block;
   margin: 0 auto;
   border-radius: 8px;
@@ -195,4 +201,9 @@ export const OutlineButton = styled.button<{ disabled?: boolean }>`
   font-weight: 500;
   line-height: 140%;
   text-transform: capitalize;
+`;
+
+export const DatePickerWrapper = styled.div`
+  position: relative;
+  width: 100%;
 `;

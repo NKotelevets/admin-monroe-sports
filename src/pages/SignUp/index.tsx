@@ -1,7 +1,14 @@
+import { useState } from "react";
+import { useFormik } from "formik";
+import { useNavigate } from "react-router-dom";
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
+
 import { MobileLogo } from "../../assets/svg";
 import { CustomCheckbox, MobileInput } from "../../common";
 
-import { FullButton } from "../../common/styles";
+import { DatePickerWrapper, FullButton } from "../../common/styles";
 
 import {
   SignUpContainer,
@@ -11,8 +18,43 @@ import {
   SignUpLinkText,
   CheckboxContainer,
 } from "./style";
+import { SignUpSchema } from "../../constants/validationSchemas";
+import { routesConstant } from "../../constants/appRoutesConstants";
+
+interface SignUpFormI {
+  fullName: string;
+  // dateOfBitrh: string;
+  zip: string;
+  password: string;
+  passwordConfirmation: string;
+  privacyPolicy: boolean;
+}
 
 const SignUp = () => {
+  const navigate = useNavigate();
+
+  const [startDate, setStartDate] = useState<Date | null>(null);
+
+  const formik = useFormik<SignUpFormI>({
+    initialValues: {
+      fullName: "",
+      // TODO: change the format
+      // dateOfBitrh: "",
+      zip: "",
+      password: "",
+      passwordConfirmation: "",
+      privacyPolicy: false,
+    },
+    onSubmit(values) {
+      console.log(values);
+      navigate(routesConstant.joinTeam);
+    },
+    validationSchema: SignUpSchema,
+    validateOnBlur: true,
+  });
+
+  const isDisabledButton = !(formik.dirty && formik.isValid);
+
   return (
     <SignUpContainer>
       <MobileLogo />
@@ -20,46 +62,86 @@ const SignUp = () => {
       <SignUpDescription>Create your account</SignUpDescription>
       <MobileInput
         type="text"
+        name="fullName"
         label="Full name"
         placeholder="Enter the player full name here"
+        value={formik.values.fullName}
+        error={formik.errors.fullName}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
       />
+
+      <DatePickerWrapper>
+        <DatePicker
+          selected={startDate}
+          onChange={(date) => setStartDate(date)}
+          dateFormat="MM.dd.yyyy"
+          placeholderText="MM.DD.YYYY"
+          showPopperArrow={false}
+          customInput={
+            <MobileInput
+              type="text"
+              label="Date of birth"
+              placeholder="MM.DD.YYYY"
+              name="dateOfBitrh"
+              dateIcon
+              // value={formik.values.dateOfBitrh}
+              // error={formik.errors.dateOfBitrh}
+            />
+          }
+        />
+      </DatePickerWrapper>
+
       <MobileInput
         type="text"
-        label="Date of birth"
-        placeholder="MM.DD.YYYY"
-        dateIcon
-      />
-      <MobileInput type="text" label="ZIP code" placeholder="012345" />
-      <MobileInput
-        type="email"
-        label="Email (Optional)"
-        placeholder="Enter the player email here"
+        label="ZIP code"
+        placeholder="012345"
+        name="zip"
+        value={formik.values.zip}
+        error={formik.errors.zip}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
       />
       <MobileInput
         type="password"
         label="Password"
         placeholder="Create your password"
+        name="password"
         passwordIcon
+        value={formik.values.password}
+        error={formik.errors.password}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
       />
       <MobileInput
         type="password"
         label="Confirm password"
+        name="passwordConfirmation"
         placeholder="Confirm your password"
         passwordIcon
+        value={formik.values.passwordConfirmation}
+        error={formik.errors.passwordConfirmation}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
       />
 
       <CheckboxContainer>
         <CustomCheckbox
+          value={formik.values.privacyPolicy}
+          name="privacyPolicy"
           label={
             <SignUpText>
               I accept the <SignUpLinkText>Terms of use</SignUpLinkText> and{" "}
               <SignUpLinkText>Privacy policy</SignUpLinkText>
             </SignUpText>
           }
+          setFieldValue={formik.setFieldValue}
         />
       </CheckboxContainer>
 
-      <FullButton>Sign Up</FullButton>
+      <FullButton disabled={isDisabledButton} onClick={formik.handleSubmit}>
+        Sign Up
+      </FullButton>
       <SignUpText>
         Already have an account? <SignUpLinkText>Login</SignUpLinkText>
       </SignUpText>

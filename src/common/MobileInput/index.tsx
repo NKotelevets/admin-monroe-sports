@@ -1,11 +1,17 @@
-import { DatePickerIcon, PasswordHideIcon } from "../../assets/svg";
+import React, { useState } from "react";
 
-import { Container, Wrapper, Input, Label } from "./style";
+import {
+  DatePickerIcon,
+  PasswordHideIcon,
+  PasswordShowIcon,
+} from "../../assets/svg";
 
-interface InputI {
+import { Container, Wrapper, Input, Label, ErrorMessage } from "./style";
+
+interface InputI extends React.HTMLProps<HTMLInputElement> {
   label: string;
-  type: string;
   placeholder: string;
+  error?: string;
   passwordIcon?: boolean;
   dateIcon?: boolean;
 }
@@ -13,19 +19,34 @@ interface InputI {
 const MobileInput = ({
   label,
   type,
-  placeholder,
   passwordIcon,
   dateIcon,
+  error,
+  ...rest
 }: InputI) => {
+  const [controlledType, setControlledType] = useState(type);
+
+  const handleChangeType = () =>
+    setControlledType(controlledType === "password" ? "text" : "password");
+
   return (
     <Container>
       <Label>{label}</Label>
 
-      <Wrapper>
-        <Input placeholder={placeholder} type={type} />
-        {passwordIcon && <PasswordHideIcon />}
+      <Wrapper isError={!!error}>
+        <Input type={controlledType} {...rest} />
+        {passwordIcon && (
+          <div onClick={handleChangeType}>
+            {controlledType === "password" ? (
+              <PasswordHideIcon />
+            ) : (
+              <PasswordShowIcon />
+            )}
+          </div>
+        )}
         {dateIcon && <DatePickerIcon />}
       </Wrapper>
+      {error && <ErrorMessage>{error}</ErrorMessage>}
     </Container>
   );
 };

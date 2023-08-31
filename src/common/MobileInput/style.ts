@@ -27,7 +27,7 @@ export const Input = styled.input`
   }
 `;
 
-export const Wrapper = styled.div`
+export const Wrapper = styled.div<{ isError?: boolean }>`
   display: flex;
   align-items: center;
   border-radius: 8px;
@@ -35,6 +35,7 @@ export const Wrapper = styled.div`
   padding: 16px;
   width: 100%;
   box-sizing: border-box;
+  border: ${({ isError }) => (isError ? "1px solid #BC261B" : "none")};
 `;
 
 export const Label = styled.h6`
@@ -45,4 +46,14 @@ export const Label = styled.h6`
   font-weight: 400;
   line-height: 16px;
   margin: 0 0 8px;
+`;
+
+export const ErrorMessage = styled.h6`
+  color: #bc261b;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 140%;
+  margin: 0;
 `;
