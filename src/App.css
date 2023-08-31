@@ -6,6 +6,18 @@ body {
   display: flex;
 }
 
+.application_container.mobile {
+  display: flex;
+  justify-content: center;
+}
+
+.mobile_application_container {
+  max-width: 500px;
+  width: 100%;
+  box-sizing: border-box;
+  padding-top: 30px;
+}
+
 .main_section_container {
   /* minus sidebar width */
   width: calc(100% - 268px);

@@ -1,9 +1,10 @@
 import { ChangeEvent, useState } from "react";
 
-import GreenCheck from "../../assets/svg/GreenCheck";
+import { GreenCheck } from "../../assets/svg";
 import { CoachI } from "../../pages/Games";
 
 import ColoredPlugLogo from "../ColoredPlugLogo";
+import OutsideClickContainer from "../OutsideClickContainer";
 
 import {
   DropdownSearchContainer,
@@ -13,7 +14,6 @@ import {
   ListItemText,
   CheckContainer,
 } from "./style";
-import OutsideClickContainer from "../OutsideClickContainer";
 
 interface DropdownSearchI {
   id: number;
@@ -74,6 +74,7 @@ const DropdownSearch = ({
                       width={20}
                       height={20}
                       smallText
+                      isBorder
                     />
                   )}
                 </div>

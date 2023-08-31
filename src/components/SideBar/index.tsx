@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 
 import { NavigationItemTitles } from "../../interfaces/index.ts";
-import Logout from "../../assets/svg/Logout.tsx";
+import { Logout } from "../../assets/svg";
 
 import Logo from "../Logo/index.tsx";
 

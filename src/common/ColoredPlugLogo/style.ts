@@ -3,8 +3,9 @@ import styled, { css } from "styled-components";
 export const RandomTeamName = styled.div<{
   width: number;
   height: number;
-  background: string;
+  background?: string;
   smallText?: boolean;
+  isBorder?: boolean;
 }>`
   display: flex;
   justify-content: center;
@@ -14,7 +15,7 @@ export const RandomTeamName = styled.div<{
   height: ${(props) => props.height}px;
   border-radius: 50%;
   margin-right: 10px;
-  border: 1px solid #e4e5e5;
+  border: ${(props) => (props.isBorder ? "1px solid #e4e5e5" : "none")};
 
   ${({ smallText }) =>
     smallText
