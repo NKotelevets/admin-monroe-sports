@@ -31,6 +31,7 @@ const SignIn = () => {
     },
     onSubmit(values) {
       console.log(values);
+      navigate(routesConstant.welcome);
     },
     validationSchema: SignInSchema,
     validateOnBlur: true,
@@ -71,10 +72,7 @@ const SignIn = () => {
         <CustomCheckbox label="Keep logged in" />
       </CheckboxContainer>
 
-      <FullButton
-        disabled={isDisabledButton}
-        onClick={() => formik.handleSubmit}
-      >
+      <FullButton disabled={isDisabledButton} onClick={formik.handleSubmit}>
         Log in
       </FullButton>
       <SignInText>

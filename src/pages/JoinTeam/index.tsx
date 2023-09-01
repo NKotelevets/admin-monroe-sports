@@ -22,7 +22,9 @@ const JoinTeam = () => {
     },
     onSubmit(values) {
       console.log(values);
-      navigate(routesConstant.success);
+      navigate(routesConstant.success, {
+        state: { isParentOrGuardianFlow: true },
+      });
     },
     validationSchema: JoinTeamSchema,
     validateOnBlur: true,

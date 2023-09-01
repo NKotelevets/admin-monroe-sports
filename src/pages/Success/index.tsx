@@ -1,3 +1,4 @@
+import { useLocation } from "react-router-dom";
 import {
   Android,
   Apple,
@@ -18,7 +19,8 @@ import {
 } from "./style";
 
 const Success = () => {
-  const isParentOrGuardianFlow = true;
+  const location = useLocation();
+  const { isParentOrGuardianFlow } = location.state;
 
   const title = isParentOrGuardianFlow
     ? "Your parent/guardian will receive an invitation"

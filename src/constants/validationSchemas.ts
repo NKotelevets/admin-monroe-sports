@@ -23,6 +23,13 @@ export const SignUpSchema = Yup.object().shape({
     .required(),
 });
 
+export const AthleteSchema = Yup.object().shape({
+  name: Yup.string().required(),
+  // dateOfBirth: Yup.string().required(),
+  zip: Yup.string().required(),
+  email: Yup.string().email(),
+});
+
 export const JoinTeamSchema = Yup.object().shape({
   parenOrGuardianEmail: Yup.string().email().required(),
 });
