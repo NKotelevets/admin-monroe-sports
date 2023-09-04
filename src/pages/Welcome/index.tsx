@@ -129,11 +129,9 @@ const Welcome = () => {
         );
       })}
 
-      <AddAthleteButton>
+      <AddAthleteButton onClick={handleAddAthlete}>
         <CircledPlus />
-        <AddAthleteButtonText onClick={handleAddAthlete}>
-          Add Athlete
-        </AddAthleteButtonText>
+        <AddAthleteButtonText>Add Athlete</AddAthleteButtonText>
       </AddAthleteButton>
 
       <FixedContainer>

@@ -76,6 +76,14 @@ export const AddAthleteButtonText = styled.p`
   margin: 0 0 0 8px;
 `;
 
+export const UpdateAvatarButton = styled(AddAthleteButton)`
+  margin: 0 0 0 16px;
+`;
+
+export const UpdateAvatarButtonText = styled.p`
+  margin: 0 0 0 8px;
+`;
+
 export const BackgroundWrapper = styled.div`
   position: fixed;
   z-index: 1;
@@ -96,6 +104,8 @@ export const AthleteContainer = styled.div`
   border-radius: 8px;
   background: #ffffff;
   width: 100%;
+  height: 100%;
+  overflow: scroll;
   box-sizing: border-box;
   padding: 26px 20px;
 
@@ -130,4 +140,10 @@ export const ButtonsContainer = styled.div`
   & > button {
     margin-bottom: 12px;
   }
+`;
+
+export const AvatarWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
 `;

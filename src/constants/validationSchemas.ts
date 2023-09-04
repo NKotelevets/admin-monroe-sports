@@ -11,7 +11,8 @@ export const GetStartedSchema = Yup.object().shape({
 });
 
 export const SignUpSchema = Yup.object().shape({
-  fullName: Yup.string().required(),
+  fisrtName: Yup.string().required(),
+  lastName: Yup.string().required(),
   // dateOfBirth: Yup.string().required(),
   zip: Yup.string().required(),
   password: Yup.string().required(),
@@ -24,7 +25,8 @@ export const SignUpSchema = Yup.object().shape({
 });
 
 export const AthleteSchema = Yup.object().shape({
-  name: Yup.string().required(),
+  fisrtName: Yup.string().required(),
+  lastName: Yup.string().required(),
   // dateOfBirth: Yup.string().required(),
   zip: Yup.string().required(),
   email: Yup.string().email(),

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useFormik } from "formik";
 import DatePicker from "react-datepicker";
 
@@ -9,6 +10,7 @@ import {
   FullButton,
   OutlineButton,
 } from "../../../common/styles";
+import { AthleteSchema } from "../../../constants/validationSchemas";
 
 import {
   BackgroundWrapper,
@@ -16,10 +18,13 @@ import {
   AthleteContainerTitle,
   NoteText,
   ButtonsContainer,
+  AvatarWrapper,
+  UpdateAvatarButton,
+  UpdateAvatarButtonText,
 } from "../style";
-import { AthleteSchema } from "../../../constants/validationSchemas";
-import { useState } from "react";
+
 import { AthleteI } from "..";
+import { AvatarMock, Camera } from "../../../assets/svg";
 
 interface CreateAthleteModalI {
   onClose(): void;
@@ -29,7 +34,8 @@ interface CreateAthleteModalI {
 }
 
 interface CreateAthleteFormI {
-  name: string;
+  firstName: string;
+  lastName: string;
   // dateOfBitrh: string;
   zip: string;
   email?: string;
@@ -40,13 +46,15 @@ const CreateAthleteModal = ({ onClose, onContinue }: CreateAthleteModalI) => {
 
   const formik = useFormik<CreateAthleteFormI>({
     initialValues: {
-      name: "",
+      firstName: "",
+      lastName: "",
       // TODO: change the format
       // dateOfBitrh: "",
       zip: "",
       email: undefined,
     },
-    onSubmit({ name, zip, email }) {
+    onSubmit({ firstName, lastName, zip, email }) {
+      const name = firstName + lastName;
       onContinue({ name, dateOfBirth: "", zip, email });
     },
     validationSchema: AthleteSchema,
@@ -59,13 +67,30 @@ const CreateAthleteModal = ({ onClose, onContinue }: CreateAthleteModalI) => {
     <BackgroundWrapper>
       <AthleteContainer>
         <AthleteContainerTitle>Player Info</AthleteContainerTitle>
+        <AvatarWrapper>
+          <AvatarMock />
+          <UpdateAvatarButton onClick={() => console.log("image")}>
+            <Camera />
+            <UpdateAvatarButtonText>Update photo</UpdateAvatarButtonText>
+          </UpdateAvatarButton>
+        </AvatarWrapper>
         <MobileInput
           type="text"
-          label="Full name"
-          placeholder="Enter the player full name here"
-          name="name"
-          value={formik.values.name}
-          error={formik.errors.name}
+          label="First name"
+          placeholder="Enter the player first name here"
+          name="firstName"
+          value={formik.values.firstName}
+          error={formik.errors.firstName}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+        />
+        <MobileInput
+          type="text"
+          label="Last name"
+          placeholder="Enter the player last name here"
+          name="lastName"
+          value={formik.values.lastName}
+          error={formik.errors.lastName}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
         />

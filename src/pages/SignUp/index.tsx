@@ -22,7 +22,8 @@ import { SignUpSchema } from "../../constants/validationSchemas";
 import { routesConstant } from "../../constants/appRoutesConstants";
 
 interface SignUpFormI {
-  fullName: string;
+  firstName: string;
+  lastName: string;
   // dateOfBitrh: string;
   zip: string;
   password: string;
@@ -37,7 +38,8 @@ const SignUp = () => {
 
   const formik = useFormik<SignUpFormI>({
     initialValues: {
-      fullName: "",
+      firstName: "",
+      lastName: "",
       // TODO: change the format
       // dateOfBitrh: "",
       zip: "",
@@ -62,11 +64,21 @@ const SignUp = () => {
       <SignUpDescription>Create your account</SignUpDescription>
       <MobileInput
         type="text"
-        name="fullName"
-        label="Full name"
-        placeholder="Enter the player full name here"
-        value={formik.values.fullName}
-        error={formik.errors.fullName}
+        label="First name"
+        placeholder="Enter the player first name here"
+        name="firstName"
+        value={formik.values.firstName}
+        error={formik.errors.firstName}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+      />
+      <MobileInput
+        type="text"
+        label="Last name"
+        placeholder="Enter the player last name here"
+        name="lastName"
+        value={formik.values.lastName}
+        error={formik.errors.lastName}
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
       />
