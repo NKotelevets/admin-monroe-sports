@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Check, MobileLogo, CircledPlus } from "../../assets/svg";
+import {
+  Check,
+  MobileLogo,
+  CircledPlus,
+  Athlete,
+  Ball,
+} from "../../assets/svg";
 import { FixedContainer, FullButton } from "../../common/styles";
 import { ColoredPlugLogo } from "../../common";
 
@@ -16,6 +22,7 @@ import {
   WelcomeContainer,
   WelcomeDescription,
   WelcomeTitle,
+  IconContainer,
 } from "./style";
 import { routesConstant } from "../../constants/appRoutesConstants";
 
@@ -27,6 +34,8 @@ export interface AthleteI {
   zip: string;
   email: string | undefined;
 }
+
+type NeverUsedAppUserRole = "User" | "Athlete";
 
 const data = [
   {
@@ -49,12 +58,20 @@ const data = [
 
 const Welcome = () => {
   const navigate = useNavigate();
+
+  // if user has already used app before
   const [athleteList, setAthleteList] = useState(data);
   const [selectedAthleteId, setSelectedAthleteId] = useState<number | null>(
     null
   );
   const [isCreateAthleteModalOpen, setIsCreateAthleteModalOpen] =
     useState(false);
+
+  // if user has never used app before
+  const [definiteUserSelected, setDefiniteUserSelected] =
+    useState<NeverUsedAppUserRole | null>(null);
+
+  const isUsedAppBefore = false;
 
   const handleAddAthlete = () => setIsCreateAthleteModalOpen(true);
 
@@ -86,10 +103,12 @@ const Welcome = () => {
 
   const handleContinue = () =>
     navigate(routesConstant.success, {
-      state: { isParentOrGuardianFlow: false },
+      state: {
+        ...(definiteUserSelected
+          ? { isNeverUsedAppBefore: true }
+          : { isParentOrGuardianFlow: false }),
+      },
     });
-
-  console.log(selectedAthleteId);
 
   return (
     <WelcomeContainer>
@@ -99,44 +118,83 @@ const Welcome = () => {
         Please submit the info for the player who is being added to [Team Name]
       </WelcomeDescription>
 
-      {athleteList.map(({ id, name, image }) => {
-        const isSelected = selectedAthleteId === id;
-        return (
+      {isUsedAppBefore ? (
+        <>
+          {athleteList.map(({ id, name, image }) => {
+            const isSelected = selectedAthleteId === id;
+            return (
+              <AthleteCard
+                selected={isSelected}
+                key={id}
+                onClick={handleSelectAthlete(id)}
+              >
+                <AthleteCheckBoxContainer checked={isSelected}>
+                  {isSelected && <Check />}
+                </AthleteCheckBoxContainer>
+
+                <div>
+                  {image ? (
+                    <img src={image} alt="athlete image" />
+                  ) : (
+                    <ColoredPlugLogo
+                      name={name}
+                      width={40}
+                      height={40}
+                      background="#BC261B"
+                      smallText
+                    />
+                  )}
+                </div>
+                <AthleteName>{name}</AthleteName>
+              </AthleteCard>
+            );
+          })}
+
+          <AddAthleteButton onClick={handleAddAthlete}>
+            <CircledPlus />
+            <AddAthleteButtonText>Add Athlete</AddAthleteButtonText>
+          </AddAthleteButton>
+        </>
+      ) : (
+        <>
           <AthleteCard
-            selected={isSelected}
-            key={id}
-            onClick={handleSelectAthlete(id)}
+            selected={definiteUserSelected === "User"}
+            onClick={() => setDefiniteUserSelected("User")}
           >
-            <AthleteCheckBoxContainer checked={isSelected}>
-              {isSelected && <Check />}
+            <AthleteCheckBoxContainer checked={definiteUserSelected === "User"}>
+              {definiteUserSelected === "User" && <Check />}
             </AthleteCheckBoxContainer>
 
-            <div>
-              {image ? (
-                <img src={image} alt="athlete image" />
-              ) : (
-                <ColoredPlugLogo
-                  name={name}
-                  width={40}
-                  height={40}
-                  background="#BC261B"
-                  smallText
-                />
-              )}
-            </div>
-            <AthleteName>{name}</AthleteName>
+            <IconContainer>
+              <Ball />
+            </IconContainer>
+            <AthleteName>John Appleseed</AthleteName>
           </AthleteCard>
-        );
-      })}
+          <AthleteCard
+            selected={definiteUserSelected === "Athlete"}
+            onClick={() => setDefiniteUserSelected("Athlete")}
+          >
+            <AthleteCheckBoxContainer
+              checked={definiteUserSelected === "Athlete"}
+            >
+              {definiteUserSelected === "Athlete" && <Check />}
+            </AthleteCheckBoxContainer>
 
-      <AddAthleteButton onClick={handleAddAthlete}>
-        <CircledPlus />
-        <AddAthleteButtonText>Add Athlete</AddAthleteButtonText>
-      </AddAthleteButton>
+            <IconContainer>
+              <Athlete />
+            </IconContainer>
+            <AthleteName>My athlete</AthleteName>
+          </AthleteCard>
+        </>
+      )}
 
       <FixedContainer>
         <FullButton
-          disabled={selectedAthleteId === null}
+          disabled={
+            isUsedAppBefore
+              ? selectedAthleteId === null
+              : definiteUserSelected === null
+          }
           onClick={handleContinue}
         >
           Continue

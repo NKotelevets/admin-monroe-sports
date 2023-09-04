@@ -5,6 +5,7 @@ import {
   BallBottle,
   Letter,
   MobileLogo,
+  ShirtWatch,
 } from "../../assets/svg";
 import { FullButton } from "../../common/styles";
 
@@ -20,12 +21,16 @@ import {
 
 const Success = () => {
   const location = useLocation();
-  const { isParentOrGuardianFlow } = location.state;
+  const { isParentOrGuardianFlow, isNeverUsedAppBefore } = location.state;
 
-  const title = isParentOrGuardianFlow
+  const title = isNeverUsedAppBefore
+    ? "Welcome to [Team Name]"
+    : isParentOrGuardianFlow
     ? "Your parent/guardian will receive an invitation"
     : "You have successfully joined the [Team Name]";
-  const description = isParentOrGuardianFlow
+  const description = isNeverUsedAppBefore
+    ? "[User name] has been added as a coach for [Team Name]. Coaches can submit their roster, invite players, enter availability, monitor RSVP and more."
+    : isParentOrGuardianFlow
     ? "In the meantime, go to the app so you don't lose touch with us."
     : "Jump into the app to select your availability, view rosters & schedules and more";
 
@@ -33,7 +38,13 @@ const Success = () => {
     <SuccessContainer>
       <MobileLogo />
       <SuccessContentContainer>
-        {isParentOrGuardianFlow ? <Letter /> : <BallBottle />}
+        {isNeverUsedAppBefore ? (
+          <ShirtWatch />
+        ) : isParentOrGuardianFlow ? (
+          <Letter />
+        ) : (
+          <BallBottle />
+        )}
         <SuccessTitle>{title}</SuccessTitle>
         <SuccessDescription>{description}</SuccessDescription>
 

@@ -147,3 +147,7 @@ export const AvatarWrapper = styled.div`
   align-items: center;
   margin-bottom: 16px;
 `;
+
+export const IconContainer = styled.div`
+  margin-right: 12px;
+`;
