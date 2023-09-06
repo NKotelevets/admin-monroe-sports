@@ -1,11 +1,19 @@
-import Input from "../../common/Input"
-import ColoredPlugLogo from "../../common/ColoredPlugLogo"
+import { ColoredPlugLogo, Input } from "../../common";
+import { ArrowDown, Bell } from "../../assets/svg";
 
-import ArrowDown from "../../assets/svg/ArrowDown"
-import Bell from "../../assets/svg/Bell"
-import avatarExample from '../../assets/avatar-example.png'
+import avatarExample from "../../assets/avatar-example.png";
 
-import { AccountContainer, Avatar, HeaderContainer, SearchContainer, ReminderContainer, UserContainer, UserDescription, UserName, UserRole } from "./style"
+import {
+  AccountContainer,
+  Avatar,
+  HeaderContainer,
+  SearchContainer,
+  ReminderContainer,
+  UserContainer,
+  UserDescription,
+  UserName,
+  UserRole,
+} from "./style";
 
 const Header = () => {
   return (
@@ -21,10 +29,15 @@ const Header = () => {
         <UserContainer>
           {avatarExample ? (
             <Avatar>
-              <img src={avatarExample} alt='avatar' />
+              <img src={avatarExample} alt="avatar" />
             </Avatar>
           ) : (
-            <ColoredPlugLogo name='Matt Damon' width={52} height={52} />
+            <ColoredPlugLogo
+              name="Matt Damon"
+              width={52}
+              height={52}
+              isBorder
+            />
           )}
           <UserDescription>
             <UserName>Matt Damon</UserName>
@@ -34,7 +47,7 @@ const Header = () => {
         </UserContainer>
       </AccountContainer>
     </HeaderContainer>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

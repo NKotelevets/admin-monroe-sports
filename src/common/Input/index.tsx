@@ -1,4 +1,4 @@
-import Search from "../../assets/svg/Search";
+import { Search } from "../../assets/svg";
 
 import { InputContainer, Input as InputBlock } from "./style";
 
@@ -8,13 +8,13 @@ interface InputI {
   icon: boolean;
 }
 
-const Input = ({type, placeholder, icon}: InputI) => {
+const Input = ({ type, placeholder, icon }: InputI) => {
   return (
     <InputContainer>
       {icon && <Search />}
       <InputBlock type={type} placeholder={placeholder} />
     </InputContainer>
-  )
-}
+  );
+};
 
-export default Input
+export default Input;

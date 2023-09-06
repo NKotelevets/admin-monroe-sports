@@ -1,3 +1,4 @@
+import { FormEvent } from "react";
 import styled from "styled-components";
 
 export const VerticalCenterContainer = styled.div`
@@ -100,4 +101,109 @@ export const TableCell = styled.td<{ center?: boolean }>`
 export const TableCenterCellContainer = styled.div`
   display: flex;
   align-items: center;
+`;
+
+// SING IN or SIGN UP flow styles
+
+export const MobileContainer = styled.div`
+  padding: 0 20px 50px;
+`;
+
+export const FixedContainer = styled.div`
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+`;
+
+export const Title = styled.h1`
+  color: #1d1e22;
+  font-family: Inter;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 140%;
+  margin: 30px 0 0;
+`;
+
+export const Description = styled.p`
+  color: #696163;
+  font-family: Inter;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 140%;
+  margin: 0;
+`;
+
+export const Text = styled.p`
+  color: #1d1e22;
+  text-align: center;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 140%;
+`;
+
+export const LinkText = styled.span`
+  color: #3e34ca;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 150%;
+  text-decoration-line: underline;
+`;
+
+type FullButtonProps = {
+  disabled?: boolean;
+  onClick?(e?: FormEvent<HTMLFormElement> | undefined): void;
+};
+
+export const FullButton = styled.button<FullButtonProps>`
+  display: block;
+  margin: 0 auto;
+  border-radius: 8px;
+  background: ${({ disabled }) => (disabled ? "#D8817B" : "#bc261b")};
+  outline: none;
+  border: none;
+  width: 263px;
+  padding: 15px 26px;
+  box-sizing: border-box;
+
+  color: #ffffff;
+  text-align: center;
+  font-family: Inter;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 140%;
+  text-transform: capitalize;
+`;
+
+export const OutlineButton = styled.button<{ disabled?: boolean }>`
+  display: block;
+  margin: 0 auto;
+  border-radius: 8px;
+  outline: none;
+  border: 1px solid #bc261b;
+  background: transparent;
+  width: 263px;
+  padding: 15px 26px;
+  box-sizing: border-box;
+
+  color: #bc261b;
+  text-align: center;
+  font-family: Inter;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 140%;
+  text-transform: capitalize;
+`;
+
+export const DatePickerWrapper = styled.div`
+  position: relative;
+  width: 100%;
 `;

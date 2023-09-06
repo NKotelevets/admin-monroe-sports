@@ -48,7 +48,12 @@ const SingleTeamAvailability = ({
             {team.teamLogo ? (
               <img src={team.teamLogo} alt="team logo" />
             ) : (
-              <ColoredPlugLogo name={team.teamName} width={32} height={32} />
+              <ColoredPlugLogo
+                name={team.teamName}
+                width={32}
+                height={32}
+                isBorder
+              />
             )}
           </TeamLogo>
           <TeamName>{team.teamName}</TeamName>

@@ -1,16 +1,15 @@
-import Export from "../../assets/svg/Export";
-import Upload from "../../assets/svg/Upload";
+import { Export, Upload } from "../../assets/svg";
 
-import { OutlineColorButtonContainer, OutlineColorButtonTitle } from "./style"
+import { OutlineColorButtonContainer, OutlineColorButtonTitle } from "./style";
 
-type IconT = "export" | "upload"
+type IconT = "export" | "upload";
 
 interface OutlineColorButtonI {
   title: string;
-  icon: IconT;
+  icon?: IconT;
 }
 
-const OutlineColorButton = ({title, icon}: OutlineColorButtonI) => {
+const OutlineColorButton = ({ title, icon }: OutlineColorButtonI) => {
   const getButtonIcon = () => {
     switch (icon) {
       case "export":
@@ -20,14 +19,14 @@ const OutlineColorButton = ({title, icon}: OutlineColorButtonI) => {
       default:
         return null;
     }
-  }
+  };
 
   return (
     <OutlineColorButtonContainer>
       {getButtonIcon()}
       <OutlineColorButtonTitle>{title}</OutlineColorButtonTitle>
     </OutlineColorButtonContainer>
-  )
-}
+  );
+};
 
-export default OutlineColorButton
+export default OutlineColorButton;

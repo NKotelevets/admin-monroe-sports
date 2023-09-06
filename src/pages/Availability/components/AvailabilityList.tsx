@@ -66,6 +66,7 @@ const AvailabilityList = ({ data, handleSelectTeam }: AvailabilityListI) => {
                           name={item.teamName}
                           width={32}
                           height={32}
+                          isBorder
                         />
                       )}
                     </TeamLogo>

@@ -234,6 +234,7 @@ const Games = () => {
                               name={item.homeTeamName}
                               width={32}
                               height={32}
+                              isBorder
                             />
                           )}
                         </TeamLogo>
@@ -265,6 +266,7 @@ const Games = () => {
                               name={item.awayTeamName}
                               width={32}
                               height={32}
+                              isBorder
                             />
                           )}
                         </TeamLogo>
