@@ -11,6 +11,7 @@ export { default as Ball } from "./Ball";
 export { default as BallBottle } from "./BallBottle";
 export { default as Basketball } from "./Basketball";
 export { default as Bell } from "./Bell";
+export { default as BlueCheckIcon } from "./BlueCheckIcon";
 export { default as Calendar } from "./Calendar";
 export { default as Camera } from "./Camera";
 export { default as Cancel } from "./Cancel";

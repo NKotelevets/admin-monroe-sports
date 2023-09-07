@@ -14,6 +14,7 @@ export const SignUpSchema = Yup.object().shape({
   fisrtName: Yup.string().required(),
   lastName: Yup.string().required(),
   // dateOfBirth: Yup.string().required(),
+  gender: Yup.string().required(),
   zip: Yup.string().required(),
   password: Yup.string().required(),
   passwordConfirmation: Yup.string()

@@ -20,11 +20,13 @@ import {
 } from "./style";
 import { SignUpSchema } from "../../constants/validationSchemas";
 import { routesConstant } from "../../constants/appRoutesConstants";
+import Dropdown, { DropdownListValue } from "../../common/Dropdown";
 
 interface SignUpFormI {
   firstName: string;
   lastName: string;
   // dateOfBitrh: string;
+  gender: string;
   zip: string;
   password: string;
   passwordConfirmation: string;
@@ -42,6 +44,7 @@ const SignUp = () => {
       lastName: "",
       // TODO: change the format
       // dateOfBitrh: "",
+      gender: "",
       zip: "",
       password: "",
       passwordConfirmation: "",
@@ -56,6 +59,10 @@ const SignUp = () => {
   });
 
   const isDisabledButton = !(formik.dirty && formik.isValid);
+
+  const handleSelectDropdownValue = (value: string) => {
+    formik.setFieldValue("gender", value);
+  };
 
   return (
     <SignUpContainer>
@@ -82,7 +89,18 @@ const SignUp = () => {
         onChange={formik.handleChange}
         onBlur={formik.handleBlur}
       />
-
+      <Dropdown
+        label="Gender"
+        placeholder="Select your gender"
+        name="gender"
+        value={formik.values.gender}
+        error={formik.errors.gender}
+        dropdownList={[
+          { id: 0, value: "Male" },
+          { id: 1, value: "Female" },
+        ]}
+        onSelectDropdownValue={handleSelectDropdownValue}
+      />
       <DatePickerWrapper>
         <DatePicker
           selected={startDate}
