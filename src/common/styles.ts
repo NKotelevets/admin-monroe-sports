@@ -106,7 +106,25 @@ export const TableCenterCellContainer = styled.div`
 // SING IN or SIGN UP flow styles
 
 export const MobileContainer = styled.div`
-  padding: 0 20px 50px;
+  max-width: 400px;
+  width: 100%;
+  box-sizing: border-box;
+
+  margin: 30px auto 0;
+
+  @media (min-width: 768px) {
+    margin: 80px auto 0;
+    max-width: 500px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+`;
+
+export const PageContainer = styled.div`
+  max-width: 400px;
+  width: 100%;
 `;
 
 export const FixedContainer = styled.div`
@@ -114,6 +132,9 @@ export const FixedContainer = styled.div`
   bottom: 20px;
   left: 0;
   right: 0;
+  @media (min-width: 768px) {
+    position: static;
+  }
 `;
 
 export const Title = styled.h1`
@@ -123,7 +144,17 @@ export const Title = styled.h1`
   font-style: normal;
   font-weight: 600;
   line-height: 140%;
-  margin: 30px 0 0;
+  margin: 0;
+
+  @media (min-width: 768px) {
+    color: #1d1e22;
+    text-align: center;
+    font-family: Inter;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 140%;
+  }
 `;
 
 export const Description = styled.p`
@@ -134,6 +165,15 @@ export const Description = styled.p`
   font-weight: 400;
   line-height: 140%;
   margin: 0;
+  @media (min-width: 768px) {
+    color: #696163;
+    text-align: center;
+    font-family: Inter;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 140%;
+  }
 `;
 
 export const Text = styled.p`
@@ -154,6 +194,8 @@ export const LinkText = styled.span`
   font-weight: 500;
   line-height: 150%;
   text-decoration-line: underline;
+
+  cursor: pointer;
 `;
 
 type FullButtonProps = {
@@ -180,6 +222,12 @@ export const FullButton = styled.button<FullButtonProps>`
   font-weight: 500;
   line-height: 140%;
   text-transform: capitalize;
+
+  cursor: pointer;
+
+  @media (min-width: 768px) {
+    width: 100%;
+  }
 `;
 
 export const OutlineButton = styled.button<{ disabled?: boolean }>`
@@ -201,6 +249,8 @@ export const OutlineButton = styled.button<{ disabled?: boolean }>`
   font-weight: 500;
   line-height: 140%;
   text-transform: capitalize;
+
+  cursor: pointer;
 `;
 
 export const DatePickerWrapper = styled.div`

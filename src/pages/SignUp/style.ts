@@ -19,7 +19,7 @@ export const SignUpDescription = styled(Description)`
 `;
 
 export const SignUpText = styled(Text)`
-  text-align: center;
+  text-align: left;
   margin-top: 16px;
 `;
 

@@ -6,7 +6,14 @@ import {
   PasswordShowIcon,
 } from "../../assets/svg";
 
-import { Container, Wrapper, Input, Label, ErrorMessage } from "./style";
+import {
+  Container,
+  Wrapper,
+  Input,
+  Label,
+  ErrorMessage,
+  PasswordIconContainer,
+} from "./style";
 
 interface InputI extends React.HTMLProps<HTMLInputElement> {
   label: string;
@@ -36,13 +43,13 @@ const MobileInput = ({
       <Wrapper isError={!!error}>
         <Input type={controlledType} {...rest} />
         {passwordIcon && (
-          <div onClick={handleChangeType}>
+          <PasswordIconContainer onClick={handleChangeType}>
             {controlledType === "password" ? (
               <PasswordHideIcon />
             ) : (
               <PasswordShowIcon />
             )}
-          </div>
+          </PasswordIconContainer>
         )}
         {dateIcon && <DatePickerIcon />}
       </Wrapper>

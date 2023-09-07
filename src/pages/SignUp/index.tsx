@@ -5,10 +5,13 @@ import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-import { MobileLogo } from "../../assets/svg";
 import { CustomCheckbox, MobileInput } from "../../common";
 
-import { DatePickerWrapper, FullButton } from "../../common/styles";
+import {
+  DatePickerWrapper,
+  FullButton,
+  PageContainer,
+} from "../../common/styles";
 
 import {
   SignUpContainer,
@@ -20,7 +23,7 @@ import {
 } from "./style";
 import { SignUpSchema } from "../../constants/validationSchemas";
 import { routesConstant } from "../../constants/appRoutesConstants";
-import Dropdown, { DropdownListValue } from "../../common/Dropdown";
+import Dropdown from "../../common/Dropdown";
 
 interface SignUpFormI {
   firstName: string;
@@ -66,115 +69,116 @@ const SignUp = () => {
 
   return (
     <SignUpContainer>
-      <MobileLogo />
       <SignUpTitle>Welcome to Schedule World!</SignUpTitle>
       <SignUpDescription>Create your account</SignUpDescription>
-      <MobileInput
-        type="text"
-        label="First name"
-        placeholder="Enter the player first name here"
-        name="firstName"
-        value={formik.values.firstName}
-        error={formik.errors.firstName}
-        onChange={formik.handleChange}
-        onBlur={formik.handleBlur}
-      />
-      <MobileInput
-        type="text"
-        label="Last name"
-        placeholder="Enter the player last name here"
-        name="lastName"
-        value={formik.values.lastName}
-        error={formik.errors.lastName}
-        onChange={formik.handleChange}
-        onBlur={formik.handleBlur}
-      />
-      <Dropdown
-        label="Gender"
-        placeholder="Select your gender"
-        name="gender"
-        value={formik.values.gender}
-        error={formik.errors.gender}
-        dropdownList={[
-          { id: 0, value: "Male" },
-          { id: 1, value: "Female" },
-        ]}
-        onSelectDropdownValue={handleSelectDropdownValue}
-      />
-      <DatePickerWrapper>
-        <DatePicker
-          selected={startDate}
-          onChange={(date) => setStartDate(date)}
-          dateFormat="MM.dd.yyyy"
-          placeholderText="MM.DD.YYYY"
-          showPopperArrow={false}
-          customInput={
-            <MobileInput
-              type="text"
-              label="Date of birth"
-              placeholder="MM.DD.YYYY"
-              name="dateOfBitrh"
-              dateIcon
-              // value={formik.values.dateOfBitrh}
-              // error={formik.errors.dateOfBitrh}
-            />
-          }
+      <PageContainer>
+        <MobileInput
+          type="text"
+          label="First name"
+          placeholder="Enter the player first name here"
+          name="firstName"
+          value={formik.values.firstName}
+          error={formik.errors.firstName}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
         />
-      </DatePickerWrapper>
-
-      <MobileInput
-        type="text"
-        label="ZIP code"
-        placeholder="012345"
-        name="zip"
-        value={formik.values.zip}
-        error={formik.errors.zip}
-        onChange={formik.handleChange}
-        onBlur={formik.handleBlur}
-      />
-      <MobileInput
-        type="password"
-        label="Password"
-        placeholder="Create your password"
-        name="password"
-        passwordIcon
-        value={formik.values.password}
-        error={formik.errors.password}
-        onChange={formik.handleChange}
-        onBlur={formik.handleBlur}
-      />
-      <MobileInput
-        type="password"
-        label="Confirm password"
-        name="passwordConfirmation"
-        placeholder="Confirm your password"
-        passwordIcon
-        value={formik.values.passwordConfirmation}
-        error={formik.errors.passwordConfirmation}
-        onChange={formik.handleChange}
-        onBlur={formik.handleBlur}
-      />
-
-      <CheckboxContainer>
-        <CustomCheckbox
-          value={formik.values.privacyPolicy}
-          name="privacyPolicy"
-          label={
-            <SignUpText>
-              I accept the <SignUpLinkText>Terms of use</SignUpLinkText> and{" "}
-              <SignUpLinkText>Privacy policy</SignUpLinkText>
-            </SignUpText>
-          }
-          setFieldValue={formik.setFieldValue}
+        <MobileInput
+          type="text"
+          label="Last name"
+          placeholder="Enter the player last name here"
+          name="lastName"
+          value={formik.values.lastName}
+          error={formik.errors.lastName}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
         />
-      </CheckboxContainer>
+        <Dropdown
+          label="Gender"
+          placeholder="Select your gender"
+          name="gender"
+          value={formik.values.gender}
+          error={formik.errors.gender}
+          dropdownList={[
+            { id: 0, value: "Male" },
+            { id: 1, value: "Female" },
+          ]}
+          onSelectDropdownValue={handleSelectDropdownValue}
+        />
+        <DatePickerWrapper>
+          <DatePicker
+            selected={startDate}
+            onChange={(date) => setStartDate(date)}
+            dateFormat="MM.dd.yyyy"
+            placeholderText="MM.DD.YYYY"
+            showPopperArrow={false}
+            customInput={
+              <MobileInput
+                type="text"
+                label="Date of birth"
+                placeholder="MM.DD.YYYY"
+                name="dateOfBitrh"
+                dateIcon
+                // value={formik.values.dateOfBitrh}
+                // error={formik.errors.dateOfBitrh}
+              />
+            }
+          />
+        </DatePickerWrapper>
 
-      <FullButton disabled={isDisabledButton} onClick={formik.handleSubmit}>
-        Sign Up
-      </FullButton>
-      <SignUpText>
-        Already have an account? <SignUpLinkText>Login</SignUpLinkText>
-      </SignUpText>
+        <MobileInput
+          type="text"
+          label="ZIP code"
+          placeholder="012345"
+          name="zip"
+          value={formik.values.zip}
+          error={formik.errors.zip}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+        />
+        <MobileInput
+          type="password"
+          label="Password"
+          placeholder="Create your password"
+          name="password"
+          passwordIcon
+          value={formik.values.password}
+          error={formik.errors.password}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+        />
+        <MobileInput
+          type="password"
+          label="Confirm password"
+          name="passwordConfirmation"
+          placeholder="Confirm your password"
+          passwordIcon
+          value={formik.values.passwordConfirmation}
+          error={formik.errors.passwordConfirmation}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+        />
+
+        <CheckboxContainer>
+          <CustomCheckbox
+            value={formik.values.privacyPolicy}
+            name="privacyPolicy"
+            label={
+              <SignUpText>
+                I accept the <SignUpLinkText>Terms of use</SignUpLinkText> and{" "}
+                <SignUpLinkText>Privacy policy</SignUpLinkText>
+              </SignUpText>
+            }
+            setFieldValue={formik.setFieldValue}
+          />
+        </CheckboxContainer>
+
+        <FullButton disabled={isDisabledButton} onClick={formik.handleSubmit}>
+          Sign Up
+        </FullButton>
+        <SignUpText>
+          Already have an account? <SignUpLinkText>Login</SignUpLinkText>
+        </SignUpText>
+      </PageContainer>
     </SignUpContainer>
   );
 };

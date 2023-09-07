@@ -1,10 +1,9 @@
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 
-import { MobileLogo } from "../../assets/svg";
 import { CustomCheckbox, MobileInput } from "../../common";
 import { SignInSchema } from "../../constants/validationSchemas";
-import { FullButton } from "../../common/styles";
+import { FullButton, PageContainer } from "../../common/styles";
 
 import {
   SignInContainer,
@@ -43,44 +42,45 @@ const SignIn = () => {
 
   return (
     <SignInContainer>
-      <MobileLogo />
       <SignInTitle>Welcome Back! Sign In Below</SignInTitle>
-      <MobileInput
-        type="email"
-        label="Email"
-        name="email"
-        placeholder="Enter your email here"
-        value={formik.values.email}
-        error={formik.errors.email}
-        onChange={formik.handleChange}
-        onBlur={formik.handleBlur}
-      />
-      <MobileInput
-        type="text"
-        label="Password"
-        name="password"
-        placeholder="Enter your password"
-        passwordIcon
-        value={formik.values.password}
-        error={formik.errors.password}
-        onChange={formik.handleChange}
-        onBlur={formik.handleBlur}
-      />
+      <PageContainer>
+        <MobileInput
+          type="email"
+          label="Email"
+          name="email"
+          placeholder="Enter your email here"
+          value={formik.values.email}
+          error={formik.errors.email}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+        />
+        <MobileInput
+          type="text"
+          label="Password"
+          name="password"
+          placeholder="Enter your password"
+          passwordIcon
+          value={formik.values.password}
+          error={formik.errors.password}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+        />
 
-      <PasswordLinkText>Forgot your password?</PasswordLinkText>
-      <CheckboxContainer>
-        <CustomCheckbox label="Keep logged in" />
-      </CheckboxContainer>
+        <PasswordLinkText>Forgot your password?</PasswordLinkText>
+        <CheckboxContainer>
+          <CustomCheckbox label="Keep logged in" />
+        </CheckboxContainer>
 
-      <FullButton disabled={isDisabledButton} onClick={formik.handleSubmit}>
-        Log in
-      </FullButton>
-      <SignInText>
-        Don't have an account yet?{" "}
-        <SignInLinkText onClick={handleNavigateToGetStarted}>
-          Sign Up
-        </SignInLinkText>
-      </SignInText>
+        <FullButton disabled={isDisabledButton} onClick={formik.handleSubmit}>
+          Log in
+        </FullButton>
+        <SignInText>
+          Don't have an account yet?{" "}
+          <SignInLinkText onClick={handleNavigateToGetStarted}>
+            Sign Up
+          </SignInLinkText>
+        </SignInText>
+      </PageContainer>
     </SignInContainer>
   );
 };

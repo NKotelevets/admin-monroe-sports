@@ -57,3 +57,7 @@ export const ErrorMessage = styled.h6`
   line-height: 140%;
   margin: 0;
 `;
+
+export const PasswordIconContainer = styled.div`
+  cursor: pointer;
+`;

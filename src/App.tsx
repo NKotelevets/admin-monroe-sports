@@ -19,6 +19,7 @@ import JoinTeam from "./pages/JoinTeam/index.tsx";
 import Success from "./pages/Success/index.tsx";
 
 import "./App.css";
+import MobileLogo from "./assets/svg/MobileLogo.tsx";
 
 function App() {
   const isAuth = false;
@@ -44,7 +45,11 @@ function App() {
           </div>
         </Router>
       ) : (
-        <div className="mobile_application_container">
+        <div className="signup_flow_container">
+          <div className="signup_flow_logo">
+            <MobileLogo />
+          </div>
+
           <Router>
             <Routes>
               <Route path={routesConstant.signIn} element={<SignIn />} />

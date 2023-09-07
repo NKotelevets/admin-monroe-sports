@@ -1,9 +1,8 @@
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 
-import { MobileLogo } from "../../assets/svg";
 import { MobileInput } from "../../common";
-import { FixedContainer, FullButton } from "../../common/styles";
+import { FixedContainer, FullButton, PageContainer } from "../../common/styles";
 import { routesConstant } from "../../constants/appRoutesConstants";
 import { JoinTeamSchema } from "../../constants/validationSchemas";
 
@@ -34,27 +33,29 @@ const JoinTeam = () => {
 
   return (
     <JoinTeamContainer>
-      <MobileLogo />
       <JoinTeamTitle>Who is joining Team [Team Name]?</JoinTeamTitle>
       <JoinTeamDescription>
         You are under 16 years old. Please submit your Parent/Guardian’s email
       </JoinTeamDescription>
-      <MobileInput
-        type="text"
-        name="parenOrGuardianEmail"
-        label="Parent/Guardian’s email"
-        placeholder="Enter Parent/Guardian’s email here"
-        value={formik.values.parenOrGuardianEmail}
-        error={formik.errors.parenOrGuardianEmail}
-        onChange={formik.handleChange}
-        onBlur={formik.handleBlur}
-      />
 
-      <FixedContainer>
-        <FullButton disabled={isDisabledButton} onClick={formik.handleSubmit}>
-          Continue
-        </FullButton>
-      </FixedContainer>
+      <PageContainer>
+        <MobileInput
+          type="text"
+          name="parenOrGuardianEmail"
+          label="Parent/Guardian’s email"
+          placeholder="Enter Parent/Guardian’s email here"
+          value={formik.values.parenOrGuardianEmail}
+          error={formik.errors.parenOrGuardianEmail}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+        />
+
+        <FixedContainer>
+          <FullButton disabled={isDisabledButton} onClick={formik.handleSubmit}>
+            Continue
+          </FullButton>
+        </FixedContainer>
+      </PageContainer>
     </JoinTeamContainer>
   );
 };

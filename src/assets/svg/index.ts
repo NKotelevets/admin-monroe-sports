@@ -29,6 +29,7 @@ export { default as MobileLogo } from "./MobileLogo";
 export { default as PasswordHideIcon } from "./PasswordHideIcon";
 export { default as PasswordShowIcon } from "./PasswordShowIcon";
 export { default as Plus } from "./Plus";
+export { default as QRCode } from "./QRCode";
 export { default as Roles } from "./Roles";
 export { default as Search } from "./Search";
 export { default as ShirtWatch } from "./ShirtWatch";

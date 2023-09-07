@@ -4,10 +4,10 @@ import {
   Apple,
   BallBottle,
   Letter,
-  MobileLogo,
+  QRCode,
   ShirtWatch,
 } from "../../assets/svg";
-import { FullButton } from "../../common/styles";
+import { FullButton, PageContainer } from "../../common/styles";
 
 import {
   SuccessContainer,
@@ -17,6 +17,9 @@ import {
   QuestionText,
   DownloadAppButton,
   DownloadAppButtonText,
+  QRCodeContainer,
+  DownloadAppContainer,
+  QRDescription,
 } from "./style";
 
 const Success = () => {
@@ -36,32 +39,44 @@ const Success = () => {
 
   return (
     <SuccessContainer>
-      <MobileLogo />
-      <SuccessContentContainer>
-        {isNeverUsedAppBefore ? (
-          <ShirtWatch />
-        ) : isParentOrGuardianFlow ? (
-          <Letter />
-        ) : (
-          <BallBottle />
-        )}
-        <SuccessTitle>{title}</SuccessTitle>
-        <SuccessDescription>{description}</SuccessDescription>
+      <PageContainer>
+        <SuccessContentContainer>
+          {isNeverUsedAppBefore ? (
+            <ShirtWatch />
+          ) : isParentOrGuardianFlow ? (
+            <Letter />
+          ) : (
+            <BallBottle />
+          )}
+          <SuccessTitle>{title}</SuccessTitle>
+          <SuccessDescription>{description}</SuccessDescription>
 
-        <FullButton>Open the app</FullButton>
-        <QuestionText>Don't have an app yet?</QuestionText>
+          <QRCodeContainer>
+            <QRCode />
+            <QRDescription>
+              Scan QR code to open the app on your phone
+            </QRDescription>
+          </QRCodeContainer>
 
-        <DownloadAppButton withGap={true}>
-          <Apple />
-          <DownloadAppButtonText>Download from App Store</DownloadAppButtonText>
-        </DownloadAppButton>
-        <DownloadAppButton>
-          <Android />
-          <DownloadAppButtonText>
-            Download from Google Play
-          </DownloadAppButtonText>
-        </DownloadAppButton>
-      </SuccessContentContainer>
+          <DownloadAppContainer>
+            <FullButton>Open the app</FullButton>
+            <QuestionText>Don't have an app yet?</QuestionText>
+
+            <DownloadAppButton withGap={true}>
+              <Apple />
+              <DownloadAppButtonText>
+                Download from App Store
+              </DownloadAppButtonText>
+            </DownloadAppButton>
+            <DownloadAppButton>
+              <Android />
+              <DownloadAppButtonText>
+                Download from Google Play
+              </DownloadAppButtonText>
+            </DownloadAppButton>
+          </DownloadAppContainer>
+        </SuccessContentContainer>
+      </PageContainer>
     </SuccessContainer>
   );
 };
