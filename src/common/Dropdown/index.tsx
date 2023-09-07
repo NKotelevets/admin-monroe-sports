@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { ArrowDown, BlueCheckIcon } from "../../assets/svg";
+import { ArrowDown, ArrowUp, BlueCheckIcon } from "../../assets/svg";
 import OutsideClickContainer from "../OutsideClickContainer";
 
 import {
@@ -53,7 +53,7 @@ const Dropdown = ({
 
         <Wrapper isError={!!error} onClick={handleOpen}>
           <Input readOnly value={value} {...rest} />
-          <ArrowDown />
+          {isOpen ? <ArrowUp /> : <ArrowDown />}
         </Wrapper>
 
         {isOpen && (

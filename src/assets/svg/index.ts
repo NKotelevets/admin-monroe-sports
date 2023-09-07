@@ -4,6 +4,7 @@ export { default as Approve } from "./Approve";
 export { default as ArrowDown } from "./ArrowDown";
 export { default as ArrowLeft } from "./ArrowLeft";
 export { default as ArrowRight } from "./ArrowRight";
+export { default as ArrowUp } from "./ArrowUp";
 export { default as Athlete } from "./Athlete";
 export { default as Availability } from "./Availability";
 export { default as AvatarMock } from "./AvatarMock";
