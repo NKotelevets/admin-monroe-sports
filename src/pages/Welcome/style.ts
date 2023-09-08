@@ -1,9 +1,18 @@
 import styled from "styled-components";
 
-import { Title, MobileContainer, Description } from "../../common/styles";
+import {
+  Title,
+  MobileContainer,
+  Description,
+  PageContainer,
+} from "../../common/styles";
 
 export const WelcomeContainer = styled(MobileContainer)`
   position: relative;
+`;
+
+export const WelcomePageContainer = styled(PageContainer)`
+  max-width: 500px;
 `;
 
 export const WelcomeTitle = styled(Title)`
@@ -103,13 +112,17 @@ export const BackgroundWrapper = styled.div`
 export const AthleteContainer = styled.div`
   border-radius: 8px;
   background: #ffffff;
+  max-width: 600px;
   width: 100%;
-  height: 100%;
   overflow: scroll;
   box-sizing: border-box;
   padding: 26px 20px;
 
   box-shadow: 0px 4px 14px 0px rgba(0, 0, 0, 0.1);
+
+  @media (min-width: 768px) {
+    padding: 40px 60px;
+  }
 `;
 
 export const AthleteContainerTitle = styled.h4`
@@ -120,6 +133,11 @@ export const AthleteContainerTitle = styled.h4`
   font-weight: 500;
   line-height: 140%;
   margin: 0 0 16px;
+  @media (min-width: 768px) {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 32px;
+  }
 `;
 
 export const NoteText = styled.p`
@@ -139,6 +157,16 @@ export const NoteText = styled.p`
 export const ButtonsContainer = styled.div`
   & > button {
     margin-bottom: 12px;
+  }
+
+  @media (min-width: 768px) {
+    max-width: 333px;
+    width: 100%;
+    margin: 0 auto;
+
+    button {
+      width: 100%;
+    }
   }
 `;
 

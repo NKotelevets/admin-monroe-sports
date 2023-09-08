@@ -20,6 +20,15 @@ export const SuccessTitle = styled.h1`
   font-weight: 500;
   line-height: 140%;
   margin: 26px 0 10px;
+  @media (min-width: 768px) {
+    color: #1d1e22;
+    text-align: center;
+    font-family: Inter;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 140%;
+  }
 `;
 
 export const SuccessDescription = styled.p`
@@ -93,4 +102,36 @@ export const DownloadAppButtonText = styled.p`
   font-weight: 500;
   line-height: 140%;
   margin: 0 0 0 8px;
+`;
+
+export const DownloadAppContainer = styled.div`
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  @media (min-width: 768px) {
+    display: none;
+  }
+`;
+
+export const QRCodeContainer = styled.div`
+  width: 100%;
+  display: none;
+  @media (min-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+`;
+
+export const QRDescription = styled.p`
+  color: #1d1e22;
+  text-align: center;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 140%;
+  margin: 16px 0 0;
 `;
