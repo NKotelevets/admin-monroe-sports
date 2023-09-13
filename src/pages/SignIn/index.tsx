@@ -14,6 +14,8 @@ import {
   CheckboxContainer,
 } from "./style";
 import { routesConstant } from "../../constants/appRoutesConstants";
+import { useAppDispatch } from "../../hooks/redux";
+import { login } from "../../store/asyncActions/users";
 
 interface SignInFormI {
   email: string;
@@ -22,6 +24,7 @@ interface SignInFormI {
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const formik = useFormik<SignInFormI>({
     initialValues: {
@@ -30,7 +33,9 @@ const SignIn = () => {
     },
     onSubmit(values) {
       console.log(values);
-      navigate(routesConstant.welcome);
+
+      dispatch(login(values));
+      //navigate(routesConstant.welcome);
     },
     validationSchema: SignInSchema,
     validateOnBlur: true,
@@ -55,7 +60,7 @@ const SignIn = () => {
           onBlur={formik.handleBlur}
         />
         <MobileInput
-          type="text"
+          type="password"
           label="Password"
           name="password"
           placeholder="Enter your password"

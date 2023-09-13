@@ -20,3 +20,19 @@ export interface AvailabilityDataI {
   league: string;
   season: string;
 }
+
+export interface LoginRequestParamsI {
+  email: string;
+  password: string;
+}
+export interface LoginResponseDataI {
+  token: string;
+}
+
+export interface RefreshTokenRequestParamsI {
+  token: string;
+}
+
+export interface RefreshTokenResponseDataI {
+  access: string;
+}
