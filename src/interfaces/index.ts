@@ -26,7 +26,8 @@ export interface LoginRequestParamsI {
   password: string;
 }
 export interface LoginResponseDataI {
-  token: string;
+  access: string;
+  refresh: string;
 }
 
 export interface RefreshTokenRequestParamsI {

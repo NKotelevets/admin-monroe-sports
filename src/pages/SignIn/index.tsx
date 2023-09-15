@@ -32,10 +32,9 @@ const SignIn = () => {
       password: "",
     },
     onSubmit(values) {
-      console.log(values);
-
-      dispatch(login(values));
-      //navigate(routesConstant.welcome);
+      dispatch(login(values))
+        .unwrap()
+        .then(() => navigate(routesConstant.welcome));
     },
     validationSchema: SignInSchema,
     validateOnBlur: true,

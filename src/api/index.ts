@@ -4,7 +4,7 @@ import { store } from "../main";
 import axios, { AxiosError, AxiosInstance } from "axios";
 import gamesApi from "./routes/games";
 import usersApi, { UsersApi } from "./routes/users";
-import { getRefreshToken, setAccesToken } from "../utils/auth";
+import { deleteToken, getRefreshToken, setAccesToken } from "../utils/auth";
 
 class Api {
   protected baseUrl: string;
@@ -18,7 +18,6 @@ class Api {
 
     this.instance = axios.create({
       baseURL: this.baseUrl,
-      withCredentials: true,
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Credentials": "true",
@@ -28,12 +27,40 @@ class Api {
       },
     });
 
-    this.instance.interceptors.request.use(async (config) => {
-      if (this._token) {
-        // TODO: condition for check is token expared ??
-        //const isExpared = checkExtToken(this._token);
+    // this.instance.interceptors.request.use(async (config) => {
+    //   console.log(this);
+    //   if (this._token) {
+    //     // TODO: condition for check is token expared ??
+    //     //const isExpared = checkExtToken(this._token);
 
-        if (false) {
+    //     if (false) {
+    //       this.token = undefined;
+    //       const refresh = getRefreshToken();
+    //       if (refresh) {
+    //         try {
+    //           const { data } = await this.users.userRefreshToken({
+    //             token: refresh,
+    //           });
+    //           setAccesToken(data.access);
+    //           this.token = data.access;
+    //         } catch (error) {
+    //           this.token = undefined;
+    //         }
+    //       }
+    //     }
+
+    //     config.headers = {
+    //       ...config.headers,
+    //       Authorization: `Bearer ${this._token}`,
+    //     };
+    //   }
+    //   return config;
+    // });
+
+    this.instance.interceptors.response.use(
+      (res) => res,
+      async (error: AxiosError) => {
+        if (error.response?.status === 401) {
           this.token = undefined;
           const refresh = getRefreshToken();
           if (refresh) {
@@ -46,38 +73,14 @@ class Api {
             } catch (error) {
               this.token = undefined;
             }
+          } else {
+            deleteToken();
+            //store.dispatch(logout());
           }
-        }
-
-        config.headers = {
-          ...config.headers,
-          Authorization: `Bearer ${this._token}`,
-        };
-      }
-      return config;
-    });
-
-    this.instance.interceptors.response.use(
-      (res) => res,
-      async (error: AxiosError) => {
-        if (error.response?.status === 401) {
-          // this.token = undefined;
-          // const refresh = getRefreshToken();
-          // if (refresh) {
-          //   try {
-          //     const { data } = await this.login.refreshToken({ refresh });
-          //     setAccesToken(data.access);
-          //     this.token = data.access;
-          //   } catch (error) {
-          //     this.token = undefined;
-          //   }
-          // } else {
-          //   store.dispatch(logout());
-          // }
-          // config.headers = {
-          //   ...config.headers,
-          //   Authorization: `Bearer ${this._token}`,
-          // };
+          config.headers = {
+            ...config.headers,
+            Authorization: `Bearer ${this._token}`,
+          };
         }
       }
     );
