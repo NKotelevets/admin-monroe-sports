@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../api";
 
 export const getGameList = createAsyncThunk(
-  "agent/getGameList",
+  "games/getGameList",
   async (_, { rejectWithValue }) => {
     try {
       const { data } = await api.games.getGames();

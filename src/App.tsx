@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
 import { routesConstant } from "./constants/appRoutesConstants.ts";
 
@@ -20,13 +25,17 @@ import Success from "./pages/Success/index.tsx";
 
 import "./App.css";
 import MobileLogo from "./assets/svg/MobileLogo.tsx";
+import { useAppSelector } from "./hooks/redux.ts";
+import { getIsAuthUserSelector } from "./store/reducers/users.ts";
 
 function App() {
-  const isAuth = false;
+  const isSignInFlow = false;
+
+  const isAuth = useAppSelector(getIsAuthUserSelector);
 
   return (
     <div className={`application_container ${!isAuth ? "mobile" : ""}`}>
-      {isAuth ? (
+      {isSignInFlow ? (
         <Router>
           <SideBar />
 
@@ -53,11 +62,27 @@ function App() {
           <Router>
             <Routes>
               <Route path={routesConstant.signIn} element={<SignIn />} />
-              <Route path={routesConstant.signUp} element={<SignUp />} />
-              <Route path={routesConstant.welcome} element={<Welcome />} />
-              <Route path={routesConstant.started} element={<GetStarted />} />
-              <Route path={routesConstant.joinTeam} element={<JoinTeam />} />
-              <Route path={routesConstant.success} element={<Success />} />
+
+              {!isAuth ? (
+                <Route
+                  path="/"
+                  element={<Navigate to={routesConstant.signIn} />}
+                />
+              ) : (
+                <>
+                  <Route path={routesConstant.signUp} element={<SignUp />} />
+                  <Route path={routesConstant.welcome} element={<Welcome />} />
+                  <Route
+                    path={routesConstant.started}
+                    element={<GetStarted />}
+                  />
+                  <Route
+                    path={routesConstant.joinTeam}
+                    element={<JoinTeam />}
+                  />
+                  <Route path={routesConstant.success} element={<Success />} />
+                </>
+              )}
             </Routes>
           </Router>
         </div>
