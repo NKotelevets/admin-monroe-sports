@@ -1,5 +1,4 @@
 import { baseUrl } from "../constants/envConstants";
-import { store } from "../main";
 
 import axios, { AxiosError, AxiosInstance } from "axios";
 import gamesApi from "./routes/games";
@@ -27,36 +26,6 @@ class Api {
       },
     });
 
-    // this.instance.interceptors.request.use(async (config) => {
-    //   console.log(this);
-    //   if (this._token) {
-    //     // TODO: condition for check is token expared ??
-    //     //const isExpared = checkExtToken(this._token);
-
-    //     if (false) {
-    //       this.token = undefined;
-    //       const refresh = getRefreshToken();
-    //       if (refresh) {
-    //         try {
-    //           const { data } = await this.users.userRefreshToken({
-    //             token: refresh,
-    //           });
-    //           setAccesToken(data.access);
-    //           this.token = data.access;
-    //         } catch (error) {
-    //           this.token = undefined;
-    //         }
-    //       }
-    //     }
-
-    //     config.headers = {
-    //       ...config.headers,
-    //       Authorization: `Bearer ${this._token}`,
-    //     };
-    //   }
-    //   return config;
-    // });
-
     this.instance.interceptors.response.use(
       (res) => res,
       async (error: AxiosError) => {
@@ -75,12 +44,12 @@ class Api {
             }
           } else {
             deleteToken();
-            //store.dispatch(logout());
+            // TODO: add logout after connecting endpoint
+            // store.dispatch(logout());
           }
-          config.headers = {
-            ...config.headers,
-            Authorization: `Bearer ${this._token}`,
-          };
+          this.instance.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${this.token}`;
         }
       }
     );

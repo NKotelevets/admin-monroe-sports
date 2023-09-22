@@ -13,7 +13,7 @@ import {
   DropdownListItem,
 } from "./style";
 
-export interface DropdownListValue {
+export interface DropdownValue {
   id: number;
   value: string;
 }
@@ -21,9 +21,9 @@ export interface DropdownListValue {
 interface DropdownI extends React.HTMLProps<HTMLInputElement> {
   label: string;
   placeholder: string;
-  dropdownList: DropdownListValue[];
+  dropdownList: DropdownValue[];
   error?: string;
-  onSelectDropdownValue(val: string): void;
+  onSelectDropdownValue(val: string | number): void;
 }
 
 const Dropdown = ({
@@ -41,7 +41,7 @@ const Dropdown = ({
 
   const handleClose = () => setIsOpen(false);
 
-  const handleSelectValue = (val: string) => () => {
+  const handleSelectValue = (val: string | number) => () => {
     onSelectDropdownValue(val);
     setIsOpen(false);
   };
@@ -58,13 +58,10 @@ const Dropdown = ({
 
         {isOpen && (
           <DropdownList>
-            {dropdownList.map(({ value: dropdownListValue }, ind) => (
-              <DropdownListItem
-                key={ind}
-                onClick={handleSelectValue(dropdownListValue)}
-              >
-                {dropdownListValue}
-                {value === dropdownListValue ? <BlueCheckIcon /> : null}
+            {dropdownList.map(({ value: title, id }, ind) => (
+              <DropdownListItem key={ind} onClick={handleSelectValue(id)}>
+                {title}
+                {value === title ? <BlueCheckIcon /> : null}
               </DropdownListItem>
             ))}
           </DropdownList>

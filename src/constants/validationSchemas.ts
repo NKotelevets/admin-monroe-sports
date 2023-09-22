@@ -7,13 +7,15 @@ export const SignInSchema = Yup.object().shape({
 
 export const GetStartedSchema = Yup.object().shape({
   email: Yup.string().email().required(),
-  privacyPolicy: Yup.boolean().required(),
+  privacyPolicy: Yup.boolean()
+    .oneOf([true], "You must accept the privacy policy")
+    .required(),
 });
 
 export const SignUpSchema = Yup.object().shape({
   firstName: Yup.string().required(),
   lastName: Yup.string().required(),
-  // dateOfBirth: Yup.string().required(),
+  dateOfBirth: Yup.string().required(),
   gender: Yup.string().required(),
   zip: Yup.string().required(),
   password: Yup.string().required(),
@@ -28,7 +30,7 @@ export const SignUpSchema = Yup.object().shape({
 export const AthleteSchema = Yup.object().shape({
   fisrtName: Yup.string().required(),
   lastName: Yup.string().required(),
-  // dateOfBirth: Yup.string().required(),
+  dateOfBirth: Yup.string().required(),
   zip: Yup.string().required(),
   email: Yup.string().email(),
 });

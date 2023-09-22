@@ -4,7 +4,13 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 
+import "react-toastify/dist/ReactToastify.css";
+
+import MobileLogo from "./assets/svg/MobileLogo.tsx";
+import { useAppSelector } from "./hooks/redux.ts";
+import { getIsAuthUserSelector } from "./store/reducers/users.ts";
 import { routesConstant } from "./constants/appRoutesConstants.ts";
 
 // admin panel flow
@@ -24,9 +30,6 @@ import JoinTeam from "./pages/JoinTeam/index.tsx";
 import Success from "./pages/Success/index.tsx";
 
 import "./App.css";
-import MobileLogo from "./assets/svg/MobileLogo.tsx";
-import { useAppSelector } from "./hooks/redux.ts";
-import { getIsAuthUserSelector } from "./store/reducers/users.ts";
 
 function App() {
   const isSignInFlow = false;
@@ -64,18 +67,21 @@ function App() {
               <Route path={routesConstant.signIn} element={<SignIn />} />
 
               {!isAuth ? (
-                <Route
-                  path="/"
-                  element={<Navigate to={routesConstant.signIn} />}
-                />
-              ) : (
                 <>
+                  <Route
+                    path="/"
+                    element={<Navigate to={routesConstant.signIn} />}
+                  />
                   <Route path={routesConstant.signUp} element={<SignUp />} />
-                  <Route path={routesConstant.welcome} element={<Welcome />} />
                   <Route
                     path={routesConstant.started}
                     element={<GetStarted />}
                   />
+                </>
+              ) : (
+                <>
+                  <Route path={routesConstant.welcome} element={<Welcome />} />
+
                   <Route
                     path={routesConstant.joinTeam}
                     element={<JoinTeam />}
@@ -87,6 +93,8 @@ function App() {
           </Router>
         </div>
       )}
+
+      <ToastContainer />
     </div>
   );
 }
