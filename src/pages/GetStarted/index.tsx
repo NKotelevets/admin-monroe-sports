@@ -3,6 +3,11 @@ import { useNavigate } from "react-router-dom";
 
 import { CustomCheckbox, MobileInput } from "../../common";
 import { FixedContainer, FullButton, PageContainer } from "../../common/styles";
+import { GetStartedSchema } from "../../constants/validationSchemas";
+import { routesConstant } from "../../constants/appRoutesConstants";
+import { useAppDispatch } from "../../hooks/redux";
+import { checkEmail } from "../../store/asyncActions/users";
+
 import {
   GetStartedContainer,
   GetStartedTitle,
@@ -11,8 +16,7 @@ import {
   GetStartedLinkText,
   CheckboxContainer,
 } from "./style";
-import { GetStartedSchema } from "../../constants/validationSchemas";
-import { routesConstant } from "../../constants/appRoutesConstants";
+import { toast } from "react-toastify";
 
 interface GetStartedFormI {
   email: string;
@@ -21,14 +25,30 @@ interface GetStartedFormI {
 
 const GetStarted = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const formik = useFormik<GetStartedFormI>({
     initialValues: {
       email: "",
       privacyPolicy: false,
     },
-    onSubmit(values) {
-      console.log(values);
+    onSubmit({ email }) {
+      dispatch(checkEmail({ email }))
+        .unwrap()
+        .then((isEmailExist) =>
+          isEmailExist
+            ? toast("This email is already exist", {
+                position: "bottom-left",
+                autoClose: 5000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+              })
+            : navigate(routesConstant.signUp, { state: { email } })
+        );
     },
     validationSchema: GetStartedSchema,
     validateOnBlur: true,
@@ -36,7 +56,7 @@ const GetStarted = () => {
 
   const isDisabledButton = !(formik.dirty && formik.isValid);
 
-  const handleNavigateToSignUp = () => navigate(routesConstant.signUp);
+  const handleNavigateToSignIn = () => navigate(routesConstant.signIn);
 
   return (
     <GetStartedContainer>
@@ -57,6 +77,8 @@ const GetStarted = () => {
         <FixedContainer>
           <CheckboxContainer>
             <CustomCheckbox
+              value={formik.values.privacyPolicy}
+              name="privacyPolicy"
               label={
                 <GetStartedText>
                   I accept the{" "}
@@ -64,18 +86,18 @@ const GetStarted = () => {
                   <GetStartedLinkText>Privacy policy</GetStartedLinkText>
                 </GetStartedText>
               }
+              setFieldValue={formik.setFieldValue}
             />
           </CheckboxContainer>
 
-          <FullButton
-            disabled={isDisabledButton}
-            onClick={handleNavigateToSignUp}
-          >
+          <FullButton disabled={isDisabledButton} onClick={formik.handleSubmit}>
             Continue
           </FullButton>
           <GetStartedText>
             Already have an account?{" "}
-            <GetStartedLinkText>Sign In</GetStartedLinkText>
+            <GetStartedLinkText onClick={handleNavigateToSignIn}>
+              Sign In
+            </GetStartedLinkText>
           </GetStartedText>
         </FixedContainer>
       </PageContainer>
