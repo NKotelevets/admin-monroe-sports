@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useFormik } from "formik";
 import DatePicker from "react-datepicker";
+import { format } from "date-fns";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -36,7 +37,7 @@ interface CreateAthleteModalI {
 interface CreateAthleteFormI {
   firstName: string;
   lastName: string;
-  // dateOfBitrh: string;
+  dateOfBirth: string;
   zip: string;
   email?: string;
 }
@@ -48,8 +49,7 @@ const CreateAthleteModal = ({ onClose, onContinue }: CreateAthleteModalI) => {
     initialValues: {
       firstName: "",
       lastName: "",
-      // TODO: change the format
-      // dateOfBitrh: "",
+      dateOfBirth: "",
       zip: "",
       email: undefined,
     },
@@ -60,6 +60,9 @@ const CreateAthleteModal = ({ onClose, onContinue }: CreateAthleteModalI) => {
     validationSchema: AthleteSchema,
     validateOnBlur: true,
   });
+
+  const handleSelectDateOfBirth = (date: Date) =>
+    formik.setFieldValue("dateOfBirth", format(date, "yyyy-MM-dd"));
 
   const isDisabledButton = !(formik.dirty && formik.isValid);
 
@@ -96,20 +99,19 @@ const CreateAthleteModal = ({ onClose, onContinue }: CreateAthleteModalI) => {
         />
         <DatePickerWrapper>
           <DatePicker
-            selected={startDate}
-            onChange={(date) => setStartDate(date)}
+            selected={new Date(formik.values.dateOfBirth)}
+            onChange={handleSelectDateOfBirth}
             dateFormat="MM.dd.yyyy"
             placeholderText="MM.DD.YYYY"
             showPopperArrow={false}
+            showYearDropdown
             customInput={
               <MobileInput
                 type="text"
                 label="Date of birth"
                 placeholder="MM.DD.YYYY"
-                name="dateOfBitrh"
+                name="dateOfBirth"
                 dateIcon
-                // value={formik.values.dateOfBitrh}
-                // error={formik.errors.dateOfBitrh}
               />
             }
           />

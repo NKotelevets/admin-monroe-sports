@@ -1,7 +1,7 @@
-import { useState } from "react";
 import { useFormik } from "formik";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
+import { format } from "date-fns";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -22,14 +22,16 @@ import {
   CheckboxContainer,
 } from "./style";
 import { SignUpSchema } from "../../constants/validationSchemas";
-import { routesConstant } from "../../constants/appRoutesConstants";
 import Dropdown from "../../common/Dropdown";
+import { useAppDispatch } from "../../hooks/redux";
+import { register } from "../../store/asyncActions/users";
+import { genderDropdown } from "../../constants/common";
 
 interface SignUpFormI {
   firstName: string;
   lastName: string;
-  // dateOfBitrh: string;
-  gender: string;
+  dateOfBirth: null | string;
+  gender: null | number;
   zip: string;
   password: string;
   passwordConfirmation: string;
@@ -38,34 +40,49 @@ interface SignUpFormI {
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const { state } = useLocation();
+  const dispatch = useAppDispatch();
 
-  const [startDate, setStartDate] = useState<Date | null>(null);
+  const { email } = state;
 
   const formik = useFormik<SignUpFormI>({
     initialValues: {
       firstName: "",
       lastName: "",
-      // TODO: change the format
-      // dateOfBitrh: "",
-      gender: "",
+      dateOfBirth: null,
+      gender: null,
       zip: "",
       password: "",
       passwordConfirmation: "",
       privacyPolicy: false,
     },
     onSubmit(values) {
-      console.log(values);
-      navigate(routesConstant.joinTeam);
+      dispatch(
+        register({
+          email: email,
+          password: values.password,
+          first_name: values.firstName,
+          last_name: values.lastName,
+          birth_date: values.dateOfBirth || "",
+          zip_code: values.zip,
+          gender: values.gender || 0,
+        })
+      );
     },
     validationSchema: SignUpSchema,
     validateOnBlur: true,
   });
 
   const isDisabledButton = !(formik.dirty && formik.isValid);
+  const genderValue = genderDropdown.find(
+    (v) => v.id === formik.values.gender
+  )?.value;
 
-  const handleSelectDropdownValue = (value: string) => {
+  const handleSelectDropdownValue = (value: string | number) =>
     formik.setFieldValue("gender", value);
-  };
+
+  const handleSelectDateOfBirth = (date: Date) =>
+    formik.setFieldValue("dateOfBirth", format(date, "yyyy-MM-dd"));
 
   return (
     <SignUpContainer>
@@ -96,30 +113,32 @@ const SignUp = () => {
           label="Gender"
           placeholder="Select your gender"
           name="gender"
-          value={formik.values.gender}
+          value={genderValue}
           error={formik.errors.gender}
-          dropdownList={[
-            { id: 0, value: "Male" },
-            { id: 1, value: "Female" },
-          ]}
+          dropdownList={genderDropdown}
           onSelectDropdownValue={handleSelectDropdownValue}
         />
         <DatePickerWrapper>
           <DatePicker
-            selected={startDate}
-            onChange={(date) => setStartDate(date)}
+            selected={
+              formik.values.dateOfBirth
+                ? new Date(formik.values.dateOfBirth)
+                : null
+            }
+            onChange={handleSelectDateOfBirth}
             dateFormat="MM.dd.yyyy"
             placeholderText="MM.DD.YYYY"
             showPopperArrow={false}
+            showYearDropdown
+            scrollableYearDropdown
+            isClearable={false}
             customInput={
               <MobileInput
                 type="text"
                 label="Date of birth"
                 placeholder="MM.DD.YYYY"
-                name="dateOfBitrh"
+                name="dateOfBirth"
                 dateIcon
-                // value={formik.values.dateOfBitrh}
-                // error={formik.errors.dateOfBitrh}
               />
             }
           />
@@ -175,9 +194,6 @@ const SignUp = () => {
         <FullButton disabled={isDisabledButton} onClick={formik.handleSubmit}>
           Sign Up
         </FullButton>
-        <SignUpText>
-          Already have an account? <SignUpLinkText>Login</SignUpLinkText>
-        </SignUpText>
       </PageContainer>
     </SignUpContainer>
   );
