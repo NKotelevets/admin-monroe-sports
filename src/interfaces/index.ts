@@ -37,3 +37,24 @@ export interface RefreshTokenRequestParamsI {
 export interface RefreshTokenResponseDataI {
   access: string;
 }
+
+// interfaces for userStartResetPassword request
+export interface StartResetPasswordRequestParamsI {
+  email: string;
+}
+
+export interface StartResetPasswordResponseDataI {
+  code: string;
+  details: string;
+}
+
+// interfaces for userFinishResetPassword request
+export interface FinishResetPasswordRequestParamsI {
+  token: string;
+  new_password: string;
+}
+
+export interface FinishResetPasswordResponseDataI {
+  code: string;
+  details: string;
+}

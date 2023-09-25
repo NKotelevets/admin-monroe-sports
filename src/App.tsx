@@ -27,6 +27,8 @@ import "./App.css";
 import MobileLogo from "./assets/svg/MobileLogo.tsx";
 import { useAppSelector } from "./hooks/redux.ts";
 import { getIsAuthUserSelector } from "./store/reducers/users.ts";
+import ResetPassword from "./pages/ResetPassword/index.tsx";
+import CheckEmail from "./pages/CheckEmail/index.tsx";
 
 function App() {
   const isSignInFlow = false;
@@ -64,10 +66,20 @@ function App() {
               <Route path={routesConstant.signIn} element={<SignIn />} />
 
               {!isAuth ? (
-                <Route
-                  path="/"
-                  element={<Navigate to={routesConstant.signIn} />}
-                />
+                <>
+                  <Route
+                    path="/"
+                    element={<Navigate to={routesConstant.signIn} />}
+                  />
+                  <Route
+                    path={routesConstant.resetPassword}
+                    element={<ResetPassword />}
+                  />
+                  <Route
+                    path={routesConstant.checkEmail}
+                    element={<CheckEmail />}
+                  />
+                </>
               ) : (
                 <>
                   <Route path={routesConstant.signUp} element={<SignUp />} />
@@ -81,6 +93,10 @@ function App() {
                     element={<JoinTeam />}
                   />
                   <Route path={routesConstant.success} element={<Success />} />
+                  <Route
+                    path={routesConstant.resetPassword}
+                    element={<ResetPassword />}
+                  />
                 </>
               )}
             </Routes>

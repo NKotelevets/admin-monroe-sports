@@ -9,7 +9,9 @@ export type RoutesT =
   | "/welcome"
   | "/join-team"
   | "/success"
-  | "/get-started";
+  | "/get-started"
+  | "/reset-password"
+  | "/check-email";
 
 interface RoutesConstantI<T extends string> {
   rootPage: T;
@@ -23,6 +25,8 @@ interface RoutesConstantI<T extends string> {
   started: T;
   joinTeam: T;
   success: T;
+  resetPassword: T;
+  checkEmail: T;
 }
 
 export const routesConstant: RoutesConstantI<RoutesT> = {
@@ -37,4 +41,6 @@ export const routesConstant: RoutesConstantI<RoutesT> = {
   started: "/get-started",
   joinTeam: "/join-team",
   success: "/success",
+  resetPassword: "/reset-password",
+  checkEmail: "/check-email",
 };

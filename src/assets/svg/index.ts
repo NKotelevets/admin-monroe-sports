@@ -21,6 +21,7 @@ export { default as CircledPlus } from "./CircledPlus";
 export { default as DatePickerIcon } from "./DatePickerIcon";
 export { default as Doubt } from "./Doubt";
 export { default as EditIcon } from "./Edit";
+export { default as EmailLetter } from "./EmailLetter";
 export { default as Export } from "./Export";
 export { default as GreenCheck } from "./GreenCheck";
 export { default as Home } from "./Home";
