@@ -1,12 +1,16 @@
 import { AxiosInstance, AxiosPromise } from "axios";
 
 import {
+  FinishResetPasswordRequestParamsI,
+  FinishResetPasswordResponseDataI,
   CheckEmailRequestParamsI,
   CheckEmailResponseDataI,
   LoginRequestParamsI,
   LoginResponseDataI,
   RefreshTokenRequestParamsI,
   RefreshTokenResponseDataI,
+  StartResetPasswordRequestParamsI,
+  StartResetPasswordResponseDataI,
   RegisterRequestParamsI,
   RegisterResponseDataI,
 } from "../../interfaces";
@@ -47,6 +51,26 @@ export class UsersApi extends CRUD {
   ): AxiosPromise<RegisterResponseDataI> {
     return this.request({
       url: `${this.url}/register`,
+      data,
+      method: "POST",
+    });
+  }
+
+  userStartResetPassword(
+    data: StartResetPasswordRequestParamsI
+  ): AxiosPromise<StartResetPasswordResponseDataI> {
+    return this.request({
+      url: `${this.url}/start-reset-password`,
+      data,
+      method: "POST",
+    });
+  }
+
+  userFinishResetPassword(
+    data: FinishResetPasswordRequestParamsI
+  ): AxiosPromise<FinishResetPasswordResponseDataI> {
+    return this.request({
+      url: `${this.url}/finish-reset-password`,
       data,
       method: "POST",
     });

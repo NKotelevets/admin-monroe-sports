@@ -38,3 +38,7 @@ export const AthleteSchema = Yup.object().shape({
 export const JoinTeamSchema = Yup.object().shape({
   parenOrGuardianEmail: Yup.string().email().required(),
 });
+
+export const ResetPasswordSchema = Yup.object().shape({
+  email: Yup.string().email().required(),
+});

@@ -30,6 +30,8 @@ import JoinTeam from "./pages/JoinTeam/index.tsx";
 import Success from "./pages/Success/index.tsx";
 
 import "./App.css";
+import ResetPassword from "./pages/ResetPassword/index.tsx";
+import CheckEmail from "./pages/CheckEmail/index.tsx";
 
 function App() {
   const isSignInFlow = false;
@@ -77,6 +79,14 @@ function App() {
                     path={routesConstant.started}
                     element={<GetStarted />}
                   />
+                  <Route
+                    path={routesConstant.resetPassword}
+                    element={<ResetPassword />}
+                  />
+                  <Route
+                    path={routesConstant.checkEmail}
+                    element={<CheckEmail />}
+                  />
                 </>
               ) : (
                 <>
@@ -87,6 +97,10 @@ function App() {
                     element={<JoinTeam />}
                   />
                   <Route path={routesConstant.success} element={<Success />} />
+                  <Route
+                    path={routesConstant.resetPassword}
+                    element={<ResetPassword />}
+                  />
                 </>
               )}
             </Routes>
