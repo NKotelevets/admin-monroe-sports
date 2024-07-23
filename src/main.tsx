@@ -1,17 +1,31 @@
-import React from "react";
-import { Provider } from "react-redux";
-import ReactDOM from "react-dom/client";
+import Root from '@/Root'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { Provider } from 'react-redux'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { PersistGate } from 'redux-persist/integration/react'
 
-import { setupStore } from "./store/index.ts";
-import App from "./App.tsx";
-import "./index.css";
+import store, { persistor } from '@/redux/store'
 
-export const store = setupStore();
+import DesignConfigProvider from '@/utils/DesignConfigProvider'
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
+import './global.css'
+
+const router = createBrowserRouter([
+  {
+    path: '*',
+    element: <Root />,
+  },
+])
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <PersistGate loading={null} persistor={persistor}>
+        <DesignConfigProvider>
+          <RouterProvider router={router} />
+        </DesignConfigProvider>
+      </PersistGate>
     </Provider>
-  </React.StrictMode>
-);
+  </React.StrictMode>,
+)

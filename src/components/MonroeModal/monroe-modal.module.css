@@ -1,0 +1,10 @@
+.monroe-modal-overlay {
+  position: fixed;
+  background-color: rgba(41, 41, 48, 0.7);
+  height: 100vh;
+  width: 100vw;
+}
+
+.ant-modal-modal .ant-modal-title {
+  color: #1A1657D9 !important
+}

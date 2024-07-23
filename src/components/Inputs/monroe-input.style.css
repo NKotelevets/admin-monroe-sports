@@ -1,0 +1,44 @@
+.input {
+  background-color: #FFFFFF !important;
+  border-color: #D8D7DB;
+  border-radius: 2px;
+  box-shadow: none;
+  color: rgba(26, 22, 87, 0.85) !important;
+  padding: 8px 12px;
+}
+
+.input:hover,
+.input:focus,
+.input:focus-within {
+  border-color: #888791;
+  box-shadow: none;
+}
+
+.input svg {
+  fill: #1A1657D9;
+  width: 16px;
+  height: 16px;
+}
+
+.input-label {
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  color: rgba(26, 22, 87, 0.85) !important;
+}
+
+.input-error {
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  color: #BC261B !important;
+}
+
+@media (width > 1660px) {
+  .input {
+    font-size: 22px !important;
+  }
+
+  .input-error,
+  .input-label {
+    font-size: 20px !important;
+  }
+}

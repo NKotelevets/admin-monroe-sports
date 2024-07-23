@@ -1,0 +1,55 @@
+.ant-menu-submenu-title {
+  padding-left: 0 !important;
+}
+
+.company-menu {
+  background-color: #F1F0FF;
+}
+
+.company-menu .ant-menu-title-content {
+  font-weight: 500;
+  color: #1A1657;
+}
+
+.items-menu .ant-menu-item {
+  padding-left: 24px !important;
+  padding-right: 24px !important;
+  margin-right: 0 !important;
+  width: calc(100% - 3px) !important;
+}
+
+.items-menu .ant-menu-submenu .ant-menu-submenu-title {
+  padding-inline: 24px !important;
+  margin-inline: 0 !important;
+  margin-block: 0 !important;
+  width: 100% !important
+}
+
+.ant-menu-item-selected {
+  border-right: 3px solid #BC261B;
+}
+
+.red-icon svg path {
+  fill: #BC261B;
+}
+
+.ant-menu-light .ant-menu-submenu-selected>.ant-menu-submenu-title {
+  color: #1A1657 !important
+}
+
+.ant-menu-title-content {
+  color: #1A1657 !important
+}
+
+.ant-menu-item-selected .ant-menu-title-content {
+  color: #BC261B !important
+}
+
+.company-menu .ant-menu-submenu-arrow::before,
+.company-menu .ant-menu-submenu-arrow::after {
+  right: -9px;
+}
+
+.items-menu .ant-menu-submenu-arrow {
+  right: 24px;
+}

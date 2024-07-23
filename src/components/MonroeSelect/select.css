@@ -1,0 +1,30 @@
+.ant-select {
+  width: 82px;
+}
+
+.ant-select-selector {
+  padding: 1px 8px !important;
+}
+
+.ant-select-selector::-webkit-scrollbar {
+  width: 2px;
+}
+
+.ant-select-selection-item {
+  padding-inline-end: 0px;
+  display: flex;
+  justify-content: center;
+}
+
+.ant-select-selector::-webkit-scrollbar-track {
+  background: #f1f1f1 !important;
+}
+
+.ant-select-selector::-webkit-scrollbar-thumb {
+  background-color: #ccc !important;
+  border-radius: 5px !important;
+}
+
+.and-select-dropdown .ant-select-item-option-active {
+  background-color: blue !important;
+}

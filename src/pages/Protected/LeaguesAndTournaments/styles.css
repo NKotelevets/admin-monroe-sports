@@ -1,0 +1,48 @@
+.import-button {
+  margin-right: 8px;
+  border-radius: 2px;
+  border: 1px solid #626169;
+  background: #FFFFFF;
+  box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.02);
+  font-size: 14px;
+  font-weight: 400;
+  height: 32px;
+}
+
+.import-button:hover {
+  border: 1px solid #BC261B !important;
+}
+
+.ant-tooltip {
+  max-width: 450px;
+}
+
+
+
+
+.ant-checkbox-checked .ant-checkbox-inner {
+  background: #3E34CA !important;
+  border-color: #3E34CA !important;
+}
+
+.ant-checkbox-wrapper:hover .ant-checkbox-inner {
+  border-color: #3E34CA !important;
+}
+
+.ant-checkbox-indeterminate .ant-checkbox-inner:after {
+  background-color: #3E34CA !important;
+}
+
+.leagues-table-header {
+  display: flex;
+  padding: 9px 16px;
+  justify-content: center;
+  border-radius: 2px;
+  background: #F1F0FF;
+  cursor: pointer;
+}
+
+.highlighted-row,
+.highlighted-row td {
+  background-color: rgba(244, 244, 245, 1) !important;
+}

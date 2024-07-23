@@ -1,0 +1,78 @@
+.view-container {
+  padding: 16px 24px;
+  overflow: auto;
+  height: 100%;
+}
+
+.title {
+  font-size: 20px !important;
+  font-weight: 500;
+  color: rgba(26, 22, 87, 0.85) !important;
+  margin: 8px 0 24px !important;
+}
+
+.view-text {
+  width: 136px;
+  margin-right: 12px;
+  color: rgba(26, 22, 87, 0.85) !important
+}
+
+.field-wrapper {
+  margin-bottom: 16px;
+}
+
+.field-value-container {
+  width: 400px;
+}
+
+.view-text-info {
+  color: #888791 !important;
+  font-size: 12px !important;
+  margin-top: 4px !important;
+}
+
+.view-season-text {
+  color: rgba(62, 52, 202, 1) !important;
+  font-size: 14px !important;
+  text-decoration: underline !important;
+  margin-left: 4px;
+}
+
+.view-season-divider {
+  color: rgba(62, 52, 202, 1) !important;
+  font-size: 14px !important;
+
+}
+
+.view-delete-button {
+  border-radius: 2px;
+  border: 1px solid #BC261B !important;
+  background: #FFF;
+  box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.02);
+  color: #BC261B !important;
+  line-height: 22px;
+  height: 32px !important;
+  margin-right: 8px;
+}
+
+.view-edit-button {
+  border-radius: 2px;
+  border: 1px solid #626169 !important;
+  background: #FFF !important;
+  box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.02) !important;
+  color: rgba(26, 22, 87, 1) !important;
+  height: 32px !important;
+  margin-right: 8px;
+}
+
+.view-connect-team-button {
+  height: 32px !important;
+}
+
+.view-connect-team-button svg {
+  display: block;
+}
+
+.view-connect-team-button svg path {
+  fill: #FFF !important;
+}
