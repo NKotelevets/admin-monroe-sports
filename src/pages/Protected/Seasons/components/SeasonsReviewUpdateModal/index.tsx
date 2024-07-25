@@ -1,4 +1,10 @@
-import { containerStyles, contentStyles, contentWrapperStyles, defaultButtonStyles, titleStyles } from './styles'
+import {
+  containerStyles,
+  contentStyles,
+  contentWrapperStyles,
+  defaultButtonStyles,
+  titleStyles,
+} from './styles'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { Button, Flex, Typography } from 'antd'
 import { FC, useState } from 'react'
@@ -10,38 +16,42 @@ import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
 import { compareObjects } from '@/utils/compareObjects'
 
 import { ISeasonReviewUpdateData } from '@/common/interfaces/season'
+import { format } from 'date-fns'
 
-const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx, onClose }) => {
+const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({
+  idx,
+  onClose,
+}) => {
   const [currentIdx, setCurrentIdx] = useState<number>(idx)
   const { duplicates } = useSeasonSlice()
-  const currentDuplicate = duplicates.find((duplicate) => duplicate.index === currentIdx)
+  const currentDuplicate = duplicates.find(
+    (duplicate) => duplicate.index === currentIdx
+  )
   const duplicateData = currentDuplicate!.existing
   const newData = currentDuplicate!.new
-
   const normalizedNewData: ISeasonReviewUpdateData = {
-    expectedEndDate: newData.expectedEndDate,
+    expectedEndDate: format(newData.expectedEndDate, 'dd MMM yyyy'),
     linkedLeagueName: newData.linkedLeagueTournament,
     name: newData.name,
     playoffFormat: newData.playoffFormat,
     standingsFormat: newData.standingsFormat,
-    startDate: newData.startDate,
+    startDate: format(newData.startDate, 'dd MMM yyyy'),
     tiebreakersFormat: newData.tiebreakersFormat,
   }
-
   const normalizedExistingData: ISeasonReviewUpdateData = {
-    expectedEndDate: duplicateData.expected_end_date,
+    expectedEndDate: format(duplicateData.expected_end_date, 'dd MMM yyyy'),
     linkedLeagueName: duplicateData.league.name,
     name: duplicateData.name,
     playoffFormat: 'Currently not available',
-    startDate: duplicateData.start_date,
+    startDate: format(duplicateData.start_date, 'dd MMM yyyy'),
     standingsFormat: 'Currently not available',
     tiebreakersFormat: 'Currently not available',
   }
 
-  const objectsDifferences: Record<Partial<keyof ISeasonReviewUpdateData>, boolean> = compareObjects(
-    normalizedNewData,
-    normalizedExistingData,
-  )
+  const objectsDifferences: Record<
+    Partial<keyof ISeasonReviewUpdateData>,
+    boolean
+  > = compareObjects(normalizedNewData, normalizedExistingData)
 
   const handleNextDuplicate = () => setCurrentIdx((prev) => prev + 1)
 
@@ -51,8 +61,13 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
     // TODO: add functionality when BE will be ready
   }
 
-  const handleUpdateAll = () => {
-    // TODO: add functionality when BE will be ready
+  const handleSkipForThis = () => {
+    if (currentIdx + 1 === duplicates.length) {
+      onClose()
+      return
+    }
+
+    setCurrentIdx((prev) => prev + 1)
   }
 
   return (
@@ -66,16 +81,25 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
           <Flex>
             <SeasonDetailsColumn
               {...normalizedExistingData}
-              title="current"
+              title="Current"
               isNew={false}
               differences={objectsDifferences}
             />
 
-            <SeasonDetailsColumn {...normalizedNewData} title="new" isNew differences={objectsDifferences} />
+            <SeasonDetailsColumn
+              {...normalizedNewData}
+              title="Imported"
+              isNew
+              differences={objectsDifferences}
+            />
           </Flex>
         </Flex>
 
-        <Flex align="center" justify="space-between" style={{ padding: '16px' }}>
+        <Flex
+          align="center"
+          justify="space-between"
+          style={{ padding: '16px' }}
+        >
           <Flex align="center">
             <Button
               disabled={currentIdx === 0}
@@ -106,17 +130,23 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
           </Flex>
 
           <Flex>
-            <Button type="default" style={defaultButtonStyles} onClick={onClose}>
+            <Button
+              type="default"
+              style={defaultButtonStyles}
+              onClick={onClose}
+            >
               Close
             </Button>
 
-            <Button type="default" style={defaultButtonStyles} onClick={handleUpdateAll}>
-              Update All
-            </Button>
-
-            <Button disabled={currentIdx + 1 === duplicates.length} type="default" style={defaultButtonStyles}>
-              Skip for this
-            </Button>
+            {duplicates.length > 1 && (
+              <Button
+                type="default"
+                style={defaultButtonStyles}
+                onClick={handleSkipForThis}
+              >
+                Skip for this
+              </Button>
+            )}
 
             <Button
               type="primary"
@@ -135,4 +165,3 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
 }
 
 export default SeasonsReviewUpdateModal
-

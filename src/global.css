@@ -120,7 +120,6 @@ svg {
 
 /* Table styles - end */
 
-
 /* Date picker styles - start */
 .ant-picker {
   padding: 5px 12px;
@@ -140,7 +139,6 @@ svg {
   color: rgba(26, 22, 87, 0.85) !important;
 }
 
-
 .ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before {
   content: "";
   border-color: rgba(62, 52, 202, 1) !important;
@@ -158,19 +156,42 @@ svg {
   color: rgba(26, 22, 87, 0.85) !important
 }
 
-
 .ant-picker-now-btn {
   color: rgba(62, 52, 202, 1) !important;
 }
 
-
 .ant-picker-dropdown .ant-picker-header-view>button:hover {
   color: rgba(62, 52, 202, 1) !important;
 }
-
 
 .ant-picker .ant-picker-input {
   color: rgba(26, 22, 87, 0.85) !important;
 }
 
 /* Date picker styles - end  */
+
+/* Collapse styles - start */
+.ant-collapse-item {
+  border-bottom: 0 !important;
+}
+
+.ant-collapse .ant-collapse-content {
+  border-top: 0 !important;
+}
+
+.ant-collapse .ant-collapse-content>.ant-collapse-content-box {
+  padding: 16px;
+  background-color: white;
+  border: 1px solid #D8D7DB;
+  border-radius: 3px;
+}
+
+.ant-collapse.ant-collapse-icon-position-end>.ant-collapse-item>.ant-collapse-header .ant-collapse-expand-icon {
+  transform: rotate(-90deg);
+}
+
+.ant-collapse-item-active>.ant-collapse-header .ant-collapse-arrow {
+  transform: rotate(90deg);
+}
+
+/* Collapse styles end */
