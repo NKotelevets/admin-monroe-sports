@@ -35,6 +35,7 @@ export const BREAD_CRUMB_ITEMS = [
       <Typography.Text
         style={{
           color: 'rgba(26, 22, 87, 0.85)',
+          fontWeight: 500,
         }}
       >
         Create League/Tournament

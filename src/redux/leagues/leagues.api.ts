@@ -72,6 +72,7 @@ export const leaguesApi = createApi({
       query: (id) => ({
         url: 'teams/leagues/' + id,
       }),
+      keepUnusedDataFor: 0.0001,
       transformResponse: (league: IBELeague) => ({
         id: league.id,
         type: league.type === 0 ? 'League' : 'Tourn',

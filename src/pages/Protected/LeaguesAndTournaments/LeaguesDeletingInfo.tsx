@@ -94,6 +94,7 @@ const LeaguesDeletingInfo = () => {
             onClick={() => clearFilters && handleReset(clearFilters)}
             style={{
               flex: '1 1 auto',
+              color: selectedKeys.length ? 'rgba(188, 38, 27, 1)' : 'rgba(189, 188, 194, 1)',
             }}
           >
             Reset
@@ -122,26 +123,48 @@ const LeaguesDeletingInfo = () => {
       filterMode: 'tree',
       onFilter: (value, record) => record.name.includes(value as string),
       fixed: 'left',
-      width: '20vw',
       sorter: (a, b) => a.name.localeCompare(b.name),
       sortOrder: tableParams.sortOrder,
+      width: '240px',
       ...getColumnSearchProps('name'),
       render: (value, record) => (
-        <Typography.Text
-          style={{
-            color: '#3E34CA',
-            cursor: 'pointer',
-          }}
-          onClick={() => navigate(PATH_TO_LEAGUE_TOURNAMENT_PAGE + '/' + record.id)}
-        >
-          {value}
-        </Typography.Text>
+        <>
+          {value?.length > 25 ? (
+            <Tooltip
+              title={value}
+              placement="top"
+              color="rgba(62, 62, 72, 0.75)"
+              style={{
+                width: '250px',
+              }}
+            >
+              <Typography.Text
+                style={{
+                  color: '#3E34CA',
+                  cursor: 'pointer',
+                }}
+                onClick={() => navigate(PATH_TO_LEAGUE_TOURNAMENT_PAGE + '/' + record.id)}
+              >
+                {value.substring(0, 23).trim() + '...'}
+              </Typography.Text>
+            </Tooltip>
+          ) : (
+            <Typography.Text
+              style={{
+                color: '#3E34CA',
+                cursor: 'pointer',
+              }}
+              onClick={() => navigate(PATH_TO_LEAGUE_TOURNAMENT_PAGE + '/' + record.id)}
+            >
+              {value}
+            </Typography.Text>
+          )}
+        </>
       ),
     },
     {
       title: 'Error info',
       dataIndex: 'error',
-      width: '300px',
       render: (value) => (
         <>
           {value?.length > 80 ? (
@@ -211,4 +234,3 @@ const LeaguesDeletingInfo = () => {
 }
 
 export default LeaguesDeletingInfo
-

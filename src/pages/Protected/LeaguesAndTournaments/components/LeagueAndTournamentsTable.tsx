@@ -80,7 +80,7 @@ const LeagueAndTournamentsTable: FC<ILeagueAndTournamentsTableProps> = ({
   const searchInput = useRef<InputRef>(null)
   const [tableParams, setTableParams] = useState<ITableParams>({
     pagination: {
-      current: offset + 1,
+      current: offset / limit + 1,
       pageSize: limit,
       pageSizeOptions: [5, 10, 30, 50],
       showQuickJumper: true,
@@ -94,7 +94,14 @@ const LeagueAndTournamentsTable: FC<ILeagueAndTournamentsTableProps> = ({
   const [deleteRecord] = useDeleteLeagueMutation()
   const navigate = useNavigate()
 
-  const handleReset = (clearFilters: () => void) => clearFilters()
+  const handleReset = (clearFilters: () => void) => {
+    getLeagues({
+      limit,
+      offset,
+      order_by: order_by || undefined,
+    })
+    clearFilters()
+  }
 
   const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IFELeague> => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -124,9 +131,13 @@ const LeagueAndTournamentsTable: FC<ILeagueAndTournamentsTableProps> = ({
             Search
           </Button>
           <Button
-            onClick={() => clearFilters && handleReset(clearFilters)}
+            onClick={() => {
+              clearFilters && handleReset(clearFilters)
+              handleSearch(confirm)
+            }}
             style={{
               flex: '1 1 auto',
+              color: selectedKeys.length ? 'rgba(188, 38, 27, 1)' : 'rgba(189, 188, 194, 1)',
             }}
           >
             Reset
@@ -164,20 +175,44 @@ const LeagueAndTournamentsTable: FC<ILeagueAndTournamentsTableProps> = ({
       dataIndex: 'name',
       sorter: true,
       fixed: 'left',
-      width: '20vw',
+      width: '240px',
       sortOrder: order_by ? (order_by === 'asc' ? 'ascend' : 'descend') : null,
       ...getColumnSearchProps('name'),
       render: (value, record) => (
-        <Typography.Text
-          style={{
-            color: '#3E34CA',
-            cursor: 'pointer',
-            zIndex: 9999,
-          }}
-          onClick={() => navigate(PATH_TO_LEAGUE_TOURNAMENT_PAGE + '/' + record.id)}
-        >
-          {value}
-        </Typography.Text>
+        <>
+          {value?.length > 25 ? (
+            <Tooltip
+              title={value}
+              placement="top"
+              color="rgba(62, 62, 72, 0.75)"
+              style={{
+                width: '250px',
+              }}
+            >
+              <Typography.Text
+                style={{
+                  color: '#3E34CA',
+                  cursor: 'pointer',
+                  zIndex: 9999,
+                }}
+                onClick={() => navigate(PATH_TO_LEAGUE_TOURNAMENT_PAGE + '/' + record.id)}
+              >
+                {value.substring(0, 23).trim() + '...'}
+              </Typography.Text>
+            </Tooltip>
+          ) : (
+            <Typography.Text
+              style={{
+                color: '#3E34CA',
+                cursor: 'pointer',
+                zIndex: 9999,
+              }}
+              onClick={() => navigate(PATH_TO_LEAGUE_TOURNAMENT_PAGE + '/' + record.id)}
+            >
+              {value}
+            </Typography.Text>
+          )}
+        </>
       ),
     },
     {
@@ -353,7 +388,14 @@ const LeagueAndTournamentsTable: FC<ILeagueAndTournamentsTableProps> = ({
       fixed: 'right',
       render: (value) => {
         return (
-          <Flex vertical={false} justify="center" align="center">
+          <Flex
+            vertical={false}
+            justify="center"
+            align="center"
+            style={{
+              cursor: 'pointer',
+            }}
+          >
             <ReactSVG
               src={EditIcon}
               onClick={() => {
@@ -377,15 +419,15 @@ const LeagueAndTournamentsTable: FC<ILeagueAndTournamentsTableProps> = ({
 
   useEffect(() => {
     setPaginationParams({
-      offset: limit * offset,
+      offset,
       limit,
-      order_by: 'asc',
+      order_by: null,
     })
 
     getLeagues({
       limit,
-      offset: limit * offset,
-      order_by: order_by || '',
+      offset,
+      order_by: order_by || undefined,
     })
 
     return () => {
@@ -420,7 +462,7 @@ const LeagueAndTournamentsTable: FC<ILeagueAndTournamentsTableProps> = ({
           ? undefined
           : (filters?.['tiebreakersFormat']?.[0] as string) ?? undefined,
       type: filters?.['type']?.length === 2 ? undefined : (filters?.['type']?.[0] as string) ?? undefined,
-      order_by: !Array.isArray(sorter) && sorter.order ? (sorter.order === 'descend' ? 'desc' : 'asc') : '',
+      order_by: !Array.isArray(sorter) && sorter.order ? (sorter.order === 'descend' ? 'desc' : 'asc') : undefined,
     }
 
     getLeagues(getLeaguesParams)
@@ -428,7 +470,7 @@ const LeagueAndTournamentsTable: FC<ILeagueAndTournamentsTableProps> = ({
     setPaginationParams({
       offset: (pagination?.current && (pagination?.current - 1) * (pagination.pageSize || 10)) || 0,
       limit: pagination?.pageSize || 10,
-      order_by: !Array.isArray(sorter) && sorter.order === 'descend' ? 'desc' : 'asc',
+      order_by: !Array.isArray(sorter) && sorter.order ? (sorter.order === 'descend' ? 'desc' : 'asc') : null,
     })
   }
 
@@ -449,7 +491,7 @@ const LeagueAndTournamentsTable: FC<ILeagueAndTournamentsTableProps> = ({
       const recordIds = data?.leagues.map((league) => league.id)
       setSelectedRecordsIds((prev) => [...prev, ...recordIds])
     }
-  }, [data])
+  }, [data, isDeleteAllRecords])
 
   return (
     <>
@@ -490,7 +532,7 @@ const LeagueAndTournamentsTable: FC<ILeagueAndTournamentsTableProps> = ({
               }}
               onClick={() => setIsDeleteAllRecords(true)}
             >
-              Select all {total} records in Leagues and Tournaments instead.
+              Select all {total} records in Leagues/Tournaments instead.
             </p>
           ) : (
             <p
@@ -526,9 +568,13 @@ const LeagueAndTournamentsTable: FC<ILeagueAndTournamentsTableProps> = ({
           onChange: (selected) => {
             if (selected.length === limit) setShowAdditionalHeader(true)
 
-            if (selected.length !== limit) setShowAdditionalHeader(false)
+            if (selected.length < limit) setShowAdditionalHeader(false)
 
-            if (!isDeleteAllRecords) setSelectedRecordsIds(selected as string[])
+            setSelectedRecordsIds(selected as string[])
+
+            if (!selected.length && showAdditionalHeader && isDeleteAllRecords) {
+              setIsDeleteAllRecords(false)
+            }
           },
         }}
         scroll={{

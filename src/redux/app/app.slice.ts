@@ -5,7 +5,7 @@ import { leaguesApi } from '@/redux/leagues/leagues.api'
 import { seasonsApi } from '@/redux/seasons/seasons.api'
 import { userApi } from '@/redux/user/user.api'
 
-import { IDetailedError, INamedDetailsError } from '@/common/interfaces'
+import { IDetailedError } from '@/common/interfaces'
 
 interface IInfoNotification {
   message: string
@@ -70,14 +70,19 @@ export const appSlice = createSlice({
       })
       .addMatcher(
         isAnyOf(leaguesApi.endpoints.createLeague.matchRejected, leaguesApi.endpoints.updateLeague.matchRejected),
-        (state, action) => {
-          state.notification.message = (action.payload?.data as INamedDetailsError).details.name[0]
+        (state) => {
+          state.notification.message = 'Leagues/tournaments with this name already exists'
           state.notification.timestamp = new Date().getTime()
         },
       )
       .addMatcher(leaguesApi.endpoints.deleteLeague.matchRejected, (state, action) => {
         state.notification.message = (action.payload?.data as IDetailedError).details
         state.notification.timestamp = new Date().getTime()
+      })
+      .addMatcher(leaguesApi.endpoints.deleteLeague.matchFulfilled, (state) => {
+        state.notification.message = 'league/tournament have been successfully removed.'
+        state.notification.timestamp = new Date().getTime()
+        state.notification.type = 'success'
       })
       .addMatcher(seasonsApi.endpoints.deleteSeason.matchRejected, (state, action) => {
         state.notification.message = (action.payload?.data as { error: string }).error

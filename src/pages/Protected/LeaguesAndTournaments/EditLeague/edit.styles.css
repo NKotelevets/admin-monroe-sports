@@ -64,7 +64,7 @@
 
  .radio-container-with-tooltip div svg {
    display: block;
-   margin-left: 4px;
+   margin-left: 0px !important;
  }
 
  .cancel-button {

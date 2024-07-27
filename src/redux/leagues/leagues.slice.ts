@@ -47,7 +47,7 @@ export const leaguesSlice = createSlice({
       action: PayloadAction<{
         limit: number
         offset: number
-        order_by: string
+        order_by: string | null
       }>,
     ) => {
       state.limit = action.payload.limit
@@ -72,31 +72,34 @@ export const leaguesSlice = createSlice({
         state.total = action.payload.count
       })
       .addMatcher(leaguesApi.endpoints.importLeaguesCSV.matchFulfilled, (state, action) => {
-        state.createdRecordsNames = action.payload.success.map((item) => item.name)
-
-        if (action.payload.status !== 'green') {
-          state.duplicates = action.payload.duplicates.map((duplicate, idx) => ({
-            existing: duplicate.existing,
-            new: getNormalizedNewVersionOfLeagueTourn(duplicate.existing.id, duplicate.new),
-            index: idx,
-          }))
-          state.tableRecords = [
-            ...(action.payload.duplicates.map((duplicate, idx) => {
-              return {
-                message: 'A record with this data already exists',
-                name: duplicate.existing.name,
-                type: 'Duplicate',
-                idx: idx,
-              }
-            }) as ILeagueImportInfoTableRecord[]),
-            ...(action.payload.errors.map((error) => ({
-              idx: -1,
-              message: error.error,
-              name: error.league_name,
-              type: 'Error',
-            })) as ILeagueImportInfoTableRecord[]),
-          ]
-        }
+        state.createdRecordsNames = action.payload?.success.map((item) => item.name)
+        state.duplicates = action.payload?.duplicates
+          ? action.payload.duplicates.map((duplicate, idx) => ({
+              existing: duplicate.existing,
+              new: getNormalizedNewVersionOfLeagueTourn(duplicate.existing.id, duplicate.new),
+              index: idx,
+            }))
+          : []
+        state.tableRecords = [
+          ...(action.payload?.duplicates
+            ? (action.payload.duplicates.map((duplicate, idx) => {
+                return {
+                  message: 'A file with this data already exists',
+                  name: duplicate.existing.name,
+                  type: 'Duplicate',
+                  idx: idx,
+                }
+              }) as ILeagueImportInfoTableRecord[])
+            : []),
+          ...(action.payload?.errors
+            ? (action.payload.errors.map((error) => ({
+                idx: -1,
+                message: error.error,
+                name: error.league_name,
+                type: 'Error',
+              })) as ILeagueImportInfoTableRecord[])
+            : []),
+        ]
       })
       .addMatcher(
         isAnyOf(

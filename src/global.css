@@ -108,6 +108,16 @@ svg {
   background-color: white;
 }
 
+
+.ant-select-arrow span svg,
+.ant-select-selection-search {
+  display: none !important;
+}
+
+.ant-pagination-options-quick-jumper {
+  display: none;
+}
+
 /* Table styles - end */
 
 

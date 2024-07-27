@@ -12,7 +12,7 @@ import WarningIcon from '@/assets/icons/import-modal/warning.svg'
 import PaperClipIcon from '@/assets/icons/paper-clip.svg'
 import SpinIcon from '@/assets/icons/spin.svg'
 
-type TImportModalStatus = 'loading' | 'red' | 'green' | 'yellow'
+type TImportModalStatus = 'loading' | 'red' | 'green' | 'yellow';
 
 const CLASS_OPTIONS: Record<TImportModalStatus, string> = {
   loading: '',
@@ -22,13 +22,13 @@ const CLASS_OPTIONS: Record<TImportModalStatus, string> = {
 }
 
 interface IImportModalProps {
-  title: string
-  filename: string
-  status: TImportModalStatus
-  errorMessage?: string
-  showInList: () => void
-  redirectToImportInfo: () => void
-  onClose: () => void
+  title: string;
+  filename: string;
+  status: TImportModalStatus;
+  errorMessage?: string;
+  showInList: () => void;
+  redirectToImportInfo: () => void;
+  onClose: () => void;
 }
 
 const ImportModal: FC<IImportModalProps> = ({
@@ -49,7 +49,11 @@ const ImportModal: FC<IImportModalProps> = ({
           {title}
         </Typography.Title>
 
-        <ReactSVG src={CloseIcon} onClick={onClose} />
+        <ReactSVG
+          src={CloseIcon}
+          onClick={onClose}
+          style={{ cursor: 'pointer' }}
+        />
       </Flex>
 
       <Tooltip title={errorMessage} color="rgba(62, 62, 72, 0.75)">
@@ -62,14 +66,21 @@ const ImportModal: FC<IImportModalProps> = ({
         >
           <Flex className={classes[CLASS_OPTIONS[status]]} align="center">
             <ReactSVG className={classes['paper-clip']} src={PaperClipIcon} />
-            <Typography className={classes['import-modal-filename']}>{filename}</Typography>
+            <Typography className={classes['import-modal-filename']}>
+              {filename}
+            </Typography>
           </Flex>
 
-          {status === 'loading' && <ReactSVG className={classes['spin']} src={SpinIcon} />}
+          {status === 'loading' && (
+            <ReactSVG className={classes['spin']} src={SpinIcon} />
+          )}
 
           {status === 'green' &&
             (isHoveredContent ? (
-              <Typography style={{ color: 'rgba(62, 52, 202, 1)', cursor: 'pointer' }} onClick={showInList}>
+              <Typography
+                style={{ color: 'rgba(62, 52, 202, 1)', cursor: 'pointer' }}
+                onClick={showInList}
+              >
                 Show in list
               </Typography>
             ) : (
@@ -80,7 +91,10 @@ const ImportModal: FC<IImportModalProps> = ({
 
           {status === 'yellow' &&
             (isHoveredContent ? (
-              <Typography style={{ color: 'rgba(62, 52, 202, 1)', cursor: 'pointer' }} onClick={redirectToImportInfo}>
+              <Typography
+                style={{ color: 'rgba(62, 52, 202, 1)', cursor: 'pointer' }}
+                onClick={redirectToImportInfo}
+              >
                 Import info
               </Typography>
             ) : (

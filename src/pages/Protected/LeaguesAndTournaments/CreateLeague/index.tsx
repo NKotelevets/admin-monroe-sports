@@ -77,15 +77,15 @@ const CreateLeague = () => {
         goBack()
       })
 
+  const handleBeforeUnloadEvent = (e: BeforeUnloadEvent) => {
+    e.preventDefault()
+  }
+
   useEffect(() => {
-    window.addEventListener('beforeunload', (e) => {
-      e.preventDefault()
-    })
+    window.addEventListener('beforeunload', handleBeforeUnloadEvent)
 
     return () => {
-      window.removeEventListener('beforeunload', (e) => {
-        e.preventDefault()
-      })
+      window.removeEventListener('beforeunload', handleBeforeUnloadEvent)
     }
   }, [])
 
@@ -99,7 +99,7 @@ const CreateLeague = () => {
         <Flex className="container" vertical>
           <Breadcrumb items={BREAD_CRUMB_ITEMS} />
 
-          <Typography.Title level={1} className="title">
+          <Typography.Title level={1} className="title" style={{ fontWeight: 500 }}>
             Create League/Tournament
           </Typography.Title>
 
@@ -182,7 +182,7 @@ const CreateLeague = () => {
                           </Radio.Group>
 
                           {values.playoffFormat === 1 && (
-                            <Flex align="center" style={{ marginBottom: '48px' }}>
+                            <Flex align="center">
                               <Typography.Text
                                 style={{
                                   color: 'rgba(26, 22, 87, 1)',
@@ -213,7 +213,9 @@ const CreateLeague = () => {
                           >
                             <Radio value={0}>
                               <div className="radio-container-with-tooltip">
-                                <Typography.Text className="radio-label">Winning %</Typography.Text>
+                                <Typography.Text className="radio-label" style={{ marginRight: '4px' }}>
+                                  Winning %
+                                </Typography.Text>
 
                                 <MonroeTooltip text={DEFAULT_STANDING_FORMAT_WINNING_TOOLTIP} width="135px">
                                   <ReactSVG src={InfoCircleIcon} />
@@ -222,7 +224,9 @@ const CreateLeague = () => {
                             </Radio>
                             <Radio value={1}>
                               <div className="radio-container-with-tooltip">
-                                <Typography.Text className="radio-label">Points</Typography.Text>
+                                <Typography.Text className="radio-label" style={{ marginRight: '4px' }}>
+                                  Points
+                                </Typography.Text>
 
                                 <MonroeTooltip text={DEFAULT_STANDING_FORMAT_POINTS_TOOLTIP} width="308px">
                                   <ReactSVG src={InfoCircleIcon} />
@@ -242,7 +246,9 @@ const CreateLeague = () => {
                           >
                             <Radio value={0}>
                               <div className="radio-container-with-tooltip">
-                                <Typography.Text className="radio-label">Winning %</Typography.Text>
+                                <Typography.Text className="radio-label" style={{ marginRight: '4px' }}>
+                                  Winning %
+                                </Typography.Text>
 
                                 <MonroeTooltip text={DEFAULT_TIEBREAKERS_FORMAT_WINNING_TOOLTIP} width="320px">
                                   <ReactSVG src={InfoCircleIcon} />
@@ -251,7 +257,9 @@ const CreateLeague = () => {
                             </Radio>
                             <Radio value={1}>
                               <div className="radio-container-with-tooltip">
-                                <Typography.Text className="radio-label">Points</Typography.Text>
+                                <Typography.Text className="radio-label" style={{ marginRight: '4px' }}>
+                                  Points
+                                </Typography.Text>
 
                                 <MonroeTooltip text={DEFAULT_TIEBREAKERS_FORMAT_POINTS_TOOLTIP} width="125px">
                                   <ReactSVG src={InfoCircleIcon} />
@@ -278,7 +286,7 @@ const CreateLeague = () => {
                         />
 
                         <MonroeButton
-                          label="Create League/tourn"
+                          label="Create League/Tourn"
                           type="primary"
                           onClick={handleSubmit}
                           isDisabled={!isEnabledButton}

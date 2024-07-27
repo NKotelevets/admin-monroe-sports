@@ -37,7 +37,16 @@ const TIEBREAKERS_FORMAT_WINNING_INFO =
 const LeagueDetails = () => {
   const params = useParams<{ id: string }>()
   const leagueId = params.id || ''
-  const { data, isError, isLoading } = useGetLeagueQuery(leagueId, { skip: !leagueId })
+  const {
+    isError,
+    isLoading,
+    currentData: data,
+    isFetching,
+  } = useGetLeagueQuery(leagueId, {
+    skip: !leagueId,
+    refetchOnMountOrArgChange: false,
+    refetchOnFocus: true,
+  })
   const navigate = useNavigate()
   const [deleteLeague] = useDeleteLeagueMutation()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -70,8 +79,8 @@ const LeagueDetails = () => {
       })
 
   useEffect(() => {
-    if (!data && !isLoading) navigate(PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE)
-  }, [isError, isLoading, data])
+    if (!data && !isLoading && !isFetching) navigate(PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE)
+  }, [isError, isLoading, data, isFetching])
 
   return (
     <BaseLayout>
@@ -91,7 +100,7 @@ const LeagueDetails = () => {
           />
         )}
 
-        {!data && isLoading && <Loader />}
+        {!data && (isLoading || isFetching) && <Loader />}
 
         {data && (
           <Flex className="view-container" vertical>

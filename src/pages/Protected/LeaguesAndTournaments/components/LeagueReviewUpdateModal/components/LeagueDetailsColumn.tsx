@@ -46,6 +46,7 @@ interface ILeagueDetailsColumnProps {
   welcomeNote: string
   isNew: boolean
   difference: Record<Partial<keyof IFELeague>, boolean>
+  playoffsTeams: number
 }
 
 const LeagueDetailsColumn: FC<ILeagueDetailsColumnProps> = ({
@@ -59,6 +60,7 @@ const LeagueDetailsColumn: FC<ILeagueDetailsColumnProps> = ({
   welcomeNote,
   isNew,
   difference,
+  playoffsTeams,
 }) => (
   <Flex flex="1 1 50%" vertical style={isNew ? newContainerStyle : currentContainerStyle}>
     <Typography.Text style={titleStyle}>{title}</Typography.Text>
@@ -74,8 +76,16 @@ const LeagueDetailsColumn: FC<ILeagueDetailsColumnProps> = ({
     </Flex>
 
     <Flex vertical style={itemContainerStyle}>
-      <Typography.Text style={getItemTitleStyle(difference['playoffFormat'])}>Default playoff format:</Typography.Text>
-      <Typography.Text style={getItemValueStyle(difference['playoffFormat'])}>{playoffFormat}</Typography.Text>
+      <Typography.Text
+        style={getItemTitleStyle(difference['playoffFormat']) || getItemTitleStyle(difference['playoffsTeams'])}
+      >
+        Default playoff format:
+      </Typography.Text>
+      <Typography.Text
+        style={getItemValueStyle(difference['playoffFormat']) || getItemValueStyle(difference['playoffsTeams'])}
+      >
+        {playoffFormat === 'Best Record Wins' ? playoffFormat : `${playoffFormat} (${playoffsTeams} playoffs’ teams)`}
+      </Typography.Text>
     </Flex>
 
     <Flex vertical style={itemContainerStyle}>
@@ -103,4 +113,3 @@ const LeagueDetailsColumn: FC<ILeagueDetailsColumnProps> = ({
 )
 
 export default LeagueDetailsColumn
-

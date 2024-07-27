@@ -1,4 +1,4 @@
-import { DeleteOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons'
+import { DeleteOutlined, DownloadOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Flex, Typography } from 'antd'
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
@@ -57,21 +57,22 @@ const LeaguesAndTournaments = () => {
 
   const handleCloseModal = useCallback(() => setIsOpenModal(false), [])
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     handleCloseModal()
 
     if (isDeleteAllRecords) {
-      deleteAll()
+      await deleteAll()
         .unwrap()
         .then((response) => {
           setSelectedRecordsIds([])
           setShowAdditionalHeader(false)
           setIsDeleteAllRecords(false)
+          const message = `${response.success}/${response.total} ${response.total === 1 ? 'league/tournament' : 'leagues/tournaments'}  have been successfully removed.`
 
           if (response.status !== 'green') {
             setInfoNotification({
               actionLabel: 'More info..',
-              message: `${response.success}/${response.total} leagues/tournaments have been successfully removed.`,
+              message,
               redirectedPageUrl: PATH_TO_LEAGUE_TOURNAMENT_DELETING_INFO,
             })
 
@@ -80,24 +81,25 @@ const LeaguesAndTournaments = () => {
 
           if (response.status === 'green') {
             setAppNotification({
-              message: `${response.success}/${response.total} leagues/tournaments have been successfully removed.`,
+              message,
               timestamp: new Date().getTime(),
               type: 'success',
             })
           }
         })
     } else {
-      bulkDelete({ ids: selectedRecordsIds })
+      await bulkDelete({ ids: selectedRecordsIds })
         .unwrap()
         .then((response) => {
           setSelectedRecordsIds([])
           setShowAdditionalHeader(false)
           setIsDeleteAllRecords(false)
+          const message = `${response.success}/${response.total} ${response.total === 1 ? 'league/tournament' : 'leagues/tournaments'}  have been successfully removed.`
 
           if (response.status !== 'green') {
             setInfoNotification({
               actionLabel: 'More info..',
-              message: `${response.success}/${response.total} leagues/tournaments have been successfully removed.`,
+              message,
               redirectedPageUrl: PATH_TO_LEAGUE_TOURNAMENT_DELETING_INFO,
             })
 
@@ -106,7 +108,7 @@ const LeaguesAndTournaments = () => {
 
           if (response.status === 'green') {
             setAppNotification({
-              message: `${response.success}/${response.total} leagues/tournaments have been successfully removed.`,
+              message,
               timestamp: new Date().getTime(),
               type: 'success',
             })
@@ -164,7 +166,7 @@ const LeaguesAndTournaments = () => {
             filename: file.name,
             isOpen: true,
             status: 'red',
-            errorMessage: (error.data as { code: string; detail: string }).detail,
+            errorMessage: (error.data as { code: string; details: string }).details,
           })
         })
     }
@@ -261,7 +263,7 @@ const LeaguesAndTournaments = () => {
 
               <Button
                 className="import-button"
-                icon={<UploadOutlined />}
+                icon={<DownloadOutlined />}
                 iconPosition="start"
                 type="default"
                 onClick={() => {

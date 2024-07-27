@@ -6,11 +6,11 @@ import { FC, useState } from 'react'
 
 import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useLeagueSlice } from '@/redux/hooks/useLeagueSlice'
-import { useBulkUpdateLeaguesMutation, useUpdateLeagueMutation } from '@/redux/leagues/leagues.api'
+import { useUpdateLeagueMutation } from '@/redux/leagues/leagues.api'
 
 import { compareObjects } from '@/utils/compareObjects'
 
-import { IBECreateLeagueBody, IBEUpdateLeagueBody, IFELeague } from '@/common/interfaces/league'
+import { IBECreateLeagueBody, IFELeague } from '@/common/interfaces/league'
 import { TFullLeagueTournament } from '@/common/types/league'
 
 const LeagueReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx, onClose }) => {
@@ -21,7 +21,6 @@ const LeagueReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx
   const newData = currentDuplicate!.new
   const [updateRecord] = useUpdateLeagueMutation()
   const { setAppNotification } = useAppSlice()
-  const [bulkUpdate] = useBulkUpdateLeaguesMutation()
 
   const normalizedNewRecord: Omit<IFELeague<TFullLeagueTournament>, 'createdAt' | 'updatedAt'> = {
     ...newData,
@@ -82,15 +81,13 @@ const LeagueReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx
       .catch(() => onClose())
   }
 
-  const handleUpdateAll = () => {
-    const records: IBEUpdateLeagueBody[] = duplicates.map((duplicate) => duplicate.new)
+  const handleSkipForThis = () => {
+    if (currentIdx + 1 === duplicates.length) {
+      onClose()
+      return
+    }
 
-    bulkUpdate(records)
-      .unwrap()
-      .then(() => {
-        onClose()
-        duplicates.map((duplicate) => removeDuplicate(duplicate.index))
-      })
+    setCurrentIdx((prev) => prev + 1)
   }
 
   return (
@@ -104,12 +101,12 @@ const LeagueReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx
           <Flex>
             <LeagueTournDetailsColumn
               {...existingRecordFullData}
-              title="current"
+              title="Current"
               isNew={false}
               difference={objectsDifferences}
             />
 
-            <LeagueTournDetailsColumn title="new" {...normalizedNewRecord} isNew difference={objectsDifferences} />
+            <LeagueTournDetailsColumn title="Imported" {...normalizedNewRecord} isNew difference={objectsDifferences} />
           </Flex>
         </Flex>
 
@@ -148,13 +145,11 @@ const LeagueReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx
               Close
             </Button>
 
-            <Button type="default" style={defaultButtonStyles} onClick={handleUpdateAll}>
-              Update All
-            </Button>
-
-            <Button disabled={currentIdx + 1 === duplicates.length} type="default" style={defaultButtonStyles}>
-              Skip for this
-            </Button>
+            {duplicates.length > 1 && (
+              <Button type="default" style={defaultButtonStyles} onClick={handleSkipForThis}>
+                Skip for this
+              </Button>
+            )}
 
             <Button
               type="primary"
@@ -173,4 +168,3 @@ const LeagueReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx
 }
 
 export default LeagueReviewUpdateModal
-

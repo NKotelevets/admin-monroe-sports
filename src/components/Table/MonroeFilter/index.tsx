@@ -10,7 +10,6 @@ const getListItemStyles = (isSelected: boolean): CSSProperties => ({
 })
 
 const resetButtonStyles: CSSProperties = {
-  color: 'rgba(189, 188, 194, 1)',
   padding: '0 7px',
   border: 0,
   height: 'auto',
@@ -22,7 +21,13 @@ const okButtonStyles: CSSProperties = {
   height: 'auto',
 }
 
-const MonroeFilter: FC<FilterDropdownProps> = ({ confirm, selectedKeys, setSelectedKeys, clearFilters, filters }) => (
+const MonroeFilter: FC<FilterDropdownProps> = ({
+  confirm,
+  selectedKeys,
+  setSelectedKeys,
+  clearFilters,
+  filters,
+}) => (
   <Flex vertical>
     <List
       dataSource={filters}
@@ -31,7 +36,9 @@ const MonroeFilter: FC<FilterDropdownProps> = ({ confirm, selectedKeys, setSelec
 
         const handleChange = () => {
           if (isSelected) {
-            const filteredKeys = selectedKeys.filter((selectedKey) => selectedKey !== (item.value as string))
+            const filteredKeys = selectedKeys.filter(
+              (selectedKey) => selectedKey !== (item.value as string)
+            )
 
             setSelectedKeys(filteredKeys)
           } else {
@@ -65,7 +72,16 @@ const MonroeFilter: FC<FilterDropdownProps> = ({ confirm, selectedKeys, setSelec
       }}
       justify="space-around"
     >
-      <Button type="default" onClick={() => clearFilters && clearFilters()} style={resetButtonStyles}>
+      <Button
+        type="default"
+        onClick={() => clearFilters && clearFilters()}
+        style={{
+          ...resetButtonStyles,
+          color: selectedKeys.length
+            ? 'rgba(188, 38, 27, 1)'
+            : 'rgba(189, 188, 194, 1)',
+        }}
+      >
         Reset
       </Button>
 
@@ -77,4 +93,3 @@ const MonroeFilter: FC<FilterDropdownProps> = ({ confirm, selectedKeys, setSelec
 )
 
 export default MonroeFilter
-

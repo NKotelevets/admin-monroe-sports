@@ -1,7 +1,7 @@
 import { Breadcrumb, Divider, Flex, Typography } from 'antd'
 import Radio from 'antd/es/radio'
 import { Form, Formik } from 'formik'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect } from 'react'
 import { Helmet } from 'react-helmet'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
@@ -41,7 +41,7 @@ const EditLeague = () => {
   const params = useParams<{ id: string }>()
   const leagueId = params.id || ''
   const { setAppNotification } = useAppSlice()
-  const { data, currentData, isError, isLoading } = useGetLeagueQuery(leagueId, {
+  const { data, currentData, isError, isLoading, isFetching } = useGetLeagueQuery(leagueId, {
     skip: !leagueId,
     refetchOnMountOrArgChange: true,
   })
@@ -55,8 +55,6 @@ const EditLeague = () => {
     welcomeNote: currentData?.welcomeNote || '',
     playoffsTeams: currentData?.playoffsTeams || 0,
   }
-
-  const mockedInitialValues = useMemo(() => initialFormValues, [data])
 
   const BREAD_CRUMB_ITEMS = [
     {
@@ -106,21 +104,21 @@ const EditLeague = () => {
         goBack()
       })
 
+  const handleBeforeUnloadEvent = (e: BeforeUnloadEvent) => {
+    e.preventDefault()
+  }
+
   useEffect(() => {
-    window.addEventListener('beforeunload', (e) => {
-      e.preventDefault()
-    })
+    window.addEventListener('beforeunload', handleBeforeUnloadEvent)
 
     return () => {
-      window.removeEventListener('beforeunload', (e) => {
-        e.preventDefault()
-      })
+      window.removeEventListener('beforeunload', handleBeforeUnloadEvent)
     }
   }, [])
 
   useEffect(() => {
-    if (!data && !isLoading) navigate(PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE)
-  }, [isError, isLoading, data])
+    if (!data && !isLoading && !isFetching) navigate(PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE)
+  }, [isError, isLoading, data, isFetching])
 
   return (
     <BaseLayout>
@@ -129,7 +127,7 @@ const EditLeague = () => {
           <title>Admin Panel | Edit League/Tournament</title>
         </Helmet>
 
-        {!data && isLoading && <Loader />}
+        {!data && (isLoading || isFetching) && <Loader />}
 
         {data && (
           <Flex className="container" vertical>
@@ -140,7 +138,7 @@ const EditLeague = () => {
             </Typography.Title>
 
             <div className="content">
-              <Formik initialValues={mockedInitialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
+              <Formik initialValues={initialFormValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
                 {({ values, handleChange, errors, handleSubmit, setFieldValue }) => {
                   const isEnabledButton = Object.keys(errors).length === 0 && values.name
 
@@ -230,7 +228,7 @@ const EditLeague = () => {
                                 </Typography.Text>
 
                                 <MonroeSelect
-                                  defaultValue={`${mockedInitialValues.playoffsTeams}` || '4'}
+                                  defaultValue={`${initialFormValues.playoffsTeams}` || '4'}
                                   name="playoffsTeams"
                                   onChange={(value) => setFieldValue('playoffsTeams', +value)}
                                   options={PLAYOFFS_TEAMS_OPTIONS}
@@ -249,7 +247,9 @@ const EditLeague = () => {
                             >
                               <Radio value={0}>
                                 <div className="radio-container-with-tooltip">
-                                  <Typography.Text className="radio-label">Winning %</Typography.Text>
+                                  <Typography.Text className="radio-label" style={{ marginRight: '4px' }}>
+                                    Winning %
+                                  </Typography.Text>
 
                                   <MonroeTooltip text={DEFAULT_STANDING_FORMAT_WINNING_TOOLTIP} width="135px">
                                     <ReactSVG src={InfoCircleIcon} />
@@ -258,7 +258,9 @@ const EditLeague = () => {
                               </Radio>
                               <Radio value={1}>
                                 <div className="radio-container-with-tooltip">
-                                  <Typography.Text className="radio-label">Points</Typography.Text>
+                                  <Typography.Text className="radio-label" style={{ marginRight: '4px' }}>
+                                    Points
+                                  </Typography.Text>
 
                                   <MonroeTooltip text={DEFAULT_STANDING_FORMAT_POINTS_TOOLTIP} width="308px">
                                     <ReactSVG src={InfoCircleIcon} />
@@ -278,7 +280,9 @@ const EditLeague = () => {
                             >
                               <Radio value={0}>
                                 <div className="radio-container-with-tooltip">
-                                  <Typography.Text className="radio-label">Winning %</Typography.Text>
+                                  <Typography.Text className="radio-label" style={{ marginRight: '4px' }}>
+                                    Winning %
+                                  </Typography.Text>
 
                                   <MonroeTooltip text={DEFAULT_TIEBREAKERS_FORMAT_WINNING_TOOLTIP} width="320px">
                                     <ReactSVG src={InfoCircleIcon} />
@@ -287,7 +291,9 @@ const EditLeague = () => {
                               </Radio>
                               <Radio value={1}>
                                 <div className="radio-container-with-tooltip">
-                                  <Typography.Text className="radio-label">Points</Typography.Text>
+                                  <Typography.Text className="radio-label" style={{ marginRight: '4px' }}>
+                                    Points
+                                  </Typography.Text>
 
                                   <MonroeTooltip text={DEFAULT_TIEBREAKERS_FORMAT_POINTS_TOOLTIP} width="125px">
                                     <ReactSVG src={InfoCircleIcon} />

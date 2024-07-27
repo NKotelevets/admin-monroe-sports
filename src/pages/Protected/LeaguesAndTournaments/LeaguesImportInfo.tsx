@@ -1,5 +1,5 @@
 import { FilterFilled, SearchOutlined } from '@ant-design/icons'
-import { Button, GetProp, InputRef, Table, TableColumnType, TableProps } from 'antd'
+import { Button, GetProp, InputRef, Table, TableColumnType, TableProps, Tooltip } from 'antd'
 import Breadcrumb from 'antd/es/breadcrumb'
 import Flex from 'antd/es/flex'
 import Input from 'antd/es/input/Input'
@@ -47,7 +47,7 @@ type TDataIndex = keyof ILeagueImportInfoTableRecord
 
 const BREADCRUMB_ITEMS = [
   {
-    title: <a href={PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE}>League & Tourn</a>,
+    title: <a href={PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE}>Leagues & Tournaments</a>,
   },
   {
     title: (
@@ -143,6 +143,7 @@ const ImportInfo = () => {
             onClick={() => clearFilters && handleReset(clearFilters)}
             style={{
               flex: '1 1 auto',
+              color: selectedKeys.length ? 'rgba(188, 38, 27, 1)' : 'rgba(189, 188, 194, 1)',
             }}
           >
             Reset
@@ -172,23 +173,49 @@ const ImportInfo = () => {
       sorter: (a, b) => a.name.localeCompare(b.name),
       sortDirections: ['ascend', 'descend'],
       sortOrder: sortOrder,
+      width: '240px',
       ...getColumnSearchProps('name'),
       render: (value, record) => (
-        <Typography.Text
-          style={{
-            color: '#3E34CA',
-            cursor: 'pointer',
-          }}
-          onClick={() => {
-            record.type === 'Duplicate' && setSelectedIdx(record.idx)
-          }}
-        >
-          {value}
-        </Typography.Text>
+        <>
+          {value?.length > 25 ? (
+            <Tooltip
+              title={value}
+              placement="top"
+              color="rgba(62, 62, 72, 0.75)"
+              style={{
+                width: '250px',
+              }}
+            >
+              <Typography.Text
+                style={{
+                  color: '#3E34CA',
+                  cursor: 'pointer',
+                }}
+                onClick={() => {
+                  record.type === 'Duplicate' && setSelectedIdx(record.idx)
+                }}
+              >
+                {value.substring(0, 23).trim() + '...'}
+              </Typography.Text>
+            </Tooltip>
+          ) : (
+            <Typography.Text
+              style={{
+                color: '#3E34CA',
+                cursor: 'pointer',
+              }}
+              onClick={() => {
+                record.type === 'Duplicate' && setSelectedIdx(record.idx)
+              }}
+            >
+              {value}
+            </Typography.Text>
+          )}
+        </>
       ),
     },
     {
-      title: 'Type',
+      title: 'Status',
       dataIndex: 'type',
       filters: [
         { text: 'Duplicate', value: 'Duplicate' },
@@ -207,9 +234,8 @@ const ImportInfo = () => {
       ),
     },
     {
-      title: 'Error message',
+      title: 'Error info',
       dataIndex: 'message',
-      width: '400px',
       render: (value) => (
         <Typography.Text
           style={{
@@ -223,7 +249,7 @@ const ImportInfo = () => {
     {
       title: '',
       dataIndex: '',
-      width: '80px',
+      width: '50px',
       render: (_, record) =>
         record.type === 'Duplicate' && <ReactSVG src={SyncIcon} onClick={() => handleUpdate(record.idx)} />,
     },

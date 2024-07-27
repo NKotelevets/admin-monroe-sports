@@ -7,9 +7,14 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
 import {
+  PATH_TO_CREATE_LEAGUE_TOURNAMENT,
+  PATH_TO_EDIT_LEAGUE_TOURNAMENT,
   PATH_TO_GROUPS_PAGE,
   PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE,
   PATH_TO_LEAGUE_TEAMS_PAGE,
+  PATH_TO_LEAGUE_TOURNAMENT_DELETING_INFO,
+  PATH_TO_LEAGUE_TOURNAMENT_IMPORT_INFO,
+  PATH_TO_LEAGUE_TOURNAMENT_PAGE,
   PATH_TO_MASTER_TEAMS_PAGE,
   PATH_TO_PLAYOFF_FORMAT_PAGE,
   PATH_TO_SCHEDULE_PAGE,
@@ -51,14 +56,30 @@ const MonroeSidebar = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const pathname = location.pathname
+  const isLeagueTournamentPage =
+    [
+      PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE,
+      PATH_TO_CREATE_LEAGUE_TOURNAMENT,
+      PATH_TO_LEAGUE_TOURNAMENT_DELETING_INFO,
+      PATH_TO_LEAGUE_TOURNAMENT_IMPORT_INFO,
+      PATH_TO_LEAGUE_TOURNAMENT_PAGE,
+    ].includes(pathname) ||
+    pathname.includes(PATH_TO_EDIT_LEAGUE_TOURNAMENT) ||
+    pathname.includes(PATH_TO_LEAGUE_TOURNAMENT_PAGE)
 
   const getSelectedSubMenu = () => {
     if ([PATH_TO_MASTER_TEAMS_PAGE, PATH_TO_LEAGUE_TEAMS_PAGE].includes(pathname)) return TEAMS_KEY
 
-    if ([PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE, PATH_TO_SEASONS_PAGE].includes(pathname)) return LEAGUE_AND_TOURN_KEY
+    if (isLeagueTournamentPage) return LEAGUE_AND_TOURN_KEY
 
     if ([PATH_TO_PLAYOFF_FORMAT_PAGE, PATH_TO_STANDINGS_FORMAT_PAGE, PATH_TO_TIEBREAKERS_PAGE].includes(pathname))
       return STANDINGS_DISPLAY_KEY
+
+    return ''
+  }
+
+  const getDefaultSelectedKeys = () => {
+    if (isLeagueTournamentPage) return PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE
 
     return ''
   }
@@ -164,7 +185,7 @@ const MonroeSidebar = () => {
       <Divider style={{ margin: '8px 0' }} />
 
       <Menu
-        defaultSelectedKeys={[location.pathname]}
+        defaultSelectedKeys={[location.pathname, getDefaultSelectedKeys()]}
         defaultOpenKeys={[location.pathname, getSelectedSubMenu()]}
         className="items-menu"
         style={{
