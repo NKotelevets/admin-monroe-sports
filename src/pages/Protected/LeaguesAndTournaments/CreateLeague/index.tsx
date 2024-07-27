@@ -1,7 +1,7 @@
 import { Breadcrumb, Divider, Flex, Typography } from 'antd'
 import Radio from 'antd/es/radio'
 import { Form, Formik } from 'formik'
-import { useCallback, useEffect } from 'react'
+import { useCallback } from 'react'
 import { Helmet } from 'react-helmet'
 import { useNavigate } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
@@ -76,18 +76,6 @@ const CreateLeague = () => {
       .then(() => {
         goBack()
       })
-
-  const handleBeforeUnloadEvent = (e: BeforeUnloadEvent) => {
-    e.preventDefault()
-  }
-
-  useEffect(() => {
-    window.addEventListener('beforeunload', handleBeforeUnloadEvent)
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnloadEvent)
-    }
-  }, [])
 
   return (
     <BaseLayout>

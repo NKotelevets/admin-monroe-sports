@@ -447,6 +447,11 @@ const LeagueAndTournamentsTable: FC<ILeagueAndTournamentsTableProps> = ({
       },
     })
 
+    if (!isDeleteAllRecords) {
+      setSelectedRecordsIds([])
+      setShowAdditionalHeader(false)
+    }
+
     const getLeaguesParams = {
       offset: (pagination?.current && (pagination?.current - 1) * (pagination?.pageSize || 10)) || 0,
       limit: pagination?.pageSize || 10,
@@ -566,6 +571,8 @@ const LeagueAndTournamentsTable: FC<ILeagueAndTournamentsTableProps> = ({
           type: 'checkbox',
           selectedRowKeys: selectedRecordIds,
           onChange: (selected) => {
+            if (isDeleteAllRecords) return
+
             if (selected.length === limit) setShowAdditionalHeader(true)
 
             if (selected.length < limit) setShowAdditionalHeader(false)

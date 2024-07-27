@@ -104,18 +104,6 @@ const EditLeague = () => {
         goBack()
       })
 
-  const handleBeforeUnloadEvent = (e: BeforeUnloadEvent) => {
-    e.preventDefault()
-  }
-
-  useEffect(() => {
-    window.addEventListener('beforeunload', handleBeforeUnloadEvent)
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnloadEvent)
-    }
-  }, [])
-
   useEffect(() => {
     if (!data && !isLoading && !isFetching) navigate(PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE)
   }, [isError, isLoading, data, isFetching])

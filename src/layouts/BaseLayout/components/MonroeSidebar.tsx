@@ -2,8 +2,8 @@ import { Divider, Flex } from 'antd'
 import type { MenuProps } from 'antd'
 import { Menu } from 'antd'
 import Sider from 'antd/es/layout/Sider'
-import { CSSProperties } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { CSSProperties, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
 import {
@@ -54,8 +54,9 @@ const TEAMS_KEY = 'teams-key'
 
 const MonroeSidebar = () => {
   const location = useLocation()
-  const navigate = useNavigate()
   const pathname = location.pathname
+  const isPageThatWillHaveChanges =
+    [PATH_TO_CREATE_LEAGUE_TOURNAMENT].includes(pathname) || pathname.includes(PATH_TO_EDIT_LEAGUE_TOURNAMENT)
   const isLeagueTournamentPage =
     [
       PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE,
@@ -84,7 +85,9 @@ const MonroeSidebar = () => {
     return ''
   }
 
-  const navigateTo = (path: string) => navigate(path)
+  const navigateTo = (path: string) => {
+    window.location.href = path
+  }
 
   const MENU_ITEMS: TMenuItem[] = [
     {
@@ -168,6 +171,17 @@ const MonroeSidebar = () => {
       onClick: () => navigateTo(PATH_TO_GROUPS_PAGE),
     },
   ]
+
+  const handleBeforeUnloadEvent = (e: BeforeUnloadEvent) => {
+    if (isPageThatWillHaveChanges) e.preventDefault()
+  }
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', handleBeforeUnloadEvent)
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnloadEvent)
+    }
+  }, [])
 
   return (
     <Sider width="256px" style={siderStyle}>
