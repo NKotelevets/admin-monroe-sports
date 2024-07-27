@@ -1,11 +1,13 @@
 import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined'
-import { Breadcrumb, Button, Flex, Table, Tooltip } from 'antd'
+import { Breadcrumb, Button, Flex, Table } from 'antd'
 import type { GetProp, InputRef, TableColumnType, TableProps } from 'antd'
 import Input from 'antd/es/input/Input'
 import type { FilterDropdownProps, SorterResult } from 'antd/es/table/interface'
 import Typography from 'antd/es/typography'
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+
+import TextWithTooltip from '@/components/TextWithTooltip'
 
 import BaseLayout from '@/layouts/BaseLayout'
 
@@ -94,6 +96,7 @@ const SeasonsDeletingInfo = () => {
             onClick={() => clearFilters && handleReset(clearFilters)}
             style={{
               flex: '1 1 auto',
+              color: selectedKeys.length ? 'rgba(188, 38, 27, 1)' : 'rgba(189, 188, 194, 1)',
             }}
           >
             Reset
@@ -122,10 +125,10 @@ const SeasonsDeletingInfo = () => {
       filterMode: 'tree',
       onFilter: (value, record) => record.name.includes(value as string),
       fixed: 'left',
-      width: '20vw',
+      width: '240px',
       sorter: (a, b) => a.name.length - b.name.length,
       sortOrder: tableParams.sortOrder,
-      // ...getColumnSearchProps('name'),
+      ...getColumnSearchProps('name'),
       render: (value) => (
         <Typography.Text
           style={{
@@ -142,7 +145,7 @@ const SeasonsDeletingInfo = () => {
       dataIndex: '',
       filterSearch: true,
       filterMode: 'tree',
-      width: '20vw',
+      width: '240px',
       sorter: (a, b) => a.name.length - b.name.length,
       sortOrder: tableParams.sortOrder,
       ...getColumnSearchProps('league'),
@@ -161,37 +164,7 @@ const SeasonsDeletingInfo = () => {
     {
       title: 'Error info',
       dataIndex: 'error',
-      width: '200px',
-      render: (value) => (
-        <>
-          {value?.length > 30 ? (
-            <Tooltip
-              title={value}
-              placement="top"
-              color="rgba(62, 62, 72, 0.75)"
-              style={{
-                width: '250px',
-              }}
-            >
-              <Typography.Text
-                style={{
-                  color: 'rgba(26, 22, 87, 0.85)',
-                }}
-              >
-                {value.substring(0, 27).trim() + '...'}
-              </Typography.Text>
-            </Tooltip>
-          ) : (
-            <Typography.Text
-              style={{
-                color: 'rgba(26, 22, 87, 0.85)',
-              }}
-            >
-              {value}
-            </Typography.Text>
-          )}
-        </>
-      ),
+      render: (value) => <TextWithTooltip maxLength={100} text={value} />,
     },
   ]
 
@@ -231,4 +204,3 @@ const SeasonsDeletingInfo = () => {
 }
 
 export default SeasonsDeletingInfo
-
