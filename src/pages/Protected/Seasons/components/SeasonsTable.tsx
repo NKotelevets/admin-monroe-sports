@@ -140,7 +140,7 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
       offset: newOffset,
       limit: newLimit,
       name: (filters?.['name']?.[0] as string) ?? undefined,
-      league__name: (filters?.['league']?.[0] as string) ?? undefined,
+      league_name: (filters?.['league']?.[0] as string) ?? undefined,
       ordering: orderingValue,
     }
 
