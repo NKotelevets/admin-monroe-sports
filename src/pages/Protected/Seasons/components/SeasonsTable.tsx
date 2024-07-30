@@ -1,31 +1,19 @@
-import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined'
-import { Button, GetProp, TableColumnType } from 'antd'
-import Flex from 'antd/es/flex'
-import Input, { InputRef } from 'antd/es/input/Input'
+import { GetProp } from 'antd'
 import Table from 'antd/es/table'
 import { TableProps } from 'antd/es/table/InternalTable'
-import { FilterDropdownProps, SorterResult } from 'antd/es/table/interface'
+import { SorterResult } from 'antd/es/table/interface'
 import Typography from 'antd/es/typography'
-import { format } from 'date-fns'
-import { Dispatch, FC, SetStateAction, useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ReactSVG } from 'react-svg'
+import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
+
+import { useSeasonTableParams } from '@/pages/Protected/Seasons/hooks/useSeasonTableParams'
 
 import MonroeModal from '@/components/MonroeModal'
-import MonroeTooltip from '@/components/MonroeTooltip'
 
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
 import { useDeleteSeasonMutation, useLazyGetSeasonsQuery } from '@/redux/seasons/seasons.api'
 
-import { PATH_TO_LEAGUE_TOURNAMENT_PAGE, PATH_TO_SEASONS_DETAILS } from '@/constants/paths'
-
-import { IBEDivision } from '@/common/interfaces/division'
 import { IFESeason, IGetSeasonsRequestParams } from '@/common/interfaces/season'
 
-import DeleteIcon from '@/assets/icons/delete.svg'
-import EditIcon from '@/assets/icons/edit.svg'
-
-type TColumns<T> = TableProps<T>['columns']
 type TTablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>
 
 interface ITableParams {
@@ -55,8 +43,6 @@ const showTotal = (total: number) => (
   </Typography.Text>
 )
 
-type TDataIndex = keyof IFESeason
-
 type TTableKeys = 'name' | 'league' | 'startDate' | 'expectedEndDate'
 
 const SeasonsTable: FC<ISeasonsTableTableProps> = ({
@@ -70,7 +56,6 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
 }) => {
   const { seasons, limit, offset, ordering, total, createdRecordsNames, setPaginationParams } = useSeasonSlice()
   const [getSeasons, { isLoading, isFetching, data }] = useLazyGetSeasonsQuery()
-  const navigate = useNavigate()
   const [tableParams, setTableParams] = useState<ITableParams>({
     pagination: {
       current: offset + 1,
@@ -85,258 +70,24 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
   const [deleteSeason] = useDeleteSeasonMutation()
   const [showDeleteSingleRecordModal, setShowDeleteSingleRecordModal] = useState(false)
   const [selectedRecordId, setSelectedRecordId] = useState('')
-  const searchInput = useRef<InputRef>(null)
+  const { columns } = useSeasonTableParams({
+    ordering,
+    setSelectedRecordId,
+    setShowDeleteSingleRecordModal,
+  })
 
   useEffect(() => {
+    setPaginationParams({
+      offset,
+      limit,
+      ordering: null,
+    })
+
     getSeasons({
       limit,
       offset,
     })
   }, [])
-
-  const handleReset = (clearFilters: () => void) => clearFilters()
-  const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
-
-  const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IFESeason> => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-        <Input
-          ref={searchInput}
-          placeholder="Search name"
-          value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(confirm)}
-          style={{ marginBottom: 8, display: 'block' }}
-        />
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Button
-            type="primary"
-            onClick={() => handleSearch(confirm)}
-            style={{
-              marginRight: '8px',
-              flex: '1 1 auto',
-            }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => clearFilters && handleReset(clearFilters)}
-            style={{
-              flex: '1 1 auto',
-            }}
-          >
-            Reset
-          </Button>
-        </div>
-      </div>
-    ),
-    filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1A1657' : '#BDBCC2' }} />,
-    onFilter: (value, record) =>
-      record[dataIndex]
-        .toString()
-        .toLowerCase()
-        .includes((value as string).toLowerCase()),
-    onFilterDropdownOpenChange: (visible) => {
-      if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100)
-      }
-    },
-  })
-
-  const columns: TColumns<IFESeason> = [
-    {
-      title: 'Season name',
-      dataIndex: 'name',
-      fixed: 'left',
-      width: '20vw',
-      sorter: true,
-      ...getColumnSearchProps('name'),
-      sortOrder: ordering?.includes('name') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
-      render: (value, record) => (
-        <Typography.Text
-          style={{
-            color: '#3E34CA',
-            cursor: 'pointer',
-          }}
-          onClick={() => navigate(`${PATH_TO_SEASONS_DETAILS}/${record.id}`)}
-        >
-          {value}
-        </Typography.Text>
-      ),
-    },
-    {
-      title: 'Linked League/Tourn',
-      dataIndex: 'league',
-      onFilter: (value, record) => record.name.startsWith(value as string),
-      width: '20vw',
-      sorter: true,
-      sortOrder: ordering?.includes('league') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
-      ...getColumnSearchProps('league'),
-      render: (value) => (
-        <Typography.Text
-          style={{
-            color: '#3E34CA',
-            cursor: 'pointer',
-          }}
-          onClick={() => navigate(PATH_TO_LEAGUE_TOURNAMENT_PAGE + '/' + value.id)}
-        >
-          {value.name}
-        </Typography.Text>
-      ),
-    },
-    {
-      title: 'Start Date',
-      dataIndex: 'startDate',
-      width: '192px',
-      sorter: true,
-      sortOrder: ordering?.includes('start_date') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
-      render: (value) => (
-        <Typography.Text
-          style={{
-            color: 'rgba(26, 22, 87, 0.85)',
-          }}
-        >
-          {format(new Date(value), 'MMMM dd, yyyy')}
-        </Typography.Text>
-      ),
-    },
-    {
-      title: 'Expected End Date',
-      dataIndex: 'expectedEndDate',
-      width: '192px',
-      sorter: true,
-      sortOrder: ordering?.includes('expected_end_date') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
-      render: (value) => (
-        <Typography.Text
-          style={{
-            color: 'rgba(26, 22, 87, 0.85)',
-          }}
-        >
-          {format(new Date(value), 'MMMM dd, yyyy')}
-        </Typography.Text>
-      ),
-    },
-    {
-      title: 'Division/Pool',
-      dataIndex: 'divisions',
-      width: '200px',
-      render: (divisions: IBEDivision[], _, idx) => {
-        const divisionsNames = divisions.map((division) => division.name).join(', ')
-        const divisionsLength = divisionsNames.length
-
-        return (
-          <>
-            {divisionsLength > 24 ? (
-              <MonroeTooltip
-                width="120px"
-                arrowPosition={idx > (seasons.length - 1) / 2 ? 'bottom' : 'top'}
-                text={
-                  <Flex vertical>
-                    {divisions.map((division) => (
-                      <p key={division.id}>{division.name}</p>
-                    ))}
-                  </Flex>
-                }
-              >
-                <Typography.Text
-                  style={{
-                    color: 'rgba(62, 52, 202, 1)',
-                    fontSize: '14px',
-                  }}
-                >
-                  {divisionsNames.substring(0, 21).trim() + '...'}
-                </Typography.Text>
-              </MonroeTooltip>
-            ) : (
-              <Typography.Text
-                style={{
-                  color: 'rgba(62, 52, 202, 1)',
-                  fontSize: '14px',
-                }}
-              >
-                {divisionsNames}
-              </Typography.Text>
-            )}
-          </>
-        )
-      },
-    },
-    {
-      title: 'Actions',
-      dataIndex: '',
-      width: '96px',
-      fixed: 'right',
-      render: (_, record) => {
-        return (
-          <Flex vertical={false} justify="center" align="center">
-            <ReactSVG src={EditIcon} />
-            <ReactSVG
-              onClick={() => {
-                setSelectedRecordId(record.id)
-                setShowDeleteSingleRecordModal(true)
-              }}
-              src={DeleteIcon}
-              style={{ marginLeft: '8px' }}
-            />
-          </Flex>
-        )
-      },
-    },
-  ]
-
-  const handleTableChange: TableProps['onChange'] = (pagination, filters, sorter) => {
-    setTableParams({
-      pagination: {
-        ...pagination,
-        showTotal,
-      },
-    })
-
-    const BE_SORTING_FIELDS: Record<TTableKeys, string> = {
-      expectedEndDate: 'expected_end_date',
-      league: 'league',
-      name: 'name',
-      startDate: 'start_date',
-    }
-
-    const orderingValue = Array.isArray(sorter)
-      ? null
-      : sorter.order === 'ascend'
-        ? `${BE_SORTING_FIELDS[sorter.field as TTableKeys]}`
-        : `-${BE_SORTING_FIELDS[sorter.field as TTableKeys]}`
-
-    const getSeasonsRequestParams: IGetSeasonsRequestParams = {
-      offset: (pagination?.current && pagination?.current - 1) || 0,
-      limit: pagination?.pageSize || 10,
-      name: (filters?.['name']?.[0] as string) ?? undefined,
-      league__name: (filters?.['league']?.[0] as string) ?? undefined,
-      ordering: orderingValue,
-    }
-
-    getSeasons(getSeasonsRequestParams)
-
-    setPaginationParams({
-      offset: (pagination?.current && pagination?.current - 1) || 0,
-      limit: pagination?.pageSize || 10,
-      ordering: orderingValue,
-    })
-  }
-
-  const handleDelete = () =>
-    deleteSeason({
-      id: selectedRecordId,
-    })
-      .unwrap()
-      .then(() => {
-        setShowDeleteSingleRecordModal(false)
-        setSelectedRecordId('')
-      })
-      .catch(() => setShowDeleteSingleRecordModal(false))
 
   useEffect(() => {
     if (data?.count) {
@@ -355,6 +106,64 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
     }
   }, [data])
 
+  const handleTableChange: TableProps['onChange'] = (pagination, filters, sorter) => {
+    const newOffset = (pagination?.current && (pagination?.current - 1) * (pagination?.pageSize || 10)) || 0
+    const newLimit = pagination?.pageSize || 10
+    setTableParams({
+      pagination: {
+        ...pagination,
+        showTotal,
+      },
+    })
+
+    if (!isDeleteAllRecords) {
+      setSelectedRecordsIds([])
+      setShowAdditionalHeader(false)
+    }
+
+    const BE_SORTING_FIELDS: Record<TTableKeys, string> = {
+      expectedEndDate: 'expected_end_date',
+      league: 'league',
+      name: 'name',
+      startDate: 'start_date',
+    }
+
+    const orderingValue = Array.isArray(sorter)
+      ? null
+      : sorter.order
+        ? sorter.order === 'ascend'
+          ? `${BE_SORTING_FIELDS[sorter.field as TTableKeys]}`
+          : `-${BE_SORTING_FIELDS[sorter.field as TTableKeys]}`
+        : null
+
+    const getSeasonsRequestParams: IGetSeasonsRequestParams = {
+      offset: newOffset,
+      limit: newLimit,
+      name: (filters?.['name']?.[0] as string) ?? undefined,
+      league_name: (filters?.['league']?.[0] as string) ?? undefined,
+      ordering: orderingValue,
+    }
+
+    getSeasons(getSeasonsRequestParams)
+
+    setPaginationParams({
+      offset: newOffset,
+      limit: newLimit,
+      ordering: orderingValue,
+    })
+  }
+
+  const handleDelete = () =>
+    deleteSeason({
+      id: selectedRecordId,
+    })
+      .unwrap()
+      .then(() => {
+        setShowDeleteSingleRecordModal(false)
+        setSelectedRecordId('')
+      })
+      .catch(() => setShowDeleteSingleRecordModal(false))
+
   return (
     <>
       {showDeleteSingleRecordModal && (
@@ -372,7 +181,7 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
         />
       )}
 
-      {showAdditionalHeader && (
+      {showAdditionalHeader && selectedRecordIds.length !== total && (
         <div className="leagues-table-header">
           <p
             style={{
@@ -428,11 +237,11 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
           type: 'checkbox',
           selectedRowKeys: selectedRecordIds,
           onChange: (selected) => {
-            if (selected.length === tableParams.pagination?.pageSize) setShowAdditionalHeader(true)
-
-            if (selected.length !== tableParams.pagination?.pageSize) setShowAdditionalHeader(false)
-
-            if (!isDeleteAllRecords) setSelectedRecordsIds(selected as string[])
+            if (isDeleteAllRecords) return
+            if (selected.length === limit) setShowAdditionalHeader(true)
+            if (selected.length < limit) setShowAdditionalHeader(false)
+            setSelectedRecordsIds(selected as string[])
+            if (!selected.length && showAdditionalHeader && isDeleteAllRecords) setIsDeleteAllRecords(false)
           },
         }}
         scroll={{
@@ -444,4 +253,3 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
 }
 
 export default SeasonsTable
-

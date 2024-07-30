@@ -1,5 +1,12 @@
 import { FilterFilled, SearchOutlined } from '@ant-design/icons'
-import { Button, GetProp, InputRef, Table, TableColumnType, TableProps } from 'antd'
+import {
+  Button,
+  GetProp,
+  InputRef,
+  Table,
+  TableColumnType,
+  TableProps,
+} from 'antd'
 import Breadcrumb from 'antd/es/breadcrumb'
 import Flex from 'antd/es/flex'
 import Input from 'antd/es/input/Input'
@@ -19,25 +26,35 @@ import BaseLayout from '@/layouts/BaseLayout'
 
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
 
-import { containerStyles, descriptionStyle, titleStyle } from '@/constants/deleting-importing-info.styles'
-import { PATH_TO_LEAGUE_TOURNAMENT_PAGE, PATH_TO_SEASONS_PAGE } from '@/constants/paths'
+import {
+  containerStyles,
+  descriptionStyle,
+  titleStyle,
+} from '@/constants/deleting-importing-info.styles'
+import {
+  PATH_TO_LEAGUE_TOURNAMENT_PAGE,
+  PATH_TO_SEASONS_PAGE,
+} from '@/constants/paths'
 
 import { IImportSeasonTableRecord } from '@/common/interfaces/season'
-import { TErrorDuplicate } from '@/common/types'
+import { TErrorDuplicate, TSortOption } from '@/common/types'
 
 import SyncIcon from '@/assets/icons/sync.svg'
 
-type TColumns<T> = TableProps<T>['columns']
-type TTablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>
+type TColumns<T> = TableProps<T>['columns'];
+type TTablePaginationConfig = Exclude<
+  GetProp<TableProps, 'pagination'>,
+  boolean
+>;
 
 interface ITableParams {
-  pagination?: TTablePaginationConfig
-  sortField?: SorterResult<IImportSeasonTableRecord>['field']
-  sortOrder?: SorterResult<IImportSeasonTableRecord>['order']
-  filters?: Parameters<GetProp<TableProps, 'onChange'>>[1]
+  pagination?: TTablePaginationConfig;
+  sortField?: SorterResult<IImportSeasonTableRecord>['field'];
+  sortOrder?: SorterResult<IImportSeasonTableRecord>['order'];
+  filters?: Parameters<GetProp<TableProps, 'onChange'>>[1];
 }
 
-type TDataIndex = keyof IImportSeasonTableRecord
+type TDataIndex = keyof IImportSeasonTableRecord;
 
 const BREADCRUMB_ITEMS = [
   {
@@ -56,9 +73,15 @@ const BREADCRUMB_ITEMS = [
   },
 ]
 
-const duplicateTagStyles: CSSProperties = { border: '1px solid #FFD770', backgroundColor: '#FFF9EB' }
+const duplicateTagStyles: CSSProperties = {
+  border: '1px solid #FFD770',
+  backgroundColor: '#FFF9EB',
+}
 
-const errorTagStyles: CSSProperties = { border: '1px solid #FF594D', backgroundColor: '#FFF1F0' }
+const errorTagStyles: CSSProperties = {
+  border: '1px solid #FF594D',
+  backgroundColor: '#FFF1F0',
+}
 
 const TagType: FC<{ text: TErrorDuplicate }> = ({ text }) => {
   const style = text === 'Duplicate' ? duplicateTagStyles : errorTagStyles
@@ -97,12 +120,16 @@ const SeasonsImportInfo = () => {
     },
   })
   const searchInput = useRef<InputRef>(null)
-  const [sortSeasonNameOrder, setSortSeasonNameOrder] = useState<'descend' | 'ascend' | null>(null)
-  const [sortLeagueNameOrder, setSortLeagueNameOrder] = useState<'descend' | 'ascend' | null>(null)
+  const [sortSeasonNameOrder, setSortSeasonNameOrder] =
+    useState<TSortOption>(null)
+  const [sortLeagueNameOrder, setSortLeagueNameOrder] =
+    useState<TSortOption>(null)
   const navigate = useNavigate()
 
   const handleUpdate = (idx: number) => {
-    const currentDuplicate = duplicates.find((duplicate) => duplicate.index === idx)
+    const currentDuplicate = duplicates.find(
+      (duplicate) => duplicate.index === idx
+    )
     const newData = currentDuplicate!.new // TODO: change fields for request into pascal case
     console.log('>', newData)
     // TODO: add update logic
@@ -112,14 +139,23 @@ const SeasonsImportInfo = () => {
 
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
 
-  const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IImportSeasonTableRecord> => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+  const getColumnSearchProps = (
+    dataIndex: TDataIndex
+  ): TableColumnType<IImportSeasonTableRecord> => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
           ref={searchInput}
           placeholder="Search name"
           value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
           onPressEnter={() => handleSearch(confirm)}
           style={{ marginBottom: 8, display: 'block' }}
         />
@@ -150,7 +186,9 @@ const SeasonsImportInfo = () => {
         </div>
       </div>
     ),
-    filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1A1657' : '#BDBCC2' }} />,
+    filterIcon: (filtered: boolean) => (
+      <SearchOutlined style={{ color: filtered ? '#1A1657' : '#BDBCC2' }} />
+    ),
     onFilter: (value, record) =>
       record[dataIndex]
         .toString()
@@ -170,8 +208,10 @@ const SeasonsImportInfo = () => {
       },
     })
 
-    if (!Array.isArray(sorter) && sorter.field === 'name') setSortSeasonNameOrder(sorter.order || null)
-    if (!Array.isArray(sorter) && sorter.field === 'leagueName') setSortLeagueNameOrder(sorter.order || null)
+    if (!Array.isArray(sorter) && sorter.field === 'name')
+      setSortSeasonNameOrder(sorter.order || null)
+    if (!Array.isArray(sorter) && sorter.field === 'leagueName')
+      setSortLeagueNameOrder(sorter.order || null)
   }
 
   const columns: TColumns<IImportSeasonTableRecord> = [
@@ -199,9 +239,8 @@ const SeasonsImportInfo = () => {
       title: 'Linked League/Tourn',
       dataIndex: 'leagueName',
       width: '20vw',
-
       sortOrder: sortLeagueNameOrder,
-      sorter: (s1, s2) => s1.name.localeCompare(s2.name),
+      sorter: (s1, s2) => s1.leagueName.localeCompare(s2.leagueName),
       ...getColumnSearchProps('leagueName'),
       render: (value, record) => (
         <Typography.Text
@@ -209,14 +248,16 @@ const SeasonsImportInfo = () => {
             color: '#3E34CA',
             cursor: 'pointer',
           }}
-          onClick={() => navigate(PATH_TO_LEAGUE_TOURNAMENT_PAGE + '/' + record.leagueId)}
+          onClick={() =>
+            navigate(PATH_TO_LEAGUE_TOURNAMENT_PAGE + '/' + record.leagueId)
+          }
         >
           {value}
         </Typography.Text>
       ),
     },
     {
-      title: 'Type',
+      title: 'Status',
       dataIndex: 'type',
       filters: [
         { text: 'Duplicate', value: 'Duplicate' },
@@ -224,7 +265,7 @@ const SeasonsImportInfo = () => {
       ],
       width: '112px',
       onFilter: (value, record) => value === record.type,
-      render: (value) => <TagType text={value} />,
+      render: (_, record) => <TagType text={record.type} />,
       filterDropdown: MonroeFilter,
       filterIcon: (filtered) => (
         <FilterFilled
@@ -235,7 +276,7 @@ const SeasonsImportInfo = () => {
       ),
     },
     {
-      title: 'Error message',
+      title: 'Error info',
       dataIndex: 'message',
       width: '400px',
       render: (value) => (
@@ -253,13 +294,20 @@ const SeasonsImportInfo = () => {
       dataIndex: '',
       width: '80px',
       render: (_, record) =>
-        record.type === 'Duplicate' && <ReactSVG src={SyncIcon} onClick={() => handleUpdate(record.idx)} />,
+        record.type === 'Duplicate' && (
+          <ReactSVG src={SyncIcon} onClick={() => handleUpdate(record.idx)} />
+        ),
     },
   ]
 
   return (
     <>
-      {selectedIdx !== null && <SeasonsReviewUpdateModal idx={selectedIdx} onClose={() => setSelectedIdx(null)} />}
+      {selectedIdx !== null && (
+        <SeasonsReviewUpdateModal
+          idx={selectedIdx}
+          onClose={() => setSelectedIdx(null)}
+        />
+      )}
 
       <BaseLayout>
         <Flex style={containerStyles} vertical>
@@ -270,9 +318,11 @@ const SeasonsImportInfo = () => {
           </Typography.Title>
 
           <Typography.Text style={descriptionStyle}>
-            This panel provides a summary of your CSV import, listing rows with errors and duplicates. Click on any
-            duplicate to review details, compare and decide whether to keep existing records or replace them with new
-            entries. This helps ensure your data is accurate and up-to-date.
+            This panel provides a summary of your CSV import, listing rows with
+            errors and duplicates. Click on any duplicate to review details,
+            compare and decide whether to keep existing records or replace them
+            with new entries. This helps ensure your data is accurate and
+            up-to-date.
           </Typography.Text>
 
           <Table
