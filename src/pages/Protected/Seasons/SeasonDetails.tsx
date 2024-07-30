@@ -142,14 +142,14 @@ export const SeasonDetails = () => {
 
                 <Flex vertical>
                   {data.divisions.map((division) => (
-                    <Flex key={division.id} vertical>
+                    <Flex key={division.id} vertical style={{ width: '400px' }}>
                       <Typography.Text
                         style={{
                           color: 'rgba(62, 52, 202, 1)',
                           textDecoration: 'underline',
                           marginBottom: '4px',
-                          width: '136px',
                           marginRight: '12px',
+                          cursor: 'pointer',
                         }}
                       >
                         {division.name}
@@ -157,6 +157,7 @@ export const SeasonDetails = () => {
                       <Typography
                         style={{
                           color: '#1A1657',
+                          cursor: 'pointer',
                         }}
                       >
                         {division.sub_division?.name || '-'}

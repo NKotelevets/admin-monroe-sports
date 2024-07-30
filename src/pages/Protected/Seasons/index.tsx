@@ -123,10 +123,12 @@ const Seasons = () => {
       setShowAdditionalHeader(false)
       setIsDeleteAllRecords(false)
 
+      const message = `${response.success}/${response.total} ${response.total === 1 ? 'season' : 'seasons'} have been successfully removed.`
+
       if (response.status !== 'green') {
         setInfoNotification({
           actionLabel: 'More info..',
-          message: `${response.success}/${response.total} seasons have been successfully removed.`,
+          message,
           redirectedPageUrl: PATH_TO_SEASONS_DELETING_INFO,
         })
 
@@ -135,7 +137,7 @@ const Seasons = () => {
 
       if (response.status === 'green') {
         setAppNotification({
-          message: `${response.success}/${response.total} seasons have been successfully removed.`,
+          message,
           timestamp: new Date().getTime(),
           type: 'success',
         })
@@ -163,7 +165,7 @@ const Seasons = () => {
           content={
             <>
               <p>
-                Are you sure you want to delete {deleteRecordsModalCount > 1 ? deleteRecordsModalCount : ''}{' '}
+                Are you sure you want to delete {deleteRecordsModalCount > 1 ? deleteRecordsModalCount : 'this'}{' '}
                 {deleteSeasonsText}?
               </p>
             </>

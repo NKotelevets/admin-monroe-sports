@@ -108,6 +108,9 @@ svg {
   background-color: white;
 }
 
+.ant-table-wrapper .ant-table-thead>tr>th {
+  font-weight: 500 !important;
+}
 
 .ant-select-arrow span svg,
 .ant-select-selection-search {

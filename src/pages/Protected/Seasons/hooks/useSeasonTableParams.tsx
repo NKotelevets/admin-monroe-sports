@@ -12,8 +12,6 @@ import { ReactSVG } from 'react-svg'
 import MonroeTooltip from '@/components/MonroeTooltip'
 import TextWithTooltip from '@/components/TextWithTooltip'
 
-import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
-
 import { PATH_TO_LEAGUE_TOURNAMENT_PAGE, PATH_TO_SEASONS_DETAILS } from '@/constants/paths'
 
 import { IBEDivision } from '@/common/interfaces/division'
@@ -32,7 +30,6 @@ interface IParams {
 }
 
 export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDeleteSingleRecordModal }: IParams) => {
-  const { seasons } = useSeasonSlice()
   const searchInput = useRef<InputRef>(null)
   const handleReset = (clearFilters: () => void) => clearFilters()
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
@@ -97,10 +94,9 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
 
   const columns: TColumns<IFESeason> = [
     {
-      title: 'Season name',
+      title: 'Season Name',
       dataIndex: 'name',
       fixed: 'left',
-      width: '240px',
       sorter: true,
       ...getColumnSearchProps('name'),
       sortOrder: ordering?.includes('name') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
@@ -116,7 +112,6 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
       title: 'Linked League/Tourn',
       dataIndex: 'league',
       onFilter: (value, record) => record.name.startsWith(value as string),
-      width: '240px',
       sorter: true,
       sortOrder: ordering?.includes('league') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
       ...getColumnSearchProps('league'),
@@ -137,7 +132,6 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
     {
       title: 'Start Date',
       dataIndex: 'startDate',
-      width: '192px',
       sorter: true,
       sortOrder: ordering?.includes('start_date') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
       render: (value) => (
@@ -153,7 +147,6 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
     {
       title: 'Expected End Date',
       dataIndex: 'expectedEndDate',
-      width: '192px',
       sorter: true,
       sortOrder: ordering?.includes('expected_end_date') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
       render: (value) => (
@@ -169,17 +162,16 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
     {
       title: 'Division/Pool',
       dataIndex: 'divisions',
-      width: '200px',
-      render: (divisions: IBEDivision[], _, idx) => {
+      render: (divisions: IBEDivision[]) => {
         const divisionsNames = divisions.map((division) => division.name).join(', ')
         const divisionsLength = divisionsNames.length
 
         return (
           <>
-            {divisionsLength > 24 ? (
+            {divisionsLength > 28 ? (
               <MonroeTooltip
-                width="120px"
-                arrowPosition={idx > (seasons.length - 1) / 2 ? 'bottom' : 'top'}
+                width="auto"
+                arrowPosition={divisions.length < 10 ? 'bottom' : 'top'}
                 text={
                   <Flex vertical>
                     {divisions.map((division) => (
@@ -194,7 +186,7 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
                     fontSize: '14px',
                   }}
                 >
-                  {divisionsNames.substring(0, 21).trim() + '...'}
+                  {divisionsNames.substring(0, 27) + '...'}
                 </Typography.Text>
               </MonroeTooltip>
             ) : (
@@ -218,7 +210,13 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
       fixed: 'right',
       render: (_, record) => {
         return (
-          <Flex vertical={false} justify="center" align="center">
+          <Flex
+            justify="center"
+            align="center"
+            style={{
+              cursor: 'pointer',
+            }}
+          >
             <ReactSVG src={EditIcon} />
             <ReactSVG
               onClick={() => {
@@ -238,4 +236,3 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
     columns,
   }
 }
-

@@ -181,7 +181,7 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
         />
       )}
 
-      {showAdditionalHeader && (
+      {showAdditionalHeader && selectedRecordIds.length !== total && (
         <div className="leagues-table-header">
           <p
             style={{

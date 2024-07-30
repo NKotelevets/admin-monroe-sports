@@ -193,7 +193,7 @@ const LeagueAndTournamentsTable: FC<ILeagueAndTournamentsTableProps> = ({
         />
       )}
 
-      {showAdditionalHeader && (
+      {showAdditionalHeader && selectedRecordIds.length !== total && (
         <div className="leagues-table-header">
           <p
             style={{
