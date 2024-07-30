@@ -152,15 +152,14 @@ export const SeasonDetails = () => {
                           cursor: 'pointer',
                         }}
                       >
-                        {division.name}
+                        {division.name}:
                       </Typography.Text>
                       <Typography
                         style={{
                           color: '#1A1657',
-                          cursor: 'pointer',
                         }}
                       >
-                        {division.sub_division?.name || '-'}
+                        {division.sub_division?.name ? division.sub_division?.name + '.' : '-'}
                       </Typography>
                     </Flex>
                   ))}
