@@ -86,3 +86,7 @@
    padding: 0 8px !important;
    margin-left: 8px;
  }
+
+ .league-tourn-search-input:hover {
+   border-color: rgba(62, 52, 202, 1);
+ }

@@ -3,7 +3,10 @@ export interface IBEDivision {
   description: string
   id: string
   name: string
-  sub_division: string[]
+  sub_division: {
+    name: string
+    description: string
+  }
   updated_at: string
 }
 
@@ -20,4 +23,3 @@ export interface IFESubdivision {
   standingsFormat: string
   tiebreakersFormat: string
 }
-

@@ -42,7 +42,7 @@ export interface IFESeason extends ISeasonCommonFields {
 export interface IGetSeasonsRequestParams {
   limit: number
   offset: number
-  league__name?: string | undefined
+  league_name?: string | undefined
   name?: string
   ordering?: string | null
   search?: string

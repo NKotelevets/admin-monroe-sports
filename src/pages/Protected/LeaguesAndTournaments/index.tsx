@@ -59,62 +59,31 @@ const LeaguesAndTournaments = () => {
 
   const handleDelete = async () => {
     handleCloseModal()
+    const deleteHandler = isDeleteAllRecords ? deleteAll() : bulkDelete({ ids: selectedRecordsIds })
+    await deleteHandler.unwrap().then((response) => {
+      setSelectedRecordsIds([])
+      setShowAdditionalHeader(false)
+      setIsDeleteAllRecords(false)
+      const message = `${response.success}/${response.total} ${response.total === 1 ? 'league/tournament' : 'leagues/tournaments'}  have been successfully removed.`
 
-    if (isDeleteAllRecords) {
-      await deleteAll()
-        .unwrap()
-        .then((response) => {
-          setSelectedRecordsIds([])
-          setShowAdditionalHeader(false)
-          setIsDeleteAllRecords(false)
-          const message = `${response.success}/${response.total} ${response.total === 1 ? 'league/tournament' : 'leagues/tournaments'}  have been successfully removed.`
-
-          if (response.status !== 'green') {
-            setInfoNotification({
-              actionLabel: 'More info..',
-              message,
-              redirectedPageUrl: PATH_TO_LEAGUE_TOURNAMENT_DELETING_INFO,
-            })
-
-            return
-          }
-
-          if (response.status === 'green') {
-            setAppNotification({
-              message,
-              timestamp: new Date().getTime(),
-              type: 'success',
-            })
-          }
+      if (response.status !== 'green') {
+        setInfoNotification({
+          actionLabel: 'More info..',
+          message,
+          redirectedPageUrl: PATH_TO_LEAGUE_TOURNAMENT_DELETING_INFO,
         })
-    } else {
-      await bulkDelete({ ids: selectedRecordsIds })
-        .unwrap()
-        .then((response) => {
-          setSelectedRecordsIds([])
-          setShowAdditionalHeader(false)
-          setIsDeleteAllRecords(false)
-          const message = `${response.success}/${response.total} ${response.total === 1 ? 'league/tournament' : 'leagues/tournaments'}  have been successfully removed.`
 
-          if (response.status !== 'green') {
-            setInfoNotification({
-              actionLabel: 'More info..',
-              message,
-              redirectedPageUrl: PATH_TO_LEAGUE_TOURNAMENT_DELETING_INFO,
-            })
+        return
+      }
 
-            return
-          }
-
-          if (response.status === 'green') {
-            setAppNotification({
-              message,
-              timestamp: new Date().getTime(),
-              type: 'success',
-            })
-          }
+      if (response.status === 'green') {
+        setAppNotification({
+          message,
+          timestamp: new Date().getTime(),
+          type: 'success',
         })
-    }
+      }
+    })
   }
 
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -134,32 +103,12 @@ const LeaguesAndTournaments = () => {
       await importLeagues(body)
         .unwrap()
         .then((response) => {
-          if (response.status === 'green') {
-            setImportModalOptions({
-              filename: file.name,
-              isOpen: true,
-              status: 'green',
-              errorMessage: '',
-            })
-          }
-
-          if (response.status === 'red') {
-            setImportModalOptions({
-              filename: file.name,
-              isOpen: true,
-              status: 'red',
-              errorMessage: '',
-            })
-          }
-
-          if (response.status === 'yellow') {
-            setImportModalOptions({
-              filename: file.name,
-              isOpen: true,
-              status: 'yellow',
-              errorMessage: '',
-            })
-          }
+          setImportModalOptions({
+            filename: file.name,
+            isOpen: true,
+            status: response.status,
+            errorMessage: '',
+          })
         })
         .catch((error) => {
           setImportModalOptions({

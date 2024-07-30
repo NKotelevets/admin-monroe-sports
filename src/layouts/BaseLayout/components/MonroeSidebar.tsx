@@ -18,6 +18,11 @@ import {
   PATH_TO_MASTER_TEAMS_PAGE,
   PATH_TO_PLAYOFF_FORMAT_PAGE,
   PATH_TO_SCHEDULE_PAGE,
+  PATH_TO_SEASONS_CREATE,
+  PATH_TO_SEASONS_DELETING_INFO,
+  PATH_TO_SEASONS_DETAILS,
+  PATH_TO_SEASONS_EDIT_DETAILS,
+  PATH_TO_SEASONS_IMPORT_INFO,
   PATH_TO_SEASONS_PAGE,
   PATH_TO_STANDINGS_FORMAT_PAGE,
   PATH_TO_TIEBREAKERS_PAGE,
@@ -56,22 +61,30 @@ const MonroeSidebar = () => {
   const location = useLocation()
   const pathname = location.pathname
   const isPageThatWillHaveChanges =
-    [PATH_TO_CREATE_LEAGUE_TOURNAMENT].includes(pathname) || pathname.includes(PATH_TO_EDIT_LEAGUE_TOURNAMENT)
+    [PATH_TO_CREATE_LEAGUE_TOURNAMENT].includes(pathname) ||
+    pathname.includes(PATH_TO_EDIT_LEAGUE_TOURNAMENT) ||
+    pathname.includes(PATH_TO_SEASONS_CREATE) ||
+    pathname.includes(PATH_TO_SEASONS_EDIT_DETAILS)
   const isLeagueTournamentPage =
     [
       PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE,
       PATH_TO_CREATE_LEAGUE_TOURNAMENT,
       PATH_TO_LEAGUE_TOURNAMENT_DELETING_INFO,
       PATH_TO_LEAGUE_TOURNAMENT_IMPORT_INFO,
-      PATH_TO_LEAGUE_TOURNAMENT_PAGE,
     ].includes(pathname) ||
     pathname.includes(PATH_TO_EDIT_LEAGUE_TOURNAMENT) ||
     pathname.includes(PATH_TO_LEAGUE_TOURNAMENT_PAGE)
+  const isSeasonsPage =
+    [PATH_TO_SEASONS_PAGE, PATH_TO_SEASONS_CREATE, PATH_TO_SEASONS_DELETING_INFO, PATH_TO_SEASONS_IMPORT_INFO].includes(
+      pathname,
+    ) ||
+    pathname.includes(PATH_TO_SEASONS_DETAILS) ||
+    pathname.includes(PATH_TO_SEASONS_EDIT_DETAILS)
 
   const getSelectedSubMenu = () => {
     if ([PATH_TO_MASTER_TEAMS_PAGE, PATH_TO_LEAGUE_TEAMS_PAGE].includes(pathname)) return TEAMS_KEY
 
-    if (isLeagueTournamentPage) return LEAGUE_AND_TOURN_KEY
+    if (isLeagueTournamentPage || isSeasonsPage) return LEAGUE_AND_TOURN_KEY
 
     if ([PATH_TO_PLAYOFF_FORMAT_PAGE, PATH_TO_STANDINGS_FORMAT_PAGE, PATH_TO_TIEBREAKERS_PAGE].includes(pathname))
       return STANDINGS_DISPLAY_KEY
@@ -81,6 +94,8 @@ const MonroeSidebar = () => {
 
   const getDefaultSelectedKeys = () => {
     if (isLeagueTournamentPage) return PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE
+
+    if (isSeasonsPage) return PATH_TO_SEASONS_PAGE
 
     return ''
   }

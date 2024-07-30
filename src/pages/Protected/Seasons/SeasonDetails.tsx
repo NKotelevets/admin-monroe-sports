@@ -114,12 +114,12 @@ export const SeasonDetails = () => {
                 <Typography.Text
                   style={{
                     color: 'rgba(62, 52, 202, 1)',
-                    textDecoration: 'underline',
+                    textDecoration: data.league?.name ? 'underline' : 'none',
                     cursor: 'pointer',
                   }}
                   onClick={() => navigate(`${PATH_TO_LEAGUE_TOURNAMENT_PAGE}/${data.league.id}`)}
                 >
-                  {data.league.name}
+                  {data.league?.name || '-'}
                 </Typography.Text>
               </Flex>
 
@@ -140,26 +140,26 @@ export const SeasonDetails = () => {
               <Flex className="field-wrapper">
                 <Typography.Text className="view-text">Division/Pool:</Typography.Text>
 
-                <Flex>
+                <Flex vertical>
                   {data.divisions.map((division) => (
-                    <Flex key={division.id} vertical>
+                    <Flex key={division.id} vertical style={{ width: '400px' }}>
                       <Typography.Text
                         style={{
                           color: 'rgba(62, 52, 202, 1)',
                           textDecoration: 'underline',
                           marginBottom: '4px',
-                          width: '136px',
                           marginRight: '12px',
+                          cursor: 'pointer',
                         }}
                       >
-                        {division.name}
+                        {division.name}:
                       </Typography.Text>
                       <Typography
                         style={{
                           color: '#1A1657',
                         }}
                       >
-                        Subdivision name
+                        {division.sub_division?.name ? division.sub_division?.name + '.' : '-'}
                       </Typography>
                     </Flex>
                   ))}
@@ -172,4 +172,3 @@ export const SeasonDetails = () => {
     </>
   )
 }
-

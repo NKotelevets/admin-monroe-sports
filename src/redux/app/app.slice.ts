@@ -84,6 +84,11 @@ export const appSlice = createSlice({
         state.notification.timestamp = new Date().getTime()
         state.notification.type = 'success'
       })
+      .addMatcher(seasonsApi.endpoints.deleteSeason.matchFulfilled, (state) => {
+        state.notification.message = 'season have been successfully removed.'
+        state.notification.timestamp = new Date().getTime()
+        state.notification.type = 'success'
+      })
       .addMatcher(seasonsApi.endpoints.deleteSeason.matchRejected, (state, action) => {
         state.notification.message = (action.payload?.data as { error: string }).error
         state.notification.timestamp = new Date().getTime()
