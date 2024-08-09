@@ -65,7 +65,7 @@ const LeagueDetailsColumn: FC<ILeagueDetailsColumnProps> = ({
   <Flex flex="1 1 50%" vertical style={isNew ? newContainerStyle : currentContainerStyle}>
     <Typography.Text style={titleStyle}>{title}</Typography.Text>
 
-    <Flex style={itemContainerStyle}>
+    <Flex vertical style={itemContainerStyle}>
       <Typography.Text style={getItemTitleStyle(difference['name'])}>Name:</Typography.Text>
       <Typography.Text style={getItemValueStyle(difference['name'])}>{name}</Typography.Text>
     </Flex>

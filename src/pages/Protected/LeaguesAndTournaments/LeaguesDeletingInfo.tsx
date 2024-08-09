@@ -1,24 +1,23 @@
-import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined'
-import { Breadcrumb, Button, Flex, Table, Tooltip } from 'antd'
-import type { GetProp, InputRef, TableColumnType, TableProps } from 'antd'
-import Input from 'antd/es/input/Input'
-import type { FilterDropdownProps, SorterResult } from 'antd/es/table/interface'
+import { Breadcrumb, Flex, Table } from 'antd'
+import type { GetProp, TableProps } from 'antd'
+import type { SorterResult } from 'antd/es/table/interface'
 import Typography from 'antd/es/typography'
-import { useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+
+import { useLeaguesDeletingInfoTableProps } from '@/pages/Protected/LeaguesAndTournaments/hooks/useLeaguesDeletingInfoTableProps'
 
 import BaseLayout from '@/layouts/BaseLayout'
 
 import { useLeagueSlice } from '@/redux/hooks/useLeagueSlice'
 
 import { containerStyles, descriptionStyle, titleStyle } from '@/constants/deleting-importing-info.styles'
-import { PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE, PATH_TO_LEAGUE_TOURNAMENT_PAGE } from '@/constants/paths'
+import { PATH_TO_LEAGUES } from '@/constants/paths'
 
 import { ILeagueDeletionItemError } from '@/common/interfaces/league'
 
 const BREADCRUMB_ITEMS = [
   {
-    title: <a href={PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE}>League & Tourn</a>,
+    title: <a href={PATH_TO_LEAGUES}>League & Tourn</a>,
   },
   {
     title: (
@@ -33,10 +32,7 @@ const BREADCRUMB_ITEMS = [
   },
 ]
 
-type TColumns<T> = TableProps<T>['columns']
 type TTablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>
-
-type TDataIndex = keyof ILeagueDeletionItemError
 
 interface ITableParams {
   pagination?: TTablePaginationConfig
@@ -56,147 +52,7 @@ const LeaguesDeletingInfo = () => {
       showSizeChanger: true,
     },
   })
-  const searchInput = useRef<InputRef>(null)
-  const navigate = useNavigate()
-
-  const handleReset = (clearFilters: () => void) => clearFilters()
-
-  const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
-
-  const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<ILeagueDeletionItemError> => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-        <Input
-          ref={searchInput}
-          placeholder="Search name"
-          value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(confirm)}
-          style={{ marginBottom: 8, display: 'block' }}
-        />
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Button
-            type="primary"
-            onClick={() => handleSearch(confirm)}
-            style={{
-              marginRight: '8px',
-              flex: '1 1 auto',
-            }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => clearFilters && handleReset(clearFilters)}
-            style={{
-              flex: '1 1 auto',
-              color: selectedKeys.length ? 'rgba(188, 38, 27, 1)' : 'rgba(189, 188, 194, 1)',
-            }}
-          >
-            Reset
-          </Button>
-        </div>
-      </div>
-    ),
-    filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1A1657' : '#BDBCC2' }} />,
-    onFilter: (value, record) =>
-      record[dataIndex]
-        .toString()
-        .toLowerCase()
-        .includes((value as string).toLowerCase()),
-    onFilterDropdownOpenChange: (visible) => {
-      if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100)
-      }
-    },
-  })
-
-  const columns: TColumns<ILeagueDeletionItemError> = [
-    {
-      title: 'League/Tourn name',
-      dataIndex: 'name',
-      filterSearch: true,
-      filterMode: 'tree',
-      onFilter: (value, record) => record.name.includes(value as string),
-      fixed: 'left',
-      sorter: (a, b) => a.name.localeCompare(b.name),
-      sortOrder: tableParams.sortOrder,
-      width: '240px',
-      ...getColumnSearchProps('name'),
-      render: (value, record) => (
-        <>
-          {value?.length > 25 ? (
-            <Tooltip
-              title={value}
-              placement="top"
-              color="rgba(62, 62, 72, 0.75)"
-              style={{
-                width: '250px',
-              }}
-            >
-              <Typography.Text
-                style={{
-                  color: '#3E34CA',
-                  cursor: 'pointer',
-                }}
-                onClick={() => navigate(PATH_TO_LEAGUE_TOURNAMENT_PAGE + '/' + record.id)}
-              >
-                {value.substring(0, 23).trim() + '...'}
-              </Typography.Text>
-            </Tooltip>
-          ) : (
-            <Typography.Text
-              style={{
-                color: '#3E34CA',
-                cursor: 'pointer',
-              }}
-              onClick={() => navigate(PATH_TO_LEAGUE_TOURNAMENT_PAGE + '/' + record.id)}
-            >
-              {value}
-            </Typography.Text>
-          )}
-        </>
-      ),
-    },
-    {
-      title: 'Error info',
-      dataIndex: 'error',
-      render: (value) => (
-        <>
-          {value?.length > 80 ? (
-            <Tooltip
-              title={value}
-              placement="top"
-              color="rgba(62, 62, 72, 0.75)"
-              style={{
-                width: '250px',
-              }}
-            >
-              <Typography.Text
-                style={{
-                  color: 'rgba(26, 22, 87, 0.85)',
-                }}
-              >
-                {value.substring(0, 77).trim() + '...'}
-              </Typography.Text>
-            </Tooltip>
-          ) : (
-            <Typography.Text
-              style={{
-                color: 'rgba(26, 22, 87, 0.85)',
-              }}
-            >
-              {value}
-            </Typography.Text>
-          )}
-        </>
-      ),
-    },
-  ]
+  const { columns } = useLeaguesDeletingInfoTableProps(tableParams)
 
   const handleTableChange: TableProps['onChange'] = (pagination, filters, sorter) => {
     setTableParams({
