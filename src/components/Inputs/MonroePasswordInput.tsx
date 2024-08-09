@@ -1,7 +1,7 @@
-import { Flex, Input, Typography } from 'antd'
+import { Flex } from 'antd'
 import { ChangeEventHandler, FC } from 'react'
 
-import './monroe-input.style.css'
+import { InputLabel, StyledPasswordInput } from '@/components/Inputs/InputElements'
 
 interface IMonroePasswordInputProps {
   label: string
@@ -9,20 +9,17 @@ interface IMonroePasswordInputProps {
   value: string
   onChange: ChangeEventHandler<HTMLInputElement>
   name: string
-  labelClasses?: string
 }
 
-const MonroePasswordInput: FC<IMonroePasswordInputProps> = ({ label, labelClasses, ...rest }) => (
+const MonroePasswordInput: FC<IMonroePasswordInputProps> = ({ label, ...rest }) => (
   <>
     {label && (
       <Flex vertical={false} justify="space-between" align="center">
-        <Typography.Title className={`input-label ${labelClasses}`} level={4}>
-          {label}
-        </Typography.Title>
+        <InputLabel>{label}</InputLabel>
       </Flex>
     )}
 
-    <Input.Password className="input" {...rest} />
+    <StyledPasswordInput {...rest} />
   </>
 )
 

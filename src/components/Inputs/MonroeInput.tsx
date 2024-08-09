@@ -1,7 +1,7 @@
-import { Flex, Input, Typography } from 'antd'
+import { Flex } from 'antd'
 import { CSSProperties, ChangeEventHandler, FC } from 'react'
 
-import './monroe-input.style.css'
+import { InputError, InputLabel, StyledInput } from '@/components/Inputs/InputElements'
 
 interface IMonroeInputProps {
   label?: string
@@ -10,23 +10,19 @@ interface IMonroeInputProps {
   onChange: ChangeEventHandler<HTMLInputElement>
   name: string
   error?: string
-  inputClasses?: string
-  labelClasses?: string
   style?: CSSProperties
 }
 
-const MonroeInput: FC<IMonroeInputProps> = ({ label, error, inputClasses, labelClasses, ...rest }) => (
+const MonroeInput: FC<IMonroeInputProps> = ({ label, error, ...rest }) => (
   <>
     {label && (
       <Flex vertical={false} justify="space-between" align="center">
-        <Typography.Title className={`input-label ${labelClasses}`} level={4}>
-          {label}
-        </Typography.Title>
-        {error && <Typography.Text className="input-error">{error}</Typography.Text>}
+        <InputLabel>{label}</InputLabel>
+        {error && <InputError>{error}</InputError>}
       </Flex>
     )}
 
-    <Input className={`input ${inputClasses}`} {...rest} />
+    <StyledInput {...rest} />
   </>
 )
 
