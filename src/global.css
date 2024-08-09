@@ -10,6 +10,10 @@
   position: relative
 }
 
+.ant-layout-content {
+  overflow: auto !important;
+}
+
 svg {
   display: block;
 }
@@ -120,7 +124,6 @@ svg {
 
 /* Table styles - end */
 
-
 /* Date picker styles - start */
 .ant-picker {
   padding: 5px 12px;
@@ -131,7 +134,7 @@ svg {
 }
 
 .ant-picker-outlined:hover {
-  border-color: rgba(62, 52, 202, 1) !important;
+  border-color: rgba(136, 135, 145, 1) !important;
   background-color: #FFFFFF;
 }
 
@@ -139,7 +142,6 @@ svg {
   font-weight: 400 !important;
   color: rgba(26, 22, 87, 0.85) !important;
 }
-
 
 .ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before {
   content: "";
@@ -158,19 +160,170 @@ svg {
   color: rgba(26, 22, 87, 0.85) !important
 }
 
-
 .ant-picker-now-btn {
   color: rgba(62, 52, 202, 1) !important;
 }
 
-
 .ant-picker-dropdown .ant-picker-header-view>button:hover {
   color: rgba(62, 52, 202, 1) !important;
 }
-
 
 .ant-picker .ant-picker-input {
   color: rgba(26, 22, 87, 0.85) !important;
 }
 
 /* Date picker styles - end  */
+
+/* Collapse styles - start */
+.ant-collapse-item {
+  border-bottom: 0 !important;
+}
+
+.ant-collapse .ant-collapse-content {
+  border-top: 0 !important;
+}
+
+.ant-collapse .ant-collapse-content>.ant-collapse-content-box {
+  padding: 16px;
+  background-color: white;
+  border: 1px solid #D8D7DB;
+  border-radius: 3px;
+}
+
+.ant-collapse.ant-collapse-icon-position-end>.ant-collapse-item>.ant-collapse-header .ant-collapse-expand-icon {
+  transform: translateY(-50%) rotate(0deg);
+  height: 10px;
+  position: absolute;
+  top: 50%;
+  right: 0;
+}
+
+.ant-collapse-item-active>.ant-collapse-header .ant-collapse-arrow {
+  transform: rotate(180deg);
+}
+
+.ant-collapse .ant-collapse-content>.ant-collapse-content-box {
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+}
+
+/* Collapse styles end */
+
+.ant-divider {
+  margin: 12px 0 !important;
+}
+
+.subdivision-collapse .ant-collapse-header {
+  padding: 0 !important;
+}
+
+/* Radio Group styles start */
+.ant-radio-group .ant-radio-wrapper .ant-radio-checked .ant-radio-inner::after {
+  background: #3E34CA;
+  width: 16px;
+}
+
+.ant-radio-wrapper .ant-radio-checked .ant-radio-inner {
+  border-color: #3E34CA !important;
+  background: white !important;
+}
+
+.ant-radio-wrapper:hover .ant-radio-inner {
+  border-color: rgba(136, 135, 145, 1) !important;
+}
+
+/* Radio Group styles end */
+
+
+/* Select styles start */
+.ant-select-selector:hover {
+  border-color: rgba(136, 135, 145, 1) !important;
+}
+
+.ant-select-selector {
+  padding: 1px 8px !important;
+}
+
+.ant-select-selector::-webkit-scrollbar {
+  width: 2px;
+}
+
+.ant-select-selection-item {
+  justify-content: flex-start !important;
+}
+
+.ant-select-selection-item {
+  padding-inline-end: 0px;
+  display: flex;
+  justify-content: center;
+}
+
+.ant-select-selector::-webkit-scrollbar-track {
+  background: #f1f1f1 !important;
+}
+
+.ant-select-selector::-webkit-scrollbar-thumb {
+  background-color: #ccc !important;
+  border-radius: 5px !important;
+}
+
+.ant-select-dropdown {
+  padding: 0
+}
+
+.ant-select-dropdown .ant-select-item-option-selected {
+  color: rgba(62, 52, 202, 1) !important;
+  background-color: rgba(244, 244, 245, 1) !important;
+  font-weight: 500 !important;
+}
+
+.and-select-dropdown .ant-select-item-option-active {
+  background-color: #3E34CA !important;
+}
+
+
+.ant-select-dropdown .ant-select-item-option-selected .ant-select-item-option-state {
+  display: none
+}
+
+.ant-select-outlined.ant-select-multiple .ant-select-selection-item .ant-select-selection-item-content .ant-checkbox {
+  display: none
+}
+
+.ant-select-outlined.ant-select-multiple .ant-select-selection-item .ant-select-selection-item-content .ant-checkbox+span {
+  padding: 0
+}
+
+/* Select styles end */
+
+/* Checkout styles start */
+
+.ant-checkbox-checked .ant-checkbox-inner {
+  background: #3E34CA !important;
+  border-color: #3E34CA !important;
+}
+
+.ant-checkbox-wrapper:hover .ant-checkbox-inner {
+  border-color: rgba(136, 135, 145, 1) !important;
+}
+
+.ant-checkbox-indeterminate .ant-checkbox-inner:after {
+  background-color: #3E34CA !important;
+}
+
+/* Checkout styles end */
+
+.ant-modal-modal .ant-modal-title {
+  color: #1A1657D9 !important
+}
+
+.ant-tooltip {
+  max-width: 450px;
+}
+
+.highlighted-row,
+.highlighted-row td {
+  background-color: rgba(244, 244, 245, 1) !important;
+}
