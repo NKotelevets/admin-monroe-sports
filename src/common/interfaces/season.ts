@@ -10,8 +10,16 @@ interface ISeasonCommonFields {
 }
 
 export interface IBESeason extends ISeasonCommonFields {
-  updated_at: string
-  created_at: string
+  updated_at?: string
+  created_at?: string
+  start_date: string
+  expected_end_date: string
+}
+
+export interface ICreateBESeason {
+  name: string
+  league_id: string
+  divisions: IBEDivision[]
   start_date: string
   expected_end_date: string
 }
@@ -24,14 +32,6 @@ export interface IFECreateSeason {
   divisions: IFEDivision[]
 }
 
-export interface ICreateBESeason {
-  name: string
-  start_date: string
-  expected_end_date: string
-  league: string
-  divisions: string[]
-}
-
 export interface IFESeason extends ISeasonCommonFields {
   updatedAt: string
   createdAt: string
@@ -42,7 +42,7 @@ export interface IFESeason extends ISeasonCommonFields {
 export interface IGetSeasonsRequestParams {
   limit: number
   offset: number
-  league__name?: string | undefined
+  league_name?: string | undefined
   name?: string
   ordering?: string | null
   search?: string
@@ -64,7 +64,7 @@ interface IImportSeasonError {
   'season Name': string
 }
 
-export interface IImportSeasonDuplicate {
+interface IImportSeasonDuplicate {
   index: number
   existing: IBESeason
   new: INewSeasonCSVFormat
@@ -146,4 +146,37 @@ export interface ISeasonReviewUpdateData {
   playoffFormat: string
   standingsFormat: string
   tiebreakersFormat: string
+}
+
+interface ICreateSeasonDivision {
+  name: string
+  description: string | null
+  sub_division: {
+    name: string
+    description: string | null
+    playoff_format: number
+    standings_format: number
+    tiebreakers_format: number
+  }[]
+}
+
+export interface IBECreateSeasonBody {
+  name: string
+  start_date: string
+  expected_end_date: string
+  league_id: string
+  divisions: ICreateSeasonDivision[]
+}
+
+export interface ICreateSeasonError {
+  code: string
+  details: {
+    name?: string
+    divisions?: {
+      name?: string
+      sub_division?: {
+        name: string
+      }[]
+    }[]
+  }
 }

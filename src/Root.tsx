@@ -20,19 +20,19 @@ import Notification from '@/components/Notification'
 import AuthProvider from '@/utils/AuthProvider'
 
 import {
-  PATH_TO_CREATE_LEAGUE_TOURNAMENT,
-  PATH_TO_EDIT_LEAGUE_TOURNAMENT,
-  PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE,
-  PATH_TO_LEAGUE_TOURNAMENT_DELETING_INFO,
-  PATH_TO_LEAGUE_TOURNAMENT_IMPORT_INFO,
-  PATH_TO_LEAGUE_TOURNAMENT_PAGE,
-  PATH_TO_SEASONS_CREATE,
+  PATH_TO_CREATE_LEAGUE,
+  PATH_TO_CREATE_SEASON,
+  PATH_TO_EDIT_LEAGUE,
+  PATH_TO_EDIT_SEASON,
+  PATH_TO_LEAGUES,
+  PATH_TO_LEAGUES_DELETING_INFO,
+  PATH_TO_LEAGUES_IMPORT_INFO,
+  PATH_TO_LEAGUE_PAGE,
+  PATH_TO_SEASONS,
   PATH_TO_SEASONS_DELETING_INFO,
-  PATH_TO_SEASONS_DETAILS,
-  PATH_TO_SEASONS_EDIT_DETAILS,
   PATH_TO_SEASONS_IMPORT_INFO,
-  PATH_TO_SEASONS_PAGE,
-  PATH_TO_SIGN_IN_PAGE,
+  PATH_TO_SEASON_DETAILS,
+  PATH_TO_SIGN_IN,
 } from '@/constants/paths'
 
 const Root = () => (
@@ -41,23 +41,23 @@ const Root = () => (
     <InfoAlert />
 
     <Routes>
-      <Route path={PATH_TO_SIGN_IN_PAGE} element={<SignIn />} />
+      <Route path={PATH_TO_SIGN_IN} element={<SignIn />} />
 
       {/* LEAGUES & TOURNAMENTS PAGES */}
-      <Route path={PATH_TO_CREATE_LEAGUE_TOURNAMENT} element={<CreateLeague />} />
-      <Route path={`${PATH_TO_EDIT_LEAGUE_TOURNAMENT}/:id`} element={<EditLeague />} />
-      <Route path={PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE} element={<LeaguesAndTournaments />} />
-      <Route path={`${PATH_TO_LEAGUE_TOURNAMENT_PAGE}/:id`} element={<LeagueDetails />} />
-      <Route path={PATH_TO_LEAGUE_TOURNAMENT_IMPORT_INFO} element={<LeaguesImportInfo />} />
-      <Route path={PATH_TO_LEAGUE_TOURNAMENT_DELETING_INFO} element={<LeaguesDeletingInfo />} />
+      <Route path={PATH_TO_CREATE_LEAGUE} element={<CreateLeague />} />
+      <Route path={`${PATH_TO_EDIT_LEAGUE}/:id`} element={<EditLeague />} />
+      <Route path={PATH_TO_LEAGUES} element={<LeaguesAndTournaments />} />
+      <Route path={`${PATH_TO_LEAGUE_PAGE}/:id`} element={<LeagueDetails />} />
+      <Route path={PATH_TO_LEAGUES_IMPORT_INFO} element={<LeaguesImportInfo />} />
+      <Route path={PATH_TO_LEAGUES_DELETING_INFO} element={<LeaguesDeletingInfo />} />
 
       {/* SEASONS PAGES */}
-      <Route path={PATH_TO_SEASONS_PAGE} element={<Seasons />} />
+      <Route path={PATH_TO_SEASONS} element={<Seasons />} />
       <Route path={PATH_TO_SEASONS_DELETING_INFO} element={<SeasonsDeletingInfo />} />
       <Route path={PATH_TO_SEASONS_IMPORT_INFO} element={<SeasonsImportInfo />} />
-      <Route path={PATH_TO_SEASONS_CREATE} element={<CreateSeason />} />
-      <Route path={`${PATH_TO_SEASONS_DETAILS}/:id`} element={<SeasonDetails />} />
-      <Route path={`${PATH_TO_SEASONS_EDIT_DETAILS}/:id`} element={<EditSeason />} />
+      <Route path={PATH_TO_CREATE_SEASON} element={<CreateSeason />} />
+      <Route path={`${PATH_TO_SEASON_DETAILS}/:id`} element={<SeasonDetails />} />
+      <Route path={`${PATH_TO_EDIT_SEASON}/:id`} element={<EditSeason />} />
     </Routes>
   </AuthProvider>
 )
