@@ -5,7 +5,7 @@ import { useUserSlice } from '@/redux/hooks/useUserSlice'
 
 import { useCookies } from '@/hooks/useCookies'
 
-import { PATH_TO_SIGN_IN_PAGE } from '@/constants/paths'
+import { PATH_TO_SIGN_IN } from '@/constants/paths'
 
 export const useLogout = () => {
   const { setRedirectToLogin, removeTokens } = useAuthSlice()
@@ -19,10 +19,9 @@ export const useLogout = () => {
     deleteCookie('accessToken')
     deleteCookie('refreshToken')
     setRedirectToLogin(false)
-    navigate(PATH_TO_SIGN_IN_PAGE + `?prev=${location.pathname}`)
+    navigate(PATH_TO_SIGN_IN + `?prev=${location.pathname}`)
     clearUserData()
   }
 
   return { onLogOut }
 }
-

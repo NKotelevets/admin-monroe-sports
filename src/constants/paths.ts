@@ -1,43 +1,43 @@
-export const PATH_TO_SIGN_IN_PAGE = '/sign-in'
+export const PATH_TO_SIGN_IN = '/sign-in'
 
 export const PATH_TO_HOME = '/'
 
 // LEAGUES & TOURNAMENTS PAGES
-export const PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE = '/leagues-and-tournaments'
-export const PATH_TO_LEAGUE_TOURNAMENT_PAGE = '/league-tournament'
-export const PATH_TO_CREATE_LEAGUE_TOURNAMENT = '/leagues-and-tournaments/create'
-export const PATH_TO_EDIT_LEAGUE_TOURNAMENT = '/leagues-and-tournaments/edit'
-export const PATH_TO_LEAGUE_TOURNAMENT_IMPORT_INFO = '/leagues-and-tournaments/import-info'
-export const PATH_TO_LEAGUE_TOURNAMENT_DELETING_INFO = '/leagues-and-tournaments/deleting-info'
+export const PATH_TO_LEAGUES = '/leagues-and-tournaments'
+export const PATH_TO_LEAGUE_PAGE = '/league-tournament'
+export const PATH_TO_CREATE_LEAGUE = '/leagues-and-tournaments/create'
+export const PATH_TO_EDIT_LEAGUE = '/leagues-and-tournaments/edit'
+export const PATH_TO_LEAGUES_IMPORT_INFO = '/leagues-and-tournaments/import-info'
+export const PATH_TO_LEAGUES_DELETING_INFO = '/leagues-and-tournaments/deleting-info'
 
 // SEASONS PAGES
-export const PATH_TO_SEASONS_PAGE = '/seasons'
+export const PATH_TO_SEASONS = '/seasons'
+export const PATH_TO_SEASON_DETAILS = '/seasons'
+export const PATH_TO_CREATE_SEASON = '/seasons/create'
+export const PATH_TO_EDIT_SEASON = '/seasons/edit'
 export const PATH_TO_SEASONS_DELETING_INFO = '/seasons/deleting-info'
 export const PATH_TO_SEASONS_IMPORT_INFO = '/seasons/import-info'
-export const PATH_TO_SEASONS_CREATE = '/seasons/create'
-export const PATH_TO_SEASONS_DETAILS = '/seasons'
-export const PATH_TO_SEASONS_EDIT_DETAILS = '/seasons/edit'
 
-export const PATH_TO_USERS_PAGE = '/users'
-export const PATH_TO_MASTER_TEAMS_PAGE = '/master-teams'
-export const PATH_TO_LEAGUE_TEAMS_PAGE = '/league-teams'
-export const PATH_TO_PLAYOFF_FORMAT_PAGE = '/playoff-format'
-export const PATH_TO_STANDINGS_FORMAT_PAGE = '/standings-format'
-export const PATH_TO_TIEBREAKERS_PAGE = '/tiebreakers'
-export const PATH_TO_SCHEDULE_PAGE = '/schedule'
-export const PATH_TO_GROUPS_PAGE = '/groups'
+export const PATH_TO_USERS = '/users'
+export const PATH_TO_MASTER_TEAMS = '/master-teams'
+export const PATH_TO_LEAGUE_TEAMS = '/league-teams'
+export const PATH_TO_PLAYOFF_FORMAT = '/playoff-format'
+export const PATH_TO_STANDINGS_FORMAT = '/standings-format'
+export const PATH_TO_TIEBREAKERS = '/tiebreakers'
+export const PATH_TO_SCHEDULE = '/schedule'
+export const PATH_TO_GROUPS = '/groups'
 
 export const PROTECTED_PAGES = [
-  PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE,
-  PATH_TO_USERS_PAGE,
-  PATH_TO_MASTER_TEAMS_PAGE,
-  PATH_TO_LEAGUE_TEAMS_PAGE,
-  PATH_TO_SEASONS_PAGE,
-  PATH_TO_PLAYOFF_FORMAT_PAGE,
-  PATH_TO_STANDINGS_FORMAT_PAGE,
-  PATH_TO_TIEBREAKERS_PAGE,
-  PATH_TO_SCHEDULE_PAGE,
-  PATH_TO_GROUPS_PAGE,
+  PATH_TO_LEAGUES,
+  PATH_TO_USERS,
+  PATH_TO_MASTER_TEAMS,
+  PATH_TO_LEAGUE_TEAMS,
+  PATH_TO_SEASONS,
+  PATH_TO_PLAYOFF_FORMAT,
+  PATH_TO_STANDINGS_FORMAT,
+  PATH_TO_TIEBREAKERS,
+  PATH_TO_SCHEDULE,
+  PATH_TO_GROUPS,
 ]
 
-export const AUTH_PAGES = [PATH_TO_SIGN_IN_PAGE]
+export const AUTH_PAGES = [PATH_TO_SIGN_IN]
