@@ -20,10 +20,10 @@ import BaseLayout from '@/layouts/BaseLayout'
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
 
 import { containerStyles, descriptionStyle, titleStyle } from '@/constants/deleting-importing-info.styles'
-import { PATH_TO_LEAGUE_TOURNAMENT_PAGE, PATH_TO_SEASONS_PAGE } from '@/constants/paths'
+import { PATH_TO_LEAGUE_PAGE, PATH_TO_SEASONS } from '@/constants/paths'
 
 import { IImportSeasonTableRecord } from '@/common/interfaces/season'
-import { TErrorDuplicate } from '@/common/types'
+import { TErrorDuplicate, TSortOption } from '@/common/types'
 
 import SyncIcon from '@/assets/icons/sync.svg'
 
@@ -41,7 +41,7 @@ type TDataIndex = keyof IImportSeasonTableRecord
 
 const BREADCRUMB_ITEMS = [
   {
-    title: <a href={PATH_TO_SEASONS_PAGE}>Seasons</a>,
+    title: <a href={PATH_TO_SEASONS}>Seasons</a>,
   },
   {
     title: (
@@ -56,9 +56,15 @@ const BREADCRUMB_ITEMS = [
   },
 ]
 
-const duplicateTagStyles: CSSProperties = { border: '1px solid #FFD770', backgroundColor: '#FFF9EB' }
+const duplicateTagStyles: CSSProperties = {
+  border: '1px solid #FFD770',
+  backgroundColor: '#FFF9EB',
+}
 
-const errorTagStyles: CSSProperties = { border: '1px solid #FF594D', backgroundColor: '#FFF1F0' }
+const errorTagStyles: CSSProperties = {
+  border: '1px solid #FF594D',
+  backgroundColor: '#FFF1F0',
+}
 
 const TagType: FC<{ text: TErrorDuplicate }> = ({ text }) => {
   const style = text === 'Duplicate' ? duplicateTagStyles : errorTagStyles
@@ -97,8 +103,8 @@ const SeasonsImportInfo = () => {
     },
   })
   const searchInput = useRef<InputRef>(null)
-  const [sortSeasonNameOrder, setSortSeasonNameOrder] = useState<'descend' | 'ascend' | null>(null)
-  const [sortLeagueNameOrder, setSortLeagueNameOrder] = useState<'descend' | 'ascend' | null>(null)
+  const [sortSeasonNameOrder, setSortSeasonNameOrder] = useState<TSortOption>(null)
+  const [sortLeagueNameOrder, setSortLeagueNameOrder] = useState<TSortOption>(null)
   const navigate = useNavigate()
 
   const handleUpdate = (idx: number) => {
@@ -199,9 +205,8 @@ const SeasonsImportInfo = () => {
       title: 'Linked League/Tourn',
       dataIndex: 'leagueName',
       width: '20vw',
-
       sortOrder: sortLeagueNameOrder,
-      sorter: (s1, s2) => s1.name.localeCompare(s2.name),
+      sorter: (s1, s2) => s1.leagueName.localeCompare(s2.leagueName),
       ...getColumnSearchProps('leagueName'),
       render: (value, record) => (
         <Typography.Text
@@ -209,14 +214,14 @@ const SeasonsImportInfo = () => {
             color: '#3E34CA',
             cursor: 'pointer',
           }}
-          onClick={() => navigate(PATH_TO_LEAGUE_TOURNAMENT_PAGE + '/' + record.leagueId)}
+          onClick={() => navigate(PATH_TO_LEAGUE_PAGE + '/' + record.leagueId)}
         >
           {value}
         </Typography.Text>
       ),
     },
     {
-      title: 'Type',
+      title: 'Status',
       dataIndex: 'type',
       filters: [
         { text: 'Duplicate', value: 'Duplicate' },
@@ -224,7 +229,7 @@ const SeasonsImportInfo = () => {
       ],
       width: '112px',
       onFilter: (value, record) => value === record.type,
-      render: (value) => <TagType text={value} />,
+      render: (_, record) => <TagType text={record.type} />,
       filterDropdown: MonroeFilter,
       filterIcon: (filtered) => (
         <FilterFilled
@@ -235,7 +240,7 @@ const SeasonsImportInfo = () => {
       ),
     },
     {
-      title: 'Error message',
+      title: 'Error info',
       dataIndex: 'message',
       width: '400px',
       render: (value) => (
