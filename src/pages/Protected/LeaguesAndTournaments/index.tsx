@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 
 import LeagueAndTournamentsTable from '@/pages/Protected/LeaguesAndTournaments/components/LeagueAndTournamentsTable'
 
+import { ImportButton } from '@/components/Elements'
 import ImportModal from '@/components/ImportTooltip'
 import Loader from '@/components/Loader'
 import MonroeButton from '@/components/MonroeButton'
@@ -18,11 +19,7 @@ import { useLeagueSlice } from '@/redux/hooks/useLeagueSlice'
 import { useImportLeaguesCSVMutation } from '@/redux/leagues/leagues.api'
 import { useBulkDeleteLeaguesMutation, useDeleteAllLeaguesMutation } from '@/redux/leagues/leagues.api'
 
-import {
-  PATH_TO_CREATE_LEAGUE_TOURNAMENT,
-  PATH_TO_LEAGUE_TOURNAMENT_DELETING_INFO,
-  PATH_TO_LEAGUE_TOURNAMENT_IMPORT_INFO,
-} from '@/constants/paths'
+import { PATH_TO_CREATE_LEAGUE, PATH_TO_LEAGUES_DELETING_INFO, PATH_TO_LEAGUES_IMPORT_INFO } from '@/constants/paths'
 
 interface IImportModalOptions {
   filename: string
@@ -53,68 +50,37 @@ const LeaguesAndTournaments = () => {
     errorMessage: '',
   })
 
-  const goToCreateLeagueTournamentPage = () => navigate(PATH_TO_CREATE_LEAGUE_TOURNAMENT)
+  const goToCreateLeagueTournamentPage = () => navigate(PATH_TO_CREATE_LEAGUE)
 
   const handleCloseModal = useCallback(() => setIsOpenModal(false), [])
 
   const handleDelete = async () => {
     handleCloseModal()
+    const deleteHandler = isDeleteAllRecords ? deleteAll() : bulkDelete({ ids: selectedRecordsIds })
+    await deleteHandler.unwrap().then((response) => {
+      setSelectedRecordsIds([])
+      setShowAdditionalHeader(false)
+      setIsDeleteAllRecords(false)
+      const message = `${response.success}/${response.total} ${response.total === 1 ? 'league/tournament' : 'leagues/tournaments'}  have been successfully removed.`
 
-    if (isDeleteAllRecords) {
-      await deleteAll()
-        .unwrap()
-        .then((response) => {
-          setSelectedRecordsIds([])
-          setShowAdditionalHeader(false)
-          setIsDeleteAllRecords(false)
-          const message = `${response.success}/${response.total} ${response.total === 1 ? 'league/tournament' : 'leagues/tournaments'}  have been successfully removed.`
-
-          if (response.status !== 'green') {
-            setInfoNotification({
-              actionLabel: 'More info..',
-              message,
-              redirectedPageUrl: PATH_TO_LEAGUE_TOURNAMENT_DELETING_INFO,
-            })
-
-            return
-          }
-
-          if (response.status === 'green') {
-            setAppNotification({
-              message,
-              timestamp: new Date().getTime(),
-              type: 'success',
-            })
-          }
+      if (response.status !== 'green') {
+        setInfoNotification({
+          actionLabel: 'More info..',
+          message,
+          redirectedPageUrl: PATH_TO_LEAGUES_DELETING_INFO,
         })
-    } else {
-      await bulkDelete({ ids: selectedRecordsIds })
-        .unwrap()
-        .then((response) => {
-          setSelectedRecordsIds([])
-          setShowAdditionalHeader(false)
-          setIsDeleteAllRecords(false)
-          const message = `${response.success}/${response.total} ${response.total === 1 ? 'league/tournament' : 'leagues/tournaments'}  have been successfully removed.`
 
-          if (response.status !== 'green') {
-            setInfoNotification({
-              actionLabel: 'More info..',
-              message,
-              redirectedPageUrl: PATH_TO_LEAGUE_TOURNAMENT_DELETING_INFO,
-            })
+        return
+      }
 
-            return
-          }
-
-          if (response.status === 'green') {
-            setAppNotification({
-              message,
-              timestamp: new Date().getTime(),
-              type: 'success',
-            })
-          }
+      if (response.status === 'green') {
+        setAppNotification({
+          message,
+          timestamp: new Date().getTime(),
+          type: 'success',
         })
-    }
+      }
+    })
   }
 
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -134,32 +100,12 @@ const LeaguesAndTournaments = () => {
       await importLeagues(body)
         .unwrap()
         .then((response) => {
-          if (response.status === 'green') {
-            setImportModalOptions({
-              filename: file.name,
-              isOpen: true,
-              status: 'green',
-              errorMessage: '',
-            })
-          }
-
-          if (response.status === 'red') {
-            setImportModalOptions({
-              filename: file.name,
-              isOpen: true,
-              status: 'red',
-              errorMessage: '',
-            })
-          }
-
-          if (response.status === 'yellow') {
-            setImportModalOptions({
-              filename: file.name,
-              isOpen: true,
-              status: 'yellow',
-              errorMessage: '',
-            })
-          }
+          setImportModalOptions({
+            filename: file.name,
+            isOpen: true,
+            status: response.status,
+            errorMessage: '',
+          })
         })
         .catch((error) => {
           setImportModalOptions({
@@ -197,7 +143,7 @@ const LeaguesAndTournaments = () => {
           showInList={() => setShowCreatedRecords(true)}
           redirectToImportInfo={() => {
             setImportModalOptions((prev) => ({ ...prev, isOpen: false }))
-            navigate(PATH_TO_LEAGUE_TOURNAMENT_IMPORT_INFO)
+            navigate(PATH_TO_LEAGUES_IMPORT_INFO)
           }}
           onClose={() => setImportModalOptions((prev) => ({ ...prev, isOpen: false }))}
         />
@@ -261,8 +207,7 @@ const LeaguesAndTournaments = () => {
                 />
               )}
 
-              <Button
-                className="import-button"
+              <ImportButton
                 icon={<DownloadOutlined />}
                 iconPosition="start"
                 type="default"
@@ -271,7 +216,7 @@ const LeaguesAndTournaments = () => {
                 }}
               >
                 Import CSV
-              </Button>
+              </ImportButton>
 
               <input
                 ref={(ref) => {

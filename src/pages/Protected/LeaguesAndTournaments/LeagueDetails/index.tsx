@@ -7,25 +7,23 @@ import { ReactSVG } from 'react-svg'
 
 import TagType from '@/pages/Protected/LeaguesAndTournaments/components/TagType'
 
+import { MonroeBlueText, MonroeSecondaryButton, PageContainer, ProtectedPageTitle } from '@/components/Elements'
 import Loader from '@/components/Loader'
 import MonroeButton from '@/components/MonroeButton'
 import MonroeModal from '@/components/MonroeModal'
 
 import BaseLayout from '@/layouts/BaseLayout'
 
+import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
 import { useDeleteLeagueMutation, useGetLeagueQuery } from '@/redux/leagues/leagues.api'
 
-import {
-  PATH_TO_EDIT_LEAGUE_TOURNAMENT,
-  PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE,
-  PATH_TO_SEASONS_DETAILS,
-} from '@/constants/paths'
+import { PATH_TO_CREATE_SEASON, PATH_TO_EDIT_LEAGUE, PATH_TO_LEAGUES, PATH_TO_SEASON_DETAILS } from '@/constants/paths'
 
 import { IIdName } from '@/common/interfaces'
 
 import './league-details.styles.css'
 
-import TeamsIcon from '@/assets/icons/sidebar/t-shirt.svg'
+import WhiteTShirtIcon from '@/assets/icons/white-team.svg'
 
 const STANDING_FORMAT_WINNING_INFO = 'Wins (info only), Losses (info only), Winning %'
 const STANDING_FORMAT_POINTS_INFO =
@@ -50,36 +48,29 @@ const LeagueDetails = () => {
   const navigate = useNavigate()
   const [deleteLeague] = useDeleteLeagueMutation()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const { setSelectedLeague } = useSeasonSlice()
 
   const BREAD_CRUMB_ITEMS = [
     {
-      title: <a href={PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE}>League & Tourn</a>,
+      title: <a href={PATH_TO_LEAGUES}>League & Tourn</a>,
     },
     {
-      title: (
-        <Typography.Text
-          style={{
-            color: 'rgba(26, 22, 87, 0.85)',
-          }}
-        >
-          {data?.name}
-        </Typography.Text>
-      ),
+      title: <MonroeBlueText>{data?.name}</MonroeBlueText>,
     },
   ]
 
-  const goToEditPage = () => navigate(`${PATH_TO_EDIT_LEAGUE_TOURNAMENT}/${leagueId}`)
+  const goToEditPage = () => navigate(`${PATH_TO_EDIT_LEAGUE}/${leagueId}`)
 
   const handleDelete = () =>
     deleteLeague({ id: leagueId })
       .unwrap()
       .then(() => {
         setShowDeleteModal(false)
-        navigate(PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE)
+        navigate(PATH_TO_LEAGUES)
       })
 
   useEffect(() => {
-    if (!data && !isLoading && !isFetching) navigate(PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE)
+    if (!data && !isLoading && !isFetching) navigate(PATH_TO_LEAGUES)
   }, [isError, isLoading, data, isFetching])
 
   return (
@@ -92,24 +83,18 @@ const LeagueDetails = () => {
             onOk={handleDelete}
             title="Delete league/tournament?"
             type="warn"
-            content={
-              <>
-                <p>Are you sure you want to delete this league/tournament?</p>
-              </>
-            }
+            content={<p>Are you sure you want to delete this league/tournament?</p>}
           />
         )}
 
         {!data && (isLoading || isFetching) && <Loader />}
 
         {data && (
-          <Flex className="view-container" vertical>
+          <PageContainer>
             <Breadcrumb items={BREAD_CRUMB_ITEMS} />
 
             <Flex justify="space-between">
-              <Typography.Title level={1} className="title">
-                {data?.name}
-              </Typography.Title>
+              <ProtectedPageTitle>{data?.name}</ProtectedPageTitle>
 
               <Flex>
                 <MonroeButton
@@ -122,34 +107,40 @@ const LeagueDetails = () => {
                   className="view-delete-button"
                 />
 
-                <MonroeButton
-                  isDisabled={false}
-                  label="Edit"
+                <MonroeSecondaryButton
                   type="default"
                   icon={<EditOutlined />}
                   iconPosition="start"
                   onClick={goToEditPage}
-                  className="view-edit-button"
-                />
+                >
+                  Edit
+                </MonroeSecondaryButton>
 
-                <MonroeButton
-                  isDisabled={false}
-                  label="Create season"
+                <MonroeSecondaryButton
                   type="default"
                   icon={<PlusOutlined />}
                   iconPosition="start"
-                  onClick={() => {}}
-                  className="view-edit-button"
-                />
+                  onClick={() => {
+                    setSelectedLeague({
+                      id: data.id,
+                      name: data.name,
+                    })
+                    navigate(PATH_TO_CREATE_SEASON)
+                  }}
+                >
+                  Create season
+                </MonroeSecondaryButton>
 
                 <MonroeButton
                   isDisabled={false}
                   label="Connect team"
                   type="primary"
-                  icon={<ReactSVG src={TeamsIcon} />}
+                  icon={<ReactSVG src={WhiteTShirtIcon} />}
                   iconPosition="start"
                   onClick={() => {}}
-                  className="view-connect-team-button"
+                  style={{
+                    height: '32px',
+                  }}
                 />
               </Flex>
             </Flex>
@@ -216,7 +207,7 @@ const LeagueDetails = () => {
                         <Fragment key={season.id}>
                           <Typography.Text
                             className="view-season-text"
-                            onClick={() => navigate(`${PATH_TO_SEASONS_DETAILS}/${season.id}`)}
+                            onClick={() => navigate(`${PATH_TO_SEASON_DETAILS}/${season.id}`)}
                             style={{
                               cursor: 'pointer',
                             }}
@@ -227,7 +218,14 @@ const LeagueDetails = () => {
                           {idx === data.seasons.length - 1 ? (
                             ''
                           ) : (
-                            <Typography.Text className="view-season-divider">,</Typography.Text>
+                            <Typography
+                              style={{
+                                color: 'rgba(62, 52, 202, 1)',
+                                fontSize: '14px',
+                              }}
+                            >
+                              ,
+                            </Typography>
                           )}
                         </Fragment>
                       ))
@@ -235,7 +233,7 @@ const LeagueDetails = () => {
                 </div>
               </Flex>
             </Flex>
-          </Flex>
+          </PageContainer>
         )}
       </>
     </BaseLayout>

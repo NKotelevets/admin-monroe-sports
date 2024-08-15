@@ -170,6 +170,10 @@ export const Accordion = styled(Collapse)`
   width: 352px;
   background-color: transparent;
   margin-bottom: 24px;
+
+  @media (width > 1660px) {
+    width: 600px;
+  }
 `
 
 export const MonroeDivider = styled.div`

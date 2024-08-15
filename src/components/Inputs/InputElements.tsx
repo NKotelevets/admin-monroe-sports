@@ -84,12 +84,12 @@ export const StyledPasswordInput = styled(Input.Password)`
 `
 
 export const InputError = styled(Typography)`
-  font-size: 14px !important;
+  font-size: 12px !important;
   font-weight: 400 !important;
   color: #bc261b !important;
 
   @media (width > 1660px) {
-    font-size: 20px !important;
+    font-size: 16px !important;
   }
 `
 
