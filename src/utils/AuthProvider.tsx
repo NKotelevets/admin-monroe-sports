@@ -8,12 +8,7 @@ import { useLazyGetUserQuery } from '@/redux/user/user.api'
 import { useCookies } from '@/hooks/useCookies'
 import { useLogout } from '@/hooks/useLogout'
 
-import {
-  AUTH_PAGES,
-  PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE,
-  PATH_TO_SIGN_IN_PAGE,
-  PROTECTED_PAGES,
-} from '@/constants/paths'
+import { AUTH_PAGES, PATH_TO_LEAGUES, PATH_TO_SIGN_IN, PROTECTED_PAGES } from '@/constants/paths'
 
 const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const navigate = useNavigate()
@@ -50,15 +45,15 @@ const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
       getUserData()
     }
 
-    if (location.pathname === '/' && cookies.accessToken) navigate(PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE)
+    if (location.pathname === '/' && cookies.accessToken) navigate(PATH_TO_LEAGUES)
 
-    if (location.pathname === '/' && !cookies.accessToken) navigate(PATH_TO_SIGN_IN_PAGE)
+    if (location.pathname === '/' && !cookies.accessToken) navigate(PATH_TO_SIGN_IN)
 
     if (cookies.accessToken && AUTH_PAGES.includes(location.pathname)) {
       if (prevRoute) {
         navigate(prevRoute)
       } else {
-        navigate(PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE)
+        navigate(PATH_TO_LEAGUES)
       }
     }
 

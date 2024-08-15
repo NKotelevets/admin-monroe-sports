@@ -12,6 +12,8 @@ import {
 } from '@/common/interfaces/season'
 import { TErrorDuplicate } from '@/common/types'
 
+type TBracketMode = 'create' | 'edit'
+
 interface ISeasonsSliceState {
   seasons: IFESeason[]
   limit: number
@@ -23,6 +25,11 @@ interface ISeasonsSliceState {
   tableRecords: IImportSeasonTableRecord[]
   duplicates: ISeasonDuplicate[]
   orderBy: string | null
+  isCreateBracketPage: boolean
+  pathToSubdivisionDataAndIndexes: string
+  selectedLeague: { id: string; name: string } | null
+  bracketIdx: number
+  bracketMode: TBracketMode
 }
 
 const seasonsSliceState: ISeasonsSliceState = {
@@ -36,6 +43,11 @@ const seasonsSliceState: ISeasonsSliceState = {
   createdRecordsNames: [],
   duplicates: [],
   orderBy: null,
+  isCreateBracketPage: false,
+  pathToSubdivisionDataAndIndexes: '',
+  selectedLeague: null,
+  bracketIdx: 0,
+  bracketMode: 'create',
 }
 
 export const seasonsSlice = createSlice({
@@ -63,6 +75,21 @@ export const seasonsSlice = createSlice({
 
       state.duplicates = remainingDuplicates
       state.tableRecords = remainingTableRecords
+    },
+    setBracketMode: (state, action: PayloadAction<TBracketMode>) => {
+      state.bracketMode = action.payload
+    },
+    setIsCreateBracketPage: (state, action: PayloadAction<boolean>) => {
+      state.isCreateBracketPage = action.payload
+    },
+    setPathToSubdivisionDataAndIndexes: (state, action: PayloadAction<string>) => {
+      state.pathToSubdivisionDataAndIndexes = action.payload
+    },
+    setSelectedLeague: (state, action: PayloadAction<{ id: string; name: string } | null>) => {
+      state.selectedLeague = action.payload
+    },
+    setBracketIdx: (state, action: PayloadAction<number>) => {
+      state.bracketIdx = action.payload
     },
   },
   extraReducers: (builder) =>
@@ -115,4 +142,3 @@ export const seasonsSlice = createSlice({
         }
       }),
 })
-
