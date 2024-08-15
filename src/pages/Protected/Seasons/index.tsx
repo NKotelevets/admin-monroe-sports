@@ -1,6 +1,6 @@
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined'
+import DownloadOutlined from '@ant-design/icons/lib/icons/DownloadOutlined'
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
-import UploadOutlined from '@ant-design/icons/lib/icons/UploadOutlined'
 import Button from 'antd/es/button/button'
 import Flex from 'antd/es/flex'
 import Typography from 'antd/es/typography'
@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom'
 
 import SeasonsTable from '@/pages/Protected/Seasons/components/SeasonsTable'
 
+import { ImportButton } from '@/components/Elements'
 import ImportModal from '@/components/ImportTooltip'
 import Loader from '@/components/Loader'
 import MonroeButton from '@/components/MonroeButton'
@@ -25,7 +26,7 @@ import {
   useImportSeasonsCSVMutation,
 } from '@/redux/seasons/seasons.api'
 
-import { PATH_TO_SEASONS_CREATE, PATH_TO_SEASONS_DELETING_INFO, PATH_TO_SEASONS_IMPORT_INFO } from '@/constants/paths'
+import { PATH_TO_CREATE_SEASON, PATH_TO_SEASONS_DELETING_INFO, PATH_TO_SEASONS_IMPORT_INFO } from '@/constants/paths'
 
 const createNewSeasonStyles: CSSProperties = {
   borderRadius: '2px',
@@ -75,6 +76,8 @@ const Seasons = () => {
     status: 'loading',
     errorMessage: '',
   })
+  const deleteRecordsModalCount = isDeleteAllRecords ? total : selectedRecordsIds.length
+  const deleteSeasonsText = deleteRecordsModalCount > 1 ? 'seasons' : 'season'
 
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -93,32 +96,12 @@ const Seasons = () => {
       await importSeasons(body)
         .unwrap()
         .then((response) => {
-          if (response.status === 'green') {
-            setImportModalOptions({
-              filename: file.name,
-              isOpen: true,
-              status: 'green',
-              errorMessage: '',
-            })
-          }
-
-          if (response.status === 'red') {
-            setImportModalOptions({
-              filename: file.name,
-              isOpen: true,
-              status: 'red',
-              errorMessage: '',
-            })
-          }
-
-          if (response.status === 'yellow') {
-            setImportModalOptions({
-              filename: file.name,
-              isOpen: true,
-              status: 'yellow',
-              errorMessage: '',
-            })
-          }
+          setImportModalOptions({
+            filename: file.name,
+            isOpen: true,
+            status: response.status,
+            errorMessage: '',
+          })
         })
         .catch((error) => {
           setImportModalOptions({
@@ -131,59 +114,34 @@ const Seasons = () => {
     }
   }
 
-  const deleteRecordsModalCount = isDeleteAllRecords ? total : selectedRecordsIds.length
-  const deleteSeasonsText = deleteRecordsModalCount > 1 ? 'seasons' : 'season'
-
   const handleCloseModal = useCallback(() => setIsOpenModal(false), [])
 
   const handleDelete = () => {
     handleCloseModal()
+    const deleteHandler = isDeleteAllRecords ? deleteAllSeasons() : bulkDeleteSeasons({ ids: selectedRecordsIds })
+    deleteHandler.unwrap().then((response) => {
+      setSelectedRecordsIds([])
+      setShowAdditionalHeader(false)
+      setIsDeleteAllRecords(false)
 
-    if (isDeleteAllRecords) {
-      deleteAllSeasons()
-        .unwrap()
-        .then((response) => {
-          if (response.status !== 'green') {
-            setInfoNotification({
-              actionLabel: 'More info..',
-              message: `${response.success}/${response.total} seasons have been successfully removed.`,
-              redirectedPageUrl: PATH_TO_SEASONS_DELETING_INFO,
-            })
-
-            return
-          }
-
-          if (response.status === 'green') {
-            setAppNotification({
-              message: `${response.success}/${response.total} seasons have been successfully removed.`,
-              timestamp: new Date().getTime(),
-              type: 'success',
-            })
-          }
+      if (response.status !== 'green') {
+        setInfoNotification({
+          actionLabel: 'More info..',
+          message: `${response.success}/${response.total} seasons have been successfully removed.`,
+          redirectedPageUrl: PATH_TO_SEASONS_DELETING_INFO,
         })
-    } else {
-      bulkDeleteSeasons({ ids: selectedRecordsIds })
-        .unwrap()
-        .then((response) => {
-          if (response.status !== 'green') {
-            setInfoNotification({
-              actionLabel: 'More info..',
-              message: `${response.success}/${response.total} seasons have been successfully removed.`,
-              redirectedPageUrl: PATH_TO_SEASONS_DELETING_INFO,
-            })
 
-            return
-          }
+        return
+      }
 
-          if (response.status === 'green') {
-            setAppNotification({
-              message: `${response.success}/${response.total} seasons have been successfully removed.`,
-              timestamp: new Date().getTime(),
-              type: 'success',
-            })
-          }
+      if (response.status === 'green') {
+        setAppNotification({
+          message: `${response.success}/${response.total} seasons have been successfully removed.`,
+          timestamp: new Date().getTime(),
+          type: 'success',
         })
-    }
+      }
+    })
   }
 
   return (
@@ -254,9 +212,8 @@ const Seasons = () => {
                 />
               )}
 
-              <Button
-                className="import-button"
-                icon={<UploadOutlined />}
+              <ImportButton
+                icon={<DownloadOutlined />}
                 iconPosition="start"
                 type="default"
                 onClick={() => {
@@ -264,14 +221,14 @@ const Seasons = () => {
                 }}
               >
                 Import CSV
-              </Button>
+              </ImportButton>
 
               <Button
                 icon={<PlusOutlined />}
                 iconPosition="start"
                 type="primary"
                 style={createNewSeasonStyles}
-                onClick={() => navigate(PATH_TO_SEASONS_CREATE)}
+                onClick={() => navigate(PATH_TO_CREATE_SEASON)}
               >
                 Create new season
               </Button>
@@ -307,4 +264,3 @@ const Seasons = () => {
 }
 
 export default Seasons
-

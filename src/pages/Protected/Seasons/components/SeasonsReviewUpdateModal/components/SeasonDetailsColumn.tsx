@@ -34,9 +34,9 @@ const itemContainerStyle: CSSProperties = {
 }
 
 interface ISeasonDetailsColumn extends ISeasonReviewUpdateData {
-  title: string
-  isNew: boolean
-  differences: Record<keyof ISeasonReviewUpdateData, boolean>
+  title: string;
+  isNew: boolean;
+  differences: Record<keyof ISeasonReviewUpdateData, boolean>;
 }
 
 const SeasonDetailsColumn: FC<ISeasonDetailsColumn> = ({
@@ -51,45 +51,92 @@ const SeasonDetailsColumn: FC<ISeasonDetailsColumn> = ({
   tiebreakersFormat,
   title,
 }) => (
-  <Flex flex="1 1 50%" vertical style={isNew ? newContainerStyle : currentContainerStyle}>
+  <Flex
+    flex="1 1 50%"
+    vertical
+    style={isNew ? newContainerStyle : currentContainerStyle}
+  >
     <Typography.Text style={titleStyle}>{title}</Typography.Text>
 
     <Flex style={itemContainerStyle}>
-      <Typography.Text style={getItemTitleStyle(differences['name'])}>Name:</Typography.Text>
-      <Typography.Text style={getItemValueStyle(differences['name'])}>{name}</Typography.Text>
+      <Typography.Text style={getItemTitleStyle(differences['name'])}>
+        Name:
+      </Typography.Text>
+      <Typography.Text style={getItemValueStyle(differences['name'])}>
+        {name}
+      </Typography.Text>
     </Flex>
 
     <Flex vertical style={itemContainerStyle}>
-      <Typography.Text style={getItemTitleStyle(differences['linkedLeagueName'])}>Linked League/Tourn:</Typography.Text>
-      <Typography.Text style={getItemValueStyle(differences['linkedLeagueName'])}>{linkedLeagueName}</Typography.Text>
+      <Typography.Text
+        style={getItemTitleStyle(differences['linkedLeagueName'])}
+      >
+        Linked League/Tourn:
+      </Typography.Text>
+      <Typography.Text
+        style={getItemValueStyle(differences['linkedLeagueName'])}
+      >
+        {linkedLeagueName}
+      </Typography.Text>
     </Flex>
 
     <Flex vertical style={itemContainerStyle}>
-      <Typography.Text style={getItemTitleStyle(differences['startDate'])}>Start date:</Typography.Text>
-      <Typography.Text style={getItemValueStyle(differences['startDate'])}>{startDate}</Typography.Text>
+      <Typography.Text style={getItemTitleStyle(differences['startDate'])}>
+        Start date:
+      </Typography.Text>
+      <Typography.Text style={getItemValueStyle(differences['startDate'])}>
+        {startDate}
+      </Typography.Text>
     </Flex>
 
     <Flex vertical style={itemContainerStyle}>
-      <Typography.Text style={getItemTitleStyle(differences['expectedEndDate'])}>Expected end date:</Typography.Text>
-      <Typography.Text style={getItemValueStyle(differences['expectedEndDate'])}>{expectedEndDate}</Typography.Text>
+      <Typography.Text
+        style={getItemTitleStyle(differences['expectedEndDate'])}
+      >
+        Expected end date:
+      </Typography.Text>
+      <Typography.Text
+        style={getItemValueStyle(differences['expectedEndDate'])}
+      >
+        {expectedEndDate}
+      </Typography.Text>
     </Flex>
 
     <Flex vertical style={itemContainerStyle}>
-      <Typography.Text style={getItemTitleStyle(differences['playoffFormat'])}>Playoff format:</Typography.Text>
-      <Typography.Text style={getItemValueStyle(differences['playoffFormat'])}>{playoffFormat}</Typography.Text>
+      <Typography.Text style={getItemTitleStyle(differences['playoffFormat'])}>
+        Playoff format:
+      </Typography.Text>
+      <Typography.Text style={getItemValueStyle(differences['playoffFormat'])}>
+        {playoffFormat}
+      </Typography.Text>
     </Flex>
 
     <Flex vertical style={itemContainerStyle}>
-      <Typography.Text style={getItemTitleStyle(differences['standingsFormat'])}>Standings format:</Typography.Text>
-      <Typography.Text style={getItemValueStyle(differences['standingsFormat'])}>{standingsFormat}</Typography.Text>
+      <Typography.Text
+        style={getItemTitleStyle(differences['standingsFormat'])}
+      >
+        Standings format:
+      </Typography.Text>
+      <Typography.Text
+        style={getItemValueStyle(differences['standingsFormat'])}
+      >
+        {standingsFormat}
+      </Typography.Text>
     </Flex>
 
     <Flex vertical style={itemContainerStyle}>
-      <Typography.Text style={getItemTitleStyle(differences['tiebreakersFormat'])}>Tiebreakers format:</Typography.Text>
-      <Typography.Text style={getItemValueStyle(differences['tiebreakersFormat'])}>{tiebreakersFormat}</Typography.Text>
+      <Typography.Text
+        style={getItemTitleStyle(differences['tiebreakersFormat'])}
+      >
+        Tiebreakers format:
+      </Typography.Text>
+      <Typography.Text
+        style={getItemValueStyle(differences['tiebreakersFormat'])}
+      >
+        {tiebreakersFormat}
+      </Typography.Text>
     </Flex>
   </Flex>
 )
 
 export default SeasonDetailsColumn
-

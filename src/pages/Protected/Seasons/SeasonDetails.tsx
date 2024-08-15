@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useNavigate, useParams } from 'react-router-dom'
 
+import { MonroeBlueText, MonroeLinkText, PageContainer, ProtectedPageTitle } from '@/components/Elements'
 import Loader from '@/components/Loader'
 import MonroeButton from '@/components/MonroeButton'
 import MonroeModal from '@/components/MonroeModal'
@@ -16,7 +17,7 @@ import BaseLayout from '@/layouts/BaseLayout'
 
 import { useDeleteSeasonMutation, useGetSeasonDetailsQuery } from '@/redux/seasons/seasons.api'
 
-import { PATH_TO_LEAGUE_TOURNAMENT_PAGE, PATH_TO_SEASONS_EDIT_DETAILS, PATH_TO_SEASONS_PAGE } from '@/constants/paths'
+import { PATH_TO_EDIT_SEASON, PATH_TO_LEAGUE_PAGE, PATH_TO_SEASONS } from '@/constants/paths'
 
 export const SeasonDetails = () => {
   const params = useParams<{ id: string }>()
@@ -31,25 +32,17 @@ export const SeasonDetails = () => {
   const handleDelete = () => {
     if (data) {
       deleteSeason({ id: data.id }).then(() => {
-        navigate(PATH_TO_SEASONS_PAGE)
+        navigate(PATH_TO_SEASONS)
       })
     }
   }
 
   const BREAD_CRUMB_ITEMS = [
     {
-      title: <a href={PATH_TO_SEASONS_PAGE}>Seasons</a>,
+      title: <a href={PATH_TO_SEASONS}>Seasons</a>,
     },
     {
-      title: (
-        <Typography.Text
-          style={{
-            color: 'rgba(26, 22, 87, 0.85)',
-          }}
-        >
-          {data?.name}
-        </Typography.Text>
-      ),
+      title: <MonroeBlueText>{data?.name}</MonroeBlueText>,
     },
   ]
 
@@ -76,13 +69,11 @@ export const SeasonDetails = () => {
         )}
 
         {data && (
-          <Flex className="view-container" vertical>
+          <PageContainer>
             <Breadcrumb items={BREAD_CRUMB_ITEMS} />
 
             <Flex justify="space-between">
-              <Typography.Title level={1} className="title">
-                {data?.name}
-              </Typography.Title>
+              <ProtectedPageTitle>{data?.name}</ProtectedPageTitle>
 
               <Flex>
                 <MonroeButton
@@ -101,7 +92,7 @@ export const SeasonDetails = () => {
                   type="primary"
                   icon={<EditOutlined />}
                   iconPosition="start"
-                  onClick={() => navigate(`${PATH_TO_SEASONS_EDIT_DETAILS}/${data!.id}`)}
+                  onClick={() => navigate(`${PATH_TO_EDIT_SEASON}/${data!.id}`)}
                   style={{ height: '32px' }}
                 />
               </Flex>
@@ -111,28 +102,21 @@ export const SeasonDetails = () => {
               <Flex className="field-wrapper">
                 <Typography.Text className="view-text">Linked League:</Typography.Text>
 
-                <Typography.Text
-                  style={{
-                    color: 'rgba(62, 52, 202, 1)',
-                    textDecoration: 'underline',
-                    cursor: 'pointer',
-                  }}
-                  onClick={() => navigate(`${PATH_TO_LEAGUE_TOURNAMENT_PAGE}/${data.league.id}`)}
-                >
-                  {data.league.name}
-                </Typography.Text>
+                <MonroeLinkText onClick={() => navigate(`${PATH_TO_LEAGUE_PAGE}/${data.league.id}`)}>
+                  {data.league?.name || '-'}
+                </MonroeLinkText>
               </Flex>
 
               <Flex className="field-wrapper">
                 <Typography.Text className="view-text">Start Date:</Typography.Text>
-                <Typography.Text className="view-text" style={{ width: '180px', color: '#1A1657' }}>
+                <Typography.Text className="view-text" style={{ color: '#1A1657' }}>
                   {format(new Date(data?.startDate), 'dd MMM yyyy')}
                 </Typography.Text>
               </Flex>
 
               <Flex className="field-wrapper">
                 <Typography.Text className="view-text">Expected End Date:</Typography.Text>
-                <Typography.Text className="view-text" style={{ width: '180px', color: '#1A1657' }}>
+                <Typography.Text className="view-text" style={{ color: '#1A1657' }}>
                   {format(new Date(data?.expectedEndDate), 'dd MMM yyyy')}
                 </Typography.Text>
               </Flex>
@@ -140,36 +124,19 @@ export const SeasonDetails = () => {
               <Flex className="field-wrapper">
                 <Typography.Text className="view-text">Division/Pool:</Typography.Text>
 
-                <Flex>
+                <Flex vertical>
                   {data.divisions.map((division) => (
                     <Flex key={division.id} vertical>
-                      <Typography.Text
-                        style={{
-                          color: 'rgba(62, 52, 202, 1)',
-                          textDecoration: 'underline',
-                          marginBottom: '4px',
-                          width: '136px',
-                          marginRight: '12px',
-                        }}
-                      >
-                        {division.name}
-                      </Typography.Text>
-                      <Typography
-                        style={{
-                          color: '#1A1657',
-                        }}
-                      >
-                        Subdivision name
-                      </Typography>
+                      <MonroeLinkText>{division.name}</MonroeLinkText>
+                      <MonroeBlueText>{division.sub_division.map((subdivision) => subdivision.name)}</MonroeBlueText>
                     </Flex>
                   ))}
                 </Flex>
               </Flex>
             </Flex>
-          </Flex>
+          </PageContainer>
         )}
       </BaseLayout>
     </>
   )
 }
-
