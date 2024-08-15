@@ -4,7 +4,9 @@ import baseQueryWithReAuth from '@/redux/reauthBaseQuery'
 
 import { IPaginationResponse } from '@/common/interfaces/api'
 import {
+  IBECreateSeasonBody,
   IBESeason,
+  ICreateBESeason,
   IDeleteSeasonsResponse,
   IFESeason,
   IGetSeasonsRequestParams,
@@ -28,14 +30,14 @@ export const seasonsApi = createApi({
       transformResponse: (data: IPaginationResponse<IBESeason[]>) => ({
         count: data.count,
         seasons: data.results.map((season) => ({
-          createdAt: season.created_at,
           divisions: season.divisions,
           expectedEndDate: season.expected_end_date,
           id: season.id,
           league: season.league,
           name: season.name,
           startDate: season.start_date,
-          updatedAt: season.updated_at,
+          createdAt: season!.created_at as string,
+          updatedAt: season!.updated_at as string,
         })),
       }),
     }),
@@ -75,13 +77,13 @@ export const seasonsApi = createApi({
       void,
       {
         id: string
-        body: IBESeason
+        body: ICreateBESeason
       }
     >({
       query: ({ id, body }) => ({
         url: 'teams/seasons/' + id,
         body,
-        method: 'PUT',
+        method: 'PATCH',
       }),
     }),
     getSeasonDetails: builder.query<IFESeason, string>({
@@ -89,14 +91,21 @@ export const seasonsApi = createApi({
         url: `teams/seasons/${id}`,
       }),
       transformResponse: (response: IBESeason): IFESeason => ({
-        createdAt: response.created_at,
+        createdAt: response.created_at as string,
         divisions: response.divisions,
         expectedEndDate: response.expected_end_date,
         id: response.id,
         league: response.league,
         name: response.name,
         startDate: response.start_date,
-        updatedAt: response.updated_at,
+        updatedAt: response.updated_at as string,
+      }),
+    }),
+    createSeason: builder.mutation<void, IBECreateSeasonBody>({
+      query: (body) => ({
+        url: 'teams/seasons',
+        method: 'POST',
+        body,
       }),
     }),
   }),
@@ -110,5 +119,5 @@ export const {
   useImportSeasonsCSVMutation,
   useUpdateSeasonMutation,
   useGetSeasonDetailsQuery,
+  useCreateSeasonMutation,
 } = seasonsApi
-

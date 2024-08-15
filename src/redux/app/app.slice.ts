@@ -6,6 +6,7 @@ import { seasonsApi } from '@/redux/seasons/seasons.api'
 import { userApi } from '@/redux/user/user.api'
 
 import { IDetailedError } from '@/common/interfaces'
+import { ICreateSeasonError } from '@/common/interfaces/season'
 
 interface IInfoNotification {
   message: string
@@ -84,8 +85,36 @@ export const appSlice = createSlice({
         state.notification.timestamp = new Date().getTime()
         state.notification.type = 'success'
       })
+      .addMatcher(seasonsApi.endpoints.deleteSeason.matchFulfilled, (state) => {
+        state.notification.message = 'season have been successfully removed.'
+        state.notification.timestamp = new Date().getTime()
+        state.notification.type = 'success'
+      })
       .addMatcher(seasonsApi.endpoints.deleteSeason.matchRejected, (state, action) => {
         state.notification.message = (action.payload?.data as { error: string }).error
         state.notification.timestamp = new Date().getTime()
-      }),
+      })
+      .addMatcher(
+        isAnyOf(seasonsApi.endpoints.createSeason.matchRejected, seasonsApi.endpoints.updateSeason.matchRejected),
+        (state, action) => {
+          const details = (action.payload?.data as ICreateSeasonError).details
+
+          state.notification.message = `
+        ${details?.name ? `${details.name},` : ''} ${details.divisions?.map((division) => {
+          if (division?.name && !division?.sub_division) {
+            return division.name
+          }
+
+          if (division?.sub_division && !division?.name)
+            return division.sub_division.map((subdivision) => subdivision.name)
+
+          if (division?.name && division?.sub_division)
+            return `${division.name}, ${division?.sub_division.map((subdivision) => subdivision.name)}`
+
+          return ''
+        })}
+        `
+          state.notification.timestamp = new Date().getTime()
+        },
+      ),
 })
