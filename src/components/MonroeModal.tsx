@@ -16,7 +16,7 @@ const MonroeModalOverlay = styled.div`
 
 interface IMonroeModalProps {
   onOk: () => void
-  onCancel: () => void
+  onCancel?: () => void
   type: TMonroeModalType
   title: string
   content?: ReactNode

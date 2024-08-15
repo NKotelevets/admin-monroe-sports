@@ -8,6 +8,8 @@ import { ReactSVG } from 'react-svg'
 
 import { MonroeDivider } from '@/components/Elements'
 
+import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
+
 import {
   PATH_TO_CREATE_LEAGUE,
   PATH_TO_CREATE_SEASON,
@@ -79,6 +81,7 @@ const MonroeSidebar = () => {
     ) ||
     pathname.includes(PATH_TO_SEASON_DETAILS) ||
     pathname.includes(PATH_TO_EDIT_SEASON)
+  const { setIsCreateBracketPage } = useSeasonSlice()
 
   const getSelectedSubMenu = () => {
     if ([PATH_TO_MASTER_TEAMS, PATH_TO_LEAGUE_TEAMS].includes(pathname)) return TEAMS_KEY
@@ -188,6 +191,8 @@ const MonroeSidebar = () => {
 
   const handleBeforeUnloadEvent = (e: BeforeUnloadEvent) => {
     if (isPageThatWillHaveChanges) e.preventDefault()
+
+    setIsCreateBracketPage(false)
   }
 
   useEffect(() => {

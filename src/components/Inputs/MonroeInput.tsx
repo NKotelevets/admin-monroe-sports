@@ -1,10 +1,10 @@
 import { Flex } from 'antd'
-import { CSSProperties, ChangeEventHandler, FC } from 'react'
+import { CSSProperties, ChangeEventHandler, FC, ReactNode } from 'react'
 
 import { InputError, InputLabel, StyledInput } from '@/components/Inputs/InputElements'
 
 interface IMonroeInputProps {
-  label?: string
+  label?: string | ReactNode
   placeholder?: string
   value: string | number
   onChange: ChangeEventHandler<HTMLInputElement>
@@ -17,7 +17,7 @@ const MonroeInput: FC<IMonroeInputProps> = ({ label, error, ...rest }) => (
   <>
     {label && (
       <Flex vertical={false} justify="space-between" align="center">
-        <InputLabel>{label}</InputLabel>
+        {typeof label === 'string' ? <InputLabel>{label}</InputLabel> : label}
         {error && <InputError>{error}</InputError>}
       </Flex>
     )}
