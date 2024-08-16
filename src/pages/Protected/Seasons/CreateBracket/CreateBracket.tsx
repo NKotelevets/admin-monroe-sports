@@ -44,7 +44,7 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue }) => {
   const subdivisionValues = values.divisions[+divisionIndex].subdivisions[+subdivisionIndex]
   const location = useLocation()
   const isEditPage = location.pathname.includes(PATH_TO_EDIT_SEASON)
-  const buttonLabel = isEditPage ? (bracketMode === 'create' ? 'Create Bracket' : 'Edit Bracket') : 'Edit Bracket'
+  const buttonLabel = !isEditPage ? (bracketMode === 'create' ? 'Create Bracket' : 'Save') : 'Save'
   const subdivisionsInSeason: DefaultOptionType[] = values.divisions?.[+divisionIndex].subdivisions.flatMap(
     (subdivision) => ({
       label: subdivision?.name,
@@ -225,6 +225,7 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue }) => {
                 setIsCreateBracketPage(false)
               }}
               isDisabled={isEnabledButton}
+              style={{ width: '150px' }}
             />
           </MonroeTooltip>
         </Flex>

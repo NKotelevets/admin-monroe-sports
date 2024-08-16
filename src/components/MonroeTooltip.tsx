@@ -64,6 +64,7 @@ const MonroeTooltip: FC<IMonroeTooltipProps> = ({
       onMouseLeave={() => setShowTooltip(false)}
     >
       {showTooltip &&
+        text &&
         createPortal(
           <MonroeTooltipContent
             style={{

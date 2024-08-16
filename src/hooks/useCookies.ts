@@ -5,7 +5,7 @@ type TCookieName = 'accessToken' | 'refreshToken'
 const MONTH_MILLISECONDS = 2592000
 
 const COOKIE_SETTINGS = {
-  domain: 'localhost', // TODO: update when will be available new env
+  domain: import.meta.env.VITE_WEBSITE_DOMAIN,
   path: '/',
   secure: true,
   maxAge: MONTH_MILLISECONDS,
@@ -26,4 +26,3 @@ export const useCookies = () => {
     deleteCookie,
   }
 }
-

@@ -32,12 +32,14 @@ export const matchSchema = Yup.object({
   participants: Yup.array().of(participantSchema).required(),
 })
 
-export const bracketSchema = Yup.object({
-  name: Yup.string().required(),
-  subdivisionsNames: Yup.array(Yup.string()),
-  playoffTeams: Yup.number().integer(),
-  matches: Yup.array().of(matchSchema),
-})
+export const bracketSchema = Yup.array().of(
+  Yup.object({
+    name: Yup.string(),
+    subdivisionsNames: Yup.array(Yup.string()),
+    playoffTeams: Yup.number().integer(),
+    matches: Yup.array().of(matchSchema),
+  }),
+)
 
 const subdivisionValidationSchema = Yup.object().shape({
   name: Yup.string().required(),
@@ -45,19 +47,11 @@ const subdivisionValidationSchema = Yup.object().shape({
   playoffFormat: Yup.string(),
   standingsFormat: Yup.string(),
   tiebreakersFormat: Yup.string(),
-  brackets: Yup.array(
-    bracketSchema.when('playoffFormat', {
-      is: (value: string) => value === 'Single Elimination Bracket',
-      then: (schema) =>
-        schema.shape({
-          name: Yup.string().required(),
-          subdivisionsNames: Yup.array(Yup.string()).min(1, 'At least one subdivision name is required').required(),
-          playoffTeams: Yup.number().required(),
-          matches: Yup.array(matchSchema).required(),
-        }),
-      otherwise: (schema) => schema,
-    }),
-  ),
+  brackets: bracketSchema.when('playoffFormat', {
+    is: (value: string) => value === 'Single Elimination Bracket',
+    then: (schema) => schema.required().min(1),
+    otherwise: (schema) => schema,
+  }),
 })
 
 const divisionValidationSchema = Yup.object<ICreateSeasonDivision[]>().shape({
