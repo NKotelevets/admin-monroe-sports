@@ -231,7 +231,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
               <OptionTitle>Default Playoff Format *</OptionTitle>
               <RadioGroupContainer
                 name={`${namePrefix}.playoffFormat`}
-                onChange={(e) => setFieldValue(`${namePrefix}.playoffFormat`, e.target.value)}
+                onChange={(e:any) => setFieldValue(`${namePrefix}.playoffFormat`, e.target.value)}
                 value={subdivision.playoffFormat}
               >
                 <Radio value="Best Record Wins">Best Record Wins</Radio>
@@ -334,7 +334,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
             <div style={{ marginBottom: '8px' }}>
               <OptionTitle>Default Standings Format *</OptionTitle>
               <RadioGroupContainer
-                onChange={(e) => setFieldValue(`${namePrefix}.standingsFormat`, e.target.value)}
+                onChange={(e:any) => setFieldValue(`${namePrefix}.standingsFormat`, e.target.value)}
                 value={subdivision.standingsFormat}
               >
                 <Radio value="Winning %">
@@ -361,7 +361,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
             <div style={{ marginBottom: '8px' }}>
               <OptionTitle>Default Tiebreakers Format *</OptionTitle>
               <RadioGroupContainer
-                onChange={(e) => setFieldValue(`${namePrefix}.tiebreakersFormat`, e.target.value)}
+                onChange={(e:any) => setFieldValue(`${namePrefix}.tiebreakersFormat`, e.target.value)}
                 value={subdivision.tiebreakersFormat}
               >
                 <Radio value="Winning %">

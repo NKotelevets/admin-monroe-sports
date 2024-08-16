@@ -103,7 +103,7 @@ const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({ setSelectedL
         >
           <SearchLeagueInput
             name="search"
-            onChange={(event) => setValue(event.target.value)}
+            onChange={(event:any) => setValue(event.target.value)}
             value={value}
             placeholder="Find league or tournament"
             style={{ height: '32px' }}

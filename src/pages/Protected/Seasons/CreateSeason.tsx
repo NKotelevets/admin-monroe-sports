@@ -251,7 +251,7 @@ const CreateSeason = () => {
                             <MonroeDatePicker
                               name="startDate"
                               value={values.startDate}
-                              onChange={(_, data) => {
+                              onChange={(_:any, data:any) => {
                                 if (data) {
                                   setFieldValue('startDate', dayjs(data as string, 'YYYY-MM-DD'))
                                 } else {
@@ -267,7 +267,7 @@ const CreateSeason = () => {
                             <MonroeDatePicker
                               name="expectedEndDate"
                               value={values.expectedEndDate}
-                              onChange={(_, data) => {
+                              onChange={(_:any, data:any) => {
                                 setFieldValue('expectedEndDate', dayjs(data as string, 'YYYY-MM-DD'))
                               }}
                               minDate={values.startDate as unknown as dayjs.Dayjs}
