@@ -12,6 +12,7 @@ const MonroeModalOverlay = styled.div`
   background-color: rgba(41, 41, 48, 0.7);
   height: 100vh;
   width: 100vw;
+  z-index: 999;
 `
 
 interface IMonroeModalProps {

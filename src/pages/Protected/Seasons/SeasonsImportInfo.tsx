@@ -6,6 +6,7 @@ import Input from 'antd/es/input/Input'
 import Space from 'antd/es/space'
 import { FilterDropdownProps, SorterResult } from 'antd/es/table/interface'
 import Typography from 'antd/es/typography'
+import { format } from 'date-fns'
 import { CSSProperties, useRef, useState } from 'react'
 import { FC } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -13,16 +14,19 @@ import { ReactSVG } from 'react-svg'
 
 import SeasonsReviewUpdateModal from '@/pages/Protected/Seasons/components/SeasonsReviewUpdateModal'
 
+import { MonroeBlueText } from '@/components/Elements'
 import MonroeFilter from '@/components/Table/MonroeFilter'
 
 import BaseLayout from '@/layouts/BaseLayout'
 
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
+import { useLazyGetSeasonBEDetailsQuery, useUpdateSeasonMutation } from '@/redux/seasons/seasons.api'
 
 import { containerStyles, descriptionStyle, titleStyle } from '@/constants/deleting-importing-info.styles'
 import { PATH_TO_LEAGUE_PAGE, PATH_TO_SEASONS } from '@/constants/paths'
 
-import { IImportSeasonTableRecord } from '@/common/interfaces/season'
+import { IImportedSubdivision, IUpdateDivision } from '@/common/interfaces/division'
+import { IImportSeasonTableRecord, ISeasonReviewUpdateData } from '@/common/interfaces/season'
 import { TErrorDuplicate, TSortOption } from '@/common/types'
 
 import SyncIcon from '@/assets/icons/sync.svg'
@@ -44,15 +48,7 @@ const BREADCRUMB_ITEMS = [
     title: <a href={PATH_TO_SEASONS}>Seasons</a>,
   },
   {
-    title: (
-      <Typography.Text
-        style={{
-          color: 'rgba(26, 22, 87, 0.85)',
-        }}
-      >
-        Import info
-      </Typography.Text>
-    ),
+    title: <MonroeBlueText>Import info</MonroeBlueText>,
   },
 ]
 
@@ -106,12 +102,154 @@ const SeasonsImportInfo = () => {
   const [sortSeasonNameOrder, setSortSeasonNameOrder] = useState<TSortOption>(null)
   const [sortLeagueNameOrder, setSortLeagueNameOrder] = useState<TSortOption>(null)
   const navigate = useNavigate()
+  const [getSeasonDetails] = useLazyGetSeasonBEDetailsQuery()
+  const { removeDuplicate } = useSeasonSlice()
+  const [updateSeason] = useUpdateSeasonMutation()
 
-  const handleUpdate = (idx: number) => {
+  const handleUpdate = async (idx: number) => {
     const currentDuplicate = duplicates.find((duplicate) => duplicate.index === idx)
-    const newData = currentDuplicate!.new // TODO: change fields for request into pascal case
-    console.log('>', newData)
-    // TODO: add update logic
+    const duplicateData = await getSeasonDetails(currentDuplicate!.existing.id).unwrap()
+    const newData = currentDuplicate!.new
+
+    const normalizedNewData: ISeasonReviewUpdateData = {
+      expectedEndDate: format(newData.expectedEndDate, 'dd MMM yyyy'),
+      linkedLeagueName: newData.linkedLeagueTournament,
+      name: newData.name,
+      startDate: format(newData.startDate, 'dd MMM yyyy'),
+      divisions: [
+        {
+          name: newData.divisionPollName,
+          description: newData.divisionPollDescription,
+          sub_division: [
+            {
+              name: newData.subdivisionPollName,
+              playoff_format: newData.playoffFormat,
+              standings_format: newData.standingsFormat,
+              tiebreakers_format: newData.tiebreakersFormat,
+              description: newData.subdivisionPollDescription,
+              brackets: [],
+            },
+          ],
+        },
+      ],
+    }
+    const normalizedExistingData: ISeasonReviewUpdateData = {
+      expectedEndDate: format(newData.expectedEndDate, 'dd MMM yyyy'),
+      linkedLeagueName: duplicateData.league.name,
+      name: duplicateData.name,
+      startDate: format(duplicateData.start_date, 'dd MMM yyyy'),
+      divisions: duplicateData.divisions.map((division) => ({
+        name: division.name,
+        description: division.description,
+        sub_division: division.sub_division.map((subdivision) => ({
+          name: subdivision.name,
+          description: subdivision.description,
+          playoff_format: subdivision.playoff_format === 0 ? 'Best Record Wins' : 'Single Elimination Bracket',
+          standings_format: subdivision.standings_format === 0 ? 'Winning %' : 'Points',
+          tiebreakers_format: subdivision.tiebreakers_format === 0 ? 'Winning %' : 'Points',
+        })),
+      })),
+    }
+    const currentDivision = normalizedExistingData.divisions.find(
+      (division) => division.name === normalizedNewData.divisions[0].name,
+    )
+    const newSubdivision = normalizedNewData.divisions[0].sub_division[0]
+    const existedSubdivision = currentDivision?.sub_division.find(
+      (subdivision) => subdivision.name === normalizedNewData.divisions[0].sub_division[0].name,
+    )
+    const isDifference = existedSubdivision
+      ? !(
+          newSubdivision.playoff_format === existedSubdivision.playoff_format &&
+          newSubdivision.standings_format === existedSubdivision.standings_format &&
+          newSubdivision.tiebreakers_format === existedSubdivision.tiebreakers_format &&
+          newSubdivision.description === existedSubdivision.description
+        )
+      : true
+    const isDivisionOrSubdivisionChanged = currentDivision ? !!isDifference : true
+
+    const mappedDivisions: IUpdateDivision[] = duplicateData.divisions.map((division) => ({
+      name: division.name,
+      description: division.description,
+      sub_division: division.sub_division.map((subdivision) => ({
+        name: subdivision.name,
+        description: subdivision.description,
+        playoff_format: subdivision.playoff_format === 'Best Record Wins' ? 0 : 1,
+        standings_format: subdivision.standings_format === 'Winning %' ? 0 : 1,
+        tiebreakers_format: subdivision.tiebreakers_format === 'Winning %' ? 0 : 1,
+        brackets: [],
+      })),
+    }))
+
+    const mappedNewDivisions: IUpdateDivision[] = normalizedNewData.divisions.map((division) => ({
+      name: division.name,
+      description: division.description,
+      sub_division: division.sub_division.map((subdivision) => ({
+        name: subdivision.name,
+        description: subdivision.description,
+        playoff_format: subdivision.playoff_format === 'Best Record Wins' ? 0 : 1,
+        standings_format: subdivision.standings_format === 'Winning %' ? 0 : 1,
+        tiebreakers_format: subdivision.tiebreakers_format === 'Winning %' ? 0 : 1,
+        brackets: [],
+      })),
+    }))
+
+    let updatingMappedDivisions: IUpdateDivision[] = []
+
+    if (currentDivision) {
+      const updatedDivision = existedSubdivision
+        ? {
+            ...currentDivision,
+            sub_division: currentDivision?.sub_division.map((subdivision) => {
+              if (subdivision.name === mappedNewDivisions[0].sub_division[0].name)
+                return mappedNewDivisions[0].sub_division[0]
+              return subdivision
+            }),
+          }
+        : ({
+            ...currentDivision,
+            sub_division: [
+              ...(currentDivision?.sub_division as IImportedSubdivision[]),
+              mappedNewDivisions[0].sub_division[0],
+            ],
+          } as IUpdateDivision)
+
+      updatingMappedDivisions = mappedDivisions.map((division) => {
+        if (division.name === updatedDivision.name) return updatedDivision as IUpdateDivision
+        return division
+      })
+    } else {
+      updatingMappedDivisions = [
+        ...mappedDivisions,
+        {
+          ...normalizedNewData.divisions[0],
+          sub_division: normalizedNewData.divisions[0].sub_division.map((subdivision) => ({
+            name: subdivision.name,
+            description: subdivision.description,
+            playoff_format: subdivision.playoff_format === 'Best Record Wins' ? 0 : 1,
+            standings_format: subdivision.standings_format === 'Points' ? 0 : 1,
+            tiebreakers_format: subdivision.tiebreakers_format === 'Points' ? 0 : 1,
+          })),
+        },
+      ]
+    }
+
+    const divisions = isDivisionOrSubdivisionChanged ? updatingMappedDivisions : mappedDivisions
+
+    updateSeason({
+      id: duplicateData.id,
+      body: {
+        name: normalizedExistingData.name,
+        start_date: format(newData.startDate, 'yyyy-MM-dd'),
+        expected_end_date: format(newData.expectedEndDate, 'yyyy-MM-dd'),
+        league_id:
+          newData.linkedLeagueTournament === duplicateData.league.name
+            ? duplicateData.league.id
+            : newData.linkedLeagueTournament, // TODO: need fix from BE
+        divisions,
+      },
+    }).then(() => {
+      removeDuplicate(idx)
+    })
   }
 
   const handleReset = (clearFilters: () => void) => clearFilters()

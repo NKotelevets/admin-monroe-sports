@@ -300,7 +300,6 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
                                 : ''
                             }
                             width="200px"
-                            arrowPosition="bottom"
                             containerWidth="134px"
                           >
                             <AddBracketButton

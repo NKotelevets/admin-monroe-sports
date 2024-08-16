@@ -9,15 +9,17 @@ export const containerStyles: CSSProperties = {
 }
 
 export const contentWrapperStyles: CSSProperties = {
-  width: '790px',
+  width: '850px',
   backgroundColor: '#FFF',
   borderRadius: '2px',
   boxShadow: ' 0px 1px 0px 0px #F0F0F0 inset',
+  maxHeight: '90vh',
+  overflow: 'auto',
+  position: 'relative',
 }
 
 export const contentStyles: CSSProperties = {
   padding: '24px',
-  borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
 }
 
 export const titleStyles: CSSProperties = {
@@ -34,4 +36,3 @@ export const defaultButtonStyles: CSSProperties = {
   color: 'rgba(26, 22, 87, 1)',
   borderRadius: '4px',
 }
-

@@ -20,7 +20,6 @@ const titleStyle: CSSProperties = {
 
 const getItemTitleStyle = (isChanged: boolean | undefined): CSSProperties => ({
   marginBottom: '4px',
-  marginRight: '20px',
   color: isChanged ? 'rgba(26, 22, 87, 0.85)' : '#888791',
   fontWeight: 500,
 })
@@ -34,9 +33,10 @@ const itemContainerStyle: CSSProperties = {
 }
 
 interface ISeasonDetailsColumn extends ISeasonReviewUpdateData {
-  title: string;
-  isNew: boolean;
-  differences: Record<keyof ISeasonReviewUpdateData, boolean>;
+  title: string
+  isNew: boolean
+  differences: Record<keyof ISeasonReviewUpdateData, boolean>
+  isDivisionOrSubdivisionChanged: boolean
 }
 
 const SeasonDetailsColumn: FC<ISeasonDetailsColumn> = ({
@@ -45,96 +45,63 @@ const SeasonDetailsColumn: FC<ISeasonDetailsColumn> = ({
   isNew,
   linkedLeagueName,
   name,
-  playoffFormat,
-  standingsFormat,
   startDate,
-  tiebreakersFormat,
   title,
+  divisions,
+  isDivisionOrSubdivisionChanged,
 }) => (
-  <Flex
-    flex="1 1 50%"
-    vertical
-    style={isNew ? newContainerStyle : currentContainerStyle}
-  >
+  <Flex flex="1 1 50%" vertical style={isNew ? newContainerStyle : currentContainerStyle}>
     <Typography.Text style={titleStyle}>{title}</Typography.Text>
 
-    <Flex style={itemContainerStyle}>
-      <Typography.Text style={getItemTitleStyle(differences['name'])}>
-        Name:
-      </Typography.Text>
-      <Typography.Text style={getItemValueStyle(differences['name'])}>
-        {name}
-      </Typography.Text>
+    <Flex vertical style={itemContainerStyle}>
+      <Typography.Text style={getItemTitleStyle(differences['name'])}>Name:</Typography.Text>
+      <Typography.Text style={getItemValueStyle(differences['name'])}>{name}</Typography.Text>
     </Flex>
 
     <Flex vertical style={itemContainerStyle}>
-      <Typography.Text
-        style={getItemTitleStyle(differences['linkedLeagueName'])}
-      >
-        Linked League/Tourn:
-      </Typography.Text>
-      <Typography.Text
-        style={getItemValueStyle(differences['linkedLeagueName'])}
-      >
-        {linkedLeagueName}
-      </Typography.Text>
+      <Typography.Text style={getItemTitleStyle(differences['linkedLeagueName'])}>Linked League/Tourn:</Typography.Text>
+      <Typography.Text style={getItemValueStyle(differences['linkedLeagueName'])}>{linkedLeagueName}</Typography.Text>
     </Flex>
 
     <Flex vertical style={itemContainerStyle}>
-      <Typography.Text style={getItemTitleStyle(differences['startDate'])}>
-        Start date:
-      </Typography.Text>
-      <Typography.Text style={getItemValueStyle(differences['startDate'])}>
-        {startDate}
-      </Typography.Text>
+      <Typography.Text style={getItemTitleStyle(differences['startDate'])}>Start date:</Typography.Text>
+      <Typography.Text style={getItemValueStyle(differences['startDate'])}>{startDate}</Typography.Text>
     </Flex>
 
     <Flex vertical style={itemContainerStyle}>
-      <Typography.Text
-        style={getItemTitleStyle(differences['expectedEndDate'])}
-      >
-        Expected end date:
-      </Typography.Text>
-      <Typography.Text
-        style={getItemValueStyle(differences['expectedEndDate'])}
-      >
-        {expectedEndDate}
-      </Typography.Text>
+      <Typography.Text style={getItemTitleStyle(differences['expectedEndDate'])}>Expected end date:</Typography.Text>
+      <Typography.Text style={getItemValueStyle(differences['expectedEndDate'])}>{expectedEndDate}</Typography.Text>
     </Flex>
 
     <Flex vertical style={itemContainerStyle}>
-      <Typography.Text style={getItemTitleStyle(differences['playoffFormat'])}>
-        Playoff format:
-      </Typography.Text>
-      <Typography.Text style={getItemValueStyle(differences['playoffFormat'])}>
-        {playoffFormat}
-      </Typography.Text>
-    </Flex>
+      <Typography.Text style={getItemTitleStyle(isDivisionOrSubdivisionChanged)}>Division/Pool</Typography.Text>
 
-    <Flex vertical style={itemContainerStyle}>
-      <Typography.Text
-        style={getItemTitleStyle(differences['standingsFormat'])}
-      >
-        Standings format:
-      </Typography.Text>
-      <Typography.Text
-        style={getItemValueStyle(differences['standingsFormat'])}
-      >
-        {standingsFormat}
-      </Typography.Text>
-    </Flex>
+      <ul style={{ listStyle: 'none' }}>
+        {divisions.map((division, idx) => (
+          <li key={division.name}>
+            <Flex vertical>
+              <Typography.Text style={getItemValueStyle(isDivisionOrSubdivisionChanged)}>
+                {idx + 1} {division.name}:
+              </Typography.Text>
 
-    <Flex vertical style={itemContainerStyle}>
-      <Typography.Text
-        style={getItemTitleStyle(differences['tiebreakersFormat'])}
-      >
-        Tiebreakers format:
-      </Typography.Text>
-      <Typography.Text
-        style={getItemValueStyle(differences['tiebreakersFormat'])}
-      >
-        {tiebreakersFormat}
-      </Typography.Text>
+              <ul style={{ listStyle: 'none' }}>
+                {division.sub_division.map((subdivision, i) => (
+                  <li key={subdivision.name} style={getItemValueStyle(isDivisionOrSubdivisionChanged)}>
+                    <Typography style={getItemValueStyle(isDivisionOrSubdivisionChanged)}>
+                      {i + 1} {subdivision.name}
+                    </Typography>
+
+                    <Typography style={getItemTitleStyle(isDivisionOrSubdivisionChanged)}>
+                      PF - {subdivision.playoff_format}, SF - {subdivision.standings_format}, TF -{' '}
+                      {subdivision.tiebreakers_format}
+                    </Typography>
+                  </li>
+                ))}
+              </ul>
+            </Flex>
+          </li>
+        ))}
+      </ul>
     </Flex>
   </Flex>
 )

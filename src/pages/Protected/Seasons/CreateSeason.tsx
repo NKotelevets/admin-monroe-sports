@@ -1,4 +1,3 @@
-import { AddDivisionPollButton, MainContainer } from './components/Elements'
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import { Breadcrumb, Flex, Typography } from 'antd'
 import { format } from 'date-fns'
@@ -11,6 +10,7 @@ import { ReactSVG } from 'react-svg'
 
 import CreateBracket from '@/pages/Protected/Seasons/CreateBracket/CreateBracket'
 import CreateDivision from '@/pages/Protected/Seasons/components/CreateDivision'
+import { AddDivisionPollButton, MainContainer } from '@/pages/Protected/Seasons/components/Elements'
 import SearchLeagueTournament from '@/pages/Protected/Seasons/components/SearchLeagueTournament'
 import {
   ICreateSeasonFormValues,
@@ -22,6 +22,7 @@ import {
 import {
   Accordion,
   CancelButton,
+  MonroeBlueText,
   MonroeDatePicker,
   MonroeDivider,
   OptionTitle,
@@ -46,20 +47,12 @@ import { IBECreateSeasonBody } from '@/common/interfaces/season'
 
 import ShowAllIcon from '@/assets/icons/show-all.svg'
 
-const BREAD_CRUMB_ITEMS = [
+const INITIAL_BREAD_CRUMB_ITEMS = [
   {
     title: <a href={PATH_TO_SEASONS}>Seasons</a>,
   },
   {
-    title: (
-      <Typography.Text
-        style={{
-          color: 'rgba(26, 22, 87, 0.85)',
-        }}
-      >
-        Create season
-      </Typography.Text>
-    ),
+    title: <MonroeBlueText>Create season</MonroeBlueText>,
   },
 ]
 
@@ -133,6 +126,20 @@ const CreateSeason = () => {
       }
     : seasonInitialFormValues
 
+  const BREAD_CRUMB_ITEMS = isCreateBracketPage
+    ? [
+        {
+          title: <a href={PATH_TO_SEASONS}>Seasons</a>,
+        },
+        {
+          title: <a onClick={() => setIsCreateBracketPage(false)}>Create season</a>,
+        },
+        {
+          title: <MonroeBlueText>Create Bracket</MonroeBlueText>,
+        },
+      ]
+    : INITIAL_BREAD_CRUMB_ITEMS
+
   return (
     <BaseLayout>
       <>
@@ -181,14 +188,17 @@ const CreateSeason = () => {
 
             return (
               <Form onSubmit={handleSubmit}>
-                {isCreateBracketPage && <CreateBracket setFieldValue={setFieldValue} values={values} />}
+                <PageContainer vertical>
+                  <Breadcrumb items={BREAD_CRUMB_ITEMS} />
 
-                {!isCreateBracketPage && (
-                  <PageContainer vertical>
-                    <Breadcrumb items={BREAD_CRUMB_ITEMS} />
+                  <ProtectedPageTitle>Create season</ProtectedPageTitle>
+                  {isCreateBracketPage && (
+                    <PageContent>
+                      <CreateBracket setFieldValue={setFieldValue} values={values} />
+                    </PageContent>
+                  )}
 
-                    <ProtectedPageTitle>Create season</ProtectedPageTitle>
-
+                  {!isCreateBracketPage && (
                     <PageContent>
                       <Flex>
                         <div style={{ flex: '0 0 40%' }}>
@@ -300,7 +310,6 @@ const CreateSeason = () => {
                                       ? "You can't create division/pool when you have errors in other divisions/pools"
                                       : ''
                                   }
-                                  arrowPosition="bottom"
                                   width="280px"
                                   containerWidth="190px"
                                 >
@@ -332,11 +341,7 @@ const CreateSeason = () => {
                             Cancel
                           </CancelButton>
 
-                          <MonroeTooltip
-                            width="176px"
-                            arrowPosition="bottom"
-                            text={!isEnabledButton ? 'Missing mandatory data' : ''}
-                          >
+                          <MonroeTooltip width="176px" text={!isEnabledButton ? 'Missing mandatory data' : ''}>
                             <MonroeButton
                               label="Create Season"
                               type="primary"
@@ -347,8 +352,8 @@ const CreateSeason = () => {
                         </Flex>
                       </Flex>
                     </PageContent>
-                  </PageContainer>
-                )}
+                  )}
+                </PageContainer>
               </Form>
             )
           }}

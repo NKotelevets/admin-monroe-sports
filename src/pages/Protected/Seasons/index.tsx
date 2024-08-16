@@ -164,7 +164,7 @@ const Seasons = () => {
           content={
             <>
               <p>
-                Are you sure you want to delete {deleteRecordsModalCount > 1 ? deleteRecordsModalCount : ''}{' '}
+                Are you sure you want to delete {deleteRecordsModalCount > 1 ? deleteRecordsModalCount : 'this'}{' '}
                 {deleteSeasonsText}?
               </p>
             </>

@@ -195,7 +195,6 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
                         : ''
                     }
                     width="280px"
-                    arrowPosition="bottom"
                     containerWidth="200px"
                   >
                     <Button

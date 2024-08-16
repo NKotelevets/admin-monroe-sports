@@ -1,4 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
+import { ReactNode } from 'react'
 
 import baseQueryWithReAuth from '@/redux/reauthBaseQuery'
 
@@ -101,11 +102,34 @@ export const seasonsApi = createApi({
         updatedAt: response.updated_at as string,
       }),
     }),
+    getSeasonBEDetails: builder.query<IBESeason, string>({
+      query: (id) => ({
+        url: `teams/seasons/${id}`,
+      }),
+    }),
     createSeason: builder.mutation<void, IBECreateSeasonBody>({
       query: (body) => ({
         url: 'teams/seasons',
         method: 'POST',
         body,
+      }),
+    }),
+    exportPlayoffTemplate: builder.mutation<ReactNode, { ids: string[] }>({
+      query: ({ ids }) => ({
+        url: 'teams/leagues/export',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        },
+        body: {
+          ids,
+        },
+      }),
+    }),
+    populateBrackets: builder.mutation<void, void>({
+      query: () => ({
+        url: 'teams/seasons/populate-brackets',
+        method: 'POST',
       }),
     }),
   }),
@@ -120,4 +144,8 @@ export const {
   useUpdateSeasonMutation,
   useGetSeasonDetailsQuery,
   useCreateSeasonMutation,
+  useExportPlayoffTemplateMutation,
+  usePopulateBracketsMutation,
+  useGetSeasonBEDetailsQuery,
+  useLazyGetSeasonBEDetailsQuery,
 } = seasonsApi

@@ -32,6 +32,14 @@ export interface IFECreateSeason {
   divisions: IFEDivision[]
 }
 
+export interface IUpdateSeasonBody {
+  name: string
+  league: string
+  divisions: IBEDivision[]
+  start_date: string
+  expected_end_date: string
+}
+
 export interface IFESeason extends ISeasonCommonFields {
   updatedAt: string
   createdAt: string
@@ -143,9 +151,7 @@ export interface ISeasonReviewUpdateData {
   linkedLeagueName: string
   startDate: string
   expectedEndDate: string
-  playoffFormat: string
-  standingsFormat: string
-  tiebreakersFormat: string
+  divisions: IBEDivision[]
 }
 
 interface ICreateSeasonDivision {

@@ -108,6 +108,10 @@ svg {
   color: rgba(26, 22, 87, 1) !important
 }
 
+.ant-table-wrapper .ant-table-thead>tr>th {
+  font-weight: 500 !important;
+}
+
 .ant-table-wrapper td.ant-table-column-sort {
   background-color: white;
 }

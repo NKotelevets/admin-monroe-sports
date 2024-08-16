@@ -1,16 +1,17 @@
-import CreateBracket from './CreateBracket/CreateBracket'
-import { AddDivisionPollButton, MainContainer } from './components/Elements'
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import { Breadcrumb, DatePicker, Flex, Typography } from 'antd'
 import { format } from 'date-fns'
 import dayjs from 'dayjs'
 import { FieldArray, Form, Formik } from 'formik'
 import { useCallback, useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Helmet } from 'react-helmet'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
+import CreateBracket from '@/pages/Protected/Seasons/CreateBracket/CreateBracket'
 import CreateDivision from '@/pages/Protected/Seasons/components/CreateDivision'
+import { AddDivisionPollButton, MainContainer } from '@/pages/Protected/Seasons/components/Elements'
 import SearchLeagueTournament from '@/pages/Protected/Seasons/components/SearchLeagueTournament'
 import {
   ICreateSeasonFormValues,
@@ -23,6 +24,7 @@ import {
   CancelButton,
   MonroeBlueText,
   MonroeDivider,
+  MonroeSecondaryButton,
   OptionTitle,
   PageContainer,
   PageContent,
@@ -33,29 +35,50 @@ import {
 import MonroeInput from '@/components/Inputs/MonroeInput'
 import Loader from '@/components/Loader'
 import MonroeButton from '@/components/MonroeButton'
+import MonroeModal from '@/components/MonroeModal'
 import MonroeTooltip from '@/components/MonroeTooltip'
 
 import BaseLayout from '@/layouts/BaseLayout'
 
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
-import { useGetSeasonDetailsQuery, useUpdateSeasonMutation } from '@/redux/seasons/seasons.api'
+import {
+  // useExportPlayoffTemplateMutation,
+  useGetSeasonDetailsQuery, // usePopulateBracketsMutation,
+  useUpdateSeasonMutation,
+} from '@/redux/seasons/seasons.api'
 
-import { PATH_TO_SEASONS } from '@/constants/paths'
+import { PATH_TO_EDIT_SEASON, PATH_TO_SEASONS } from '@/constants/paths'
 
 import { ICreateBESeason } from '@/common/interfaces/season'
 
+import FileExcel from '@/assets/icons/file-exel.svg'
 import ShowAllIcon from '@/assets/icons/show-all.svg'
+import SwapIcon from '@/assets/icons/swap.svg'
+
+// const MOCKED_IDS = [
+//   'fa9f7fca-aec7-4ee4-8c75-7a415e1a8385',
+//   '9285879c-8a79-4064-9164-71a7d4f5bb47',
+//   'c15cc462-176a-48c9-83a6-0a8da637c432',
+//   'deb5dfd6-ac54-4439-a783-ff7f90f7aac1',
+//   '034f4f63-075c-4b8a-ba8b-ff4711edd79c',
+// ]
 
 const EditSeason = () => {
   const navigate = useNavigate()
   const [updateSeason] = useUpdateSeasonMutation()
   const params = useParams<{ id: string }>()
+  const location = useLocation()
   const { data, isLoading } = useGetSeasonDetailsQuery(params!.id || '', {
     skip: !params.id,
     refetchOnMountOrArgChange: true,
   })
   const [selectedLeague, setSelectedLeague] = useState<string | undefined>(data?.league?.name)
-  const { isCreateBracketPage } = useSeasonSlice()
+  const { isCreateBracketPage, setIsCreateBracketPage } = useSeasonSlice()
+  const isEditPage = location.pathname.includes(PATH_TO_EDIT_SEASON)
+  // const [exportPlayoffTemplate] = useExportPlayoffTemplateMutation()
+  // const [fileData, setFileData] = useState<null | string>(null)
+  // const [populateBrackets] = usePopulateBracketsMutation()
+  const [showModal, setShowModal] = useState(false)
 
   const goBack = useCallback(() => navigate(PATH_TO_SEASONS), [])
 
@@ -110,14 +133,15 @@ const EditSeason = () => {
     })
   }
 
-  const BREAD_CRUMB_ITEMS = [
-    {
-      title: <a href={PATH_TO_SEASONS}>Seasons</a>,
-    },
-    {
-      title: <MonroeBlueText>{data?.name}</MonroeBlueText>,
-    },
-  ]
+  // useEffect(() => {
+  //   exportPlayoffTemplate({ ids: MOCKED_IDS })
+  //     .unwrap()
+  //     .then((response) => response.blob())
+  //     .then((data) => {
+  //       setFileData(data)
+  //     })
+  //     .catch((error) => console.error('Error fetching file:', error))
+  // }, [])
 
   useEffect(() => {
     if (data && !selectedLeague) {
@@ -144,7 +168,7 @@ const EditSeason = () => {
           playoffFormat: subdivision.playoff_format === 0 ? 'Best Record Wins' : 'Single Elimination Bracket',
           standingsFormat: subdivision.standings_format === 0 ? 'Winning %' : 'Points',
           tiebreakersFormat: subdivision.tiebreakers_format === 0 ? 'Winning %' : 'Points',
-          brackets: subdivision.brackets.map((bracket) => ({
+          brackets: subdivision!.brackets!.map((bracket) => ({
             name: bracket.name,
             subdivisionsNames: bracket.subdivision,
             playoffTeams: bracket.number_of_teams,
@@ -171,6 +195,51 @@ const EditSeason = () => {
       })) || [],
   }
 
+  const INITIAL_BREAD_CRUMB_ITEMS = [
+    {
+      title: <a href={PATH_TO_SEASONS}>Seasons</a>,
+    },
+    {
+      title: <MonroeBlueText>{data?.name}</MonroeBlueText>,
+    },
+  ]
+
+  const BREAD_CRUMB_ITEMS = isCreateBracketPage
+    ? [
+        {
+          title: (
+            <a href={PATH_TO_SEASONS} onClick={() => setIsCreateBracketPage(false)}>
+              Seasons
+            </a>
+          ),
+        },
+        {
+          title: <a onClick={() => setIsCreateBracketPage(false)}>{data?.name}</a>,
+        },
+        {
+          title: <MonroeBlueText>Edit Bracket</MonroeBlueText>,
+        },
+      ]
+    : INITIAL_BREAD_CRUMB_ITEMS
+
+  const handleExport = () => {
+    // if (!fileData) return
+    // const blob = new Blob([fileData], { type: 'text/csv' })
+    // const url = URL.createObjectURL(blob)
+    // const link = document.createElement('a')
+    // link.href = url
+    // link.setAttribute('download', 'my_file.csv') // Specify filename
+    // document.body.appendChild(link)
+    // link.click()
+    // document.body.removeChild(link)
+    // URL.revokeObjectURL(url) // Release memory
+  }
+
+  const handlePopulateBrackets = async () => {
+    setShowModal(true)
+    // await populateBrackets().unwrap()
+  }
+
   return (
     <BaseLayout>
       <>
@@ -178,11 +247,56 @@ const EditSeason = () => {
           <title>Admin Panel | Edit Season</title>
         </Helmet>
 
+        {showModal &&
+          createPortal(
+            <MonroeModal
+              okText="Confirm"
+              onOk={() => {
+                setShowModal(false)
+              }}
+              onCancel={() => {
+                setShowModal(false)
+              }}
+              title="Playoff phase is not ready"
+              type="warn"
+              content={
+                <p>
+                  It seems that there is at least one Game with Scores pending to be added and this might impact on
+                  Teams placed on the Brackets. You may proceed, but reviewing it is advisable.
+                </p>
+              }
+            />,
+            document.body,
+          )}
+
         <PageContainer vertical>
           <Breadcrumb items={BREAD_CRUMB_ITEMS} />
 
-          <ProtectedPageTitle>Edit season</ProtectedPageTitle>
+          <Flex align="center" justify="space-between">
+            <ProtectedPageTitle>Edit season</ProtectedPageTitle>
 
+            {isEditPage && isCreateBracketPage && (
+              <Flex>
+                <MonroeSecondaryButton
+                  icon={<ReactSVG src={FileExcel} />}
+                  iconPosition="start"
+                  type="default"
+                  onClick={handleExport}
+                >
+                  Export Playoff Template CSV
+                </MonroeSecondaryButton>
+
+                <MonroeButton
+                  label="Populate Brackets"
+                  iconPosition="start"
+                  icon={<ReactSVG src={SwapIcon} />}
+                  type="primary"
+                  style={{ height: '32px' }}
+                  onClick={handlePopulateBrackets}
+                />
+              </Flex>
+            )}
+          </Flex>
           <PageContent>
             <Formik
               initialValues={initialValues}
@@ -227,7 +341,7 @@ const EditSeason = () => {
                   <>
                     {!isCreateBracketPage && (
                       <Form onSubmit={handleSubmit}>
-                        <Flex>
+                        <Flex style={{ padding: '0' }}>
                           <div style={{ flex: '0 0 40%' }}>
                             <ProtectedPageSubtitle>Main Info</ProtectedPageSubtitle>
                           </div>
@@ -334,7 +448,6 @@ const EditSeason = () => {
                                         ? "You can't create division/pool when you have errors in other divisions/pools"
                                         : ''
                                     }
-                                    arrowPosition="bottom"
                                     width="280px"
                                     containerWidth="190px"
                                   >
@@ -369,11 +482,7 @@ const EditSeason = () => {
                               Cancel
                             </CancelButton>
 
-                            <MonroeTooltip
-                              width="176px"
-                              arrowPosition="bottom"
-                              text={!isEnabledButton ? 'Missing mandatory data' : ''}
-                            >
+                            <MonroeTooltip width="176px" text={!isEnabledButton ? 'Missing mandatory data' : ''}>
                               <MonroeButton
                                 label="Edit Season"
                                 type="primary"

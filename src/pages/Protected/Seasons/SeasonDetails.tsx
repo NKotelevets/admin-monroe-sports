@@ -128,7 +128,12 @@ export const SeasonDetails = () => {
                   {data.divisions.map((division) => (
                     <Flex key={division.id} vertical>
                       <MonroeLinkText>{division.name}</MonroeLinkText>
-                      <MonroeBlueText>{division.sub_division.map((subdivision) => subdivision.name)}</MonroeBlueText>
+                      <MonroeBlueText>
+                        {division.sub_division.map(
+                          (subdivision, idx) =>
+                            ` ${subdivision.name}${division.sub_division.length - 1 === idx ? '.' : ','}`,
+                        )}
+                      </MonroeBlueText>
                     </Flex>
                   ))}
                 </Flex>

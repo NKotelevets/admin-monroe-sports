@@ -12,8 +12,6 @@ import MonroeTooltip from '@/components/MonroeTooltip'
 import CellText from '@/components/Table/CellText'
 import TextWithTooltip from '@/components/TextWithTooltip'
 
-import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
-
 import { PATH_TO_EDIT_SEASON, PATH_TO_LEAGUE_PAGE, PATH_TO_SEASON_DETAILS } from '@/constants/paths'
 
 import { IBEDivision } from '@/common/interfaces/division'
@@ -32,7 +30,6 @@ interface IParams {
 }
 
 export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDeleteSingleRecordModal }: IParams) => {
-  const { seasons } = useSeasonSlice()
   const searchInput = useRef<InputRef>(null)
   const handleReset = (clearFilters: () => void) => clearFilters()
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
@@ -157,16 +154,16 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
       title: 'Division/Pool',
       dataIndex: 'divisions',
       width: '200px',
-      render: (divisions: IBEDivision[], _, idx) => {
+      render: (divisions: IBEDivision[]) => {
         const divisionsNames = divisions.map((division) => division.name).join(', ')
         const divisionsLength = divisionsNames.length
 
         return (
-          <div style={{ width: '160px' }}>
-            {divisionsLength > 24 ? (
+          <div>
+            {divisionsLength > 20 ? (
               <MonroeTooltip
-                width="120px"
-                arrowPosition={idx > (seasons.length - 1) / 2 ? 'bottom' : 'top'}
+                width="auto"
+                containerWidth="auto"
                 text={
                   <Flex vertical>
                     {divisions.map((division) => (
@@ -175,7 +172,7 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
                   </Flex>
                 }
               >
-                <CellText isLink> {divisionsNames.substring(0, 21).trim() + '...'}</CellText>
+                <CellText isLink> {divisionsNames.substring(0, 16).trim() + '...'}</CellText>
               </MonroeTooltip>
             ) : (
               <CellText isLink>{divisionsNames}</CellText>
