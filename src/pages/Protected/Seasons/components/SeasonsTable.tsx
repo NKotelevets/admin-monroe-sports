@@ -62,7 +62,17 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
   showAdditionalHeader,
   showCreatedRecords,
 }) => {
-  const { seasons, limit, offset, ordering, total, createdRecordsNames, setPaginationParams } = useSeasonSlice()
+  const {
+    seasons,
+    limit,
+    offset,
+    ordering,
+    total,
+    createdRecordsNames,
+    setPaginationParams,
+    isShowImportWarningModal,
+    hideImportWarningModal,
+  } = useSeasonSlice()
   const [getSeasons, { isLoading, isFetching, data }] = useLazyGetSeasonsQuery()
   const [tableParams, setTableParams] = useState<ITableParams>({
     pagination: {
@@ -184,6 +194,35 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
         />
       )}
 
+      {isShowImportWarningModal && (
+        <MonroeModal
+          okText="Confirm"
+          onOk={() => hideImportWarningModal()}
+          title="Further Bracket editing required"
+          type="warn"
+          closable={false}
+          content={
+            <div>
+              <p>
+                You are importing a file that contains at least one Subdivision with Playoff Format set as “Single
+                Elimination Bracket”.
+              </p>
+
+              <p>
+                If you’re <span style={{ fontWeight: 600, margin: '20px 0' }}>updating a record</span>, only the Playoff
+                change will be discarded and will have to be done manually through the Edit Season screen.
+              </p>
+
+              <p>
+                If you’re <span style={{ fontWeight: 600 }}>adding a new record</span>, it will be created with the
+                Playoff Format set as “Best Record Win“. Changing and adding brackets can be done through the
+                corresponding Edit Season screen.
+              </p>
+            </div>
+          }
+        />
+      )}
+
       {showAdditionalHeader && (
         <ExpandedTableHeader>
           <p
@@ -234,7 +273,7 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
         loading={isLoading || isFetching}
         onChange={handleTableChange}
         rowClassName={(record) =>
-          showCreatedRecords && createdRecordsNames.includes(record.name) ? 'highlighted-row' : ''
+          showCreatedRecords && createdRecordsNames.find((cRN) => cRN.name === record.name) ? 'highlighted-row' : ''
         }
         rowSelection={{
           type: 'checkbox',

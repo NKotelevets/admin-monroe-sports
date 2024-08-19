@@ -1,3 +1,4 @@
+import styled from '@emotion/styled'
 import { Checkbox, Select } from 'antd'
 import { DefaultOptionType } from 'antd/es/select'
 import { CSSProperties, FC } from 'react'
@@ -15,7 +16,7 @@ interface IMonroeMultipleSelectProps {
   value: string[]
 }
 
-const MonroeMultipleSelect: FC<IMonroeMultipleSelectProps> = ({ styles, options, value, ...props }) => (
+const CustomSelect: FC<IMonroeMultipleSelectProps> = ({ styles, options, value, ...props }) => (
   <Select
     suffixIcon={<ReactSVG src={ArrowDownIcon} />}
     mode="multiple"
@@ -31,5 +32,14 @@ const MonroeMultipleSelect: FC<IMonroeMultipleSelectProps> = ({ styles, options,
   </Select>
 )
 
-export default MonroeMultipleSelect
+const MonroeMultipleSelect = styled(CustomSelect)`
+  @media (width > 1660px) {
+    & .ant-checkbox-wrapper span {
+      font-size: 18px !important;
+    }
 
+    min-height: 40px !important;
+  }
+`
+
+export default MonroeMultipleSelect

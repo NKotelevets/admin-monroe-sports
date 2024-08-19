@@ -82,12 +82,12 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
   division,
   values,
 }) => {
-  const { setBracketIdx, setBracketMode } = useSeasonSlice()
+  const { setBracketIdx, setBracketMode, setIsDuplicateNames } = useSeasonSlice()
   const [isOpenedDetails, setIsOpenedDetails] = useState(index === 0 ? true : false)
   const { isComponentVisible, ref } = useIsActiveComponent(index === 0 ? true : false)
   const subdivisionError = (errors?.divisions?.[divisionIndex] as FormikErrors<IFEDivision>)?.subdivisions?.[index]
   const isBlockAddBracketButton = !!(subdivisionError as FormikErrors<IFESubdivision>)?.name
-  const { setIsCreateBracketPage, setPathToSubdivisionDataAndIndexes } = useSeasonSlice()
+  const { setIsCreateBracketPage, setSelectedBracketId, setPathToSubdivisionDataAndIndexes } = useSeasonSlice()
   const allSubdivisionsNames = division.subdivisions.map((sd) => sd.name)
   const listOfDuplicatedNames = allSubdivisionsNames
     .map((dN, idx, array) => {
@@ -106,6 +106,14 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
   useEffect(() => {
     if (!isComponentVisible) setIsOpenedDetails(false)
   }, [isComponentVisible])
+
+  useEffect(() => {
+    if (notUniqueNameErrorText === 'Name already exists') {
+      setIsDuplicateNames(true)
+    } else {
+      setIsDuplicateNames(false)
+    }
+  }, [notUniqueNameErrorText])
 
   const handleSubdivisionNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newSubdivisionName = event.target.value
@@ -152,9 +160,9 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
   const handleDelete = () => {
     const isSubDivisionNameUsed = values.divisions.find((division) =>
       division.subdivisions.find((subdiv) =>
-        subdiv.brackets.find((bracket) =>
-          bracket.matches.find((match) =>
-            match.participants.find((p) => p.subpoolName === subdivision.name && subdiv.name !== subdivision.name),
+        subdiv.brackets?.find((bracket) =>
+          bracket.matches?.find((match) =>
+            match.participants?.find((p) => p.subpoolName === subdivision.name && subdiv.name !== subdivision.name),
           ),
         ),
       ),
@@ -178,7 +186,6 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
         <MonroeModal
           okText="Confirm"
           onOk={() => setIsShowModal(false)}
-          onCancel={() => setIsShowModal(false)}
           type="warn"
           title="Forbidden action"
           content={<p>You can't delete this subdivision because it used on brackets</p>}
@@ -239,95 +246,95 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
               </RadioGroupContainer>
 
               <FieldArray name={`divisions[${divisionIndex}.subdivisions[${index}.brackets]]`}>
-                {(innerArrayHelpers) => {
-                  return (
-                    <>
-                      {subdivision.playoffFormat === 'Single Elimination Bracket' && (
-                        <>
-                          {subdivision?.brackets && (
-                            <Flex vertical>
-                              {subdivision?.brackets?.map((bracketData, idx) => (
-                                <Flex
-                                  key={bracketData.name}
-                                  justify="space-between"
+                {(innerArrayHelpers) => (
+                  <>
+                    {subdivision.playoffFormat === 'Single Elimination Bracket' && (
+                      <>
+                        {subdivision?.brackets && (
+                          <Flex vertical>
+                            {subdivision?.brackets?.map((bracketData, idx) => (
+                              <Flex
+                                key={bracketData.name}
+                                justify="space-between"
+                                style={{
+                                  marginTop: '5px',
+                                }}
+                              >
+                                <Typography
                                   style={{
-                                    marginTop: '5px',
+                                    color: 'rgba(26, 22, 87, 1)',
+                                    fontWeight: 500,
+                                    fontSize: '14px',
                                   }}
                                 >
-                                  <Typography
+                                  {bracketData.name}
+                                </Typography>
+
+                                <Flex>
+                                  <div
                                     style={{
-                                      color: 'rgba(26, 22, 87, 1)',
-                                      fontWeight: 500,
-                                      fontSize: '14px',
+                                      marginRight: '4px',
                                     }}
                                   >
-                                    {bracketData.name}
-                                  </Typography>
-
-                                  <Flex>
-                                    <div
-                                      style={{
-                                        marginRight: '4px',
-                                      }}
-                                    >
-                                      <ReactSVG
-                                        src={SmallEditIcon}
-                                        style={{ width: '14px', height: '14px' }}
-                                        onClick={() => {
-                                          setIsCreateBracketPage(true)
-                                          setPathToSubdivisionDataAndIndexes(`${namePrefix}&${divisionIndex}-${index}`)
-                                          setBracketIdx(idx)
-                                          setBracketMode('edit')
-                                        }}
-                                      />
-                                    </div>
-
                                     <ReactSVG
-                                      src={SmallDeleteIcon}
+                                      src={SmallEditIcon}
                                       style={{ width: '14px', height: '14px' }}
-                                      onClick={() => innerArrayHelpers.remove(idx)}
+                                      onClick={() => {
+                                        setIsCreateBracketPage(true)
+                                        setPathToSubdivisionDataAndIndexes(`${namePrefix}&${divisionIndex}-${index}`)
+                                        setBracketIdx(idx)
+                                        setBracketMode('edit')
+                                        setSelectedBracketId(bracketData.id as number)
+                                      }}
                                     />
-                                  </Flex>
-                                </Flex>
-                              ))}
-                            </Flex>
-                          )}
+                                  </div>
 
-                          <MonroeTooltip
-                            text={
-                              isBlockAddBracketButton
-                                ? "You can't create bracket when you don't have subdivision/subpool name"
-                                : ''
-                            }
-                            width="200px"
-                            containerWidth="134px"
+                                  <ReactSVG
+                                    src={SmallDeleteIcon}
+                                    style={{ width: '14px', height: '14px' }}
+                                    onClick={() => innerArrayHelpers.remove(idx)}
+                                  />
+                                </Flex>
+                              </Flex>
+                            ))}
+                          </Flex>
+                        )}
+
+                        <MonroeTooltip
+                          text={
+                            isBlockAddBracketButton
+                              ? "You can't create bracket when you don't have subdivision/subpool name"
+                              : ''
+                          }
+                          width="200px"
+                          containerWidth="134px"
+                        >
+                          <AddBracketButton
+                            type="default"
+                            icon={<PlusOutlined />}
+                            disabled={isBlockAddBracketButton}
+                            iconPosition="start"
+                            onClick={() => {
+                              setIsCreateBracketPage(true)
+                              setPathToSubdivisionDataAndIndexes(`${namePrefix}&${divisionIndex}-${index}`)
+                              setBracketIdx(lastBracketIdx)
+                              setBracketMode('create')
+                              innerArrayHelpers.push({
+                                name: '',
+                                subdivisionsNames: [],
+                                playoffTeams: 2,
+                                matches: BRACKETS_OPTIONS[2],
+                              })
+                              setSelectedBracketId(null)
+                            }}
                           >
-                            <AddBracketButton
-                              type="default"
-                              icon={<PlusOutlined />}
-                              disabled={isBlockAddBracketButton}
-                              iconPosition="start"
-                              onClick={() => {
-                                setIsCreateBracketPage(true)
-                                setPathToSubdivisionDataAndIndexes(`${namePrefix}&${divisionIndex}-${index}`)
-                                setBracketIdx(lastBracketIdx)
-                                setBracketMode('create')
-                                innerArrayHelpers.push({
-                                  name: '',
-                                  subdivisionsNames: [],
-                                  playoffTeams: 2,
-                                  matches: BRACKETS_OPTIONS[2],
-                                })
-                              }}
-                            >
-                              Add Bracket
-                            </AddBracketButton>
-                          </MonroeTooltip>
-                        </>
-                      )}
-                    </>
-                  )
-                }}
+                            Add Bracket
+                          </AddBracketButton>
+                        </MonroeTooltip>
+                      </>
+                    )}
+                  </>
+                )}
               </FieldArray>
             </div>
 

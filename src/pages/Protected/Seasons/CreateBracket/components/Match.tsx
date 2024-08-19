@@ -1,3 +1,4 @@
+import styled from '@emotion/styled'
 import { MatchComponentProps } from '@g-loot/react-tournament-brackets/dist/src/types'
 import { Flex } from 'antd'
 import { DefaultOptionType } from 'antd/es/select'
@@ -33,10 +34,19 @@ interface IMatchProps {
   >
 }
 
+const MonroeSelectWrapper = styled(MonroeSelect)`
+  height: 42px;
+  width: 85px;
+
+  @media (width > 1660px) {
+    width: 102px;
+  }
+`
+
 const Match: FC<IMatchProps> = ({ brackets, matchProps, teamsOptions, options, setNewBracketData }) => {
   const match = matchProps.match as IMatch
   const matchParticipants =
-    match.participants.length % 2 !== 0
+    match.participants.length === 1
       ? [
           ...match.participants,
           {
@@ -109,55 +119,49 @@ const Match: FC<IMatchProps> = ({ brackets, matchProps, teamsOptions, options, s
           </TeamsWrapper>
         ) : (
           <>
-            {matchParticipants.map((participant) => {
-              return (
-                <Flex
-                  key={participant.id}
-                  style={{
-                    height: '42px',
-                  }}
-                >
-                  {participant.isEmpty ? (
-                    <EmptyTeamWrapper>
-                      <MonroeBlueText>Bye</MonroeBlueText>
-                    </EmptyTeamWrapper>
-                  ) : (
-                    <Flex
-                      style={{
-                        width: '100%',
-                      }}
-                    >
-                      <MonroeSelect
-                        styles={{ flex: '1 1 auto', height: '42px' }}
-                        placeholder="Choose Subpool"
-                        options={options}
-                        onChange={(value) => handleChange(value, `${participant.id}`, 'subpoolName')}
-                        value={
-                          participant.subpoolName?.length
-                            ? participant.subpoolName?.length > 16
-                              ? participant.subpoolName?.substring(0, 16) + '...'
-                              : participant?.subpoolName
-                            : undefined
-                        }
-                        name="subpoolname"
-                      />
+            {matchParticipants.map((participant) => (
+              <Flex
+                key={participant.id}
+                style={{
+                  height: '42px',
+                }}
+              >
+                {participant.isEmpty ? (
+                  <EmptyTeamWrapper>
+                    <MonroeBlueText>Bye</MonroeBlueText>
+                  </EmptyTeamWrapper>
+                ) : (
+                  <Flex
+                    style={{
+                      width: '100%',
+                    }}
+                  >
+                    <MonroeSelect
+                      styles={{ flex: '1 1 auto', height: '42px' }}
+                      placeholder="Choose Subpool"
+                      options={options}
+                      onChange={(value) => handleChange(value, `${participant.id}`, 'subpoolName')}
+                      value={
+                        participant.subpoolName?.length
+                          ? participant.subpoolName?.length > 16
+                            ? participant.subpoolName?.substring(0, 16) + '...'
+                            : participant?.subpoolName
+                          : undefined
+                      }
+                      name="subpoolname"
+                    />
 
-                      <MonroeSelect
-                        name="playoffsTeams"
-                        value={participant.seed ? `${participant.seed}` : null}
-                        options={teamsOptions}
-                        onChange={(value) => handleChange(value, `${participant.id}`, 'seed')}
-                        placeholder="Seed #"
-                        styles={{
-                          width: '85px',
-                          height: '42px',
-                        }}
-                      />
-                    </Flex>
-                  )}
-                </Flex>
-              )
-            })}
+                    <MonroeSelectWrapper
+                      name="playoffsTeams"
+                      value={participant.seed ? `${participant.seed}` : null}
+                      options={teamsOptions}
+                      onChange={(value) => handleChange(value, `${participant.id}`, 'seed')}
+                      placeholder="Seed #"
+                    />
+                  </Flex>
+                )}
+              </Flex>
+            ))}
           </>
         )}
       </>
@@ -166,4 +170,3 @@ const Match: FC<IMatchProps> = ({ brackets, matchProps, teamsOptions, options, s
 }
 
 export default Match
-

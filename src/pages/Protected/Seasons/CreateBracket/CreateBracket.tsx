@@ -16,7 +16,7 @@ import { BracketWrapper, CancelButton, MonroeDivider, OptionTitle, ProtectedPage
 import MonroeInput from '@/components/Inputs/MonroeInput'
 import MonroeButton from '@/components/MonroeButton'
 import MonroeMultipleSelect from '@/components/MonroeMultipleSelect'
-import MonroeSelect from '@/components/MonroeSelect'
+import CustomSelect from '@/components/MonroeSelect'
 import MonroeTooltip from '@/components/MonroeTooltip'
 
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
@@ -53,6 +53,21 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue }) => {
   )
   const [newBracketData, setNewBracketData] = useState(subdivisionValues.brackets?.[bracketIdx])
   const [isEnabledButton, setIsEnabledButton] = useState(true)
+  const screenWidth = window.innerWidth
+  const [isLargeScreen, setIsLargeScreen] = useState(screenWidth >= 1660)
+
+  const handleResize = () => {
+    const screenWidth = window.innerWidth
+
+    setIsLargeScreen(screenWidth >= 1660)
+  }
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
 
   const calculateTeamsOptions = () => {
     const arrayOfNumbers = Array.from({ length: newBracketData.playoffTeams }, (_, index) => ({
@@ -65,7 +80,7 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue }) => {
 
   useEffect(() => {
     if (newBracketData.subdivisionsNames.length) {
-      const subpoolOptions = subdivisionValues.brackets?.[bracketIdx].subdivisionsNames.map((subpool) => ({
+      const subpoolOptions = newBracketData.subdivisionsNames.map((subpool) => ({
         label: subpool,
         value: subpool,
       }))
@@ -148,7 +163,7 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue }) => {
 
           <Flex vertical style={{ marginBottom: '8px' }}>
             <OptionTitle># playoffs' teams *</OptionTitle>
-            <MonroeSelect
+            <CustomSelect
               name={`${namePrefix}.brackets.${bracketIdx}.playoffTeams`}
               value={`${newBracketData.playoffTeams}`}
               options={PLAYOFFS_TEAMS_OPTIONS}
@@ -179,7 +194,12 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue }) => {
           <SingleEliminationBracket
             theme={bracketTheme}
             matches={newBracketData.matches}
-            options={BRACKET_STYLES}
+            options={{
+              style: {
+                ...BRACKET_STYLES,
+                width: isLargeScreen ? 400 : 300,
+              },
+            }}
             matchComponent={(props) => (
               <Match
                 setNewBracketData={setNewBracketData}
@@ -206,17 +226,16 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue }) => {
             onClick={() => {
               setIsCreateBracketPage(false)
 
-              const brackets = subdivisionValues.brackets
-
-              if (brackets.length === 1 && !brackets[0].name && brackets[0].subdivisionsNames.length === 0) {
-                setFieldValue(`${namePrefix}.brackets`, [])
+              if (bracketMode === 'create') {
+                const brackets = subdivisionValues.brackets.filter((_, idx) => idx !== bracketIdx)
+                setFieldValue(`${namePrefix}.brackets`, brackets)
               }
             }}
           >
             Cancel
           </CancelButton>
 
-          <MonroeTooltip width="176px" text={isEnabledButton ? 'Missing mandatory data' : ''}>
+          <MonroeTooltip width="200px" containerWidth="auto" text={isEnabledButton ? 'Missing mandatory data' : ''}>
             <MonroeButton
               label={buttonLabel}
               type="primary"

@@ -20,26 +20,24 @@ export const participantSchema = Yup.object().shape({
 })
 
 export const matchSchema = Yup.object({
-  id: Yup.number().required(),
+  id: Yup.number().nullable(),
   nextMatchId: Yup.number().nullable(),
-  tournamentRoundText: Yup.string(),
+  tournamentRoundText: Yup.string().nullable(),
   state: Yup.string().required(),
   isNotFirstRound: Yup.boolean(),
-  gameNumber: Yup.mixed(),
+  gameNumber: Yup.mixed().nullable(),
   startTime: Yup.string().required(),
   topTeam: Yup.string(),
   bottomTeam: Yup.string(),
   participants: Yup.array().of(participantSchema).required(),
 })
 
-export const bracketSchema = Yup.array().of(
-  Yup.object({
-    name: Yup.string(),
-    subdivisionsNames: Yup.array(Yup.string()),
-    playoffTeams: Yup.number().integer(),
-    matches: Yup.array().of(matchSchema),
-  }),
-)
+export const bracketSchema = Yup.object({
+  name: Yup.string(),
+  subdivisionsNames: Yup.array(Yup.string()).min(1),
+  playoffTeams: Yup.number().integer(),
+  matches: Yup.array().of(matchSchema).min(1),
+})
 
 const subdivisionValidationSchema = Yup.object().shape({
   name: Yup.string().required(),
@@ -47,11 +45,13 @@ const subdivisionValidationSchema = Yup.object().shape({
   playoffFormat: Yup.string(),
   standingsFormat: Yup.string(),
   tiebreakersFormat: Yup.string(),
-  brackets: bracketSchema.when('playoffFormat', {
-    is: (value: string) => value === 'Single Elimination Bracket',
-    then: (schema) => schema.required().min(1),
-    otherwise: (schema) => schema,
-  }),
+  brackets: Yup.array()
+    .of(bracketSchema)
+    .when('playoffFormat', {
+      is: (value: string) => value === 'Single Elimination Bracket',
+      then: (schema) => schema.required().min(1),
+      otherwise: (schema) => schema,
+    }),
 })
 
 const divisionValidationSchema = Yup.object<ICreateSeasonDivision[]>().shape({
@@ -114,6 +114,7 @@ export interface ICreateSeasonSubdivision {
   standingsFormat: string
   tiebreakersFormat: string
   brackets: {
+    id?: number
     name: string
     subdivisionsNames: string[]
     playoffTeams: number

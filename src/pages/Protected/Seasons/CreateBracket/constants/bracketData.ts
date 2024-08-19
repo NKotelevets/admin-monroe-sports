@@ -1746,16 +1746,12 @@ export const BRACKETS_OPTIONS: Record<TBracketKeys, IMatch[]> = {
 }
 
 export const BRACKET_STYLES = {
-  style: {
-    connectorColor: '#D9D9D9',
-    boxHeight: 85,
-    roundHeader: {
-      fontColor: 'rgba(26, 22, 87, 1)',
-      backgroundColor: 'yellow',
-      height: 46,
-      fontFamily: 'Inter',
-      fontSize: 14,
-    },
+  connectorColor: '#D9D9D9',
+  boxHeight: 85,
+  roundHeader: {
+    fontColor: 'rgba(26, 22, 87, 1)',
+    height: 46,
+    fontFamily: 'Inter',
+    fontSize: 14,
   },
 }
-

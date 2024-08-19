@@ -36,6 +36,7 @@ interface IBEBracket {
   subdivision: string[]
   updated_at?: string
   matches: IBEMatch[]
+  id: number
 }
 
 interface IBESubdivision {
@@ -56,6 +57,7 @@ interface IFEBracket {
   subdivision: string[]
   updatedAt: string
   matches: IMatch[]
+  id?: number
 }
 
 export interface IFESubdivision {

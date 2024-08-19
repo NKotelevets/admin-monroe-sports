@@ -81,7 +81,7 @@ const MonroeSidebar = () => {
     ) ||
     pathname.includes(PATH_TO_SEASON_DETAILS) ||
     pathname.includes(PATH_TO_EDIT_SEASON)
-  const { setIsCreateBracketPage } = useSeasonSlice()
+  const { setIsCreateBracketPage, setSelectedBracketId } = useSeasonSlice()
 
   const getSelectedSubMenu = () => {
     if ([PATH_TO_MASTER_TEAMS, PATH_TO_LEAGUE_TEAMS].includes(pathname)) return TEAMS_KEY
@@ -193,6 +193,7 @@ const MonroeSidebar = () => {
     if (isPageThatWillHaveChanges) e.preventDefault()
 
     setIsCreateBracketPage(false)
+    setSelectedBracketId(null)
   }
 
   useEffect(() => {

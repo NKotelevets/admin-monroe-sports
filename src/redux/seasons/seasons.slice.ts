@@ -20,7 +20,7 @@ interface ISeasonsSliceState {
   offset: number
   total: number
   ordering: string | null
-  createdRecordsNames: string[]
+  createdRecordsNames: { name: string; showIcon: boolean }[]
   deletedRecordsErrors: IDeletionSeasonItemError[]
   tableRecords: IImportSeasonTableRecord[]
   duplicates: ISeasonDuplicate[]
@@ -30,6 +30,9 @@ interface ISeasonsSliceState {
   selectedLeague: { id: string; name: string } | null
   bracketIdx: number
   bracketMode: TBracketMode
+  isShowImportWarningModal: boolean
+  isDuplicateNames: boolean
+  selectedBracketId: number | null
 }
 
 const seasonsSliceState: ISeasonsSliceState = {
@@ -48,6 +51,9 @@ const seasonsSliceState: ISeasonsSliceState = {
   selectedLeague: null,
   bracketIdx: 0,
   bracketMode: 'create',
+  isShowImportWarningModal: false,
+  isDuplicateNames: false,
+  selectedBracketId: null,
 }
 
 export const seasonsSlice = createSlice({
@@ -91,6 +97,15 @@ export const seasonsSlice = createSlice({
     setBracketIdx: (state, action: PayloadAction<number>) => {
       state.bracketIdx = action.payload
     },
+    hideImportWarningModal: (state) => {
+      state.isShowImportWarningModal = false
+    },
+    setIsDuplicateNames: (state, action: PayloadAction<boolean>) => {
+      state.isDuplicateNames = action.payload
+    },
+    setSelectedBracketId: (state, action: PayloadAction<number | null>) => {
+      state.selectedBracketId = action.payload
+    },
   },
   extraReducers: (builder) =>
     builder
@@ -108,14 +123,32 @@ export const seasonsSlice = createSlice({
         },
       )
       .addMatcher(seasonsApi.endpoints.importSeasonsCSV.matchFulfilled, (state, action) => {
-        state.createdRecordsNames = action.payload.success.map((item) => item.name)
+        state.createdRecordsNames = action.payload.success.map((item) => ({
+          name: item.name,
+          showIcon: item.sub_division[0].playoff_format === 1,
+        }))
+
+        const isSingleEliminationBracketInCreatedRecords = action.payload.success.find(
+          (value) => value.sub_division[0].playoff_format === 1,
+        )
+
+        if (action.payload.status === 'green') {
+          state.isShowImportWarningModal = !!isSingleEliminationBracketInCreatedRecords
+        }
 
         if (action.payload.status !== 'green') {
           const duplicates: ISeasonDuplicate[] = action.payload.duplicates.map((duplicate, idx) => ({
             existing: duplicate.existing,
-            new: getNormalizedVersionOfSeason(duplicate.existing.id, duplicate.new),
+            new: getNormalizedVersionOfSeason(duplicate.existing, duplicate.new),
             index: idx,
           }))
+
+          const isSingleEliminationBracketInNewRecords = action.payload.duplicates.find(
+            (duplicate) => duplicate.new['Playoff Format'] === 'Single Elimination Bracket',
+          )
+
+          state.isShowImportWarningModal =
+            !!isSingleEliminationBracketInNewRecords || !!isSingleEliminationBracketInCreatedRecords
 
           state.duplicates = duplicates
 
@@ -132,7 +165,7 @@ export const seasonsSlice = createSlice({
             ...action.payload.errors.map((error) => ({
               idx: -1,
               message: error.error,
-              name: error['season Name'] || '-',
+              name: error.season_name || '-',
               type: 'Error' as TErrorDuplicate,
               leagueId: (error.league && error.league.name) || '-',
               leagueName: (error.league && error.league.name) || '-',

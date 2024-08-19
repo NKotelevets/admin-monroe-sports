@@ -4,6 +4,4 @@ export const bracketTheme = createTheme({
   roundHeaders: {
     background: 'transparent',
   },
-  canvasBackground: 'green',
 })
-

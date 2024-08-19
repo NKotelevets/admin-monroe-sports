@@ -63,13 +63,22 @@ export interface IGetSeasonsResponse {
 
 interface IImportSeasonSuccess {
   name: string
+  description: string
+  sub_division: {
+    name: string
+    description: string
+    playoff_format: number
+    standings_format: number
+    tiebreakers_format: number
+    brackets: []
+  }[]
 }
 
 interface IImportSeasonError {
   index: number
   error: string
   league?: IBELeague
-  'season Name': string
+  season_name: string
 }
 
 interface IImportSeasonDuplicate {

@@ -1,7 +1,6 @@
 import styled from '@emotion/styled'
 import { Flex } from 'antd'
 import { FC, ReactNode, RefObject, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
 
 const MonroeTooltipContainer = styled.div`
   position: relative;
@@ -12,13 +11,12 @@ const MonroeTooltipContent = styled.div`
   top: 0%;
   left: 50%;
   padding: 8px;
-  transform: translate(-50%, calc(-100% - 10px));
+  transform: translate(-50%, calc(-100% - 5px));
   background-color: #62636d;
   border-radius: 2px;
   font-size: 14px;
-  z-index: 1;
   color: #fff;
-  transform: translate(-50%, calc(-100% + -30px));
+  z-index: 9999;
 
   &::after {
     content: '';
@@ -42,53 +40,34 @@ interface IMonroeTooltipProps {
   height?: string
 }
 
-const MonroeTooltip: FC<IMonroeTooltipProps> = ({
-  children,
-  text,
-  width,
-  containerWidth = 'auto',
-  height = 'auto',
-}) => {
+const MonroeTooltip: FC<IMonroeTooltipProps> = ({ children, text, width, height = 'auto', containerWidth }) => {
   const [showTooltip, setShowTooltip] = useState(false)
   const ref = useRef<HTMLDivElement>()
-  const boundingClientRect = ref.current?.getBoundingClientRect()
-  const top = boundingClientRect && boundingClientRect.y + boundingClientRect?.height / 2 + 10
-  const left = boundingClientRect && boundingClientRect.x + boundingClientRect?.width / 2 + 10
 
   return (
     <MonroeTooltipContainer
+      ref={ref as RefObject<HTMLDivElement>}
+      onMouseEnter={() => setShowTooltip(true)}
+      onMouseLeave={() => setShowTooltip(false)}
       style={{
         width: containerWidth,
       }}
-      onMouseEnter={() => setShowTooltip(true)}
-      onMouseLeave={() => setShowTooltip(false)}
     >
-      {showTooltip &&
-        text &&
-        createPortal(
-          <MonroeTooltipContent
+      {showTooltip && text && (
+        <MonroeTooltipContent style={{ width }}>
+          <Flex
             style={{
-              width,
-              top,
-              left,
+              maxHeight: height,
+              overflow: 'auto',
+              paddingRight: '4px',
             }}
           >
-            <Flex
-              style={{
-                maxHeight: height,
-                overflow: 'auto',
-                paddingRight: '4px',
-              }}
-            >
-              {text}
-            </Flex>
-          </MonroeTooltipContent>,
-          document.body,
-        )}
+            {text}
+          </Flex>
+        </MonroeTooltipContent>
+      )}
 
-      <div ref={ref as RefObject<HTMLDivElement>} style={{ width: containerWidth }}>
-        {children}
-      </div>
+      {children}
     </MonroeTooltipContainer>
   )
 }

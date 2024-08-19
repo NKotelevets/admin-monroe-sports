@@ -58,13 +58,14 @@ const INITIAL_BREAD_CRUMB_ITEMS = [
 
 const CreateSeason = () => {
   const navigate = useNavigate()
-  const { selectedLeague } = useSeasonSlice()
+  const { selectedLeague, isDuplicateNames } = useSeasonSlice()
   const [selectedLeagueTournament, setSelectedLeagueTournament] = useState<string | undefined>('')
   const [createSeason] = useCreateSeasonMutation()
-  const { isCreateBracketPage, setIsCreateBracketPage, setSelectedLeague } = useSeasonSlice()
+  const { isCreateBracketPage, setIsCreateBracketPage, setSelectedBracketId, setSelectedLeague } = useSeasonSlice()
 
   useEffect(() => {
     setIsCreateBracketPage(false)
+    setSelectedBracketId(null)
     if (selectedLeague && !selectedLeagueTournament) setSelectedLeagueTournament(selectedLeague.name)
 
     setSelectedLeague(null)
@@ -91,13 +92,14 @@ const CreateSeason = () => {
             name: bracket.name,
             number_of_teams: bracket.playoffTeams,
             subdivision: bracket.subdivisionsNames,
+            published: false,
             matches: bracket.matches.map((match) => ({
               top_team: match?.topTeam || '',
               bottom_team: match?.bottomTeam || '',
               next_match_id: match.nextMatchId,
               tournament_round_text: match?.tournamentRoundText || '',
               is_not_first_round: match.isNotFirstRound,
-              game_number: match.gameNumber,
+              game_number: match.gameNumber || null,
               match_integer_id: match.id,
               match_participants: match.participants
                 .map((participant) => ({
@@ -132,7 +134,16 @@ const CreateSeason = () => {
           title: <a href={PATH_TO_SEASONS}>Seasons</a>,
         },
         {
-          title: <a onClick={() => setIsCreateBracketPage(false)}>Create season</a>,
+          title: (
+            <a
+              onClick={() => {
+                setIsCreateBracketPage(false)
+                setSelectedBracketId(null)
+              }}
+            >
+              Create season
+            </a>
+          ),
         },
         {
           title: <MonroeBlueText>Create Bracket</MonroeBlueText>,
@@ -155,8 +166,8 @@ const CreateSeason = () => {
           validateOnMount
         >
           {({ values, handleChange, handleSubmit, errors, setFieldValue }) => {
-            const isEnabledButton = Object.keys(errors).length === 0
-            const isAddSubdivisionBtnDisabled = !!errors.divisions?.length
+            const isEnabledButton = Object.keys(errors).length === 0 && !isDuplicateNames
+            const isAddSubdivisionBtnDisabled = !!errors.divisions?.length || isDuplicateNames
 
             const collapsedDivisionItems = (removeFn: (index: number) => void) =>
               values.divisions.map((division, idx) => ({
@@ -268,7 +279,11 @@ const CreateSeason = () => {
                               name="expectedEndDate"
                               value={values.expectedEndDate}
                               onChange={(_, data) => {
-                                setFieldValue('expectedEndDate', dayjs(data as string, 'YYYY-MM-DD'))
+                                if (data) {
+                                  setFieldValue('expectedEndDate', dayjs(data as string, 'YYYY-MM-DD'))
+                                } else {
+                                  setFieldValue('expectedEndDate', null)
+                                }
                               }}
                               minDate={values.startDate as unknown as dayjs.Dayjs}
                             />
@@ -303,30 +318,28 @@ const CreateSeason = () => {
                                 accordion
                               />
 
-                              <div>
-                                <MonroeTooltip
-                                  text={
-                                    isAddSubdivisionBtnDisabled
-                                      ? "You can't create division/pool when you have errors in other divisions/pools"
-                                      : ''
-                                  }
-                                  width="280px"
-                                  containerWidth="190px"
+                              <MonroeTooltip
+                                text={
+                                  isAddSubdivisionBtnDisabled
+                                    ? "You can't create division/pool when you have errors in other divisions/pools"
+                                    : ''
+                                }
+                                width="220px"
+                                containerWidth="190px"
+                              >
+                                <AddDivisionPollButton
+                                  disabled={isAddSubdivisionBtnDisabled}
+                                  type="default"
+                                  icon={<PlusOutlined />}
+                                  iconPosition="start"
+                                  onClick={() => push(INITIAL_DIVISION_DATA)}
+                                  style={{
+                                    width: 'auto',
+                                  }}
                                 >
-                                  <AddDivisionPollButton
-                                    disabled={isAddSubdivisionBtnDisabled}
-                                    type="default"
-                                    icon={<PlusOutlined />}
-                                    iconPosition="start"
-                                    onClick={() => push(INITIAL_DIVISION_DATA)}
-                                    style={{
-                                      width: 'auto',
-                                    }}
-                                  >
-                                    Add Division/Pool
-                                  </AddDivisionPollButton>
-                                </MonroeTooltip>
-                              </div>
+                                  Add Division/Pool
+                                </AddDivisionPollButton>
+                              </MonroeTooltip>
                             </Flex>
                           )}
                         </FieldArray>
@@ -341,7 +354,7 @@ const CreateSeason = () => {
                             Cancel
                           </CancelButton>
 
-                          <MonroeTooltip width="176px" text={!isEnabledButton ? 'Missing mandatory data' : ''}>
+                          <MonroeTooltip width="179px" text={!isEnabledButton ? 'Missing mandatory data' : ''}>
                             <MonroeButton
                               label="Create Season"
                               type="primary"

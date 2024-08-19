@@ -12,6 +12,8 @@ import MonroeTooltip from '@/components/MonroeTooltip'
 import CellText from '@/components/Table/CellText'
 import TextWithTooltip from '@/components/TextWithTooltip'
 
+import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
+
 import { PATH_TO_EDIT_SEASON, PATH_TO_LEAGUE_PAGE, PATH_TO_SEASON_DETAILS } from '@/constants/paths'
 
 import { IBEDivision } from '@/common/interfaces/division'
@@ -19,6 +21,7 @@ import { IFESeason } from '@/common/interfaces/season'
 
 import DeleteIcon from '@/assets/icons/delete.svg'
 import EditIcon from '@/assets/icons/edit.svg'
+import WarningIcon from '@/assets/icons/warn.svg'
 
 type TDataIndex = keyof IFESeason
 type TColumns<T> = TableProps<T>['columns']
@@ -34,6 +37,7 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
   const handleReset = (clearFilters: () => void) => clearFilters()
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
   const navigate = useNavigate()
+  const { createdRecordsNames } = useSeasonSlice()
 
   const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IFESeason> => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -104,13 +108,25 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
       sorter: true,
       ...getColumnSearchProps('name'),
       sortOrder: ordering?.includes('name') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
-      render: (value, record) => (
-        <TextWithTooltip
-          onClick={() => navigate(`${PATH_TO_SEASON_DETAILS}/${record.id}`)}
-          text={value}
-          maxLength={25}
-        />
-      ),
+      render: (value, record) => {
+        const newRecord = createdRecordsNames.find((cRN) => cRN.name === record.name)
+
+        return (
+          <Flex justify="flex-start">
+            {newRecord && newRecord.showIcon && (
+              <MonroeTooltip text="Season requires brackets setting." width="auto" containerWidth="auto">
+                <ReactSVG src={WarningIcon} />
+              </MonroeTooltip>
+            )}
+
+            <TextWithTooltip
+              onClick={() => navigate(`${PATH_TO_SEASON_DETAILS}/${record.id}`)}
+              text={value}
+              maxLength={25}
+            />
+          </Flex>
+        )
+      },
     },
     {
       title: 'Linked League/Tourn',
@@ -154,16 +170,17 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
       title: 'Division/Pool',
       dataIndex: 'divisions',
       width: '200px',
-      render: (divisions: IBEDivision[]) => {
+      render: (divisions: IBEDivision[], record) => {
         const divisionsNames = divisions.map((division) => division.name).join(', ')
         const divisionsLength = divisionsNames.length
 
         return (
-          <div>
+          <div style={{ maxWidth: '150px' }}>
             {divisionsLength > 20 ? (
               <MonroeTooltip
-                width="auto"
+                width="150px"
                 containerWidth="auto"
+                height="120px"
                 text={
                   <Flex vertical>
                     {divisions.map((division) => (
@@ -172,10 +189,15 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
                   </Flex>
                 }
               >
-                <CellText isLink> {divisionsNames.substring(0, 16).trim() + '...'}</CellText>
+                <CellText isLink onClick={() => navigate(`${PATH_TO_SEASON_DETAILS}/${record.id}`)}>
+                  {' '}
+                  {divisionsNames.substring(0, 16).trim() + '...'}
+                </CellText>
               </MonroeTooltip>
             ) : (
-              <CellText isLink>{divisionsNames}</CellText>
+              <CellText isLink onClick={() => navigate(`${PATH_TO_SEASON_DETAILS}/${record.id}`)}>
+                {divisionsNames}
+              </CellText>
             )}
           </div>
         )
@@ -189,14 +211,20 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
       render: (_, record) => {
         return (
           <Flex vertical={false} justify="center" align="center">
-            <ReactSVG src={EditIcon} onClick={() => navigate(`${PATH_TO_EDIT_SEASON}/${record.id}`)} />
+            <ReactSVG
+              src={EditIcon}
+              onClick={() => navigate(`${PATH_TO_EDIT_SEASON}/${record.id}`)}
+              style={{
+                cursor: 'pointer',
+              }}
+            />
             <ReactSVG
               onClick={() => {
                 setSelectedRecordId(record.id)
                 setShowDeleteSingleRecordModal(true)
               }}
               src={DeleteIcon}
-              style={{ marginLeft: '8px' }}
+              style={{ marginLeft: '8px', cursor: 'pointer' }}
             />
           </Flex>
         )

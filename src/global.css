@@ -183,6 +183,10 @@ svg {
   border-bottom: 0 !important;
 }
 
+.ant-collapse-header {
+  padding: 12px 0 !important;
+}
+
 .ant-collapse .ant-collapse-content {
   border-top: 0 !important;
 }
@@ -248,6 +252,20 @@ svg {
 
 .ant-select-selector {
   padding: 1px 8px !important;
+}
+
+@media (width > 1660px) {
+  .ant-select-item-option-content {
+    font-size: 18px;
+  }
+
+  .ant-select-item-option-content span {
+    font-size: 18px;
+  }
+
+  .ant-select-selection-placeholder {
+    font-size: 18px;
+  }
 }
 
 .ant-select-selector::-webkit-scrollbar {

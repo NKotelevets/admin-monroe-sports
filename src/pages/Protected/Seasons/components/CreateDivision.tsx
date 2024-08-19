@@ -16,6 +16,8 @@ import MonroeInput from '@/components/Inputs/MonroeInput'
 import MonroeTextarea from '@/components/Inputs/MonroeTextarea'
 import MonroeTooltip from '@/components/MonroeTooltip'
 
+import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
+
 import useIsActiveComponent from '@/hooks/useIsActiveComponent'
 
 import { IFEDivision } from '@/common/interfaces/division'
@@ -69,6 +71,7 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
   const { isComponentVisible, ref } = useIsActiveComponent(index === 0 ? true : false)
   const isDisabled = !!(errors?.divisions?.[+index] as FormikErrors<IFEDivision>)?.subdivisions?.length
   const allDivisionNames = values.divisions.map((d) => d.name)
+  const { setIsDuplicateNames, isDuplicateNames } = useSeasonSlice()
   const listOfDuplicatedNames = allDivisionNames
     .map((dN, idx, array) => {
       if (array.indexOf(dN) === idx) return false
@@ -77,7 +80,15 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
     })
     .filter((i) => i)
   const notUniqueNameErrorText = listOfDuplicatedNames.find((dN) => dN === division.name) ? 'Name already exists' : ''
-  const isError = !!errors?.divisions?.[index] || !!notUniqueNameErrorText
+  const isError = !!errors?.divisions?.[index] || isDuplicateNames
+
+  useEffect(() => {
+    if (notUniqueNameErrorText === 'Name already exists') {
+      setIsDuplicateNames(true)
+    } else {
+      setIsDuplicateNames(false)
+    }
+  }, [notUniqueNameErrorText])
 
   useEffect(() => {
     if (!isComponentVisible) setIsOpenedDetails(false)
@@ -87,7 +98,7 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
     <div ref={ref} style={getContainerStyles(isError)}>
       {!isOpenedDetails && (
         <Flex justify="space-between" align="center" onClick={() => setIsOpenedDetails(true)}>
-          <Flex vertical>
+          <Flex vertical style={{ cursor: 'pointer' }}>
             <Typography.Title level={4} style={getTitleStyles(isError)}>
               {isError ? 'Missing mandatory data' : division.name}
             </Typography.Title>

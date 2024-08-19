@@ -322,6 +322,7 @@ const SeasonsImportInfo = () => {
     {
       title: 'Season name',
       dataIndex: 'name',
+      width: '240px',
       sorter: (s1, s2) => s1.name.localeCompare(s2.name),
       sortOrder: sortSeasonNameOrder,
       ...getColumnSearchProps('name'),
@@ -342,7 +343,8 @@ const SeasonsImportInfo = () => {
     {
       title: 'Linked League/Tourn',
       dataIndex: 'leagueName',
-      width: '20vw',
+      width: '240px',
+
       sortOrder: sortLeagueNameOrder,
       sorter: (s1, s2) => s1.leagueName.localeCompare(s2.leagueName),
       ...getColumnSearchProps('leagueName'),
@@ -365,7 +367,7 @@ const SeasonsImportInfo = () => {
         { text: 'Duplicate', value: 'Duplicate' },
         { text: 'Error', value: 'Error' },
       ],
-      width: '112px',
+      width: '132px',
       onFilter: (value, record) => value === record.type,
       render: (_, record) => <TagType text={record.type} />,
       filterDropdown: MonroeFilter,
@@ -380,7 +382,6 @@ const SeasonsImportInfo = () => {
     {
       title: 'Error info',
       dataIndex: 'message',
-      width: '400px',
       render: (value) => (
         <Typography.Text
           style={{

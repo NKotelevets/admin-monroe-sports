@@ -40,12 +40,10 @@ import MonroeTooltip from '@/components/MonroeTooltip'
 
 import BaseLayout from '@/layouts/BaseLayout'
 
+import { useAppSlice } from '@/redux/hooks/useAppSlice'
+import { useAuthSlice } from '@/redux/hooks/useAuthSlice'
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
-import {
-  // useExportPlayoffTemplateMutation,
-  useGetSeasonDetailsQuery, // usePopulateBracketsMutation,
-  useUpdateSeasonMutation,
-} from '@/redux/seasons/seasons.api'
+import { useGetSeasonDetailsQuery, useUpdateSeasonMutation } from '@/redux/seasons/seasons.api'
 
 import { PATH_TO_EDIT_SEASON, PATH_TO_SEASONS } from '@/constants/paths'
 
@@ -54,14 +52,6 @@ import { ICreateBESeason } from '@/common/interfaces/season'
 import FileExcel from '@/assets/icons/file-exel.svg'
 import ShowAllIcon from '@/assets/icons/show-all.svg'
 import SwapIcon from '@/assets/icons/swap.svg'
-
-// const MOCKED_IDS = [
-//   'fa9f7fca-aec7-4ee4-8c75-7a415e1a8385',
-//   '9285879c-8a79-4064-9164-71a7d4f5bb47',
-//   'c15cc462-176a-48c9-83a6-0a8da637c432',
-//   'deb5dfd6-ac54-4439-a783-ff7f90f7aac1',
-//   '034f4f63-075c-4b8a-ba8b-ff4711edd79c',
-// ]
 
 const EditSeason = () => {
   const navigate = useNavigate()
@@ -73,12 +63,13 @@ const EditSeason = () => {
     refetchOnMountOrArgChange: true,
   })
   const [selectedLeague, setSelectedLeague] = useState<string | undefined>(data?.league?.name)
-  const { isCreateBracketPage, setIsCreateBracketPage } = useSeasonSlice()
+  const { isCreateBracketPage, setIsCreateBracketPage, setSelectedBracketId, selectedBracketId, isDuplicateNames } =
+    useSeasonSlice()
   const isEditPage = location.pathname.includes(PATH_TO_EDIT_SEASON)
-  // const [exportPlayoffTemplate] = useExportPlayoffTemplateMutation()
-  // const [fileData, setFileData] = useState<null | string>(null)
-  // const [populateBrackets] = usePopulateBracketsMutation()
+  const [fileData, setFileData] = useState<Blob | null>(null)
   const [showModal, setShowModal] = useState(false)
+  const { access } = useAuthSlice()
+  const { setAppNotification } = useAppSlice()
 
   const goBack = useCallback(() => navigate(PATH_TO_SEASONS), [])
 
@@ -89,19 +80,19 @@ const EditSeason = () => {
       start_date: format(new Date(values.startDate as unknown as string), 'yyyy-MM-dd'),
       expected_end_date: format(new Date(values.expectedEndDate as unknown as string), 'yyyy-MM-dd'),
       divisions: values.divisions.map((division) => ({
-        id: division.id as string,
         name: division.name,
         description: division.description,
         sub_division: division.subdivisions.map((subdivision) => ({
-          id: subdivision.id as string,
           name: subdivision.name,
           description: subdivision.description,
           playoff_format: subdivision.playoffFormat === 'Best Record Wins' ? 0 : 1,
           standings_format: subdivision.standingsFormat !== 'Points' ? 0 : 1,
           tiebreakers_format: subdivision.tiebreakersFormat !== 'Points' ? 0 : 1,
           brackets: subdivision.brackets.map((bracket) => ({
+            id: bracket.id as number,
             name: bracket.name,
             number_of_teams: bracket.playoffTeams,
+            published: false,
             matches: bracket.matches.map((match) => ({
               bottom_team: match.bottomTeam || '',
               top_team: match.topTeam || '',
@@ -133,15 +124,21 @@ const EditSeason = () => {
     })
   }
 
-  // useEffect(() => {
-  //   exportPlayoffTemplate({ ids: MOCKED_IDS })
-  //     .unwrap()
-  //     .then((response) => response.blob())
-  //     .then((data) => {
-  //       setFileData(data)
-  //     })
-  //     .catch((error) => console.error('Error fetching file:', error))
-  // }, [])
+  useEffect(() => {
+    if (selectedBracketId) {
+      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/teams/seasons/export-bracket`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${access}`,
+        },
+        body: JSON.stringify({
+          id: selectedBracketId,
+        }),
+      })
+        .then((response) => response.blob())
+        .then((data) => setFileData(data))
+    }
+  }, [selectedBracketId])
 
   useEffect(() => {
     if (data && !selectedLeague) {
@@ -169,6 +166,7 @@ const EditSeason = () => {
           standingsFormat: subdivision.standings_format === 0 ? 'Winning %' : 'Points',
           tiebreakersFormat: subdivision.tiebreakers_format === 0 ? 'Winning %' : 'Points',
           brackets: subdivision!.brackets!.map((bracket) => ({
+            id: bracket.id,
             name: bracket.name,
             subdivisionsNames: bracket.subdivision,
             playoffTeams: bracket.number_of_teams,
@@ -208,13 +206,28 @@ const EditSeason = () => {
     ? [
         {
           title: (
-            <a href={PATH_TO_SEASONS} onClick={() => setIsCreateBracketPage(false)}>
+            <a
+              href={PATH_TO_SEASONS}
+              onClick={() => {
+                setIsCreateBracketPage(false)
+                setSelectedBracketId(null)
+              }}
+            >
               Seasons
             </a>
           ),
         },
         {
-          title: <a onClick={() => setIsCreateBracketPage(false)}>{data?.name}</a>,
+          title: (
+            <a
+              onClick={() => {
+                setIsCreateBracketPage(false)
+                setSelectedBracketId(null)
+              }}
+            >
+              {data?.name}
+            </a>
+          ),
         },
         {
           title: <MonroeBlueText>Edit Bracket</MonroeBlueText>,
@@ -223,21 +236,75 @@ const EditSeason = () => {
     : INITIAL_BREAD_CRUMB_ITEMS
 
   const handleExport = () => {
-    // if (!fileData) return
-    // const blob = new Blob([fileData], { type: 'text/csv' })
-    // const url = URL.createObjectURL(blob)
-    // const link = document.createElement('a')
-    // link.href = url
-    // link.setAttribute('download', 'my_file.csv') // Specify filename
-    // document.body.appendChild(link)
-    // link.click()
-    // document.body.removeChild(link)
-    // URL.revokeObjectURL(url) // Release memory
+    if (!fileData) return
+    const blob = new Blob([fileData], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', 'bracket.csv')
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
   }
 
-  const handlePopulateBrackets = async () => {
+  const handlePopulateBrackets = async (values: ICreateSeasonFormValues) => {
+    const editSeasonBody: ICreateBESeason = {
+      name: values.name,
+      league_id: values.league,
+      start_date: format(new Date(values.startDate as unknown as string), 'yyyy-MM-dd'),
+      expected_end_date: format(new Date(values.expectedEndDate as unknown as string), 'yyyy-MM-dd'),
+      divisions: values.divisions.map((division) => ({
+        name: division.name,
+        description: division.description,
+        sub_division: division.subdivisions.map((subdivision) => ({
+          name: subdivision.name,
+          description: subdivision.description,
+          playoff_format: subdivision.playoffFormat === 'Best Record Wins' ? 0 : 1,
+          standings_format: subdivision.standingsFormat !== 'Points' ? 0 : 1,
+          tiebreakers_format: subdivision.tiebreakersFormat !== 'Points' ? 0 : 1,
+          brackets: subdivision.brackets.map((bracket) => ({
+            id: bracket.id as number,
+            name: bracket.name,
+            number_of_teams: bracket.playoffTeams,
+            published: true,
+            matches: bracket.matches.map((match) => ({
+              bottom_team: match.bottomTeam || '',
+              top_team: match.topTeam || '',
+              game_number: match.gameNumber || null,
+              match_integer_id: match.id,
+              is_not_first_round: match.isNotFirstRound || false,
+              start_time: null,
+              tournament_round_text: match.tournamentRoundText || '',
+              next_match_id: match.nextMatchId,
+              match_participants: match.participants
+                .map((p) => ({
+                  sub_division: p.subpoolName,
+                  seed: p.seed,
+                  is_empty: p.isEmpty,
+                }))
+                .filter((p) => p?.sub_division),
+            })),
+            subdivision: bracket.subdivisionsNames,
+          })),
+        })),
+      })),
+    }
+
+    // TODO: handle modal behavior
+
     setShowModal(true)
-    // await populateBrackets().unwrap()
+
+    updateSeason({
+      id: data!.id as string,
+      body: editSeasonBody,
+    }).then(() => {
+      setAppNotification({
+        message: 'Bracket successfully populated',
+        timestamp: new Date().getTime(),
+        type: 'success',
+      })
+    })
   }
 
   return (
@@ -269,76 +336,76 @@ const EditSeason = () => {
             document.body,
           )}
 
-        <PageContainer vertical>
-          <Breadcrumb items={BREAD_CRUMB_ITEMS} />
+        <Formik
+          initialValues={initialValues}
+          validationSchema={seasonValidationSchema}
+          onSubmit={handleSubmit}
+          validateOnChange
+          validateOnMount
+        >
+          {({ values, handleChange, handleSubmit, errors, setFieldValue }) => {
+            const isEnabledButton = Object.keys(errors).length === 0 && !isDuplicateNames
+            const isAddSubdivisionBtnDisabled = !!errors.divisions?.length || isDuplicateNames
 
-          <Flex align="center" justify="space-between">
-            <ProtectedPageTitle>Edit season</ProtectedPageTitle>
+            const collapsedDivisionItems = (removeFn: (index: number) => void) =>
+              values.divisions.map((division, idx) => ({
+                key: idx,
+                children: (
+                  <CreateDivision
+                    index={idx}
+                    division={division}
+                    errors={errors}
+                    onChange={handleChange}
+                    setFieldValue={setFieldValue}
+                    removeFn={removeFn}
+                    isMultipleDivisions={values.divisions.length > 1}
+                    values={values}
+                  />
+                ),
+                label: (
+                  <Typography
+                    style={{
+                      color: '#1A1657',
+                      fontSize: '16px',
+                      fontWeight: 500,
+                    }}
+                  >
+                    #{idx + 1} Division/Pool
+                  </Typography>
+                ),
+              }))
 
-            {isEditPage && isCreateBracketPage && (
-              <Flex>
-                <MonroeSecondaryButton
-                  icon={<ReactSVG src={FileExcel} />}
-                  iconPosition="start"
-                  type="default"
-                  onClick={handleExport}
-                >
-                  Export Playoff Template CSV
-                </MonroeSecondaryButton>
+            return (
+              <>
+                <PageContainer vertical>
+                  <Breadcrumb items={BREAD_CRUMB_ITEMS} />
 
-                <MonroeButton
-                  label="Populate Brackets"
-                  iconPosition="start"
-                  icon={<ReactSVG src={SwapIcon} />}
-                  type="primary"
-                  style={{ height: '32px' }}
-                  onClick={handlePopulateBrackets}
-                />
-              </Flex>
-            )}
-          </Flex>
-          <PageContent>
-            <Formik
-              initialValues={initialValues}
-              validationSchema={seasonValidationSchema}
-              onSubmit={handleSubmit}
-              validateOnChange
-              validateOnMount
-            >
-              {({ values, handleChange, handleSubmit, errors, setFieldValue }) => {
-                const isEnabledButton = Object.keys(errors).length === 0
-                const isAddSubdivisionBtnDisabled = !!errors.divisions?.length
+                  <Flex align="center" justify="space-between">
+                    <ProtectedPageTitle>Edit season</ProtectedPageTitle>
 
-                const collapsedDivisionItems = (removeFn: (index: number) => void) =>
-                  values.divisions.map((division, idx) => ({
-                    key: idx,
-                    children: (
-                      <CreateDivision
-                        index={idx}
-                        division={division}
-                        errors={errors}
-                        onChange={handleChange}
-                        setFieldValue={setFieldValue}
-                        removeFn={removeFn}
-                        isMultipleDivisions={values.divisions.length > 1}
-                        values={values}
-                      />
-                    ),
-                    label: (
-                      <Typography
-                        style={{
-                          color: '#1A1657',
-                          fontSize: '16px',
-                          fontWeight: 500,
-                        }}
-                      >
-                        #{idx + 1} Division/Pool
-                      </Typography>
-                    ),
-                  }))
+                    {isEditPage && isCreateBracketPage && selectedBracketId && (
+                      <Flex>
+                        <MonroeSecondaryButton
+                          icon={<ReactSVG src={FileExcel} />}
+                          iconPosition="start"
+                          type="default"
+                          onClick={handleExport}
+                        >
+                          Export Playoff Template CSV
+                        </MonroeSecondaryButton>
 
-                return (
-                  <>
+                        <MonroeButton
+                          label="Populate Brackets"
+                          iconPosition="start"
+                          icon={<ReactSVG src={SwapIcon} />}
+                          type="primary"
+                          style={{ height: '32px' }}
+                          onClick={() => handlePopulateBrackets(values)}
+                        />
+                      </Flex>
+                    )}
+                  </Flex>
+                  <PageContent>
                     {!isCreateBracketPage && (
                       <Form onSubmit={handleSubmit}>
                         <Flex style={{ padding: '0' }}>
@@ -410,7 +477,11 @@ const EditSeason = () => {
                                 name="expectedEndDate"
                                 value={dayjs(values.expectedEndDate, 'YYYY-MM-DD')}
                                 onChange={(_, data) => {
-                                  setFieldValue('expectedEndDate', dayjs(data as string, 'YYYY-MM-DD'))
+                                  if (data) {
+                                    setFieldValue('expectedEndDate', dayjs(data as string, 'YYYY-MM-DD'))
+                                  } else {
+                                    setFieldValue('expectedEndDate', null)
+                                  }
                                 }}
                                 minDate={dayjs(values.startDate, 'YYYY-MM-DD')}
                               />
@@ -496,12 +567,12 @@ const EditSeason = () => {
                     )}
 
                     {isCreateBracketPage && <CreateBracket setFieldValue={setFieldValue} values={values} />}
-                  </>
-                )
-              }}
-            </Formik>
-          </PageContent>
-        </PageContainer>
+                  </PageContent>
+                </PageContainer>
+              </>
+            )
+          }}
+        </Formik>
       </>
     </BaseLayout>
   )
