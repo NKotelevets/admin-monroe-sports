@@ -262,8 +262,7 @@ const CreateSeason = () => {
                             <MonroeDatePicker
                               name="startDate"
                               value={values.startDate}
-                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                              onChange={(_: any, data: any) => {
+                              onChange={(_: unknown, data: string | string[]) => {
                                 if (data) {
                                   setFieldValue('startDate', dayjs(data as string, 'YYYY-MM-DD'))
                                 } else {
@@ -279,8 +278,7 @@ const CreateSeason = () => {
                             <MonroeDatePicker
                               name="expectedEndDate"
                               value={values.expectedEndDate}
-                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                              onChange={(_: any, data: any) => {
+                              onChange={(_: unknown, data: string | string[]) => {
                                 if (data) {
                                   setFieldValue('expectedEndDate', dayjs(data as string, 'YYYY-MM-DD'))
                                 } else {

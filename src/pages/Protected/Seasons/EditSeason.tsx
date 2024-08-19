@@ -460,7 +460,7 @@ const EditSeason = () => {
                               <DatePicker
                                 name="startDate"
                                 value={dayjs(values.startDate, 'YYYY-MM-DD')}
-                                onChange={(_, data) => {
+                                onChange={(_: unknown, data: string | string[]) => {
                                   if (data) {
                                     setFieldValue('startDate', dayjs(data as string, 'YYYY-MM-DD'))
                                   } else {
@@ -476,7 +476,7 @@ const EditSeason = () => {
                               <DatePicker
                                 name="expectedEndDate"
                                 value={dayjs(values.expectedEndDate, 'YYYY-MM-DD')}
-                                onChange={(_, data) => {
+                                onChange={(_: unknown, data: string | string[]) => {
                                   if (data) {
                                     setFieldValue('expectedEndDate', dayjs(data as string, 'YYYY-MM-DD'))
                                   } else {

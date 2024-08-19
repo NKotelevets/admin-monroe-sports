@@ -1,5 +1,5 @@
 import { Flex, Typography } from 'antd'
-import { CSSProperties, FC, RefObject, useEffect, useState } from 'react'
+import { CSSProperties, ChangeEvent, FC, RefObject, useEffect, useState } from 'react'
 import { ReactSVG } from 'react-svg'
 
 import { SearchLeagueInput, SearchLeagueInputIcon } from '@/components/Elements'
@@ -103,7 +103,7 @@ const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({ setSelectedL
         >
           <SearchLeagueInput
             name="search"
-            onChange={(event:any) => setValue(event.target.value)}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => setValue(event.target.value)}
             value={value}
             placeholder="Find league or tournament"
             style={{ height: '32px' }}

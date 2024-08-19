@@ -1,5 +1,5 @@
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
-import { Flex, Radio } from 'antd'
+import { Flex, Radio, RadioChangeEvent } from 'antd'
 import Typography from 'antd/es/typography'
 import { FieldArray, FormikErrors } from 'formik'
 import { CSSProperties, ChangeEvent, ChangeEventHandler, FC, useEffect, useState } from 'react'
@@ -238,7 +238,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
               <OptionTitle>Default Playoff Format *</OptionTitle>
               <RadioGroupContainer
                 name={`${namePrefix}.playoffFormat`}
-                onChange={(e:any) => setFieldValue(`${namePrefix}.playoffFormat`, e.target.value)}
+                onChange={(e: RadioChangeEvent) => setFieldValue(`${namePrefix}.playoffFormat`, e.target.value)}
                 value={subdivision.playoffFormat}
               >
                 <Radio value="Best Record Wins">Best Record Wins</Radio>
@@ -341,7 +341,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
             <div style={{ marginBottom: '8px' }}>
               <OptionTitle>Default Standings Format *</OptionTitle>
               <RadioGroupContainer
-                onChange={(e:any) => setFieldValue(`${namePrefix}.standingsFormat`, e.target.value)}
+                onChange={(e: RadioChangeEvent) => setFieldValue(`${namePrefix}.standingsFormat`, e.target.value)}
                 value={subdivision.standingsFormat}
               >
                 <Radio value="Winning %">
@@ -368,7 +368,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
             <div style={{ marginBottom: '8px' }}>
               <OptionTitle>Default Tiebreakers Format *</OptionTitle>
               <RadioGroupContainer
-                onChange={(e:any) => setFieldValue(`${namePrefix}.tiebreakersFormat`, e.target.value)}
+                onChange={(e: RadioChangeEvent) => setFieldValue(`${namePrefix}.tiebreakersFormat`, e.target.value)}
                 value={subdivision.tiebreakersFormat}
               >
                 <Radio value="Winning %">
