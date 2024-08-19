@@ -220,7 +220,7 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue }) => {
       <Flex style={{ marginTop: '20px' }}>
         <div style={{ flex: '0 0 40%' }} />
 
-        <Flex style={{ width: '300px' }}>
+        <Flex>
           <CancelButton
             type="default"
             onClick={() => {

@@ -349,7 +349,7 @@ const CreateSeason = () => {
 
                       <Flex>
                         <div style={{ flex: '0 0 40%' }} />
-                        <Flex style={{ width: '300px' }}>
+                        <Flex>
                           <CancelButton type="default" onClick={goBack}>
                             Cancel
                           </CancelButton>

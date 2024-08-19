@@ -1,10 +1,11 @@
 import { PlusOutlined } from '@ant-design/icons'
 import { Button, Flex, Typography } from 'antd'
 import { FieldArray, FormikErrors } from 'formik'
-import { CSSProperties, ChangeEventHandler, FC, useEffect, useState } from 'react'
+import { ChangeEventHandler, FC, useEffect, useState } from 'react'
 import { ReactSVG } from 'react-svg'
 
 import CreateSubdivision from '@/pages/Protected/Seasons/components/CreateSubdivision'
+import { CreateDivisionContainer, Subtext, TitleStyle } from '@/pages/Protected/Seasons/components/Elements'
 import {
   ICreateSeasonDivision,
   ICreateSeasonFormValues,
@@ -25,25 +26,6 @@ import { IFECreateSeason } from '@/common/interfaces/season'
 
 import DeleteIcon from '@/assets/icons/delete.svg'
 import ShowAllIcon from '@/assets/icons/show-all.svg'
-
-const getContainerStyles = (isError: boolean): CSSProperties => ({
-  padding: '8px 16px',
-  backgroundColor: 'white',
-  borderRadius: '3px',
-  border: '1px solid #D8D7DB',
-  borderColor: isError ? '#BC261B' : '#D8D7DB',
-})
-
-const getTitleStyles = (isError: boolean): CSSProperties => ({
-  color: isError ? '#BC261B' : '#1A1657',
-  fontSize: '14px',
-  fontWeight: 500,
-})
-
-const subtextStyles: CSSProperties = {
-  color: '#888791',
-  fontSize: '12px',
-}
 
 interface ICreateDivisionProps {
   index: number
@@ -73,11 +55,7 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
   const allDivisionNames = values.divisions.map((d) => d.name)
   const { setIsDuplicateNames, isDuplicateNames } = useSeasonSlice()
   const listOfDuplicatedNames = allDivisionNames
-    .map((dN, idx, array) => {
-      if (array.indexOf(dN) === idx) return false
-
-      return dN
-    })
+    .map((dN, idx, array) => (array.indexOf(dN) === idx ? false : dN))
     .filter((i) => i)
   const notUniqueNameErrorText = listOfDuplicatedNames.find((dN) => dN === division.name) ? 'Name already exists' : ''
   const isError = !!errors?.divisions?.[index] || isDuplicateNames
@@ -95,18 +73,16 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
   }, [isComponentVisible])
 
   return (
-    <div ref={ref} style={getContainerStyles(isError)}>
+    <CreateDivisionContainer ref={ref} isError={isError}>
       {!isOpenedDetails && (
         <Flex justify="space-between" align="center" onClick={() => setIsOpenedDetails(true)}>
           <Flex vertical style={{ cursor: 'pointer' }}>
-            <Typography.Title level={4} style={getTitleStyles(isError)}>
-              {isError ? 'Missing mandatory data' : division.name}
-            </Typography.Title>
+            <TitleStyle isError={isError}>{isError ? 'Missing mandatory data' : division.name}</TitleStyle>
 
-            <Typography.Text style={subtextStyles}>
+            <Subtext>
               {division.subdivisions.length}{' '}
               {division.subdivisions.length === 1 ? 'Subdivision/Subpool' : 'Subdivisions/Subpools'}
-            </Typography.Text>
+            </Subtext>
           </Flex>
 
           {isMultipleDivisions && (
@@ -227,7 +203,7 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
           </FieldArray>
         </Flex>
       )}
-    </div>
+    </CreateDivisionContainer>
   )
 }
 

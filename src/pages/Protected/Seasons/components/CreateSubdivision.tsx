@@ -2,7 +2,7 @@ import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import { Flex, Radio, RadioChangeEvent } from 'antd'
 import Typography from 'antd/es/typography'
 import { FieldArray, FormikErrors } from 'formik'
-import { CSSProperties, ChangeEvent, ChangeEventHandler, FC, useEffect, useState } from 'react'
+import { ChangeEvent, ChangeEventHandler, FC, useEffect, useState } from 'react'
 import { ReactSVG } from 'react-svg'
 
 import {
@@ -12,7 +12,7 @@ import {
   DEFAULT_TIEBREAKERS_FORMAT_WINNING_TOOLTIP,
 } from '@/pages/Protected/LeaguesAndTournaments/constants/tooltips'
 import { BRACKETS_OPTIONS } from '@/pages/Protected/Seasons/CreateBracket/constants/bracketData'
-import { AddBracketButton } from '@/pages/Protected/Seasons/components/Elements'
+import { AddBracketButton, CreateDivisionContainer, TitleStyle } from '@/pages/Protected/Seasons/components/Elements'
 import {
   ICreateSeasonDivision,
   ICreateSeasonFormValues,
@@ -51,23 +51,6 @@ interface ICreateSubdivisionProps {
   division: ICreateSeasonDivision
   values: ICreateSeasonFormValues
 }
-
-const getContainerStyles = (isError: boolean): CSSProperties => ({
-  padding: '8px 16px',
-  backgroundColor: 'white',
-  borderRadius: '3px',
-  border: '1px solid #D8D7DB',
-  borderColor: isError ? '#BC261B' : '#D8D7DB',
-  marginTop: '8px',
-})
-
-const getTitleStyles = (isError: boolean): CSSProperties => ({
-  color: isError ? '#BC261B' : '#1A1657',
-  fontSize: '14px',
-  fontWeight: 500,
-  marginBottom: 0,
-  cursor: 'pointer',
-})
 
 const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
   onChange,
@@ -176,12 +159,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
   }
 
   return (
-    <div
-      ref={ref}
-      style={{
-        ...getContainerStyles(isError),
-      }}
-    >
+    <CreateDivisionContainer ref={ref} isError={isError}>
       {isShowModal && (
         <MonroeModal
           okText="Confirm"
@@ -195,9 +173,9 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
       {!isOpenedDetails && (
         <Flex justify="space-between" align="center" onClick={() => setIsOpenedDetails(true)}>
           <Flex vertical>
-            <Typography.Title level={4} style={getTitleStyles(isError)}>
+            <TitleStyle isError={isError}>
               {isError ? 'Missing mandatory data' : subdivision.name || 'subdivision/subpool name'}
-            </Typography.Title>
+            </TitleStyle>
           </Flex>
 
           {isMultipleSubdivisions && (
@@ -394,7 +372,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
           </Flex>
         </Flex>
       )}
-    </div>
+    </CreateDivisionContainer>
   )
 }
 
