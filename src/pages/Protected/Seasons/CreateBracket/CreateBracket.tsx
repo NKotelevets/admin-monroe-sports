@@ -45,16 +45,13 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue }) => {
   const location = useLocation()
   const isEditPage = location.pathname.includes(PATH_TO_EDIT_SEASON)
   const buttonLabel = !isEditPage ? (bracketMode === 'create' ? 'Create Bracket' : 'Save') : 'Save'
-  const subdivisionsInSeason: DefaultOptionType[] = values.divisions?.[+divisionIndex].subdivisions
-    .flatMap((subdivision) =>
-      subdivision.name
-        ? {
-            label: subdivision.name,
-            value: subdivision.name,
-          }
-        : null,
-    )
-    .filter((s) => !!s)
+  const subdivisionsInSeason: DefaultOptionType[] = values.divisions?.[+divisionIndex].subdivisions.flatMap(
+    (subdivision) => ({
+      label: subdivision.name,
+      value: subdivision.name,
+    }),
+  )
+  const filteredSubdivisionsInSeason = subdivisionsInSeason.filter((s) => !!s?.label)
   const [newBracketData, setNewBracketData] = useState(subdivisionValues.brackets?.[bracketIdx])
   const [isEnabledButton, setIsEnabledButton] = useState(true)
   const screenWidth = window.innerWidth
@@ -84,18 +81,12 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue }) => {
 
   useEffect(() => {
     if (newBracketData?.subdivisionsNames?.length) {
-      const subpoolOptions = newBracketData?.subdivisionsNames
-        .map((subpool) =>
-          subpool
-            ? {
-                label: subpool,
-                value: subpool,
-              }
-            : null,
-        )
-        .filter((s) => !!s)
-
-      setSelectedSubpools(subpoolOptions)
+      const subpoolOptions = newBracketData?.subdivisionsNames.map((subpool) => ({
+        label: subpool,
+        value: subpool,
+      }))
+      const filteredOptions = subpoolOptions.filter((s) => s.label)
+      setSelectedSubpools(filteredOptions)
     }
 
     calculateTeamsOptions()
@@ -138,7 +129,7 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue }) => {
             <MonroeMultipleSelect
               styles={{ width: '100%' }}
               placeholder="Select subpools"
-              options={subdivisionsInSeason}
+              options={filteredSubdivisionsInSeason}
               name={`${namePrefix}.brackets.${bracketIdx}.subdivisionsNames`}
               value={newBracketData?.subdivisionsNames}
               onChange={(value) => {
