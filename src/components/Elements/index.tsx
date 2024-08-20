@@ -200,6 +200,37 @@ export const MonroeSecondaryButton = styled(Button)`
   color: rgba(26, 22, 87, 1) !important;
   height: 32px !important;
   margin-right: 8px;
-  font-size: 16px;
 `
 
+export const CreateNewEntityButton = styled(Button)`
+  border-radius: 2px;
+  border: 1px solid #bc261b;
+  background: #bc261b;
+  box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.04);
+  font-size: 14px;
+  font-weight: 400;
+  height: 32px;
+`
+
+export const MonroeDeleteButton = styled(Button)`
+  border-radius: 2px;
+  border: 1px solid #bc261b;
+  background: #fff;
+  box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.02);
+  color: #bc261b;
+  line-height: 22px;
+  height: 32px;
+  margin-right: 8px;
+`
+
+export const ViewText = styled(Typography)`
+  width: 136px;
+  margin-right: 12px;
+  color: rgba(26, 22, 87, 0.85);
+`
+
+export const ViewTextInfo = styled(ViewText)`
+  color: #888791;
+  font-size: 12px;
+  margin-top: 4px;
+`

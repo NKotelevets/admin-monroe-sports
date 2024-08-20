@@ -175,7 +175,7 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
         const divisionsLength = divisionsNames.length
 
         return (
-          <div style={{ maxWidth: '150px' }}>
+          <div style={{ maxWidth: '150px' }} onClick={() => navigate(`${PATH_TO_SEASON_DETAILS}/${record.id}`)}>
             {divisionsLength > 20 ? (
               <MonroeTooltip
                 width="150px"
@@ -189,15 +189,10 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
                   </Flex>
                 }
               >
-                <CellText isLink onClick={() => navigate(`${PATH_TO_SEASON_DETAILS}/${record.id}`)}>
-                  {' '}
-                  {divisionsNames.substring(0, 16).trim() + '...'}
-                </CellText>
+                <CellText isLink>{divisionsNames.substring(0, 16).trim() + '...'}</CellText>
               </MonroeTooltip>
             ) : (
-              <CellText isLink onClick={() => navigate(`${PATH_TO_SEASON_DETAILS}/${record.id}`)}>
-                {divisionsNames}
-              </CellText>
+              <CellText isLink>{divisionsNames}</CellText>
             )}
           </div>
         )

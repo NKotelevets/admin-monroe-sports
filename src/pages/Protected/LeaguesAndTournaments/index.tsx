@@ -6,10 +6,9 @@ import { useNavigate } from 'react-router-dom'
 
 import LeagueAndTournamentsTable from '@/pages/Protected/LeaguesAndTournaments/components/LeagueAndTournamentsTable'
 
-import { ImportButton } from '@/components/Elements'
+import { ImportButton, MonroeDeleteButton } from '@/components/Elements'
 import ImportModal from '@/components/ImportTooltip'
 import Loader from '@/components/Loader'
-import MonroeButton from '@/components/MonroeButton'
 import MonroeModal from '@/components/MonroeModal'
 
 import BaseLayout from '@/layouts/BaseLayout'
@@ -196,15 +195,14 @@ const LeaguesAndTournaments = () => {
 
             <Flex>
               {!!selectedRecordsIds.length && (
-                <MonroeButton
-                  isDisabled={false}
-                  label="Delete"
+                <MonroeDeleteButton
                   type="default"
                   icon={<DeleteOutlined />}
                   iconPosition="start"
                   onClick={() => setIsOpenModal(true)}
-                  className="view-delete-button"
-                />
+                >
+                  Delete
+                </MonroeDeleteButton>
               )}
 
               <ImportButton

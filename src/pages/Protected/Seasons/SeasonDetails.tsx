@@ -2,13 +2,19 @@ import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined'
 import EditOutlined from '@ant-design/icons/lib/icons/EditOutlined'
 import Breadcrumb from 'antd/es/breadcrumb'
 import Flex from 'antd/es/flex'
-import Typography from 'antd/es/typography'
 import { format } from 'date-fns'
 import { useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useNavigate, useParams } from 'react-router-dom'
 
-import { MonroeBlueText, MonroeLinkText, PageContainer, ProtectedPageTitle } from '@/components/Elements'
+import {
+  MonroeBlueText,
+  MonroeDeleteButton,
+  MonroeLinkText,
+  PageContainer,
+  ProtectedPageTitle,
+  ViewText,
+} from '@/components/Elements'
 import Loader from '@/components/Loader'
 import MonroeButton from '@/components/MonroeButton'
 import MonroeModal from '@/components/MonroeModal'
@@ -76,15 +82,13 @@ export const SeasonDetails = () => {
               <ProtectedPageTitle>{data?.name}</ProtectedPageTitle>
 
               <Flex>
-                <MonroeButton
-                  isDisabled={false}
-                  label="Delete"
-                  type="default"
+                <MonroeDeleteButton
                   icon={<DeleteOutlined />}
                   iconPosition="start"
                   onClick={() => setShowDeleteModal(true)}
-                  className="view-delete-button"
-                />
+                >
+                  Delete
+                </MonroeDeleteButton>
 
                 <MonroeButton
                   isDisabled={false}
@@ -99,35 +103,35 @@ export const SeasonDetails = () => {
             </Flex>
 
             <Flex vertical>
-              <Flex className="field-wrapper">
-                <Typography.Text className="view-text">Linked League:</Typography.Text>
+              <Flex className="mb-16">
+                <ViewText>Linked League:</ViewText>
 
                 <MonroeLinkText onClick={() => navigate(`${PATH_TO_LEAGUE_PAGE}/${data.league.id}`)}>
                   {data.league?.name || '-'}
                 </MonroeLinkText>
               </Flex>
 
-              <Flex className="field-wrapper">
-                <Typography.Text className="view-text">Start Date:</Typography.Text>
-                <Typography.Text className="view-text" style={{ color: '#1A1657' }}>
-                  {format(new Date(data?.startDate), 'dd MMM yyyy')}
-                </Typography.Text>
+              <Flex className="mb-16">
+                <ViewText>Start Date:</ViewText>
+                <ViewText style={{ color: '#1A1657' }}>{format(new Date(data?.startDate), 'dd MMM yyyy')}</ViewText>
               </Flex>
 
-              <Flex className="field-wrapper">
-                <Typography.Text className="view-text">Expected End Date:</Typography.Text>
-                <Typography.Text className="view-text" style={{ color: '#1A1657' }}>
+              <Flex className="mb-16">
+                <ViewText>Expected End Date:</ViewText>
+                <ViewText style={{ color: '#1A1657' }}>
                   {format(new Date(data?.expectedEndDate), 'dd MMM yyyy')}
-                </Typography.Text>
+                </ViewText>
               </Flex>
 
-              <Flex className="field-wrapper">
-                <Typography.Text className="view-text">Division/Pool:</Typography.Text>
+              <Flex className="mb-16">
+                <ViewText>Division/Pool:</ViewText>
 
                 <Flex vertical>
                   {data.divisions.map((division) => (
                     <Flex key={division.name} vertical>
-                      <MonroeLinkText>{division.name}:</MonroeLinkText>
+                      <MonroeLinkText onClick={() => navigate(`${PATH_TO_EDIT_SEASON}/${data!.id}`)}>
+                        {division.name}:
+                      </MonroeLinkText>
                       <MonroeBlueText>
                         {division.sub_division.map(
                           (subdivision, idx) =>

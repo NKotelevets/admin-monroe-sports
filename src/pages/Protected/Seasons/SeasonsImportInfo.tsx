@@ -397,7 +397,9 @@ const SeasonsImportInfo = () => {
       dataIndex: '',
       width: '80px',
       render: (_, record) =>
-        record.type === 'Duplicate' && <ReactSVG src={SyncIcon} onClick={() => handleUpdate(record.idx)} />,
+        record.type === 'Duplicate' && (
+          <ReactSVG style={{ cursor: 'pointer' }} src={SyncIcon} onClick={() => handleUpdate(record.idx)} />
+        ),
     },
   ]
 

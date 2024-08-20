@@ -1,19 +1,22 @@
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined'
 import DownloadOutlined from '@ant-design/icons/lib/icons/DownloadOutlined'
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
-import Button from 'antd/es/button/button'
 import Flex from 'antd/es/flex'
-import Typography from 'antd/es/typography'
-import { CSSProperties, ChangeEvent, useCallback, useRef, useState } from 'react'
+import { ChangeEvent, useCallback, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useNavigate } from 'react-router-dom'
 
 import SeasonsTable from '@/pages/Protected/Seasons/components/SeasonsTable'
 
-import { ImportButton } from '@/components/Elements'
+import {
+  CreateNewEntityButton,
+  ImportButton,
+  MonroeDeleteButton,
+  PageContainer,
+  ProtectedPageTitle,
+} from '@/components/Elements'
 import ImportModal from '@/components/ImportTooltip'
 import Loader from '@/components/Loader'
-import MonroeButton from '@/components/MonroeButton'
 import MonroeModal from '@/components/MonroeModal'
 
 import BaseLayout from '@/layouts/BaseLayout'
@@ -28,34 +31,7 @@ import {
 
 import { PATH_TO_CREATE_SEASON, PATH_TO_SEASONS_DELETING_INFO, PATH_TO_SEASONS_IMPORT_INFO } from '@/constants/paths'
 
-const createNewSeasonStyles: CSSProperties = {
-  borderRadius: '2px',
-  border: '1px solid #BC261B',
-  background: '#BC261B',
-  boxShadow: '0px 2px 0px 0px rgba(0, 0, 0, 0.04)',
-  fontSize: '14px',
-  fontWeight: 400,
-  height: '32px',
-}
-
-const titleStyle: CSSProperties = {
-  fontSize: '20px',
-  fontWeight: 500,
-  color: 'rgba(26, 22, 87, 0.85)',
-}
-
-const containerStyle: CSSProperties = {
-  padding: '16px 24px',
-  overflow: 'auto',
-  height: '100%',
-}
-
-interface IImportModalOptions {
-  filename: string
-  errorMessage?: string
-  status: 'loading' | 'red' | 'green' | 'yellow'
-  isOpen: boolean
-}
+import { IImportModalOptions } from '@/common/interfaces'
 
 const Seasons = () => {
   const { total } = useSeasonSlice()
@@ -188,28 +164,15 @@ const Seasons = () => {
       )}
 
       <BaseLayout>
-        <Flex vertical style={containerStyle}>
-          <Flex
-            justify="space-between"
-            align="center"
-            vertical={false}
-            style={{
-              marginBottom: '24px',
-            }}
-          >
-            <Typography.Title style={titleStyle}>Seasons</Typography.Title>
+        <PageContainer>
+          <Flex justify="space-between" align="center" vertical={false}>
+            <ProtectedPageTitle>Seasons</ProtectedPageTitle>
 
             <Flex>
               {!!selectedRecordsIds.length && (
-                <MonroeButton
-                  isDisabled={false}
-                  label="Delete"
-                  type="default"
-                  icon={<DeleteOutlined />}
-                  iconPosition="start"
-                  onClick={() => setIsOpenModal(true)}
-                  className="view-delete-button"
-                />
+                <MonroeDeleteButton icon={<DeleteOutlined />} iconPosition="start" onClick={() => setIsOpenModal(true)}>
+                  Delete
+                </MonroeDeleteButton>
               )}
 
               <ImportButton
@@ -223,15 +186,14 @@ const Seasons = () => {
                 Import CSV
               </ImportButton>
 
-              <Button
+              <CreateNewEntityButton
                 icon={<PlusOutlined />}
                 iconPosition="start"
                 type="primary"
-                style={createNewSeasonStyles}
                 onClick={() => navigate(PATH_TO_CREATE_SEASON)}
               >
                 Create new season
-              </Button>
+              </CreateNewEntityButton>
             </Flex>
           </Flex>
 
@@ -257,7 +219,7 @@ const Seasons = () => {
               showCreatedRecords={showCreatedRecords}
             />
           </Flex>
-        </Flex>
+        </PageContainer>
       </BaseLayout>
     </>
   )

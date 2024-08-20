@@ -114,9 +114,11 @@ const CreateSeason = () => {
       })),
     }
 
-    createSeason(createSeasonBody).then(() => {
-      navigate(PATH_TO_SEASONS)
-    })
+    createSeason(createSeasonBody)
+      .unwrap()
+      .then(() => {
+        navigate(PATH_TO_SEASONS)
+      })
 
     setSelectedLeague(null)
   }

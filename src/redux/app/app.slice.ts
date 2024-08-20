@@ -100,7 +100,7 @@ export const appSlice = createSlice({
           const details = (action.payload?.data as ICreateSeasonError).details
 
           state.notification.message = `
-        ${details?.name ? `${details.name},` : ''} ${details.divisions?.map((division) => {
+        ${details?.name ? `${details.name}` : ''} ${details.divisions?.map((division) => {
           if (division?.name && !division?.sub_division) {
             return division.name
           }

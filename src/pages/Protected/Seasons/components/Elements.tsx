@@ -37,7 +37,6 @@ export const MainContainer = styled(Flex)`
 `
 
 export const CreateDivisionContainer = styled.div<{ isError: boolean }>`
-  padding: 8px 16px;
   background-color: white;
   border-radius: 3px;
   border: 1px solid #d8d7d8;

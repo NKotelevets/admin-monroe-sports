@@ -349,3 +349,7 @@ svg {
 .highlighted-row td {
   background-color: rgba(244, 244, 245, 1) !important;
 }
+
+.mb-16 {
+  margin-bottom: 16px;
+}

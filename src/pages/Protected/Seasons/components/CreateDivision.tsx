@@ -75,8 +75,13 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
   return (
     <CreateDivisionContainer ref={ref} isError={isError}>
       {!isOpenedDetails && (
-        <Flex justify="space-between" align="center" onClick={() => setIsOpenedDetails(true)}>
-          <Flex vertical style={{ cursor: 'pointer' }}>
+        <Flex
+          justify="space-between"
+          align="center"
+          onClick={() => setIsOpenedDetails(true)}
+          style={{ cursor: 'pointer', padding: '8px 16px' }}
+        >
+          <Flex vertical>
             <TitleStyle isError={isError}>{isError ? 'Missing mandatory data' : division.name}</TitleStyle>
 
             <Subtext>
@@ -94,7 +99,7 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
       )}
 
       {isOpenedDetails && (
-        <Flex vertical>
+        <Flex vertical style={{ padding: '8px 16px' }}>
           <Flex vertical>
             <div style={{ marginBottom: '8px' }}>
               <MonroeInput

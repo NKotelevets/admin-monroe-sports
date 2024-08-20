@@ -171,7 +171,12 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
       )}
 
       {!isOpenedDetails && (
-        <Flex justify="space-between" align="center" onClick={() => setIsOpenedDetails(true)}>
+        <Flex
+          justify="space-between"
+          align="center"
+          onClick={() => setIsOpenedDetails(true)}
+          style={{ padding: '8px 16px', cursor: 'pointer' }}
+        >
           <Flex vertical>
             <TitleStyle isError={isError}>
               {isError ? 'Missing mandatory data' : subdivision.name || 'subdivision/subpool name'}
@@ -179,7 +184,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
           </Flex>
 
           {isMultipleSubdivisions && (
-            <div onClick={handleDelete}>
+            <div onClick={handleDelete} style={{ cursor: 'pointer' }}>
               <ReactSVG src={DeleteIcon} />
             </div>
           )}
@@ -187,7 +192,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
       )}
 
       {isOpenedDetails && (
-        <Flex vertical>
+        <Flex vertical style={{ padding: '8px 16px' }}>
           <div style={{ marginBottom: '8px' }}>
             <MonroeInput
               label={<OptionTitle>Subdivision/subpool Name *</OptionTitle>}

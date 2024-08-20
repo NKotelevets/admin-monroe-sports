@@ -45,12 +45,16 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue }) => {
   const location = useLocation()
   const isEditPage = location.pathname.includes(PATH_TO_EDIT_SEASON)
   const buttonLabel = !isEditPage ? (bracketMode === 'create' ? 'Create Bracket' : 'Save') : 'Save'
-  const subdivisionsInSeason: DefaultOptionType[] = values.divisions?.[+divisionIndex].subdivisions.flatMap(
-    (subdivision) => ({
-      label: subdivision?.name,
-      value: subdivision?.name,
-    }),
-  )
+  const subdivisionsInSeason: DefaultOptionType[] = values.divisions?.[+divisionIndex].subdivisions
+    .flatMap((subdivision) =>
+      subdivision.name
+        ? {
+            label: subdivision.name,
+            value: subdivision.name,
+          }
+        : null,
+    )
+    .filter((s) => !!s)
   const [newBracketData, setNewBracketData] = useState(subdivisionValues.brackets?.[bracketIdx])
   const [isEnabledButton, setIsEnabledButton] = useState(true)
   const screenWidth = window.innerWidth
@@ -70,7 +74,7 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue }) => {
   }, [])
 
   const calculateTeamsOptions = () => {
-    const arrayOfNumbers = Array.from({ length: newBracketData.playoffTeams }, (_, index) => ({
+    const arrayOfNumbers = Array.from({ length: newBracketData?.playoffTeams }, (_, index) => ({
       label: index + 1,
       value: index + 1,
     }))
@@ -79,11 +83,17 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue }) => {
   }
 
   useEffect(() => {
-    if (newBracketData.subdivisionsNames.length) {
-      const subpoolOptions = newBracketData.subdivisionsNames.map((subpool) => ({
-        label: subpool,
-        value: subpool,
-      }))
+    if (newBracketData?.subdivisionsNames?.length) {
+      const subpoolOptions = newBracketData?.subdivisionsNames
+        .map((subpool) =>
+          subpool
+            ? {
+                label: subpool,
+                value: subpool,
+              }
+            : null,
+        )
+        .filter((s) => !!s)
 
       setSelectedSubpools(subpoolOptions)
     }
@@ -91,7 +101,7 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue }) => {
     calculateTeamsOptions()
 
     if (!newBracketData) setIsCreateBracketPage(false)
-  }, [newBracketData.playoffTeams])
+  }, [newBracketData?.playoffTeams])
 
   useEffect(() => {
     // eslint-disable-next-line no-extra-semi
@@ -130,7 +140,7 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue }) => {
               placeholder="Select subpools"
               options={subdivisionsInSeason}
               name={`${namePrefix}.brackets.${bracketIdx}.subdivisionsNames`}
-              value={newBracketData.subdivisionsNames}
+              value={newBracketData?.subdivisionsNames}
               onChange={(value) => {
                 const arrayOfSubpools = value as unknown as string[]
                 const options = arrayOfSubpools.map((subpool) => ({
@@ -165,7 +175,7 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue }) => {
             <OptionTitle># playoffs' teams *</OptionTitle>
             <CustomSelect
               name={`${namePrefix}.brackets.${bracketIdx}.playoffTeams`}
-              value={`${newBracketData.playoffTeams}`}
+              value={`${newBracketData?.playoffTeams}`}
               options={PLAYOFFS_TEAMS_OPTIONS}
               onChange={(value) => {
                 setNewBracketData((prev) => ({

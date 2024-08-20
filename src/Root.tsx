@@ -14,6 +14,7 @@ import { SeasonDetails } from '@/pages/Protected/Seasons/SeasonDetails'
 import SeasonsDeletingInfo from '@/pages/Protected/Seasons/SeasonsDeletingInfo'
 import SeasonsImportInfo from '@/pages/Protected/Seasons/SeasonsImportInfo'
 
+// import Users from '@/pages/Protected/Users'
 import InfoAlert from '@/components/InfoAlert'
 import Notification from '@/components/Notification'
 
@@ -32,7 +33,7 @@ import {
   PATH_TO_SEASONS_DELETING_INFO,
   PATH_TO_SEASONS_IMPORT_INFO,
   PATH_TO_SEASON_DETAILS,
-  PATH_TO_SIGN_IN,
+  PATH_TO_SIGN_IN, // PATH_TO_USERS,
 } from '@/constants/paths'
 
 const Root = () => (
@@ -58,6 +59,9 @@ const Root = () => (
       <Route path={PATH_TO_CREATE_SEASON} element={<CreateSeason />} />
       <Route path={`${PATH_TO_SEASON_DETAILS}/:id`} element={<SeasonDetails />} />
       <Route path={`${PATH_TO_EDIT_SEASON}/:id`} element={<EditSeason />} />
+
+      {/* Users */}
+      {/* <Route path={PATH_TO_USERS} element={<Users />} /> */}
     </Routes>
   </AuthProvider>
 )

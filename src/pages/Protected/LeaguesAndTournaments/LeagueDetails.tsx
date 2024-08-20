@@ -1,13 +1,22 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
 import { Breadcrumb, Typography } from 'antd'
 import Flex from 'antd/es/flex'
-import { Fragment, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
+import { ViewSeasonText } from '@/pages/Protected/LeaguesAndTournaments/components/Elements'
 import TagType from '@/pages/Protected/LeaguesAndTournaments/components/TagType'
 
-import { MonroeBlueText, MonroeSecondaryButton, PageContainer, ProtectedPageTitle } from '@/components/Elements'
+import {
+  MonroeBlueText,
+  MonroeDeleteButton,
+  MonroeSecondaryButton,
+  PageContainer,
+  ProtectedPageTitle,
+  ViewText,
+  ViewTextInfo,
+} from '@/components/Elements'
 import Loader from '@/components/Loader'
 import MonroeButton from '@/components/MonroeButton'
 import MonroeModal from '@/components/MonroeModal'
@@ -20,8 +29,6 @@ import { useDeleteLeagueMutation, useGetLeagueQuery } from '@/redux/leagues/leag
 import { PATH_TO_CREATE_SEASON, PATH_TO_EDIT_LEAGUE, PATH_TO_LEAGUES, PATH_TO_SEASON_DETAILS } from '@/constants/paths'
 
 import { IIdName } from '@/common/interfaces'
-
-import './league-details.styles.css'
 
 import WhiteTShirtIcon from '@/assets/icons/white-team.svg'
 
@@ -97,15 +104,13 @@ const LeagueDetails = () => {
               <ProtectedPageTitle>{data?.name}</ProtectedPageTitle>
 
               <Flex>
-                <MonroeButton
-                  isDisabled={false}
-                  label="Delete"
-                  type="default"
+                <MonroeDeleteButton
                   icon={<DeleteOutlined />}
                   iconPosition="start"
                   onClick={() => setShowDeleteModal(true)}
-                  className="view-delete-button"
-                />
+                >
+                  Delete
+                </MonroeDeleteButton>
 
                 <MonroeSecondaryButton
                   type="default"
@@ -146,74 +151,62 @@ const LeagueDetails = () => {
             </Flex>
 
             <Flex vertical>
-              <Flex className="field-wrapper">
-                <Typography.Text className="view-text">Type:</Typography.Text>
+              <Flex className="mb-16">
+                <ViewText>Type:</ViewText>
                 <TagType text={data!.type} />
               </Flex>
 
-              <Flex className="field-wrapper">
-                <Typography.Text className="view-text">Playoff format:</Typography.Text>
-                <Typography.Text className="view-text" style={{ width: '180px' }}>
-                  {data?.playoffFormat}
-                </Typography.Text>
+              <Flex className="mb-16">
+                <ViewText>Playoff format:</ViewText>
+                <ViewText style={{ width: '180px' }}>{data?.playoffFormat}</ViewText>
               </Flex>
 
-              <Flex className="field-wrapper">
-                <Typography.Text className="view-text">Standings format:</Typography.Text>
+              <Flex className="mb-16">
+                <ViewText>Standings format:</ViewText>
 
                 <Flex vertical>
-                  <Typography.Text className="view-text">{data?.standingsFormat}</Typography.Text>
+                  <ViewText>{data?.standingsFormat}</ViewText>
 
-                  <Typography.Text className="view-text-info field-value-container">
+                  <ViewText style={{ width: '400px' }}>
                     {data?.standingsFormat === 'Winning %' ? STANDING_FORMAT_WINNING_INFO : STANDING_FORMAT_POINTS_INFO}
-                  </Typography.Text>
+                  </ViewText>
                 </Flex>
               </Flex>
 
-              <Flex className="field-wrapper">
-                <Typography.Text className="view-text">Tiebreakers format:</Typography.Text>
+              <Flex className="mb-16">
+                <ViewText>Tiebreakers format:</ViewText>
 
                 <Flex vertical>
-                  <Typography.Text className="view-text">{data?.tiebreakersFormat}</Typography.Text>
+                  <ViewText>{data?.tiebreakersFormat}</ViewText>
 
-                  <Typography.Text className="view-text-info field-value-container">
+                  <ViewTextInfo style={{ width: '400px' }}>
                     {data?.tiebreakersFormat === 'Winning %'
                       ? TIEBREAKERS_FORMAT_WINNING_INFO
                       : TIEBREAKERS_FORMAT_POINTS_INFO}
-                  </Typography.Text>
+                  </ViewTextInfo>
                 </Flex>
               </Flex>
 
-              <Flex className="field-wrapper">
-                <Typography.Text className="view-text">Description:</Typography.Text>
-                <Typography.Text className="view-text field-value-container">
-                  {data?.description || '-'}
-                </Typography.Text>
+              <Flex className="mb-16">
+                <ViewText>Description:</ViewText>
+                <ViewText style={{ width: '400px' }}>{data?.description || '-'}</ViewText>
               </Flex>
 
-              <Flex className="field-wrapper">
-                <Typography.Text className="view-text">Welcome Note:</Typography.Text>
-                <Typography.Text className="view-text field-value-container">
-                  {data?.welcomeNote || '-'}
-                </Typography.Text>
+              <Flex className="mb-16">
+                <ViewText>Welcome Note:</ViewText>
+                <ViewText style={{ width: '400px' }}>{data?.welcomeNote || '-'}</ViewText>
               </Flex>
 
-              <Flex className="field-wrapper">
-                <Typography.Text className="view-text">Connected seasons:</Typography.Text>
+              <Flex className="mb-16">
+                <ViewText>Connected seasons:</ViewText>
 
-                <div className="field-value-container">
+                <Flex style={{ width: '400px' }}>
                   {data?.seasons.length
                     ? (data?.seasons as IIdName[]).map((season, idx) => (
-                        <Fragment key={season.id}>
-                          <Typography.Text
-                            className="view-season-text"
-                            onClick={() => navigate(`${PATH_TO_SEASON_DETAILS}/${season.id}`)}
-                            style={{
-                              cursor: 'pointer',
-                            }}
-                          >
+                        <Flex key={season.id}>
+                          <ViewSeasonText onClick={() => navigate(`${PATH_TO_SEASON_DETAILS}/${season.id}`)}>
                             {season.name}
-                          </Typography.Text>
+                          </ViewSeasonText>
 
                           {idx === data.seasons.length - 1 ? (
                             ''
@@ -227,10 +220,10 @@ const LeagueDetails = () => {
                               ,
                             </Typography>
                           )}
-                        </Fragment>
+                        </Flex>
                       ))
                     : '-'}
-                </div>
+                </Flex>
               </Flex>
             </Flex>
           </PageContainer>
