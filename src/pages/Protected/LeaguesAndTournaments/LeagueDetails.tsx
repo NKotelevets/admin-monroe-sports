@@ -200,7 +200,7 @@ const LeagueDetails = () => {
               <Flex className="mb-16">
                 <ViewText>Connected seasons:</ViewText>
 
-                <Flex style={{ width: '400px' }}>
+                <Flex style={{ width: '400px', flexWrap: 'wrap' }}>
                   {data?.seasons.length
                     ? (data?.seasons as IIdName[]).map((season, idx) => (
                         <Flex key={season.id}>
