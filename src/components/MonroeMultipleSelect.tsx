@@ -38,7 +38,9 @@ const MonroeMultipleSelect = styled(CustomSelect)`
       font-size: 18px !important;
     }
 
-    min-height: 40px !important;
+    &.ant-select .ant-select-selector {
+      min-height: 40px !important;
+    }
   }
 `
 

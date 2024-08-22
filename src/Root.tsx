@@ -13,8 +13,12 @@ import EditSeason from '@/pages/Protected/Seasons/EditSeason'
 import { SeasonDetails } from '@/pages/Protected/Seasons/SeasonDetails'
 import SeasonsDeletingInfo from '@/pages/Protected/Seasons/SeasonsDeletingInfo'
 import SeasonsImportInfo from '@/pages/Protected/Seasons/SeasonsImportInfo'
+import Users from '@/pages/Protected/Users'
+import CreateUser from '@/pages/Protected/Users/CreateUser'
+import EditUser from '@/pages/Protected/Users/EditUser'
+import UserDetails from '@/pages/Protected/Users/UserDetails'
+import UsersBulkEdit from '@/pages/Protected/Users/UsersBulkEdit'
 
-// import Users from '@/pages/Protected/Users'
 import InfoAlert from '@/components/InfoAlert'
 import Notification from '@/components/Notification'
 
@@ -23,8 +27,10 @@ import AuthProvider from '@/utils/AuthProvider'
 import {
   PATH_TO_CREATE_LEAGUE,
   PATH_TO_CREATE_SEASON,
+  PATH_TO_CREATE_USER,
   PATH_TO_EDIT_LEAGUE,
   PATH_TO_EDIT_SEASON,
+  PATH_TO_EDIT_USER,
   PATH_TO_LEAGUES,
   PATH_TO_LEAGUES_DELETING_INFO,
   PATH_TO_LEAGUES_IMPORT_INFO,
@@ -33,7 +39,9 @@ import {
   PATH_TO_SEASONS_DELETING_INFO,
   PATH_TO_SEASONS_IMPORT_INFO,
   PATH_TO_SEASON_DETAILS,
-  PATH_TO_SIGN_IN, // PATH_TO_USERS,
+  PATH_TO_SIGN_IN,
+  PATH_TO_USERS,
+  PATH_TO_USERS_BULK_EDIT,
 } from '@/constants/paths'
 
 const Root = () => (
@@ -61,7 +69,11 @@ const Root = () => (
       <Route path={`${PATH_TO_EDIT_SEASON}/:id`} element={<EditSeason />} />
 
       {/* Users */}
-      {/* <Route path={PATH_TO_USERS} element={<Users />} /> */}
+      <Route path={PATH_TO_USERS} element={<Users />} />
+      <Route path={`${PATH_TO_USERS}/:id`} element={<UserDetails />} />
+      <Route path={PATH_TO_CREATE_USER} element={<CreateUser />} />
+      <Route path={`${PATH_TO_EDIT_USER}/:id`} element={<EditUser />} />
+      <Route path={PATH_TO_USERS_BULK_EDIT} element={<UsersBulkEdit />} />
     </Routes>
   </AuthProvider>
 )

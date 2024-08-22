@@ -7,7 +7,7 @@ import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 
 import { useSeasonTableParams } from '@/pages/Protected/Seasons/hooks/useSeasonTableParams'
 
-import { ExpandedTableHeader } from '@/components/Elements'
+import { ExpandedHeaderLeftText, ExpandedTableHeader, MonroeLightBlueText } from '@/components/Elements'
 import MonroeModal from '@/components/MonroeModal'
 
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
@@ -225,34 +225,18 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
 
       {showAdditionalHeader && (
         <ExpandedTableHeader>
-          <p
-            style={{
-              fontSize: '14px',
-              color: 'rgba(0, 0, 0, 0.85)',
-              marginRight: '10px',
-            }}
-          >
+          <ExpandedHeaderLeftText>
             {isDeleteAllRecords
               ? `All ${total} records are selected.`
               : `All ${tableParams.pagination?.pageSize} records on this page are selected.`}
-          </p>
+          </ExpandedHeaderLeftText>
 
           {!isDeleteAllRecords ? (
-            <p
-              style={{
-                color: '#3E34CA',
-                fontSize: '14px',
-              }}
-              onClick={() => setIsDeleteAllRecords(true)}
-            >
+            <MonroeLightBlueText onClick={() => setIsDeleteAllRecords(true)}>
               Select all {total} records in seasons instead.
-            </p>
+            </MonroeLightBlueText>
           ) : (
-            <p
-              style={{
-                color: '#3E34CA',
-                fontSize: '14px',
-              }}
+            <MonroeLightBlueText
               onClick={() => {
                 setIsDeleteAllRecords(false)
                 setSelectedRecordsIds([])
@@ -260,7 +244,7 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
               }}
             >
               Unselect all records
-            </p>
+            </MonroeLightBlueText>
           )}
         </ExpandedTableHeader>
       )}

@@ -12,7 +12,7 @@ import {
   DEFAULT_TIEBREAKERS_FORMAT_WINNING_TOOLTIP,
 } from '@/pages/Protected/LeaguesAndTournaments/constants/tooltips'
 import { BRACKETS_OPTIONS } from '@/pages/Protected/Seasons/CreateBracket/constants/bracketData'
-import { AddBracketButton, CreateDivisionContainer, TitleStyle } from '@/pages/Protected/Seasons/components/Elements'
+import { AddBracketButton } from '@/pages/Protected/Seasons/components/Elements'
 import {
   ICreateSeasonDivision,
   ICreateSeasonFormValues,
@@ -20,6 +20,7 @@ import {
 } from '@/pages/Protected/Seasons/constants/formik'
 
 import { OptionTitle, RadioGroupContainer, RadioGroupLabel, RadioGroupLabelTooltip } from '@/components/Elements'
+import { CreateEntityContainer, TitleStyle } from '@/components/Elements/entity'
 import MonroeInput from '@/components/Inputs/MonroeInput'
 import MonroeTextarea from '@/components/Inputs/MonroeTextarea'
 import MonroeModal from '@/components/MonroeModal'
@@ -159,7 +160,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
   }
 
   return (
-    <CreateDivisionContainer ref={ref} isError={isError}>
+    <CreateEntityContainer ref={ref} isError={isError}>
       {isShowModal && (
         <MonroeModal
           okText="Confirm"
@@ -261,7 +262,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
                                   >
                                     <ReactSVG
                                       src={SmallEditIcon}
-                                      style={{ width: '14px', height: '14px' }}
+                                      style={{ width: '14px', height: '14px', cursor: 'pointer' }}
                                       onClick={() => {
                                         setIsCreateBracketPage(true)
                                         setPathToSubdivisionDataAndIndexes(`${namePrefix}&${divisionIndex}-${index}`)
@@ -274,7 +275,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
 
                                   <ReactSVG
                                     src={SmallDeleteIcon}
-                                    style={{ width: '14px', height: '14px' }}
+                                    style={{ width: '14px', height: '14px', cursor: 'pointer' }}
                                     onClick={() => innerArrayHelpers.remove(idx)}
                                   />
                                 </Flex>
@@ -377,7 +378,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
           </Flex>
         </Flex>
       )}
-    </CreateDivisionContainer>
+    </CreateEntityContainer>
   )
 }
 

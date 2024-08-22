@@ -1,5 +1,5 @@
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
-import { Breadcrumb, DatePicker, Flex, Typography } from 'antd'
+import { Breadcrumb, DatePicker, Flex } from 'antd'
 import { format } from 'date-fns'
 import dayjs from 'dayjs'
 import { FieldArray, Form, Formik } from 'formik'
@@ -11,7 +11,6 @@ import { ReactSVG } from 'react-svg'
 
 import CreateBracket from '@/pages/Protected/Seasons/CreateBracket/CreateBracket'
 import CreateDivision from '@/pages/Protected/Seasons/components/CreateDivision'
-import { AddDivisionPollButton, MainContainer } from '@/pages/Protected/Seasons/components/Elements'
 import SearchLeagueTournament from '@/pages/Protected/Seasons/components/SearchLeagueTournament'
 import {
   ICreateSeasonFormValues,
@@ -19,6 +18,7 @@ import {
   seasonValidationSchema,
 } from '@/pages/Protected/Seasons/constants/formik'
 
+import { AccordionHeader, AddEntityButton, MainContainer } from '@/components/Elements'
 import {
   Accordion,
   CancelButton,
@@ -58,7 +58,7 @@ const EditSeason = () => {
   const [updateSeason] = useUpdateSeasonMutation()
   const params = useParams<{ id: string }>()
   const location = useLocation()
-  const { data, isLoading } = useGetSeasonDetailsQuery(params!.id || '', {
+  const { data, currentData, isLoading } = useGetSeasonDetailsQuery(params!.id || '', {
     skip: !params.id,
     refetchOnMountOrArgChange: true,
   })
@@ -126,10 +126,11 @@ const EditSeason = () => {
 
   useEffect(() => {
     if (selectedBracketId) {
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/teams/seasons/export-bracket`, {
+      fetch(`${import.meta.env.VITE_BACKEND_URL}teams/seasons/export-bracket`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${access}`,
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           id: selectedBracketId,
@@ -149,12 +150,12 @@ const EditSeason = () => {
   if (!data && isLoading) return <Loader />
 
   const initialValues: ICreateSeasonFormValues = {
-    name: data?.name || '',
-    expectedEndDate: data?.expectedEndDate || '',
-    startDate: data?.startDate || '',
-    league: data?.league?.id || '',
+    name: currentData?.name || '',
+    expectedEndDate: currentData?.expectedEndDate || '',
+    startDate: currentData?.startDate || '',
+    league: currentData?.league?.id || '',
     divisions:
-      data?.divisions.map((division) => ({
+      currentData?.divisions.map((division) => ({
         id: division.id || '',
         name: division.name,
         description: division.description,
@@ -237,11 +238,24 @@ const EditSeason = () => {
 
   const handleExport = () => {
     if (!fileData) return
+
+    let bracketName = 'bracket'
+
+    currentData?.divisions.map((div) =>
+      div.sub_division.map((subDiv) =>
+        subDiv.brackets?.map((bracket) => {
+          if (bracket.id === selectedBracketId) {
+            bracketName = bracket.name
+          }
+        }),
+      ),
+    )
+
     const blob = new Blob([fileData], { type: 'text/csv' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.setAttribute('download', 'bracket.csv')
+    link.setAttribute('download', `${bracketName}.csv`)
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -362,17 +376,7 @@ const EditSeason = () => {
                     values={values}
                   />
                 ),
-                label: (
-                  <Typography
-                    style={{
-                      color: '#1A1657',
-                      fontSize: '16px',
-                      fontWeight: 500,
-                    }}
-                  >
-                    #{idx + 1} Division/Pool
-                  </Typography>
-                ),
+                label: <AccordionHeader>#{idx + 1} Division/Pool</AccordionHeader>,
               }))
 
             return (
@@ -522,7 +526,7 @@ const EditSeason = () => {
                                     width="280px"
                                     containerWidth="190px"
                                   >
-                                    <AddDivisionPollButton
+                                    <AddEntityButton
                                       disabled={isAddSubdivisionBtnDisabled}
                                       type="default"
                                       icon={<PlusOutlined />}
@@ -533,7 +537,7 @@ const EditSeason = () => {
                                       }}
                                     >
                                       Add Division/Pool
-                                    </AddDivisionPollButton>
+                                    </AddEntityButton>
                                   </MonroeTooltip>
                                 </div>
                               </Flex>

@@ -11,6 +11,7 @@ interface IMonroeInputProps {
   name: string
   error?: string
   style?: CSSProperties
+  disabled?: boolean
 }
 
 const MonroeInput: FC<IMonroeInputProps> = ({ label, error, ...rest }) => (

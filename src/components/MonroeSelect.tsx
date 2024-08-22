@@ -15,6 +15,7 @@ interface IMonroeSelectProps {
   placeholder?: string
   value?: string | null | undefined
   mode?: 'multiple' | 'tags' | undefined
+  disabled?: boolean
 }
 
 const CustomSelect: FC<IMonroeSelectProps> = ({ styles, ...props }) => (
@@ -22,6 +23,14 @@ const CustomSelect: FC<IMonroeSelectProps> = ({ styles, ...props }) => (
 )
 
 const MonroeSelect = styled(CustomSelect)`
+  & .ant-select-selection-item {
+    color: #1a1657;
+  }
+
+  &.ant-select-disabled .ant-select-selection-item {
+    color: rgba(189, 188, 194, 1);
+  }
+
   @media (width > 1660px) {
     & .ant-select-selection-item {
       font-size: 18px !important;

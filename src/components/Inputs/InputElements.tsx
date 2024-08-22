@@ -44,6 +44,11 @@ export const StyledInput = styled(Input)`
     box-shadow: none;
   }
 
+  &:disabled {
+    background-color: #f4f4f5 !important;
+    color: rgba(189, 188, 194, 1) !important;
+  }
+
   & svg {
     fill: #1a1657d9;
     width: 16px;
@@ -102,4 +107,3 @@ export const InputLabel = styled(Typography)`
     font-size: 20px !important;
   }
 `
-

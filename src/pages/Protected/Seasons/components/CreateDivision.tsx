@@ -1,18 +1,18 @@
 import { PlusOutlined } from '@ant-design/icons'
-import { Button, Flex, Typography } from 'antd'
+import { Button, Flex } from 'antd'
 import { FieldArray, FormikErrors } from 'formik'
 import { ChangeEventHandler, FC, useEffect, useState } from 'react'
 import { ReactSVG } from 'react-svg'
 
 import CreateSubdivision from '@/pages/Protected/Seasons/components/CreateSubdivision'
-import { CreateDivisionContainer, Subtext, TitleStyle } from '@/pages/Protected/Seasons/components/Elements'
 import {
   ICreateSeasonDivision,
   ICreateSeasonFormValues,
   INITIAL_SUBDIVISION_DATA,
 } from '@/pages/Protected/Seasons/constants/formik'
 
-import { Accordion, MonroeDivider, OptionTitle } from '@/components/Elements'
+import { Accordion, AccordionHeader, MonroeDivider, OptionTitle } from '@/components/Elements'
+import { CreateEntityContainer, Subtext, TitleStyle } from '@/components/Elements/entity'
 import MonroeInput from '@/components/Inputs/MonroeInput'
 import MonroeTextarea from '@/components/Inputs/MonroeTextarea'
 import MonroeTooltip from '@/components/MonroeTooltip'
@@ -73,7 +73,7 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
   }, [isComponentVisible])
 
   return (
-    <CreateDivisionContainer ref={ref} isError={isError}>
+    <CreateEntityContainer ref={ref} isError={isError}>
       {!isOpenedDetails && (
         <Flex
           justify="space-between"
@@ -147,16 +147,13 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
                   />
                 ),
                 label: (
-                  <Typography
+                  <AccordionHeader
                     style={{
-                      color: '#1A1657',
-                      fontSize: '16px',
-                      fontWeight: 500,
                       marginTop: idx > 0 ? '12px' : '0',
                     }}
                   >
                     #{idx + 1} Subdivision/subpool
-                  </Typography>
+                  </AccordionHeader>
                 ),
               }))
 
@@ -208,7 +205,7 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
           </FieldArray>
         </Flex>
       )}
-    </CreateDivisionContainer>
+    </CreateEntityContainer>
   )
 }
 
