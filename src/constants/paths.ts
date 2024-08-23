@@ -18,7 +18,14 @@ export const PATH_TO_EDIT_SEASON = '/seasons/edit'
 export const PATH_TO_SEASONS_DELETING_INFO = '/seasons/deleting-info'
 export const PATH_TO_SEASONS_IMPORT_INFO = '/seasons/import-info'
 
+// USERS PAGES
 export const PATH_TO_USERS = '/users'
+export const PATH_TO_CREATE_USER = '/users/create'
+export const PATH_TO_EDIT_USER = '/users/edit'
+export const PATH_TO_USERS_BULK_EDIT = '/users/bulk-edit'
+export const PATH_TO_USERS_BLOCKING_INFO = '/users/blocking-info'
+export const PATH_TO_USERS_IMPORT_INFO = '/users/import-info'
+
 export const PATH_TO_MASTER_TEAMS = '/master-teams'
 export const PATH_TO_LEAGUE_TEAMS = '/league-teams'
 export const PATH_TO_PLAYOFF_FORMAT = '/playoff-format'

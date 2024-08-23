@@ -13,21 +13,17 @@ import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
 import {
   PATH_TO_CREATE_LEAGUE,
   PATH_TO_CREATE_SEASON,
+  PATH_TO_CREATE_USER,
   PATH_TO_EDIT_LEAGUE,
   PATH_TO_EDIT_SEASON,
+  PATH_TO_EDIT_USER,
   PATH_TO_GROUPS,
   PATH_TO_LEAGUES,
-  PATH_TO_LEAGUES_DELETING_INFO,
-  PATH_TO_LEAGUES_IMPORT_INFO,
-  PATH_TO_LEAGUE_PAGE,
   PATH_TO_LEAGUE_TEAMS,
   PATH_TO_MASTER_TEAMS,
   PATH_TO_PLAYOFF_FORMAT,
   PATH_TO_SCHEDULE,
   PATH_TO_SEASONS,
-  PATH_TO_SEASONS_DELETING_INFO,
-  PATH_TO_SEASONS_IMPORT_INFO,
-  PATH_TO_SEASON_DETAILS,
   PATH_TO_STANDINGS_FORMAT,
   PATH_TO_TIEBREAKERS,
   PATH_TO_USERS,
@@ -60,6 +56,7 @@ const COMPANY_MENU_ITEMS: TMenuItem[] = [
 const LEAGUE_AND_TOURN_KEY = 'league-and-tourn-key'
 const STANDINGS_DISPLAY_KEY = 'standings-display-key'
 const TEAMS_KEY = 'teams-key'
+const USERS_KEY = 'users'
 
 const MonroeSidebar = () => {
   const location = useLocation()
@@ -68,25 +65,20 @@ const MonroeSidebar = () => {
     [PATH_TO_CREATE_LEAGUE].includes(pathname) ||
     pathname.includes(PATH_TO_EDIT_LEAGUE) ||
     pathname.includes(PATH_TO_CREATE_SEASON) ||
-    pathname.includes(PATH_TO_EDIT_SEASON)
-  const isLeagueTournamentPage =
-    [PATH_TO_LEAGUES, PATH_TO_CREATE_LEAGUE, PATH_TO_LEAGUES_DELETING_INFO, PATH_TO_LEAGUES_IMPORT_INFO].includes(
-      pathname,
-    ) ||
-    pathname.includes(PATH_TO_EDIT_LEAGUE) ||
-    pathname.includes(PATH_TO_LEAGUE_PAGE)
-  const isSeasonsPage =
-    [PATH_TO_SEASONS, PATH_TO_CREATE_SEASON, PATH_TO_SEASONS_DELETING_INFO, PATH_TO_SEASONS_IMPORT_INFO].includes(
-      pathname,
-    ) ||
-    pathname.includes(PATH_TO_SEASON_DETAILS) ||
-    pathname.includes(PATH_TO_EDIT_SEASON)
+    pathname.includes(PATH_TO_EDIT_SEASON) ||
+    pathname.includes(PATH_TO_CREATE_USER) ||
+    pathname.includes(PATH_TO_EDIT_USER)
+  const isLeagueTournamentPage = pathname.includes(PATH_TO_LEAGUES)
+  const isSeasonsPage = pathname.includes(PATH_TO_SEASONS)
+  const isUsersPage = pathname.includes(PATH_TO_USERS)
   const { setIsCreateBracketPage, setSelectedBracketId } = useSeasonSlice()
 
   const getSelectedSubMenu = () => {
     if ([PATH_TO_MASTER_TEAMS, PATH_TO_LEAGUE_TEAMS].includes(pathname)) return TEAMS_KEY
 
     if (isLeagueTournamentPage || isSeasonsPage) return LEAGUE_AND_TOURN_KEY
+
+    if (isUsersPage) return USERS_KEY
 
     if ([PATH_TO_PLAYOFF_FORMAT, PATH_TO_STANDINGS_FORMAT, PATH_TO_TIEBREAKERS].includes(pathname))
       return STANDINGS_DISPLAY_KEY
@@ -108,16 +100,17 @@ const MonroeSidebar = () => {
 
   const MENU_ITEMS: TMenuItem[] = [
     {
-      key: PATH_TO_USERS,
+      key: USERS_KEY,
       label: 'Users',
-      icon: (
-        <ReactSVG
-          className={location.pathname === PATH_TO_USERS ? 'red-icon' : ''}
-          src={UserIcon}
-          style={{ marginLeft: '5px' }}
-        />
-      ),
+      icon: <ReactSVG className={isUsersPage ? 'red-icon' : ''} src={UserIcon} style={{ marginLeft: '5px' }} />,
       onClick: () => navigateTo(PATH_TO_USERS),
+      className: isUsersPage ? 'red-text' : '',
+      style: isUsersPage
+        ? {
+            backgroundColor: '#fcf1ed',
+            borderRight: '3px solid #BC261B',
+          }
+        : {},
     },
     {
       key: TEAMS_KEY,

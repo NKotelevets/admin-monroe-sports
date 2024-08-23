@@ -183,11 +183,13 @@ export const MonroeDivider = styled.div`
 `
 
 export const MonroeDatePicker = styled(DatePicker)`
+  font-size: 18px !important;
+
   @media (width > 1660px) {
     min-height: 40px !important;
+    font-size: 18px !important;
 
-    & .ant-picker-input input {
-      font-size: 18px !important;
+    &.ant-picker input {
     }
   }
 `
@@ -229,8 +231,47 @@ export const ViewText = styled(Typography)`
   color: rgba(26, 22, 87, 0.85);
 `
 
+export const DetailValue = styled(Typography)`
+  color: #1a1657;
+`
+
 export const ViewTextInfo = styled(ViewText)`
   color: #888791;
   font-size: 12px;
   margin-top: 4px;
+`
+
+export const MonroeLightBlueText = styled(Typography)`
+  color: #3e34ca;
+`
+
+export const ExpandedHeaderLeftText = styled(Typography)`
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.85);
+  margin-right: 10px;
+`
+
+export const AddEntityButton = styled(MonroeSecondaryButton)`
+  &:disabled {
+    box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.02) !important;
+    border-radius: 2px !important;
+    border: 1px solid #d8d7db !important;
+    background: #f4f4f5 !important;
+    color: #bdbcc2 !important;
+  }
+`
+
+export const MainContainer = styled(Flex)`
+  flex-direction: column;
+  width: 352px;
+
+  @media (width > 1660px) {
+    width: 600px;
+  }
+`
+
+export const AccordionHeader = styled(Typography)`
+  color: #1a1657;
+  font-size: 16px;
+  font-weight: 500;
 `

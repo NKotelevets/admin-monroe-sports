@@ -90,6 +90,8 @@ export const seasonsApi = createApi({
       query: (id) => ({
         url: `teams/seasons/${id}`,
       }),
+      keepUnusedDataFor: 0.0001,
+
       transformResponse: (response: IBESeason): IFESeason => ({
         createdAt: response.created_at as string,
         divisions: response.divisions,

@@ -1,5 +1,5 @@
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
-import { Breadcrumb, Flex, Typography } from 'antd'
+import { Breadcrumb, Flex } from 'antd'
 import { format } from 'date-fns'
 import dayjs from 'dayjs'
 import { FieldArray, Form, Formik } from 'formik'
@@ -10,7 +10,6 @@ import { ReactSVG } from 'react-svg'
 
 import CreateBracket from '@/pages/Protected/Seasons/CreateBracket/CreateBracket'
 import CreateDivision from '@/pages/Protected/Seasons/components/CreateDivision'
-import { AddDivisionPollButton, MainContainer } from '@/pages/Protected/Seasons/components/Elements'
 import SearchLeagueTournament from '@/pages/Protected/Seasons/components/SearchLeagueTournament'
 import {
   ICreateSeasonFormValues,
@@ -19,6 +18,7 @@ import {
   seasonValidationSchema,
 } from '@/pages/Protected/Seasons/constants/formik'
 
+import { AccordionHeader, AddEntityButton, MainContainer } from '@/components/Elements'
 import {
   Accordion,
   CancelButton,
@@ -186,17 +186,7 @@ const CreateSeason = () => {
                     values={values}
                   />
                 ),
-                label: (
-                  <Typography
-                    style={{
-                      color: '#1A1657',
-                      fontSize: '16px',
-                      fontWeight: 500,
-                    }}
-                  >
-                    #{idx + 1} Division/Pool
-                  </Typography>
-                ),
+                label: <AccordionHeader>#{idx + 1} Division/Pool</AccordionHeader>,
               }))
 
             return (
@@ -329,7 +319,7 @@ const CreateSeason = () => {
                                 width="220px"
                                 containerWidth="190px"
                               >
-                                <AddDivisionPollButton
+                                <AddEntityButton
                                   disabled={isAddSubdivisionBtnDisabled}
                                   type="default"
                                   icon={<PlusOutlined />}
@@ -340,7 +330,7 @@ const CreateSeason = () => {
                                   }}
                                 >
                                   Add Division/Pool
-                                </AddDivisionPollButton>
+                                </AddEntityButton>
                               </MonroeTooltip>
                             </Flex>
                           )}

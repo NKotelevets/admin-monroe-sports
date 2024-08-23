@@ -9,10 +9,16 @@ import Match from '@/pages/Protected/Seasons/CreateBracket/components/Match'
 import WinnerBox from '@/pages/Protected/Seasons/CreateBracket/components/WinnerBox'
 import { BRACKETS_OPTIONS, BRACKET_STYLES } from '@/pages/Protected/Seasons/CreateBracket/constants/bracketData'
 import { bracketTheme } from '@/pages/Protected/Seasons/CreateBracket/utils/bracketTheme'
-import { MainContainer } from '@/pages/Protected/Seasons/components/Elements'
 import { ICreateSeasonFormValues, bracketSchema } from '@/pages/Protected/Seasons/constants/formik'
 
-import { BracketWrapper, CancelButton, MonroeDivider, OptionTitle, ProtectedPageSubtitle } from '@/components/Elements'
+import {
+  BracketWrapper,
+  CancelButton,
+  MainContainer,
+  MonroeDivider,
+  OptionTitle,
+  ProtectedPageSubtitle,
+} from '@/components/Elements'
 import MonroeInput from '@/components/Inputs/MonroeInput'
 import MonroeButton from '@/components/MonroeButton'
 import MonroeMultipleSelect from '@/components/MonroeMultipleSelect'

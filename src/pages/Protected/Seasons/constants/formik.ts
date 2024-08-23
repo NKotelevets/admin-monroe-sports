@@ -50,7 +50,6 @@ const subdivisionValidationSchema = Yup.object().shape({
     .when('playoffFormat', {
       is: (value: string) => value === 'Single Elimination Bracket',
       then: (schema) => schema.required().min(1),
-      otherwise: (schema) => schema,
     }),
 })
 

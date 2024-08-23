@@ -1,11 +1,11 @@
 import type { GetProp, TableProps } from 'antd'
-import { Table, Typography } from 'antd'
+import { Table } from 'antd'
 import type { FilterValue, SorterResult } from 'antd/es/table/interface'
 import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 
 import { useLeagueAndTournamentTableParams } from '@/pages/Protected/LeaguesAndTournaments/hooks/useLeagueAndTournamentTableParams'
 
-import { ExpandedTableHeader } from '@/components/Elements'
+import { ExpandedHeaderLeftText, ExpandedTableHeader, MonroeBlueText, MonroeLightBlueText } from '@/components/Elements'
 import MonroeModal from '@/components/MonroeModal'
 
 import { useLeagueSlice } from '@/redux/hooks/useLeagueSlice'
@@ -34,15 +34,7 @@ interface ILeagueAndTournamentsTableProps {
   showCreatedRecords: boolean
 }
 
-const showTotal = (total: number) => (
-  <Typography.Text
-    style={{
-      color: 'rgba(26, 22, 87) !important',
-    }}
-  >
-    Total {total} items
-  </Typography.Text>
-)
+const showTotal = (total: number) => <MonroeBlueText>Total {total} items</MonroeBlueText>
 
 const LeagueAndTournamentsTable: FC<ILeagueAndTournamentsTableProps> = ({
   setSelectedRecordsIds,
@@ -184,44 +176,24 @@ const LeagueAndTournamentsTable: FC<ILeagueAndTournamentsTableProps> = ({
           onOk={handleDelete}
           title="Delete league/tournament?"
           type="warn"
-          content={
-            <>
-              <p>Are you sure you want to delete this league/tournament?</p>
-            </>
-          }
+          content={<p>Are you sure you want to delete this league/tournament?</p>}
         />
       )}
 
       {showAdditionalHeader && (
         <ExpandedTableHeader>
-          <p
-            style={{
-              fontSize: '14px',
-              color: 'rgba(0, 0, 0, 0.85)',
-              marginRight: '10px',
-            }}
-          >
+          <ExpandedHeaderLeftText>
             {isDeleteAllRecords
               ? `All ${total} records are selected.`
               : `All ${limit} records on this page are selected.`}
-          </p>
+          </ExpandedHeaderLeftText>
 
           {!isDeleteAllRecords ? (
-            <p
-              style={{
-                color: '#3E34CA',
-                fontSize: '14px',
-              }}
-              onClick={() => setIsDeleteAllRecords(true)}
-            >
+            <MonroeLightBlueText onClick={() => setIsDeleteAllRecords(true)}>
               Select all {total} records in Leagues/Tournaments instead.
-            </p>
+            </MonroeLightBlueText>
           ) : (
-            <p
-              style={{
-                color: '#3E34CA',
-                fontSize: '14px',
-              }}
+            <MonroeLightBlueText
               onClick={() => {
                 setIsDeleteAllRecords(false)
                 setSelectedRecordsIds([])
@@ -229,7 +201,7 @@ const LeagueAndTournamentsTable: FC<ILeagueAndTournamentsTableProps> = ({
               }}
             >
               Unselect all records
-            </p>
+            </MonroeLightBlueText>
           )}
         </ExpandedTableHeader>
       )}

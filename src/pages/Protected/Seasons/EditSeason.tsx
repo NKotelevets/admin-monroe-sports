@@ -1,5 +1,5 @@
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
-import { Breadcrumb, DatePicker, Flex, Typography } from 'antd'
+import { Breadcrumb, DatePicker, Flex } from 'antd'
 import { format } from 'date-fns'
 import dayjs from 'dayjs'
 import { FieldArray, Form, Formik } from 'formik'
@@ -11,7 +11,6 @@ import { ReactSVG } from 'react-svg'
 
 import CreateBracket from '@/pages/Protected/Seasons/CreateBracket/CreateBracket'
 import CreateDivision from '@/pages/Protected/Seasons/components/CreateDivision'
-import { AddDivisionPollButton, MainContainer } from '@/pages/Protected/Seasons/components/Elements'
 import SearchLeagueTournament from '@/pages/Protected/Seasons/components/SearchLeagueTournament'
 import {
   ICreateSeasonFormValues,
@@ -19,6 +18,7 @@ import {
   seasonValidationSchema,
 } from '@/pages/Protected/Seasons/constants/formik'
 
+import { AccordionHeader, AddEntityButton, MainContainer } from '@/components/Elements'
 import {
   Accordion,
   CancelButton,
@@ -54,144 +54,22 @@ import ShowAllIcon from '@/assets/icons/show-all.svg'
 import SwapIcon from '@/assets/icons/swap.svg'
 
 const EditSeason = () => {
-  const navigate = useNavigate()
-  const [updateSeason] = useUpdateSeasonMutation()
   const params = useParams<{ id: string }>()
-  const location = useLocation()
-  const { data, isLoading } = useGetSeasonDetailsQuery(params!.id || '', {
+  const { data, currentData, isFetching, isLoading } = useGetSeasonDetailsQuery(params!.id || '', {
     skip: !params.id,
     refetchOnMountOrArgChange: true,
+    refetchOnFocus: true,
   })
+  const navigate = useNavigate()
+  const [updateSeason] = useUpdateSeasonMutation()
+  const location = useLocation()
   const [selectedLeague, setSelectedLeague] = useState<string | undefined>(data?.league?.name)
   const { isCreateBracketPage, setIsCreateBracketPage, setSelectedBracketId, selectedBracketId, isDuplicateNames } =
     useSeasonSlice()
   const isEditPage = location.pathname.includes(PATH_TO_EDIT_SEASON)
-  const [fileData, setFileData] = useState<Blob | null>(null)
   const [showModal, setShowModal] = useState(false)
   const { access } = useAuthSlice()
   const { setAppNotification } = useAppSlice()
-
-  const goBack = useCallback(() => navigate(PATH_TO_SEASONS), [])
-
-  const handleSubmit = (values: ICreateSeasonFormValues) => {
-    const editSeasonBody: ICreateBESeason = {
-      name: values.name,
-      league_id: values.league,
-      start_date: format(new Date(values.startDate as unknown as string), 'yyyy-MM-dd'),
-      expected_end_date: format(new Date(values.expectedEndDate as unknown as string), 'yyyy-MM-dd'),
-      divisions: values.divisions.map((division) => ({
-        name: division.name,
-        description: division.description,
-        sub_division: division.subdivisions.map((subdivision) => ({
-          name: subdivision.name,
-          description: subdivision.description,
-          playoff_format: subdivision.playoffFormat === 'Best Record Wins' ? 0 : 1,
-          standings_format: subdivision.standingsFormat !== 'Points' ? 0 : 1,
-          tiebreakers_format: subdivision.tiebreakersFormat !== 'Points' ? 0 : 1,
-          brackets: subdivision.brackets.map((bracket) => ({
-            id: bracket.id as number,
-            name: bracket.name,
-            number_of_teams: bracket.playoffTeams,
-            published: false,
-            matches: bracket.matches.map((match) => ({
-              bottom_team: match.bottomTeam || '',
-              top_team: match.topTeam || '',
-              game_number: match.gameNumber || null,
-              match_integer_id: match.id,
-              is_not_first_round: match.isNotFirstRound || false,
-              start_time: null,
-              tournament_round_text: match.tournamentRoundText || '',
-              next_match_id: match.nextMatchId,
-              match_participants: match.participants
-                .map((p) => ({
-                  sub_division: p.subpoolName,
-                  seed: p.seed,
-                  is_empty: p.isEmpty,
-                }))
-                .filter((p) => p?.sub_division),
-            })),
-            subdivision: bracket.subdivisionsNames,
-          })),
-        })),
-      })),
-    }
-
-    updateSeason({
-      id: data!.id as string,
-      body: editSeasonBody,
-    }).then(() => {
-      navigate(PATH_TO_SEASONS)
-    })
-  }
-
-  useEffect(() => {
-    if (selectedBracketId) {
-      fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/teams/seasons/export-bracket`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${access}`,
-        },
-        body: JSON.stringify({
-          id: selectedBracketId,
-        }),
-      })
-        .then((response) => response.blob())
-        .then((data) => setFileData(data))
-    }
-  }, [selectedBracketId])
-
-  useEffect(() => {
-    if (data && !selectedLeague) {
-      setSelectedLeague(data.league.name)
-    }
-  }, [data])
-
-  if (!data && isLoading) return <Loader />
-
-  const initialValues: ICreateSeasonFormValues = {
-    name: data?.name || '',
-    expectedEndDate: data?.expectedEndDate || '',
-    startDate: data?.startDate || '',
-    league: data?.league?.id || '',
-    divisions:
-      data?.divisions.map((division) => ({
-        id: division.id || '',
-        name: division.name,
-        description: division.description,
-        subdivisions: division.sub_division.map((subdivision) => ({
-          id: subdivision.id || '',
-          name: subdivision.name,
-          description: subdivision.description,
-          playoffFormat: subdivision.playoff_format === 0 ? 'Best Record Wins' : 'Single Elimination Bracket',
-          standingsFormat: subdivision.standings_format === 0 ? 'Winning %' : 'Points',
-          tiebreakersFormat: subdivision.tiebreakers_format === 0 ? 'Winning %' : 'Points',
-          brackets: subdivision!.brackets!.map((bracket) => ({
-            id: bracket.id,
-            name: bracket.name,
-            subdivisionsNames: bracket.subdivision,
-            playoffTeams: bracket.number_of_teams,
-            matches: bracket.matches.map((match) => ({
-              id: match.match_integer_id,
-              nextMatchId: match.next_match_id,
-              tournamentRoundText: match.tournament_round_text,
-              state: 'SCHEDULED',
-              isNotFirstRound: match.is_not_first_round,
-              gameNumber: match.game_number,
-              startTime: '-',
-              topTeam: match.top_team,
-              bottomTeam: match.bottom_team,
-              participants: match.match_participants.map((p) => ({
-                id: p.id || '',
-                isEmpty: p.is_empty,
-                subpoolName: p.sub_division,
-                seed: p.seed,
-              })),
-              primaryId: match.id,
-            })),
-          })),
-        })),
-      })) || [],
-  }
 
   const INITIAL_BREAD_CRUMB_ITEMS = [
     {
@@ -235,17 +113,48 @@ const EditSeason = () => {
       ]
     : INITIAL_BREAD_CRUMB_ITEMS
 
-  const handleExport = () => {
-    if (!fileData) return
-    const blob = new Blob([fileData], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.setAttribute('download', 'bracket.csv')
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(url)
+  useEffect(() => {
+    if (data && !selectedLeague) setSelectedLeague(data.league.name)
+  }, [data])
+
+  const handleExport = async () => {
+    if (selectedBracketId) {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}teams/seasons/export-bracket`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${access}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: selectedBracketId,
+        }),
+      })
+      const fileData = await response.blob()
+
+      if (!fileData) return
+
+      let bracketName = 'bracket'
+
+      currentData?.divisions.map((div) =>
+        div.sub_division.map((subDiv) =>
+          subDiv.brackets?.map((bracket) => {
+            if (bracket.id === selectedBracketId) {
+              bracketName = bracket.name
+            }
+          }),
+        ),
+      )
+
+      const blob = new Blob([fileData], { type: 'text/csv' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', `${bracketName}.xlsx`)
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+    }
   }
 
   const handlePopulateBrackets = async (values: ICreateSeasonFormValues) => {
@@ -307,6 +216,106 @@ const EditSeason = () => {
     })
   }
 
+  const goBack = useCallback(() => navigate(PATH_TO_SEASONS), [])
+
+  const handleSubmit = (values: ICreateSeasonFormValues) => {
+    const editSeasonBody: ICreateBESeason = {
+      name: values.name,
+      league_id: values.league,
+      start_date: format(new Date(values.startDate as unknown as string), 'yyyy-MM-dd'),
+      expected_end_date: format(new Date(values.expectedEndDate as unknown as string), 'yyyy-MM-dd'),
+      divisions: values.divisions.map((division) => ({
+        name: division.name,
+        description: division.description,
+        sub_division: division.subdivisions.map((subdivision) => ({
+          name: subdivision.name,
+          description: subdivision.description,
+          playoff_format: subdivision.playoffFormat === 'Best Record Wins' ? 0 : 1,
+          standings_format: subdivision.standingsFormat !== 'Points' ? 0 : 1,
+          tiebreakers_format: subdivision.tiebreakersFormat !== 'Points' ? 0 : 1,
+          brackets: subdivision.brackets.map((bracket) => ({
+            id: bracket.id as number,
+            name: bracket.name,
+            number_of_teams: bracket.playoffTeams,
+            published: false,
+            matches: bracket.matches.map((match) => ({
+              bottom_team: match.bottomTeam || '',
+              top_team: match.topTeam || '',
+              game_number: match.gameNumber || null,
+              match_integer_id: match.id,
+              is_not_first_round: match.isNotFirstRound || false,
+              start_time: null,
+              tournament_round_text: match.tournamentRoundText || '',
+              next_match_id: match.nextMatchId,
+              match_participants: match.participants
+                .map((p) => ({
+                  sub_division: p.subpoolName,
+                  seed: p.seed,
+                  is_empty: p.isEmpty,
+                }))
+                .filter((p) => p?.sub_division),
+            })),
+            subdivision: bracket.subdivisionsNames,
+          })),
+        })),
+      })),
+    }
+
+    updateSeason({
+      id: data!.id as string,
+      body: editSeasonBody,
+    }).then(() => {
+      navigate(PATH_TO_SEASONS)
+    })
+  }
+
+  if (!data && (isLoading || isFetching)) return <Loader />
+
+  const initialValues: ICreateSeasonFormValues = {
+    name: currentData?.name || '',
+    expectedEndDate: currentData?.expectedEndDate || '',
+    startDate: currentData?.startDate || '',
+    league: currentData?.league?.id || '',
+    divisions:
+      currentData?.divisions.map((division) => ({
+        id: division.id || '',
+        name: division.name,
+        description: division.description,
+        subdivisions: division.sub_division.map((subdivision) => ({
+          id: subdivision.id || '',
+          name: subdivision.name,
+          description: subdivision.description,
+          playoffFormat: subdivision.playoff_format === 0 ? 'Best Record Wins' : 'Single Elimination Bracket',
+          standingsFormat: subdivision.standings_format === 0 ? 'Winning %' : 'Points',
+          tiebreakersFormat: subdivision.tiebreakers_format === 0 ? 'Winning %' : 'Points',
+          brackets: subdivision!.brackets!.map((bracket) => ({
+            id: bracket.id,
+            name: bracket.name,
+            subdivisionsNames: bracket.subdivision,
+            playoffTeams: bracket.number_of_teams,
+            matches: bracket.matches.map((match) => ({
+              id: match.match_integer_id,
+              nextMatchId: match.next_match_id,
+              tournamentRoundText: match.tournament_round_text,
+              state: 'SCHEDULED',
+              isNotFirstRound: match.is_not_first_round,
+              gameNumber: match.game_number,
+              startTime: '-',
+              topTeam: match.top_team,
+              bottomTeam: match.bottom_team,
+              participants: match.match_participants.map((p) => ({
+                id: p.id || '',
+                isEmpty: p.is_empty,
+                subpoolName: p.sub_division,
+                seed: p.seed,
+              })),
+              primaryId: match.id,
+            })),
+          })),
+        })),
+      })) || [],
+  }
+
   return (
     <BaseLayout>
       <>
@@ -362,17 +371,7 @@ const EditSeason = () => {
                     values={values}
                   />
                 ),
-                label: (
-                  <Typography
-                    style={{
-                      color: '#1A1657',
-                      fontSize: '16px',
-                      fontWeight: 500,
-                    }}
-                  >
-                    #{idx + 1} Division/Pool
-                  </Typography>
-                ),
+                label: <AccordionHeader>#{idx + 1} Division/Pool</AccordionHeader>,
               }))
 
             return (
@@ -522,7 +521,7 @@ const EditSeason = () => {
                                     width="280px"
                                     containerWidth="190px"
                                   >
-                                    <AddDivisionPollButton
+                                    <AddEntityButton
                                       disabled={isAddSubdivisionBtnDisabled}
                                       type="default"
                                       icon={<PlusOutlined />}
@@ -533,7 +532,7 @@ const EditSeason = () => {
                                       }}
                                     >
                                       Add Division/Pool
-                                    </AddDivisionPollButton>
+                                    </AddEntityButton>
                                   </MonroeTooltip>
                                 </div>
                               </Flex>

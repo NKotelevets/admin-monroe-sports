@@ -6,6 +6,7 @@ import { SearchLeagueInput, SearchLeagueInputIcon } from '@/components/Elements'
 
 import { useLazyGetLeaguesQuery } from '@/redux/leagues/leagues.api'
 
+import useDebounceEffect from '@/hooks/useDebounceEffect'
 import useIsActiveComponent from '@/hooks/useIsActiveComponent'
 import useScroll from '@/hooks/useScroll'
 
@@ -65,29 +66,36 @@ const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({ setSelectedL
   const { handleScroll, ref: scrollRef } = useScroll(getData)
 
   useEffect(() => {
-    getLeagues({
-      limit: DEFAULT_LIMIT_RECORDS,
-      offset,
-      league_name: value,
-    })
+    // eslint-disable-next-line no-extra-semi
+    ;(async () => {
+      const response = await getLeagues({
+        limit: DEFAULT_LIMIT_RECORDS,
+        offset,
+      }).unwrap()
+
+      setLeaguesList(response.leagues || [])
+    })()
   }, [])
 
   useEffect(() => {
     if (selectedLeague && !value) setValue(selectedLeague)
   }, [selectedLeague])
 
-  useEffect(() => {
-    // eslint-disable-next-line no-extra-semi
-    ;(async () => {
-      const res = await getLeagues({
-        limit: DEFAULT_LIMIT_RECORDS,
-        offset: 0,
-        league_name: value,
-      }).unwrap()
+  const handleChange = async (leagueName: string) => {
+    setValue(leagueName)
+  }
 
-      setLeaguesList(res?.leagues || [])
-    })()
-  }, [value])
+  const getDataWithNewName = async () => {
+    const res = await getLeagues({
+      limit: DEFAULT_LIMIT_RECORDS,
+      offset: 0,
+      league_name: value === selectedLeague ? '' : value,
+    }).unwrap()
+
+    setLeaguesList(res?.leagues || [])
+  }
+
+  useDebounceEffect(getDataWithNewName, [value])
 
   useEffect(() => {
     if (!isComponentVisible && selectedLeague) setValue(selectedLeague)
@@ -103,7 +111,7 @@ const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({ setSelectedL
         >
           <SearchLeagueInput
             name="search"
-            onChange={(event: ChangeEvent<HTMLInputElement>) => setValue(event.target.value)}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => handleChange(event.target.value)}
             value={value}
             placeholder="Find league or tournament"
             style={{ height: '32px' }}

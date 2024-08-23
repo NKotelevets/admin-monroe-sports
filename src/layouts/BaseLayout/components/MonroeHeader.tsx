@@ -85,7 +85,7 @@ const MonroeHeader = () => {
         </Flex>
 
         <Flex vertical={false} align="center" style={{ marginLeft: '12px' }}>
-          <Avatar src={user?.photo_s3_url} alt="avatar" size={32} icon={<UserOutlined />} />
+          <Avatar src={user?.photoS3Url} alt="avatar" size={32} icon={<UserOutlined />} />
 
           <Dropdown menu={{ items: DROPDOWN_MENU_ITEMS }} placement="bottomRight">
             <Space

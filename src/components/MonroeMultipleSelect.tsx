@@ -14,14 +14,16 @@ interface IMonroeMultipleSelectProps {
   styles?: CSSProperties
   placeholder?: string
   value: string[]
+  renderInside?: boolean
 }
 
-const CustomSelect: FC<IMonroeMultipleSelectProps> = ({ styles, options, value, ...props }) => (
+const CustomSelect: FC<IMonroeMultipleSelectProps> = ({ styles, options, value, renderInside = false, ...props }) => (
   <Select
     suffixIcon={<ReactSVG src={ArrowDownIcon} />}
     mode="multiple"
     style={styles}
     value={value as unknown as string}
+    getPopupContainer={(trigger) => (renderInside ? trigger.parentNode : undefined)}
     {...props}
   >
     {options.map((option) => (
@@ -38,7 +40,9 @@ const MonroeMultipleSelect = styled(CustomSelect)`
       font-size: 18px !important;
     }
 
-    min-height: 40px !important;
+    &.ant-select .ant-select-selector {
+      min-height: 40px !important;
+    }
   }
 `
 
