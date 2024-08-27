@@ -14,10 +14,12 @@ import { SeasonDetails } from '@/pages/Protected/Seasons/SeasonDetails'
 import SeasonsDeletingInfo from '@/pages/Protected/Seasons/SeasonsDeletingInfo'
 import SeasonsImportInfo from '@/pages/Protected/Seasons/SeasonsImportInfo'
 import Users from '@/pages/Protected/Users'
+import BlockingInfo from '@/pages/Protected/Users/BlockingInfo'
 import CreateUser from '@/pages/Protected/Users/CreateUser'
 import EditUser from '@/pages/Protected/Users/EditUser'
 import UserDetails from '@/pages/Protected/Users/UserDetails'
 import UsersBulkEdit from '@/pages/Protected/Users/UsersBulkEdit'
+import UsersImportInfo from '@/pages/Protected/Users/UsersImportInfo'
 
 import InfoAlert from '@/components/InfoAlert'
 import Notification from '@/components/Notification'
@@ -41,7 +43,9 @@ import {
   PATH_TO_SEASON_DETAILS,
   PATH_TO_SIGN_IN,
   PATH_TO_USERS,
+  PATH_TO_USERS_BLOCKING_INFO,
   PATH_TO_USERS_BULK_EDIT,
+  PATH_TO_USERS_IMPORT_INFO,
 } from '@/constants/paths'
 
 const Root = () => (
@@ -74,6 +78,8 @@ const Root = () => (
       <Route path={PATH_TO_CREATE_USER} element={<CreateUser />} />
       <Route path={`${PATH_TO_EDIT_USER}/:id`} element={<EditUser />} />
       <Route path={PATH_TO_USERS_BULK_EDIT} element={<UsersBulkEdit />} />
+      <Route path={PATH_TO_USERS_BLOCKING_INFO} element={<BlockingInfo />} />
+      <Route path={PATH_TO_USERS_IMPORT_INFO} element={<UsersImportInfo />} />
     </Routes>
   </AuthProvider>
 )

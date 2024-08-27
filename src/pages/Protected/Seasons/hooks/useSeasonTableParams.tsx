@@ -12,8 +12,6 @@ import MonroeTooltip from '@/components/MonroeTooltip'
 import CellText from '@/components/Table/CellText'
 import TextWithTooltip from '@/components/TextWithTooltip'
 
-import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
-
 import { PATH_TO_EDIT_SEASON, PATH_TO_LEAGUE_PAGE, PATH_TO_SEASON_DETAILS } from '@/constants/paths'
 
 import { IBEDivision } from '@/common/interfaces/division'
@@ -37,7 +35,6 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
   const handleReset = (clearFilters: () => void) => clearFilters()
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
   const navigate = useNavigate()
-  const { createdRecordsNames } = useSeasonSlice()
 
   const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IFESeason> => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -109,13 +106,13 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
       ...getColumnSearchProps('name'),
       sortOrder: ordering?.includes('name') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
       render: (value, record) => {
-        const newRecord = createdRecordsNames.find((cRN) => cRN.name === record.name)
+        const showIcon = record.divisions.flatMap((d) => d.sub_division.filter((s) => !!s.changed)).length
 
         return (
           <Flex justify="flex-start">
-            {newRecord && newRecord.showIcon && (
-              <MonroeTooltip text="Season requires brackets setting." width="auto" containerWidth="auto">
-                <ReactSVG src={WarningIcon} />
+            {!!showIcon && (
+              <MonroeTooltip text="Season requires brackets setting." width="130px" containerWidth="auto">
+                <ReactSVG src={WarningIcon} style={{ marginRight: '4px' }} />
               </MonroeTooltip>
             )}
 

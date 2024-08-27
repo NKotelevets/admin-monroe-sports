@@ -46,7 +46,8 @@ interface IBESubdivision {
   playoff_format: number | string
   standings_format: number | string
   tiebreakers_format: number | string
-  brackets?: IBEBracket[]
+  brackets: IBEBracket[]
+  changed: boolean
 }
 
 interface IFEBracket {
@@ -91,6 +92,8 @@ export interface IImportedSubdivision {
   playoff_format: number | string
   standings_format: number | string
   tiebreakers_format: number | string
+  changed: boolean
+  brackets: IBEBracket[]
 }
 
 export interface IUpdateDivision {

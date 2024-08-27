@@ -16,7 +16,7 @@ export const getNormalizedVersionOfSeason = (existing: IBESeason, season: INewSe
     divisionPollDescription: season['Div/Pool Description'],
     divisionPollName: season['Division/Pool Name'],
     playoffFormat:
-      season['Playoff Format'] === 'Single Elimination Bracket' && existedSubpool === 'Single Elimination Bracket'
+      season['Playoff Format'] === 'Single Elimination Bracket' && existedSubpool === 1
         ? 'Single Elimination Bracket'
         : 'Best Record Wins',
     playoffsTeams: season['Number of Teams to Qualify for Playoff'],

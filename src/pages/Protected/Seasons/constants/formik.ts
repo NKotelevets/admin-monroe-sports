@@ -99,6 +99,7 @@ export const seasonInitialFormValues: ICreateSeasonFormValues = {
           standingsFormat: 'Winning %',
           tiebreakersFormat: 'Winning %',
           brackets: [],
+          changed: false,
         },
       ],
     },
@@ -112,6 +113,7 @@ export interface ICreateSeasonSubdivision {
   playoffFormat: string
   standingsFormat: string
   tiebreakersFormat: string
+  changed: boolean
   brackets: {
     id?: number
     name: string

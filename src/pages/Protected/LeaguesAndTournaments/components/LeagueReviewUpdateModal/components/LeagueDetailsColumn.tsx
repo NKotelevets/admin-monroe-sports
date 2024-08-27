@@ -1,7 +1,7 @@
 import { Flex, Typography } from 'antd'
 import { CSSProperties, FC } from 'react'
 
-import TagType from '@/pages/Protected/LeaguesAndTournaments/components/TagType'
+import LeagueTagType from '@/pages/Protected/LeaguesAndTournaments/components/LeagueTagType'
 
 import { IFELeague } from '@/common/interfaces/league'
 
@@ -72,7 +72,7 @@ const LeagueDetailsColumn: FC<ILeagueDetailsColumnProps> = ({
 
     <Flex style={itemContainerStyle} align="center">
       <Typography.Text style={getItemTitleStyle(difference['type'])}>Type:</Typography.Text>
-      <TagType text={type} />
+      <LeagueTagType text={type} />
     </Flex>
 
     <Flex vertical style={itemContainerStyle}>

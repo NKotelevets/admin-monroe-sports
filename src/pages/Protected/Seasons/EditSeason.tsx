@@ -172,6 +172,7 @@ const EditSeason = () => {
           playoff_format: subdivision.playoffFormat === 'Best Record Wins' ? 0 : 1,
           standings_format: subdivision.standingsFormat !== 'Points' ? 0 : 1,
           tiebreakers_format: subdivision.tiebreakersFormat !== 'Points' ? 0 : 1,
+          changed: subdivision.changed,
           brackets: subdivision.brackets.map((bracket) => ({
             id: bracket.id as number,
             name: bracket.name,
@@ -225,20 +226,24 @@ const EditSeason = () => {
       start_date: format(new Date(values.startDate as unknown as string), 'yyyy-MM-dd'),
       expected_end_date: format(new Date(values.expectedEndDate as unknown as string), 'yyyy-MM-dd'),
       divisions: values.divisions.map((division) => ({
+        id: division.id as string,
         name: division.name,
         description: division.description,
         sub_division: division.subdivisions.map((subdivision) => ({
+          id: subdivision.id as string,
           name: subdivision.name,
           description: subdivision.description,
           playoff_format: subdivision.playoffFormat === 'Best Record Wins' ? 0 : 1,
           standings_format: subdivision.standingsFormat !== 'Points' ? 0 : 1,
           tiebreakers_format: subdivision.tiebreakersFormat !== 'Points' ? 0 : 1,
+          changed: subdivision.changed ? subdivision.playoffFormat === 'Best Record Wins' : false,
           brackets: subdivision.brackets.map((bracket) => ({
             id: bracket.id as number,
             name: bracket.name,
             number_of_teams: bracket.playoffTeams,
             published: false,
             matches: bracket.matches.map((match) => ({
+              id: match.primaryId,
               bottom_team: match.bottomTeam || '',
               top_team: match.topTeam || '',
               game_number: match.gameNumber || null,
@@ -248,11 +253,20 @@ const EditSeason = () => {
               tournament_round_text: match.tournamentRoundText || '',
               next_match_id: match.nextMatchId,
               match_participants: match.participants
-                .map((p) => ({
-                  sub_division: p.subpoolName,
-                  seed: p.seed,
-                  is_empty: p.isEmpty,
-                }))
+                .map((p) =>
+                  p.id.length > 2
+                    ? {
+                        id: p.id.length > 2 ? p.id : '',
+                        sub_division: p.subpoolName,
+                        seed: p.seed,
+                        is_empty: p.isEmpty,
+                      }
+                    : {
+                        sub_division: p.subpoolName,
+                        seed: p.seed,
+                        is_empty: p.isEmpty,
+                      },
+                )
                 .filter((p) => p?.sub_division),
             })),
             subdivision: bracket.subdivisionsNames,
@@ -288,6 +302,7 @@ const EditSeason = () => {
           playoffFormat: subdivision.playoff_format === 0 ? 'Best Record Wins' : 'Single Elimination Bracket',
           standingsFormat: subdivision.standings_format === 0 ? 'Winning %' : 'Points',
           tiebreakersFormat: subdivision.tiebreakers_format === 0 ? 'Winning %' : 'Points',
+          changed: subdivision.changed,
           brackets: subdivision!.brackets!.map((bracket) => ({
             id: bracket.id,
             name: bracket.name,

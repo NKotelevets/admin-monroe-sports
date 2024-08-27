@@ -1,16 +1,17 @@
-import { Breadcrumb, Flex, Table } from 'antd'
+import { Breadcrumb, Table } from 'antd'
 import type { GetProp, TableProps } from 'antd'
 import type { SorterResult } from 'antd/es/table/interface'
-import Typography from 'antd/es/typography'
 import { useState } from 'react'
 
 import { useLeaguesDeletingInfoTableProps } from '@/pages/Protected/LeaguesAndTournaments/hooks/useLeaguesDeletingInfoTableProps'
+
+import { MonroeBlueText } from '@/components/Elements'
+import { Container, Description, Title } from '@/components/Elements/deletingBlockingInfoElements'
 
 import BaseLayout from '@/layouts/BaseLayout'
 
 import { useLeagueSlice } from '@/redux/hooks/useLeagueSlice'
 
-import { containerStyles, descriptionStyle, titleStyle } from '@/constants/deleting-importing-info.styles'
 import { PATH_TO_LEAGUES } from '@/constants/paths'
 
 import { ILeagueDeletionItemError } from '@/common/interfaces/league'
@@ -20,15 +21,7 @@ const BREADCRUMB_ITEMS = [
     title: <a href={PATH_TO_LEAGUES}>League & Tourn</a>,
   },
   {
-    title: (
-      <Typography.Text
-        style={{
-          color: 'rgba(26, 22, 87, 0.85)',
-        }}
-      >
-        Deleting info
-      </Typography.Text>
-    ),
+    title: <MonroeBlueText>Deleting info</MonroeBlueText>,
   },
 ]
 
@@ -65,17 +58,15 @@ const LeaguesDeletingInfo = () => {
 
   return (
     <BaseLayout>
-      <Flex style={containerStyles} vertical>
+      <Container>
         <Breadcrumb items={BREADCRUMB_ITEMS} />
 
-        <Typography.Title level={1} style={titleStyle}>
-          Deleting info
-        </Typography.Title>
+        <Title>Deleting info</Title>
 
-        <Typography.Text style={descriptionStyle}>
+        <Description>
           This panel provides a summary of deleted leagues/tournaments, listing the rows with errors. Click on the error
           to view the details and correct the error that is preventing deletion.
-        </Typography.Text>
+        </Description>
 
         <Table
           columns={columns}
@@ -84,7 +75,7 @@ const LeaguesDeletingInfo = () => {
           pagination={tableParams.pagination}
           onChange={handleTableChange}
         />
-      </Flex>
+      </Container>
     </BaseLayout>
   )
 }

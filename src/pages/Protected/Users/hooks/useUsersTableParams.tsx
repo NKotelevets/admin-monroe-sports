@@ -7,6 +7,7 @@ import { InputRef } from 'antd/es/input'
 import Input from 'antd/es/input/Input'
 import { TableProps } from 'antd/es/table/InternalTable'
 import { FilterDropdownProps } from 'antd/es/table/interface'
+import { format } from 'date-fns'
 import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
@@ -182,7 +183,7 @@ export const useUsersTableParams = ({ setSelectedRecordId, setShowDeleteSingleRe
       dataIndex: 'birthDate',
       width: '128px',
       sorter: (a, b) => new Date(a.birthDate).getTime() - new Date(b.birthDate).getTime(),
-      render: (value) => <CellText>{value || '-'}</CellText>,
+      render: (value) => <CellText>{format(new Date(value), 'MMM, dd yyyy') || '-'}</CellText>,
     },
 
     {

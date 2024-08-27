@@ -123,37 +123,52 @@ export const seasonsSlice = createSlice({
         },
       )
       .addMatcher(seasonsApi.endpoints.importSeasonsCSV.matchFulfilled, (state, action) => {
-        state.createdRecordsNames = action.payload.success.map((item) => ({
+        const success = action.payload.success || []
+        const duplicates = action.payload.duplicates || []
+        const errors = action.payload.errors || []
+
+        state.createdRecordsNames = success.map((item) => ({
           name: item.name,
-          showIcon: item.sub_division[0].playoff_format === 1,
+          showIcon: false,
         }))
 
-        const isSingleEliminationBracketInCreatedRecords = action.payload.success.find(
-          (value) => value.sub_division[0].playoff_format === 1,
-        )
+        const isSingleEliminationBracketInCreatedRecords =
+          success?.map((createdRecord) => createdRecord.sub_division?.find((subdivision) => !!subdivision.changed))
+            .length > 0
 
         if (action.payload.status === 'green') {
           state.isShowImportWarningModal = !!isSingleEliminationBracketInCreatedRecords
         }
 
         if (action.payload.status !== 'green') {
-          const duplicates: ISeasonDuplicate[] = action.payload.duplicates.map((duplicate, idx) => ({
+          const convertedDuplicates: ISeasonDuplicate[] = duplicates.map((duplicate, idx) => ({
             existing: duplicate.existing,
             new: getNormalizedVersionOfSeason(duplicate.existing, duplicate.new),
             index: idx,
           }))
 
-          const isSingleEliminationBracketInNewRecords = action.payload.duplicates.find(
-            (duplicate) => duplicate.new['Playoff Format'] === 'Single Elimination Bracket',
-          )
+          const isSingleEliminationBracketInNewRecords = !!duplicates?.find((duplicate) => {
+            const division = duplicate.existing.divisions?.find((d) => d.name === duplicate.new['Division/Pool Name'])
+            const isSEB = duplicate.new['Playoff Format'] === 'Single Elimination Bracket'
+
+            if (!division) return isSEB
+
+            const existingSubdivision = division.sub_division?.find(
+              (subdiv) => subdiv.name === duplicate.new['Subdiv/Pool Name'],
+            )
+
+            if (!existingSubdivision) return isSEB
+
+            return existingSubdivision.playoff_format === 1 ? false : isSEB
+          })
 
           state.isShowImportWarningModal =
-            !!isSingleEliminationBracketInNewRecords || !!isSingleEliminationBracketInCreatedRecords
+            isSingleEliminationBracketInNewRecords || isSingleEliminationBracketInCreatedRecords
 
-          state.duplicates = duplicates
+          state.duplicates = convertedDuplicates
 
           state.tableRecords = [
-            ...action.payload.duplicates.map((duplicate, idx) => ({
+            ...duplicates.map((duplicate, idx) => ({
               message: 'A record with this data already exists',
               name: duplicate.existing.name,
               type: 'Duplicate' as TErrorDuplicate,
@@ -162,7 +177,7 @@ export const seasonsSlice = createSlice({
               leagueName: duplicate.existing.league.name,
               id: duplicate.existing.id,
             })),
-            ...action.payload.errors.map((error) => ({
+            ...errors.map((error) => ({
               idx: -1,
               message: error.error,
               name: error.season_name || '-',

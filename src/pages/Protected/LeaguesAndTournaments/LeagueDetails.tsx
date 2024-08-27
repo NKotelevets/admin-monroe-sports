@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
 import { ViewSeasonText } from '@/pages/Protected/LeaguesAndTournaments/components/Elements'
-import TagType from '@/pages/Protected/LeaguesAndTournaments/components/TagType'
+import LeagueTagType from '@/pages/Protected/LeaguesAndTournaments/components/LeagueTagType'
 
 import {
   MonroeBlueText,
@@ -153,7 +153,7 @@ const LeagueDetails = () => {
             <Flex vertical>
               <Flex className="mb-16">
                 <ViewText>Type:</ViewText>
-                <TagType text={data!.type} />
+                <LeagueTagType text={data!.type} />
               </Flex>
 
               <Flex className="mb-16">

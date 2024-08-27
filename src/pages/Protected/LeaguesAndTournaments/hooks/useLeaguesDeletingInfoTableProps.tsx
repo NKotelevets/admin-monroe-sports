@@ -61,7 +61,10 @@ export const useLeaguesDeletingInfoTableProps = (tableParams: ITableParams) => {
             Search
           </Button>
           <Button
-            onClick={() => clearFilters && handleReset(clearFilters)}
+            onClick={() => {
+              clearFilters && handleReset(clearFilters)
+              handleSearch(confirm)
+            }}
             style={{
               flex: '1 1 auto',
               color: selectedKeys.length ? 'rgba(188, 38, 27, 1)' : 'rgba(189, 188, 194, 1)',

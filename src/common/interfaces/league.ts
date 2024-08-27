@@ -1,6 +1,6 @@
 import { IIdName } from '@/common/interfaces'
 import { IBESeason } from '@/common/interfaces/season'
-import { TDeletionStatus } from '@/common/types'
+import { TDeletionStatus, TErrorDuplicate } from '@/common/types'
 import { TLeagueTourn, TPlayOffFormat, TWinningPoints } from '@/common/types/league'
 
 interface ICommonLeagueFields {
@@ -133,6 +133,6 @@ export interface ILeagueBulkDeleteResponse {
 export interface ILeagueImportInfoTableRecord {
   name: string
   message: string
-  type: 'Error' | 'Duplicate'
+  type: TErrorDuplicate
   idx: number
 }

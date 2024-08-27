@@ -11,7 +11,7 @@ import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
-import TagType from '@/pages/Protected/LeaguesAndTournaments/components/TagType'
+import LeagueTagType from '@/pages/Protected/LeaguesAndTournaments/components/LeagueTagType'
 
 import CellText from '@/components/Table/CellText'
 import MonroeFilter from '@/components/Table/MonroeFilter'
@@ -130,7 +130,7 @@ export const useLeagueAndTournamentTableParams = ({ setSelectedRecordId, setShow
         { text: 'Tourn', value: 1 },
       ],
       width: '112px',
-      render: (value) => <TagType text={value} />,
+      render: (value) => <LeagueTagType text={value} />,
       filterDropdown: MonroeFilter,
       filterIcon: (filtered) => (
         <FilterFilled

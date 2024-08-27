@@ -309,7 +309,7 @@ const EditUser = () => {
 
                         <MonroeTooltip width="179px" text={!isEnabledButton ? 'Missing mandatory data' : ''}>
                           <MonroeButton
-                            label="Create User"
+                            label="Save"
                             type="primary"
                             onClick={handleSubmit}
                             isDisabled={!isEnabledButton}

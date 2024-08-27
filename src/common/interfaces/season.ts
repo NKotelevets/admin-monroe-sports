@@ -71,6 +71,7 @@ interface IImportSeasonSuccess {
     standings_format: number
     tiebreakers_format: number
     brackets: []
+    changed: boolean
   }[]
 }
 
@@ -89,9 +90,9 @@ interface IImportSeasonDuplicate {
 
 export interface IImportSeasonsResponse {
   status: TDeletionStatus
-  success: IImportSeasonSuccess[]
-  errors: IImportSeasonError[]
-  duplicates: IImportSeasonDuplicate[]
+  success?: IImportSeasonSuccess[]
+  errors?: IImportSeasonError[]
+  duplicates?: IImportSeasonDuplicate[]
 }
 
 export interface IDeletionSeasonItemError {

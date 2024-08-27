@@ -1,6 +1,5 @@
 import { GetProp, Table, TableProps } from 'antd'
 import Breadcrumb from 'antd/es/breadcrumb'
-import Flex from 'antd/es/flex'
 import { SorterResult } from 'antd/es/table/interface'
 import Typography from 'antd/es/typography'
 import { useState } from 'react'
@@ -8,11 +7,12 @@ import { useState } from 'react'
 import LeagueReviewUpdateModal from '@/pages/Protected/LeaguesAndTournaments/components/LeagueReviewUpdateModal'
 import { useLeaguesImportInfoTableParams } from '@/pages/Protected/LeaguesAndTournaments/hooks/useLeaguesImportInfoTableParams'
 
+import { Container, Description, Title } from '@/components/Elements/deletingBlockingInfoElements'
+
 import BaseLayout from '@/layouts/BaseLayout'
 
 import { useLeagueSlice } from '@/redux/hooks/useLeagueSlice'
 
-import { containerStyles, descriptionStyle, titleStyle } from '@/constants/deleting-importing-info.styles'
 import { PATH_TO_LEAGUES } from '@/constants/paths'
 
 import { ILeagueImportInfoTableRecord } from '@/common/interfaces/league'
@@ -78,18 +78,16 @@ const ImportInfo = () => {
       {selectedIdx !== null && <LeagueReviewUpdateModal idx={selectedIdx} onClose={() => setSelectedIdx(null)} />}
 
       <BaseLayout>
-        <Flex style={containerStyles} vertical>
+        <Container>
           <Breadcrumb items={BREADCRUMB_ITEMS} />
 
-          <Typography.Title level={1} style={titleStyle}>
-            Import info
-          </Typography.Title>
+          <Title>Import info</Title>
 
-          <Typography.Text style={descriptionStyle}>
+          <Description>
             This panel provides a summary of your CSV import, listing rows with errors and duplicates. Click on any
             duplicate to review details, compare and decide whether to keep existing records or replace them with new
             entries. This helps ensure your data is accurate and up-to-date.
-          </Typography.Text>
+          </Description>
 
           <Table
             columns={columns}
@@ -98,7 +96,7 @@ const ImportInfo = () => {
             pagination={tableParams.pagination}
             onChange={handleTableChange}
           />
-        </Flex>
+        </Container>
       </BaseLayout>
     </>
   )

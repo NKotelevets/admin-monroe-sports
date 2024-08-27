@@ -42,13 +42,13 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
         description: newData.divisionPollDescription,
         sub_division: [
           {
+            changed: false,
             name: newData.subdivisionPollName,
             playoff_format: newData.playoffFormat,
             standings_format: newData.standingsFormat,
             tiebreakers_format: newData.tiebreakersFormat,
             description: newData.subdivisionPollDescription,
             brackets: [],
-            changed: false,
           },
         ],
       },
@@ -112,13 +112,15 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
     const mappedDivisions: IUpdateDivision[] = duplicateData.divisions.map((division) => ({
       name: division.name,
       description: division.description,
+      id: division.id as string,
       sub_division: division.sub_division.map((subdivision) => ({
+        id: subdivision.id,
         name: subdivision.name,
         description: subdivision.description,
         playoff_format: subdivision.playoff_format === 'Best Record Wins' ? 0 : 1,
         standings_format: subdivision.standings_format === 'Winning %' ? 0 : 1,
         tiebreakers_format: subdivision.tiebreakers_format === 'Winning %' ? 0 : 1,
-        brackets: subdivision.brackets,
+        brackets: [],
         changed: subdivision.changed,
       })),
     }))
@@ -133,7 +135,7 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
         standings_format: subdivision.standings_format === 'Winning %' ? 0 : 1,
         tiebreakers_format: subdivision.tiebreakers_format === 'Winning %' ? 0 : 1,
         brackets: [],
-        changed: false,
+        changed: subdivision.changed,
       })),
     }))
 
@@ -169,13 +171,13 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
         {
           ...normalizedNewData.divisions[0],
           sub_division: normalizedNewData.divisions[0].sub_division.map((subdivision) => ({
+            changed: subdivision.changed || false,
+            brackets: subdivision.brackets,
             name: subdivision.name,
             description: subdivision.description,
             playoff_format: subdivision.playoff_format === 'Best Record Wins' ? 0 : 1,
             standings_format: subdivision.standings_format === 'Points' ? 0 : 1,
             tiebreakers_format: subdivision.tiebreakers_format === 'Points' ? 0 : 1,
-            brackets: [],
-            changed: false,
           })),
         },
       ]
