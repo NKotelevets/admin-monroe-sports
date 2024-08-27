@@ -74,9 +74,11 @@ export const useSeasonsImportTable = (
       name: duplicateData.name,
       startDate: format(duplicateData.start_date, 'dd MMM yyyy'),
       divisions: duplicateData.divisions.map((division) => ({
+        id: division.id as string,
         name: division.name,
         description: division.description,
         sub_division: division.sub_division.map((subdivision) => ({
+          id: subdivision.id as string,
           name: subdivision.name,
           description: subdivision.description,
           playoff_format: subdivision.playoff_format === 0 ? 'Best Record Wins' : 'Single Elimination Bracket',
@@ -105,9 +107,11 @@ export const useSeasonsImportTable = (
     const isDivisionOrSubdivisionChanged = currentDivision ? !!isDifference : true
 
     const mappedDivisions: IUpdateDivision[] = duplicateData.divisions.map((division) => ({
+      id: division.id as string,
       name: division.name,
       description: division.description,
       sub_division: division.sub_division.map((subdivision) => ({
+        id: subdivision.id as string,
         name: subdivision.name,
         description: subdivision.description,
         playoff_format: subdivision.playoff_format === 'Best Record Wins' ? 0 : 1,

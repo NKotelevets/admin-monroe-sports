@@ -110,9 +110,11 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
 
   const handleUpdate = () => {
     const mappedDivisions: IUpdateDivision[] = duplicateData.divisions.map((division) => ({
+      id: division.id as string,
       name: division.name,
       description: division.description,
       sub_division: division.sub_division.map((subdivision) => ({
+        id: subdivision.id as string,
         name: subdivision.name,
         description: subdivision.description,
         playoff_format: subdivision.playoff_format === 'Best Record Wins' ? 0 : 1,

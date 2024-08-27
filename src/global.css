@@ -48,6 +48,11 @@ svg {
 }
 
 /* Table styles - start */
+.ant-table-wrapper table tr th.ant-table-selection-column.ant-table-cell-fix-left {
+  z-index: 0 !important;
+}
+
+
 .ant-table-thead th {
   font-weight: 500;
   color: rgba(26, 22, 87, 0.85) !important;

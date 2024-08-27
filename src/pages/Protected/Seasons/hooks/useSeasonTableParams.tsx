@@ -19,7 +19,7 @@ import { IFESeason } from '@/common/interfaces/season'
 
 import DeleteIcon from '@/assets/icons/delete.svg'
 import EditIcon from '@/assets/icons/edit.svg'
-import WarningIcon from '@/assets/icons/warn.svg'
+import WarningIcon from '@/assets/icons/small-warn.svg'
 
 type TDataIndex = keyof IFESeason
 type TColumns<T> = TableProps<T>['columns']
@@ -109,10 +109,10 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
         const showIcon = record.divisions.flatMap((d) => d.sub_division.filter((s) => !!s.changed)).length
 
         return (
-          <Flex justify="flex-start">
+          <Flex align="center" justify="flex-start">
             {!!showIcon && (
               <MonroeTooltip text="Season requires brackets setting." width="130px" containerWidth="auto">
-                <ReactSVG src={WarningIcon} style={{ marginRight: '4px' }} />
+                <ReactSVG src={WarningIcon} style={{ marginRight: '8px' }} />
               </MonroeTooltip>
             )}
 
