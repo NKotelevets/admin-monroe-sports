@@ -133,8 +133,9 @@ export const seasonsSlice = createSlice({
         }))
 
         const isSingleEliminationBracketInCreatedRecords =
-          success?.map((createdRecord) => createdRecord.sub_division?.find((subdivision) => !!subdivision.changed))
-            .length > 0
+          success
+            ?.flatMap((createdRecord) => !!createdRecord.sub_division?.filter((subdivision) => subdivision.changed))
+            .filter((r) => !!r).length > 0
 
         if (action.payload.status === 'green') {
           state.isShowImportWarningModal = !!isSingleEliminationBracketInCreatedRecords

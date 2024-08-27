@@ -411,6 +411,7 @@ const EditSeason = () => {
                         <MonroeButton
                           label="Populate Brackets"
                           iconPosition="start"
+                          isDisabled
                           icon={<ReactSVG src={SwapIcon} />}
                           type="primary"
                           style={{ height: '32px' }}
