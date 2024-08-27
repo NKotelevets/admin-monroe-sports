@@ -27,6 +27,13 @@ interface IImportModalOptions {
   isOpen: boolean
 }
 
+const DEFAULT_IMPORT_MODAL_OPTIONS: IImportModalOptions = {
+  filename: '',
+  isOpen: false,
+  status: 'loading',
+  errorMessage: '',
+}
+
 const LeaguesAndTournaments = () => {
   const navigate = useNavigate()
   const { total } = useLeagueSlice()
@@ -42,12 +49,7 @@ const LeaguesAndTournaments = () => {
   const leagueTournText = deleteRecordsModalCount > 1 ? 'leagues/tournaments' : 'league/tournament'
   const [showCreatedRecords, setShowCreatedRecords] = useState(false)
   const [importLeagues] = useImportLeaguesCSVMutation()
-  const [importModalOptions, setImportModalOptions] = useState<IImportModalOptions>({
-    filename: '',
-    isOpen: false,
-    status: 'loading',
-    errorMessage: '',
-  })
+  const [importModalOptions, setImportModalOptions] = useState<IImportModalOptions>(DEFAULT_IMPORT_MODAL_OPTIONS)
 
   const goToCreateLeagueTournamentPage = () => navigate(PATH_TO_CREATE_LEAGUE)
 
@@ -83,6 +85,7 @@ const LeaguesAndTournaments = () => {
   }
 
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    setImportModalOptions(DEFAULT_IMPORT_MODAL_OPTIONS)
     const file = event.target.files?.[0]
 
     if (file) {

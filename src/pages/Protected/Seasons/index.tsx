@@ -33,6 +33,13 @@ import { PATH_TO_CREATE_SEASON, PATH_TO_SEASONS_DELETING_INFO, PATH_TO_SEASONS_I
 
 import { IImportModalOptions } from '@/common/interfaces'
 
+const DEFAULT_IMPORT_MODAL_OPTIONS: IImportModalOptions = {
+  filename: '',
+  isOpen: false,
+  status: 'loading',
+  errorMessage: '',
+}
+
 const Seasons = () => {
   const { total } = useSeasonSlice()
   const { setInfoNotification, setAppNotification } = useAppSlice()
@@ -46,16 +53,12 @@ const Seasons = () => {
   const [showCreatedRecords, setShowCreatedRecords] = useState(false)
   const inputRef = useRef<HTMLInputElement | null>()
   const navigate = useNavigate()
-  const [importModalOptions, setImportModalOptions] = useState<IImportModalOptions>({
-    filename: '',
-    isOpen: false,
-    status: 'loading',
-    errorMessage: '',
-  })
+  const [importModalOptions, setImportModalOptions] = useState<IImportModalOptions>(DEFAULT_IMPORT_MODAL_OPTIONS)
   const deleteRecordsModalCount = isDeleteAllRecords ? total : selectedRecordsIds.length
   const deleteSeasonsText = deleteRecordsModalCount > 1 ? 'seasons' : 'season'
 
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    setImportModalOptions(DEFAULT_IMPORT_MODAL_OPTIONS)
     const file = event.target.files?.[0]
 
     if (file) {
