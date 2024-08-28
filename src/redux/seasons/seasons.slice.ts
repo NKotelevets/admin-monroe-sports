@@ -132,16 +132,12 @@ export const seasonsSlice = createSlice({
           showIcon: false,
         }))
 
-        const isSingleEliminationBracketInCreatedRecords =
-          success
-            ?.flatMap(
-              (createdRecord) =>
-                !!createdRecord.divisions?.filter((division) => division.sub_division.find((subdiv) => subdiv.changed)),
-            )
-            .filter((r) => !!r).length > 0
+        const isChanged =
+          success.flatMap((r) => r.divisions.flatMap((d) => d.sub_division).filter((subDiv) => !!subDiv.changed))
+            .length > 0
 
         if (action.payload.status === 'green') {
-          state.isShowImportWarningModal = !!isSingleEliminationBracketInCreatedRecords
+          state.isShowImportWarningModal = !!isChanged
         }
 
         if (action.payload.status !== 'green') {
@@ -166,8 +162,7 @@ export const seasonsSlice = createSlice({
             return existingSubdivision.playoff_format === 1 ? false : isSEB
           })
 
-          state.isShowImportWarningModal =
-            isSingleEliminationBracketInNewRecords || isSingleEliminationBracketInCreatedRecords
+          state.isShowImportWarningModal = isSingleEliminationBracketInNewRecords || isChanged
 
           state.duplicates = convertedDuplicates
 
