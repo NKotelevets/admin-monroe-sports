@@ -38,6 +38,10 @@ const MonroeSelect = styled(CustomSelect)`
     color: rgba(189, 188, 194, 1);
   }
 
+  &.rc-virtual-list-holder-inner:first-child {
+    background-color: blueviolet;
+  }
+
   @media (width > 1660px) {
     & .ant-select-selection-item {
       font-size: 18px !important;

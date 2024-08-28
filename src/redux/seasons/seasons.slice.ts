@@ -134,7 +134,10 @@ export const seasonsSlice = createSlice({
 
         const isSingleEliminationBracketInCreatedRecords =
           success
-            ?.flatMap((createdRecord) => !!createdRecord.sub_division?.filter((subdivision) => subdivision.changed))
+            ?.flatMap(
+              (createdRecord) =>
+                !!createdRecord.divisions?.filter((division) => division.sub_division.find((subdiv) => subdiv.changed)),
+            )
             .filter((r) => !!r).length > 0
 
         if (action.payload.status === 'green') {

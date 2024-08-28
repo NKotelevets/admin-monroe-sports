@@ -13,6 +13,7 @@ interface IUserSliceState {
   ordering: string
   createdRecordsNames: { name: string; showIcon: boolean }[]
   selectedRecords: IFEUser[]
+  isCreateOperatorScreen: boolean
 }
 
 const userSliceState: IUserSliceState = {
@@ -24,6 +25,7 @@ const userSliceState: IUserSliceState = {
   ordering: '',
   createdRecordsNames: [],
   selectedRecords: [],
+  isCreateOperatorScreen: false,
 }
 
 export const userSlice = createSlice({
@@ -47,6 +49,9 @@ export const userSlice = createSlice({
     },
     setRecords: (state, action: PayloadAction<IFEUser[]>) => {
       state.selectedRecords = action.payload
+    },
+    setIsCreateOperatorScreen: (state, action: PayloadAction<boolean>) => {
+      state.isCreateOperatorScreen = action.payload
     },
   },
   extraReducers: (builder) =>

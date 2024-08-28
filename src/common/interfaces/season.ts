@@ -62,16 +62,22 @@ export interface IGetSeasonsResponse {
 }
 
 interface IImportSeasonSuccess {
+  id: string
   name: string
   description: string
-  sub_division: {
+  divisions: {
+    id: string
     name: string
     description: string
-    playoff_format: number
-    standings_format: number
-    tiebreakers_format: number
-    brackets: []
-    changed: boolean
+    sub_division: {
+      name: string
+      description: string
+      playoff_format: number
+      standings_format: number
+      tiebreakers_format: number
+      brackets: []
+      changed: boolean
+    }[]
   }[]
 }
 
