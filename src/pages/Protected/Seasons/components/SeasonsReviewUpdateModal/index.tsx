@@ -148,8 +148,12 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
         ? {
             ...currentDivision,
             sub_division: currentDivision?.sub_division.map((subdivision) => {
-              if (subdivision.name === mappedNewDivisions[0].sub_division[0].name)
-                return mappedNewDivisions[0].sub_division[0]
+              if (subdivision.name === mappedNewDivisions[0].sub_division[0].name) {
+                return {
+                  id: subdivision.id,
+                  ...mappedNewDivisions[0].sub_division[0],
+                }
+              }
               return subdivision
             }),
           }
