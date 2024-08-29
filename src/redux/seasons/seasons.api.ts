@@ -115,6 +115,15 @@ export const seasonsApi = createApi({
         body,
       }),
     }),
+    bulkDeleteBrackets: builder.mutation<void, number[]>({
+      query: (ids) => ({
+        url: 'teams/brackets/bulk-bracket-delete',
+        method: 'POST',
+        body: {
+          ids,
+        },
+      }),
+    }),
   }),
 })
 
@@ -129,4 +138,5 @@ export const {
   useCreateSeasonMutation,
   useGetSeasonBEDetailsQuery,
   useLazyGetSeasonBEDetailsQuery,
+  useBulkDeleteBracketsMutation,
 } = seasonsApi

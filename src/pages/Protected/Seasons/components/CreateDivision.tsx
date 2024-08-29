@@ -37,6 +37,7 @@ interface ICreateDivisionProps {
   removeFn: (index: number) => void
   isMultipleDivisions: boolean
   values: ICreateSeasonFormValues
+  setIds: React.Dispatch<React.SetStateAction<number[]>>
 }
 
 const CreateDivision: FC<ICreateDivisionProps> = ({
@@ -48,6 +49,7 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
   removeFn,
   isMultipleDivisions,
   values,
+  setIds,
 }) => {
   const [isOpenedDetails, setIsOpenedDetails] = useState(index === 0 ? true : false)
   const { isComponentVisible, ref } = useIsActiveComponent(index === 0 ? true : false)
@@ -144,6 +146,7 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
                     errors={errors}
                     division={division}
                     values={values}
+                    setIds={setIds}
                   />
                 ),
                 label: (

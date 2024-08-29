@@ -51,6 +51,7 @@ interface ICreateSubdivisionProps {
   divisionIndex: number
   division: ICreateSeasonDivision
   values: ICreateSeasonFormValues
+  setIds: React.Dispatch<React.SetStateAction<number[]>>
 }
 
 const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
@@ -65,6 +66,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
   divisionIndex,
   division,
   values,
+  setIds,
 }) => {
   const { setBracketIdx, setBracketMode, setIsDuplicateNames } = useSeasonSlice()
   const [isOpenedDetails, setIsOpenedDetails] = useState(index === 0 ? true : false)
@@ -276,7 +278,10 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
                                   <ReactSVG
                                     src={SmallDeleteIcon}
                                     style={{ width: '14px', height: '14px', cursor: 'pointer' }}
-                                    onClick={() => innerArrayHelpers.remove(idx)}
+                                    onClick={() => {
+                                      innerArrayHelpers.remove(idx)
+                                      if (bracketData.id) setIds((prev) => [...prev, bracketData.id as number])
+                                    }}
                                   />
                                 </Flex>
                               </Flex>

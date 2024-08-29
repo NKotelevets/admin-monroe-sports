@@ -43,7 +43,11 @@ import BaseLayout from '@/layouts/BaseLayout'
 import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useAuthSlice } from '@/redux/hooks/useAuthSlice'
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
-import { useGetSeasonDetailsQuery, useUpdateSeasonMutation } from '@/redux/seasons/seasons.api'
+import {
+  useBulkDeleteBracketsMutation,
+  useGetSeasonDetailsQuery,
+  useUpdateSeasonMutation,
+} from '@/redux/seasons/seasons.api'
 
 import { PATH_TO_EDIT_SEASON, PATH_TO_SEASONS } from '@/constants/paths'
 
@@ -70,6 +74,8 @@ const EditSeason = () => {
   const [showModal, setShowModal] = useState(false)
   const { access } = useAuthSlice()
   const { setAppNotification } = useAppSlice()
+  const [bulkBracketDelete] = useBulkDeleteBracketsMutation()
+  const [ids, setIds] = useState<number[]>([])
 
   const INITIAL_BREAD_CRUMB_ITEMS = [
     {
@@ -219,7 +225,7 @@ const EditSeason = () => {
 
   const goBack = useCallback(() => navigate(PATH_TO_SEASONS), [])
 
-  const handleSubmit = (values: ICreateSeasonFormValues) => {
+  const handleSubmit = async (values: ICreateSeasonFormValues) => {
     const editSeasonBody: ICreateBESeason = {
       name: values.name,
       league_id: values.league,
@@ -237,43 +243,47 @@ const EditSeason = () => {
           standings_format: subdivision.standingsFormat !== 'Points' ? 0 : 1,
           tiebreakers_format: subdivision.tiebreakersFormat !== 'Points' ? 0 : 1,
           changed: subdivision.changed ? subdivision.playoffFormat === 'Best Record Wins' : false,
-          brackets: subdivision.brackets.map((bracket) => ({
-            id: bracket.id as number,
-            name: bracket.name,
-            number_of_teams: bracket.playoffTeams,
-            published: false,
-            matches: bracket.matches.map((match) => ({
-              id: match.primaryId,
-              bottom_team: match.bottomTeam || '',
-              top_team: match.topTeam || '',
-              game_number: match.gameNumber || null,
-              match_integer_id: match.id,
-              is_not_first_round: match.isNotFirstRound || false,
-              start_time: null,
-              tournament_round_text: match.tournamentRoundText || '',
-              next_match_id: match.nextMatchId,
-              match_participants: match.participants
-                .map((p) =>
-                  p.id.length > 2
-                    ? {
-                        id: p.id.length > 2 ? p.id : '',
-                        sub_division: p.subpoolName,
-                        seed: p.seed,
-                        is_empty: p.isEmpty,
-                      }
-                    : {
-                        sub_division: p.subpoolName,
-                        seed: p.seed,
-                        is_empty: p.isEmpty,
-                      },
-                )
-                .filter((p) => p?.sub_division),
-            })),
-            subdivision: bracket.subdivisionsNames,
-          })),
+          brackets: subdivision.brackets
+            .map((bracket) => ({
+              id: bracket.id as number,
+              name: bracket.name,
+              number_of_teams: bracket.playoffTeams,
+              published: false,
+              matches: bracket.matches.map((match) => ({
+                id: match.primaryId,
+                bottom_team: match.bottomTeam || '',
+                top_team: match.topTeam || '',
+                game_number: match.gameNumber || null,
+                match_integer_id: match.id,
+                is_not_first_round: match.isNotFirstRound || false,
+                start_time: null,
+                tournament_round_text: match.tournamentRoundText || '',
+                next_match_id: match.nextMatchId,
+                match_participants: match.participants
+                  .map((p) =>
+                    p.id.length > 2
+                      ? {
+                          id: p.id.length > 2 ? p.id : '',
+                          sub_division: p.subpoolName,
+                          seed: p.seed,
+                          is_empty: p.isEmpty,
+                        }
+                      : {
+                          sub_division: p.subpoolName,
+                          seed: p.seed,
+                          is_empty: p.isEmpty,
+                        },
+                  )
+                  .filter((p) => p?.sub_division),
+              })),
+              subdivision: bracket.subdivisionsNames,
+            }))
+            .filter((b) => !ids.includes(b.id)),
         })),
       })),
     }
+
+    await bulkBracketDelete(ids).unwrap()
 
     updateSeason({
       id: data!.id as string,
@@ -384,6 +394,7 @@ const EditSeason = () => {
                     removeFn={removeFn}
                     isMultipleDivisions={values.divisions.length > 1}
                     values={values}
+                    setIds={setIds}
                   />
                 ),
                 label: <AccordionHeader>#{idx + 1} Division/Pool</AccordionHeader>,
