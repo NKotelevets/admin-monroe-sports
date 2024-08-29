@@ -82,7 +82,7 @@ const SeasonsImportInfo = () => {
 
           <Table
             columns={columns}
-            rowKey={(record) => record.name}
+            rowKey={(record) => record.name + Math.random()}
             dataSource={tableRecords}
             pagination={tableParams.pagination}
             onChange={handleTableChange}

@@ -50,6 +50,7 @@ const LeaguesAndTournaments = () => {
   const [showCreatedRecords, setShowCreatedRecords] = useState(false)
   const [importLeagues] = useImportLeaguesCSVMutation()
   const [importModalOptions, setImportModalOptions] = useState<IImportModalOptions>(DEFAULT_IMPORT_MODAL_OPTIONS)
+  const [fileKey, setFileKey] = useState('')
 
   const goToCreateLeagueTournamentPage = () => navigate(PATH_TO_CREATE_LEAGUE)
 
@@ -117,6 +118,8 @@ const LeaguesAndTournaments = () => {
             errorMessage: (error.data as { code: string; details: string }).details,
           })
         })
+
+      setFileKey(new Date().toISOString())
     }
   }
 
@@ -228,6 +231,7 @@ const LeaguesAndTournaments = () => {
                 accept=".csv"
                 onChange={handleChange}
                 style={{ display: 'none' }}
+                key={fileKey}
               />
 
               <Button

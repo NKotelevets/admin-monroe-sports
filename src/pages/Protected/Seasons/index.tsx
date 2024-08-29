@@ -56,6 +56,7 @@ const Seasons = () => {
   const [importModalOptions, setImportModalOptions] = useState<IImportModalOptions>(DEFAULT_IMPORT_MODAL_OPTIONS)
   const deleteRecordsModalCount = isDeleteAllRecords ? total : selectedRecordsIds.length
   const deleteSeasonsText = deleteRecordsModalCount > 1 ? 'seasons' : 'season'
+  const [fileKey, setFileKey] = useState('')
 
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
     setImportModalOptions(DEFAULT_IMPORT_MODAL_OPTIONS)
@@ -90,6 +91,8 @@ const Seasons = () => {
             errorMessage: (error.data as { code: string; detail: string }).detail,
           })
         })
+
+      setFileKey(new Date().toISOString())
     }
   }
 
@@ -209,6 +212,7 @@ const Seasons = () => {
             accept=".csv"
             onChange={handleChange}
             style={{ display: 'none' }}
+            key={fileKey}
           />
 
           <Flex flex="1 1 auto" vertical>

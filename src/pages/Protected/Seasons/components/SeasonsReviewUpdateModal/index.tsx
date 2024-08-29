@@ -117,9 +117,9 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
         id: subdivision.id as string,
         name: subdivision.name,
         description: subdivision.description,
-        playoff_format: subdivision.playoff_format === 'Best Record Wins' ? 0 : 1,
-        standings_format: subdivision.standings_format === 'Winning %' ? 0 : 1,
-        tiebreakers_format: subdivision.tiebreakers_format === 'Winning %' ? 0 : 1,
+        playoff_format: subdivision.playoff_format,
+        standings_format: subdivision.standings_format,
+        tiebreakers_format: subdivision.tiebreakers_format,
         brackets: subdivision.brackets,
         changed: subdivision.changed,
       })),
@@ -178,8 +178,8 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
             name: subdivision.name,
             description: subdivision.description,
             playoff_format: subdivision.playoff_format === 'Best Record Wins' ? 0 : 1,
-            standings_format: subdivision.standings_format === 'Points' ? 0 : 1,
-            tiebreakers_format: subdivision.tiebreakers_format === 'Points' ? 0 : 1,
+            standings_format: subdivision.standings_format === 'Points' ? 1 : 0,
+            tiebreakers_format: subdivision.tiebreakers_format === 'Points' ? 1 : 0,
             brackets: [],
             changed: false,
           })),
@@ -200,7 +200,10 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
       },
     }).then(() => {
       onClose()
-      removeDuplicate(idx)
+
+      setTimeout(() => {
+        removeDuplicate(idx)
+      }, 500)
     })
   }
 
