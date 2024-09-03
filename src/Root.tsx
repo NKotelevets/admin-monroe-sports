@@ -17,6 +17,7 @@ import Users from '@/pages/Protected/Users'
 import BlockingInfo from '@/pages/Protected/Users/BlockingInfo'
 import CreateUser from '@/pages/Protected/Users/CreateUser'
 import EditUser from '@/pages/Protected/Users/EditUser'
+import OperatorOnboarding from '@/pages/Protected/Users/OperatorOnboarding'
 import UserDetails from '@/pages/Protected/Users/UserDetails'
 import UsersBulkEdit from '@/pages/Protected/Users/UsersBulkEdit'
 import UsersImportInfo from '@/pages/Protected/Users/UsersImportInfo'
@@ -37,6 +38,7 @@ import {
   PATH_TO_LEAGUES_DELETING_INFO,
   PATH_TO_LEAGUES_IMPORT_INFO,
   PATH_TO_LEAGUE_PAGE,
+  PATH_TO_OPERATOR_ONBOARDING,
   PATH_TO_SEASONS,
   PATH_TO_SEASONS_DELETING_INFO,
   PATH_TO_SEASONS_IMPORT_INFO,
@@ -80,6 +82,7 @@ const Root = () => (
       <Route path={PATH_TO_USERS_BULK_EDIT} element={<UsersBulkEdit />} />
       <Route path={PATH_TO_USERS_BLOCKING_INFO} element={<BlockingInfo />} />
       <Route path={PATH_TO_USERS_IMPORT_INFO} element={<UsersImportInfo />} />
+      <Route path={`${PATH_TO_OPERATOR_ONBOARDING}/:id`} element={<OperatorOnboarding />} />
     </Routes>
   </AuthProvider>
 )

@@ -4,14 +4,18 @@ import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { Button, Flex, Typography } from 'antd'
 import { FC, useState } from 'react'
 
-import { useAppSlice } from '@/redux/hooks/useAppSlice'
+import Message from '@/components/Message'
+
 import { useLeagueSlice } from '@/redux/hooks/useLeagueSlice'
 import { useUpdateLeagueMutation } from '@/redux/leagues/leagues.api'
 
 import { compareObjects } from '@/utils/compareObjects'
 
-import { IBECreateLeagueBody, IFELeague } from '@/common/interfaces/league'
+import { IBECreateLeagueBody, IFELeague, ILeagueDuplicate } from '@/common/interfaces/league'
 import { TFullLeagueTournament } from '@/common/types/league'
+
+const SUCCESS_MESSAGE = 'Record Updated'
+const ERROR_MESSAGE = "Record can't be updated. Please try again."
 
 const LeagueReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx, onClose }) => {
   const [currentIdx, setCurrentIdx] = useState<number>(idx)
@@ -20,7 +24,9 @@ const LeagueReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx
   const duplicateData = currentDuplicate!.existing
   const newData = currentDuplicate!.new
   const [updateRecord] = useUpdateLeagueMutation()
-  const { setAppNotification } = useAppSlice()
+  const [isUpdatedSeason, setIsUpdatedSeason] = useState(false)
+  const [isError, setIsError] = useState(false)
+  const actualIndex = duplicates.indexOf(currentDuplicate as ILeagueDuplicate)
 
   const normalizedNewRecord: Omit<IFELeague<TFullLeagueTournament>, 'createdAt' | 'updatedAt'> = {
     ...newData,
@@ -70,15 +76,13 @@ const LeagueReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx
     updateRecord({ id: normalizedNewRecord.id, body: backendBodyFormat })
       .unwrap()
       .then(() => {
-        setAppNotification({
-          message: 'Successfully update',
-          type: 'success',
-          timestamp: new Date().getTime(),
-        })
-        onClose()
-        removeDuplicate(idx)
+        setIsUpdatedSeason(true)
+        setIsError(false)
       })
-      .catch(() => onClose())
+      .catch(() => {
+        setIsUpdatedSeason(true)
+        setIsError(true)
+      })
   }
 
   const handleSkipForThis = () => {
@@ -88,6 +92,23 @@ const LeagueReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx
     }
 
     setCurrentIdx((prev) => prev + 1)
+  }
+
+  const handleNextRecord = () => {
+    if (duplicates.length === 1) onClose()
+
+    setIsUpdatedSeason(false)
+    handleNextDuplicate()
+    removeDuplicate(currentIdx)
+  }
+
+  const handleClose = () => {
+    if (isUpdatedSeason) {
+      setIsUpdatedSeason(false)
+      removeDuplicate(currentIdx)
+    }
+
+    onClose()
   }
 
   return (
@@ -108,12 +129,16 @@ const LeagueReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx
 
             <LeagueTournDetailsColumn title="Imported" {...normalizedNewRecord} isNew difference={objectsDifferences} />
           </Flex>
+
+          {isUpdatedSeason && (
+            <Message type={isError ? 'error' : 'success'} text={!isError ? SUCCESS_MESSAGE : ERROR_MESSAGE} />
+          )}
         </Flex>
 
         <Flex align="center" justify="space-between" style={{ padding: '16px' }}>
           <Flex align="center">
             <Button
-              disabled={currentIdx === 0}
+              disabled={actualIndex === 0}
               style={{
                 background: 'transparent',
                 border: 0,
@@ -124,7 +149,7 @@ const LeagueReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx
               <LeftOutlined />
             </Button>
             <Button
-              disabled={currentIdx + 1 === duplicates.length}
+              disabled={actualIndex + 1 === duplicates.length}
               style={{
                 background: 'transparent',
                 border: 0,
@@ -136,12 +161,12 @@ const LeagueReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx
             </Button>
 
             <Typography.Text style={{ color: 'rgba(26, 22, 87, 1)' }}>
-              {currentIdx + 1} of {duplicates.length} duplicate
+              {actualIndex + 1} of {duplicates.length} duplicate
             </Typography.Text>
           </Flex>
 
           <Flex>
-            <Button type="default" style={defaultButtonStyles} onClick={onClose}>
+            <Button type="default" style={defaultButtonStyles} onClick={handleClose}>
               Close
             </Button>
 
@@ -151,15 +176,31 @@ const LeagueReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx
               </Button>
             )}
 
-            <Button
-              type="primary"
-              style={{
-                borderRadius: '4px',
-              }}
-              onClick={handleUpdate}
-            >
-              Update current
-            </Button>
+            {isUpdatedSeason ? (
+              <>
+                {duplicates.length > 1 && (
+                  <Button
+                    type="primary"
+                    style={{
+                      borderRadius: '4px',
+                    }}
+                    onClick={handleNextRecord}
+                  >
+                    Next record
+                  </Button>
+                )}
+              </>
+            ) : (
+              <Button
+                type="primary"
+                style={{
+                  borderRadius: '4px',
+                }}
+                onClick={handleUpdate}
+              >
+                Update current
+              </Button>
+            )}
           </Flex>
         </Flex>
       </Flex>

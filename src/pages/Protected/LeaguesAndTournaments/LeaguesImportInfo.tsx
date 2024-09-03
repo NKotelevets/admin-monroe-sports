@@ -1,12 +1,12 @@
 import { GetProp, Table, TableProps } from 'antd'
 import Breadcrumb from 'antd/es/breadcrumb'
 import { SorterResult } from 'antd/es/table/interface'
-import Typography from 'antd/es/typography'
 import { useState } from 'react'
 
 import LeagueReviewUpdateModal from '@/pages/Protected/LeaguesAndTournaments/components/LeagueReviewUpdateModal'
 import { useLeaguesImportInfoTableParams } from '@/pages/Protected/LeaguesAndTournaments/hooks/useLeaguesImportInfoTableParams'
 
+import { MonroeBlueText } from '@/components/Elements'
 import { Container, Description, Title } from '@/components/Elements/deletingBlockingInfoElements'
 
 import BaseLayout from '@/layouts/BaseLayout'
@@ -32,15 +32,7 @@ const BREADCRUMB_ITEMS = [
     title: <a href={PATH_TO_LEAGUES}>Leagues & Tournaments</a>,
   },
   {
-    title: (
-      <Typography.Text
-        style={{
-          color: 'rgba(26, 22, 87, 0.85)',
-        }}
-      >
-        Import info
-      </Typography.Text>
-    ),
+    title: <MonroeBlueText>Import info</MonroeBlueText>,
   },
 ]
 

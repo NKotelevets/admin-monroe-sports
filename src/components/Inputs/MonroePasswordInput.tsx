@@ -1,17 +1,18 @@
 import { Flex } from 'antd'
-import { ChangeEventHandler, FC } from 'react'
+import { ChangeEventHandler, FC, ReactNode } from 'react'
 
-import { InputLabel, StyledPasswordInput } from '@/components/Inputs/InputElements'
+import { InputError, InputLabel, StyledPasswordInput } from '@/components/Inputs/InputElements'
 
 interface IMonroePasswordInputProps {
-  label: string
+  label: string | ReactNode
   placeholder: string
   value: string
   onChange: ChangeEventHandler<HTMLInputElement>
   name: string
+  error?: string
 }
 
-const MonroePasswordInput: FC<IMonroePasswordInputProps> = ({ label, ...rest }) => (
+const MonroePasswordInput: FC<IMonroePasswordInputProps> = ({ label, error, ...rest }) => (
   <>
     {label && (
       <Flex vertical={false} justify="space-between" align="center">
@@ -19,7 +20,9 @@ const MonroePasswordInput: FC<IMonroePasswordInputProps> = ({ label, ...rest }) 
       </Flex>
     )}
 
-    <StyledPasswordInput {...rest} />
+    <StyledPasswordInput is_error={`${error ? 'true' : 'false'}`} {...rest} />
+
+    {error && <InputError>{error}</InputError>}
   </>
 )
 

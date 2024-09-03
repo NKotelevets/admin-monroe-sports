@@ -140,11 +140,12 @@ export const RadioGroupLabelTooltip = styled.div`
   }
 `
 
-export const SearchLeagueInput = styled(MonroeInput)`
+export const SearchLeagueInput = styled(MonroeInput)<{ is_error?: string }>`
   overflow: hidden;
   text-overflow: ellipsis;
   box-shadow: none !important;
   color: rgba(26, 22, 87, 0.85);
+  border-color: ${(props) => (props.is_error === 'true' ? '#BC261B' : '#d8d7db')};
 
   &:hover,
   &:focus,
@@ -182,8 +183,9 @@ export const MonroeDivider = styled.div`
   border: 1px solid rgba(216, 215, 219, 1);
 `
 
-export const MonroeDatePicker = styled(DatePicker)`
+export const MonroeDatePicker = styled(DatePicker)<{ is_error?: string }>`
   font-size: 18px !important;
+  border-color: ${(props) => (props.is_error === 'true' ? '#BC261B' : '#d8d7db')};
 
   @media (width > 1660px) {
     min-height: 40px !important;

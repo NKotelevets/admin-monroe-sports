@@ -19,6 +19,7 @@ import {
   OptionTitle,
   ProtectedPageSubtitle,
 } from '@/components/Elements'
+import { InputError } from '@/components/Inputs/InputElements'
 import MonroeInput from '@/components/Inputs/MonroeInput'
 import MonroeButton from '@/components/MonroeButton'
 import MonroeMultipleSelect from '@/components/MonroeMultipleSelect'
@@ -120,18 +121,25 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue }) => {
 
         <Flex vertical justify="flex-start">
           <div style={{ marginBottom: '8px' }}>
-            <OptionTitle>Bracket Name *</OptionTitle>
             <MonroeInput
               name={`${namePrefix}.brackets.${bracketIdx}.name`}
               value={newBracketData.name}
               onChange={(event) => setNewBracketData((prev) => ({ ...prev, name: event.target.value }))}
               placeholder="Enter bracket name"
               style={{ height: '32px' }}
+              label={<OptionTitle>Bracket Name *</OptionTitle>}
+              error={newBracketData.name.length ? '' : 'Bracket Name is required'}
             />
           </div>
 
           <MainContainer vertical style={{ marginBottom: '8px' }}>
-            <OptionTitle>Subpools in Bracket *</OptionTitle>
+            <Flex align="center" justify="space-between">
+              <OptionTitle>Subpools in Bracket *</OptionTitle>
+
+              {newBracketData?.subdivisionsNames.length === 0 && (
+                <InputError>Subpools in Bracket is required</InputError>
+              )}
+            </Flex>
             <MonroeMultipleSelect
               styles={{ width: '100%' }}
               placeholder="Select subpools"
@@ -165,6 +173,7 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue }) => {
                 }))
                 setSelectedSubpools(options)
               }}
+              is_error={`${newBracketData?.subdivisionsNames.length === 0}`}
             />
           </MainContainer>
 
@@ -242,7 +251,7 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue }) => {
             Cancel
           </CancelButton>
 
-          <MonroeTooltip width="200px" containerWidth="auto" text={isEnabledButton ? 'Missing mandatory data' : ''}>
+          <MonroeTooltip width="180px" containerWidth="auto" text={isEnabledButton ? 'Missing mandatory data' : ''}>
             <MonroeButton
               label={buttonLabel}
               type="primary"

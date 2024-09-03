@@ -17,11 +17,14 @@ interface IMonroeSelectProps {
   mode?: 'multiple' | 'tags' | undefined
   disabled?: boolean
   renderInside?: boolean
+  optionFilterProp?: string
+  filterSort?: (optionA: DefaultOptionType, optionB: DefaultOptionType) => number
+  onSearch?: (value: string) => void
 }
 
 const CustomSelect: FC<IMonroeSelectProps> = ({ styles, renderInside = false, ...props }) => (
   <Select
-    showSearch
+    showSearch={true}
     suffixIcon={<ReactSVG src={ArrowDownIcon} />}
     style={styles}
     {...props}
@@ -29,17 +32,17 @@ const CustomSelect: FC<IMonroeSelectProps> = ({ styles, renderInside = false, ..
   />
 )
 
-const MonroeSelect = styled(CustomSelect)`
+const MonroeSelect = styled(CustomSelect)<{ is_add_option?: string; is_error?: string }>`
+  & .ant-select-selector {
+    border-color: ${(props) => (props.is_error === 'true' ? '#BC261B !important' : '#d8d7db !important')};
+  }
+
   & .ant-select-selection-item {
     color: #1a1657;
   }
 
   &.ant-select-disabled .ant-select-selection-item {
     color: rgba(189, 188, 194, 1);
-  }
-
-  &.rc-virtual-list-holder-inner:first-child {
-    background-color: blueviolet;
   }
 
   @media (width > 1660px) {

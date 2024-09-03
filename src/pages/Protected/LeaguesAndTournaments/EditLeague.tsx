@@ -16,6 +16,7 @@ import {
 
 import {
   CancelButton,
+  MonroeBlueText,
   MonroeDivider,
   OptionTitle,
   PageContainer,
@@ -71,15 +72,7 @@ const EditLeague = () => {
       title: <a href={PATH_TO_LEAGUES}>League & Tourn</a>,
     },
     {
-      title: (
-        <Typography.Text
-          style={{
-            color: 'rgba(26, 22, 87, 0.85)',
-          }}
-        >
-          {data?.name}
-        </Typography.Text>
-      ),
+      title: <MonroeBlueText>{data?.name}</MonroeBlueText>,
     },
   ]
 
@@ -147,12 +140,13 @@ const EditLeague = () => {
 
                         <Flex vertical justify="flex-start" style={{ width: '352px' }}>
                           <div style={{ marginBottom: '8px' }}>
-                            <OptionTitle>Name *</OptionTitle>
                             <MonroeInput
                               name="name"
                               value={values.name}
                               onChange={handleChange}
                               placeholder="Enter league/tourn name"
+                              label={<OptionTitle>Name *</OptionTitle>}
+                              error={errors.name}
                             />
                           </div>
 

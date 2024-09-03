@@ -1,6 +1,6 @@
 import * as Yup from 'yup'
 
-import { IMatch } from '@/common/interfaces/bracket'
+import { IBracket } from '@/common/interfaces/bracket'
 
 export const participantSchema = Yup.object().shape({
   id: Yup.string(),
@@ -40,7 +40,7 @@ export const bracketSchema = Yup.object({
 })
 
 const subdivisionValidationSchema = Yup.object().shape({
-  name: Yup.string().required(),
+  name: Yup.string().required('Subdivision/subpool name is required'),
   description: Yup.string(),
   playoffFormat: Yup.string(),
   standingsFormat: Yup.string(),
@@ -54,16 +54,16 @@ const subdivisionValidationSchema = Yup.object().shape({
 })
 
 const divisionValidationSchema = Yup.object<ICreateSeasonDivision[]>().shape({
-  name: Yup.string().required(''),
+  name: Yup.string().required('Division name is required'),
   description: Yup.string(),
   subdivisions: Yup.array().of(subdivisionValidationSchema).required(),
 })
 
 export const seasonValidationSchema = Yup.object<ICreateSeasonFormValues>().shape({
-  name: Yup.string().required(),
-  league: Yup.string().required(),
-  startDate: Yup.string().required(),
-  expectedEndDate: Yup.string().required(),
+  name: Yup.string().required('Name is required'),
+  league: Yup.string().required('Linked League/Tourn is required'),
+  startDate: Yup.string().required('Start date is required'),
+  expectedEndDate: Yup.string().required('Expected end date is required'),
   divisions: Yup.array().of(divisionValidationSchema).required(),
 })
 
@@ -114,13 +114,7 @@ export interface ICreateSeasonSubdivision {
   standingsFormat: string
   tiebreakersFormat: string
   changed: boolean
-  brackets: {
-    id?: number
-    name: string
-    subdivisionsNames: string[]
-    playoffTeams: number
-    matches: IMatch[]
-  }[]
+  brackets: IBracket[]
 }
 
 export interface ICreateSeasonDivision {

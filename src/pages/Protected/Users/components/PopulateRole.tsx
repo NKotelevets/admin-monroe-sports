@@ -1,5 +1,4 @@
-import { AddBracketButton } from '../../Seasons/components/Elements'
-import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
+import OperatorsInput from './OperatorsInput'
 import { Divider, Flex } from 'antd'
 import { DefaultOptionType } from 'antd/es/select'
 import { FormikErrors } from 'formik'
@@ -17,8 +16,6 @@ import { OptionTitle } from '@/components/Elements'
 import { CreateEntityContainer, Subtext, TitleStyle } from '@/components/Elements/entity'
 import MonroeMultipleSelect from '@/components/MonroeMultipleSelect'
 import MonroeSelect from '@/components/MonroeSelect'
-
-import { useUserSlice } from '@/redux/hooks/useUserSlice'
 
 import useIsActiveComponent from '@/hooks/useIsActiveComponent'
 
@@ -66,29 +63,7 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
   }))
   const isRoleWithTeams = ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(role.name as TRole)
   const isOperator = (role.name as TRole) === 'Operator'
-  const { setIsCreateOperatorScreen } = useUserSlice()
-
-  const operatorOptions: DefaultOptionType[] = [
-    {
-      label: (
-        <Flex style={{ borderBottom: '1px solid rgba(189, 188, 194, 1)', margin: '4px 0 0 0 ' }}>
-          <AddBracketButton
-            type="default"
-            icon={<PlusOutlined />}
-            iconPosition="start"
-            onClick={() => setIsCreateOperatorScreen(true)}
-            style={{
-              padding: '0px',
-            }}
-          >
-            Add Operator
-          </AddBracketButton>
-        </Flex>
-      ),
-      value: '',
-    },
-    ...teamsOptions,
-  ]
+  const [selectedOperator, setOperator] = useState('')
 
   useEffect(() => {
     if (!isComponentVisible) setIsOpenedDetails(false)
@@ -169,19 +144,8 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
 
             {isOperator && (
               <div>
-                <OptionTitle>Operator</OptionTitle>
-                <MonroeSelect
-                  renderInside
-                  onChange={(value) => {
-                    setFieldValue(`roles.${index}.linkedEntities[0]`, value)
-                  }}
-                  options={operatorOptions}
-                  placeholder="Select operator"
-                  value={role?.linkedEntities?.[0] || undefined}
-                  styles={{
-                    width: '100%',
-                  }}
-                />
+                <OptionTitle>Operator *</OptionTitle>
+                <OperatorsInput setOperator={setOperator} selectedOperator={selectedOperator} />
               </div>
             )}
           </Flex>

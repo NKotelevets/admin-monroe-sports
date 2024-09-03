@@ -1,25 +1,26 @@
+import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import styled from '@emotion/styled'
 import { Flex } from 'antd'
+import { Button } from 'antd'
+import { DefaultOptionType } from 'antd/es/select'
 import { CSSProperties, ChangeEvent, FC, RefObject, useEffect, useState } from 'react'
 import { ReactSVG } from 'react-svg'
 
 import { SearchLeagueInput, SearchLeagueInputIcon } from '@/components/Elements'
-import { Subtext } from '@/components/Elements/entity'
 
+import { useUserSlice } from '@/redux/hooks/useUserSlice'
 import { useLazyGetLeaguesQuery } from '@/redux/leagues/leagues.api'
 
 import useDebounceEffect from '@/hooks/useDebounceEffect'
 import useIsActiveComponent from '@/hooks/useIsActiveComponent'
 import useScroll from '@/hooks/useScroll'
 
-import { IFELeague } from '@/common/interfaces/league'
-
 import ShowAllIcon from '@/assets/icons/show-all.svg'
 
 const DEFAULT_LIMIT_RECORDS = 20
 
-const ListItem = styled.li`
-  padding: 5px 12px;
+const ListItem = styled.li<{ is_add_operator?: string }>`
+  padding: ${(props) => (props.is_add_operator === 'true' ? '0' : '5px 12px')};
   color: rgba(26, 22, 87, 0.85);
   border-bottom: 0;
   cursor: pointer;
@@ -49,26 +50,47 @@ const defaultPadding: CSSProperties = {
   padding: '5px 12px',
 }
 
-interface ISearchLeagueTournamentProps {
-  setSelectedLeague: (data: IFELeague) => void
-  selectedLeague: undefined | string
-  isError: boolean
-  onBlur: () => void
-  setFieldError: (field: string, message: string | undefined) => void
+const AddOperatorButton = styled(Button)`
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  color: #3e34ca;
+  box-shadow: none;
+
+  &:hover {
+    background: transparent !important;
+    color: #3e34ca !important;
+  }
+`
+
+interface IOperatorsInputProps {
+  setOperator: (data: string) => void
+  selectedOperator: undefined | string
 }
 
-const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({
-  setSelectedLeague,
-  selectedLeague,
-  isError,
-  onBlur,
-  setFieldError,
-}) => {
-  const [value, setValue] = useState(selectedLeague || '')
+const OperatorsInput: FC<IOperatorsInputProps> = ({ setOperator, selectedOperator }) => {
+  const [value, setValue] = useState(selectedOperator || '')
   const { isComponentVisible, ref, onClose } = useIsActiveComponent(false)
   const [offset, setOffset] = useState(0)
   const [getLeagues, { data }] = useLazyGetLeaguesQuery()
-  const [leaguesList, setLeaguesList] = useState<IFELeague[]>([])
+  const { setIsCreateOperatorScreen } = useUserSlice()
+  const ADD_OPERATOR_PROPERTY: DefaultOptionType = {
+    label: (
+      <Flex style={{ borderBottom: '1px solid rgba(189, 188, 194, 1)', margin: '4px 0 0 0 ' }}>
+        <AddOperatorButton
+          type="default"
+          icon={<PlusOutlined />}
+          iconPosition="start"
+          onClick={() => setIsCreateOperatorScreen(true)}
+        >
+          Add Operator
+        </AddOperatorButton>
+      </Flex>
+    ),
+    value: '',
+  }
+
+  const [leaguesList, setLeaguesList] = useState<DefaultOptionType[]>([ADD_OPERATOR_PROPERTY])
 
   const getData = async () => {
     if (data && data?.count > leaguesList.length) {
@@ -80,7 +102,12 @@ const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({
         league_name: value,
       }).unwrap()
 
-      if (response?.leagues) setLeaguesList((prev) => [...prev, ...response.leagues])
+      const options: DefaultOptionType[] = response.leagues.map((league) => ({
+        label: league.name,
+        value: league.name,
+      }))
+
+      if (response?.leagues) setLeaguesList((prev) => [...prev, ...options])
     }
   }
 
@@ -94,30 +121,40 @@ const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({
         offset,
       }).unwrap()
 
-      setLeaguesList(response.leagues || [])
+      const options: DefaultOptionType[] = response.leagues.map((league) => ({
+        label: league.name,
+        value: league.name,
+      }))
+
+      setLeaguesList(() => [ADD_OPERATOR_PROPERTY, ...options])
     })()
   }, [])
 
   useEffect(() => {
-    if (selectedLeague && !value) setValue(selectedLeague)
-  }, [selectedLeague])
+    if (selectedOperator && !value) setValue(selectedOperator)
+  }, [selectedOperator])
 
   const handleChange = async (leagueName: string) => setValue(leagueName)
 
   const getDataWithNewName = async () => {
-    const res = await getLeagues({
+    const response = await getLeagues({
       limit: DEFAULT_LIMIT_RECORDS,
       offset: 0,
-      league_name: value === selectedLeague ? '' : value,
+      league_name: value === selectedOperator ? '' : value,
     }).unwrap()
 
-    setLeaguesList(res?.leagues || [])
+    const options: DefaultOptionType[] = response.leagues.map((league) => ({
+      label: league.name,
+      value: league.name,
+    }))
+
+    setLeaguesList(() => [ADD_OPERATOR_PROPERTY, ...options])
   }
 
   useDebounceEffect(getDataWithNewName, [value])
 
   useEffect(() => {
-    if (!isComponentVisible && selectedLeague) setValue(selectedLeague)
+    if (!isComponentVisible && selectedOperator) setValue(selectedOperator)
   }, [isComponentVisible])
 
   return (
@@ -126,15 +163,10 @@ const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({
         <Container>
           <SearchLeagueInput
             name="search"
-            onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              handleChange(event.target.value)
-              setFieldError('league', '')
-            }}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => handleChange(event.target.value)}
             value={value}
-            placeholder="Find league or tournament"
+            placeholder="Select operator"
             style={{ height: '32px' }}
-            is_error={`${isError}`}
-            onBlur={onBlur}
           />
 
           <SearchLeagueInputIcon isComponentVisible={isComponentVisible}>
@@ -144,23 +176,20 @@ const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({
 
         {isComponentVisible && (
           <Container style={defaultPadding}>
-            {leaguesList.length ? (
+            {leaguesList.length && (
               <List ref={scrollRef as unknown as RefObject<HTMLUListElement>} onScroll={handleScroll}>
-                {leaguesList.map((league) => (
+                {leaguesList.map((league, idx) => (
                   <ListItem
-                    key={league.id}
+                    is_add_operator={`${idx === 0 ? 'true' : 'false'}`}
+                    key={league.value}
                     onClick={() => {
-                      setSelectedLeague(league)
+                      setOperator(league.name)
                       onClose()
                     }}
                   >
-                    {league.name}
+                    {league.label}
                   </ListItem>
                 ))}
-              </List>
-            ) : (
-              <List as="div" style={defaultPadding}>
-                <Subtext>There's no match. Try a different name or create a league/tourn first.</Subtext>
               </List>
             )}
           </Container>
@@ -170,4 +199,5 @@ const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({
   )
 }
 
-export default SearchLeagueTournament
+export default OperatorsInput
+

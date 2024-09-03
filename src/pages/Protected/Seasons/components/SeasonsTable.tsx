@@ -2,12 +2,11 @@ import { GetProp } from 'antd'
 import Table from 'antd/es/table'
 import { TableProps } from 'antd/es/table/InternalTable'
 import { SorterResult } from 'antd/es/table/interface'
-import Typography from 'antd/es/typography'
 import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 
 import { useSeasonTableParams } from '@/pages/Protected/Seasons/hooks/useSeasonTableParams'
 
-import { ExpandedHeaderLeftText, ExpandedTableHeader, MonroeLightBlueText } from '@/components/Elements'
+import { ExpandedHeaderLeftText, ExpandedTableHeader, MonroeBlueText, MonroeLightBlueText } from '@/components/Elements'
 import MonroeModal from '@/components/MonroeModal'
 
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
@@ -24,15 +23,7 @@ interface ITableParams {
   filters?: Parameters<GetProp<TableProps, 'onChange'>>[1]
 }
 
-const showTotal = (total: number) => (
-  <Typography.Text
-    style={{
-      color: 'rgba(26, 22, 87)',
-    }}
-  >
-    Total {total} items
-  </Typography.Text>
-)
+const showTotal = (total: number) => <MonroeBlueText>Total {total} items</MonroeBlueText>
 
 type TTableKeys = 'name' | 'league' | 'startDate' | 'expectedEndDate'
 
@@ -95,12 +86,6 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
   })
 
   useEffect(() => {
-    setPaginationParams({
-      offset,
-      limit,
-      ordering: null,
-    })
-
     getSeasons({
       limit,
       offset,

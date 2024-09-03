@@ -37,7 +37,7 @@ interface ICreateDivisionProps {
   removeFn: (index: number) => void
   isMultipleDivisions: boolean
   values: ICreateSeasonFormValues
-  setIds: React.Dispatch<React.SetStateAction<number[]>>
+  setIds?: React.Dispatch<React.SetStateAction<number[]>>
 }
 
 const CreateDivision: FC<ICreateDivisionProps> = ({
@@ -111,7 +111,8 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
                 onChange={onChange}
                 placeholder="Enter name"
                 style={{ height: '32px' }}
-                error={notUniqueNameErrorText}
+                error={notUniqueNameErrorText || (errors?.divisions?.[index] as FormikErrors<IFEDivision>)?.name}
+                errorPosition="bottom"
               />
             </div>
             <div style={{ marginBottom: '8px' }}>

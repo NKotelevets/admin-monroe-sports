@@ -13,11 +13,7 @@ import CellText from '@/components/Table/CellText'
 import MonroeFilter from '@/components/Table/MonroeFilter'
 import TextWithTooltip from '@/components/TextWithTooltip'
 
-import { useAppSlice } from '@/redux/hooks/useAppSlice'
-import { useLeagueSlice } from '@/redux/hooks/useLeagueSlice'
-import { useUpdateLeagueMutation } from '@/redux/leagues/leagues.api'
-
-import { IBECreateLeagueBody, ILeagueImportInfoTableRecord } from '@/common/interfaces/league'
+import { ILeagueImportInfoTableRecord } from '@/common/interfaces/league'
 import { TSortOption } from '@/common/types'
 
 import SyncIcon from '@/assets/icons/sync.svg'
@@ -29,39 +25,7 @@ export const useLeaguesImportInfoTableParams = (
   sortOrder: TSortOption,
   setSelectedIdx: (value: number | null) => void,
 ) => {
-  const [updateRecord] = useUpdateLeagueMutation()
-  const { setAppNotification } = useAppSlice()
   const searchInput = useRef<InputRef>(null)
-  const { duplicates, removeDuplicate } = useLeagueSlice()
-
-  const handleUpdate = (idx: number) => {
-    const currentDuplicate = duplicates.find((duplicate) => duplicate.index === idx)
-    const newData = currentDuplicate!.new
-    const backendBodyFormat: IBECreateLeagueBody = {
-      description: newData.description,
-      name: newData.name,
-      playoff_format: newData.playoff_format,
-      playoffs_teams: newData.playoffs_teams,
-      standings_format: newData.standings_format,
-      tiebreakers_format: newData.tiebreakers_format,
-      type: newData.type,
-      welcome_note: newData.welcome_note,
-      league_seasons: newData.league_seasons || [],
-    }
-
-    updateRecord({ id: newData.id, body: backendBodyFormat })
-      .unwrap()
-      .then(() => {
-        setAppNotification({
-          message: 'Successfully update',
-          type: 'success',
-          timestamp: new Date().getTime(),
-        })
-        setSelectedIdx(null)
-        removeDuplicate(idx)
-      })
-      .catch(() => setSelectedIdx(null))
-  }
 
   const handleReset = (clearFilters: () => void) => clearFilters()
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
@@ -172,7 +136,7 @@ export const useLeaguesImportInfoTableParams = (
       width: '50px',
       render: (_, record) =>
         record.type === 'Duplicate' && (
-          <ReactSVG style={{ cursor: 'pointer' }} src={SyncIcon} onClick={() => handleUpdate(record.idx)} />
+          <ReactSVG style={{ cursor: 'pointer' }} src={SyncIcon} onClick={() => setSelectedIdx(record.idx)} />
         ),
     },
   ]

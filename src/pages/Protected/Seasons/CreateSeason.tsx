@@ -32,6 +32,7 @@ import {
   ProtectedPageSubtitleDescription,
   ProtectedPageTitle,
 } from '@/components/Elements'
+import { InputError } from '@/components/Inputs/InputElements'
 import MonroeInput from '@/components/Inputs/MonroeInput'
 import MonroeButton from '@/components/MonroeButton'
 import MonroeTooltip from '@/components/MonroeTooltip'
@@ -165,9 +166,10 @@ const CreateSeason = () => {
           validationSchema={seasonValidationSchema}
           onSubmit={handleSubmit}
           validateOnChange
+          validateOnBlur
           validateOnMount
         >
-          {({ values, handleChange, handleSubmit, errors, setFieldValue }) => {
+          {({ values, handleChange, handleSubmit, errors, setFieldValue, validateField, setFieldError }) => {
             const isEnabledButton = Object.keys(errors).length === 0 && !isDuplicateNames
             const isAddSubdivisionBtnDisabled = !!errors.divisions?.length || isDuplicateNames
 
@@ -210,22 +212,31 @@ const CreateSeason = () => {
 
                         <MainContainer>
                           <div style={{ marginBottom: '8px' }}>
-                            <OptionTitle style={{ padding: '0 0 5px 0' }}>Name *</OptionTitle>
                             <MonroeInput
                               name="name"
                               value={values.name}
                               onChange={handleChange}
-                              placeholder="Enter league/tourn name"
+                              placeholder="Enter season"
                               style={{ height: '32px' }}
+                              label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Name *</OptionTitle>}
+                              error={errors.name}
+                              onBlur={() => validateField('name')}
                             />
                           </div>
 
                           <Flex vertical justify="flex-start">
                             <div style={{ marginBottom: '8px' }}>
-                              <OptionTitle>Linked League/Tourn *</OptionTitle>
+                              <Flex align="center" justify="space-between">
+                                <OptionTitle>Linked League/Tourn *</OptionTitle>
+
+                                {errors.league && <InputError>{errors.league}</InputError>}
+                              </Flex>
 
                               <SearchLeagueTournament
                                 selectedLeague={selectedLeagueTournament}
+                                isError={!!errors.league}
+                                onBlur={() => validateField('league')}
+                                setFieldError={setFieldError}
                                 setSelectedLeague={(data) => {
                                   setFieldValue('league', data.id)
 
@@ -244,16 +255,24 @@ const CreateSeason = () => {
                                   setFieldValue('divisions', updatedSubdivisions)
 
                                   setSelectedLeagueTournament(data.name)
+
+                                  validateField('league')
                                 }}
                               />
                             </div>
                           </Flex>
 
                           <Flex vertical justify="flex-start" style={{ marginBottom: '8px', width: '100%' }}>
-                            <OptionTitle>Start Date *</OptionTitle>
+                            <Flex align="center" justify="space-between">
+                              <OptionTitle>Start Date *</OptionTitle>
+
+                              {errors.startDate && <InputError>{errors.startDate}</InputError>}
+                            </Flex>
+
                             <MonroeDatePicker
                               name="startDate"
                               value={values.startDate}
+                              is_error={`${!!errors.startDate}`}
                               onChange={(_: unknown, data: string | string[]) => {
                                 if (data) {
                                   setFieldValue('startDate', dayjs(data as string, 'YYYY-MM-DD'))
@@ -262,12 +281,18 @@ const CreateSeason = () => {
                                 }
                               }}
                               maxDate={values.expectedEndDate as unknown as dayjs.Dayjs}
+                              onBlur={() => validateField('startDate')}
                             />
                           </Flex>
 
                           <Flex vertical justify="flex-start" style={{ marginBottom: '8px', width: '100%' }}>
-                            <OptionTitle>Expected End Date *</OptionTitle>
+                            <Flex align="center" justify="space-between">
+                              <OptionTitle>Expected End Date *</OptionTitle>
+                              {errors.expectedEndDate && <InputError>{errors.expectedEndDate}</InputError>}
+                            </Flex>
+
                             <MonroeDatePicker
+                              is_error={`${!!errors.expectedEndDate}`}
                               name="expectedEndDate"
                               value={values.expectedEndDate}
                               onChange={(_: unknown, data: string | string[]) => {
@@ -278,6 +303,7 @@ const CreateSeason = () => {
                                 }
                               }}
                               minDate={values.startDate as unknown as dayjs.Dayjs}
+                              onBlur={() => validateField('expectedEndDate')}
                             />
                           </Flex>
                         </MainContainer>

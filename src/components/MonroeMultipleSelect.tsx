@@ -34,7 +34,11 @@ const CustomSelect: FC<IMonroeMultipleSelectProps> = ({ styles, options, value, 
   </Select>
 )
 
-const MonroeMultipleSelect = styled(CustomSelect)`
+const MonroeMultipleSelect = styled(CustomSelect)<{ is_error?: string }>`
+  & .ant-select-selector {
+    border-color: ${(props) => (props.is_error === 'true' ? '#BC261B !important' : '#d8d7db !important')};
+  }
+
   @media (width > 1660px) {
     & .ant-checkbox-wrapper span {
       font-size: 18px !important;

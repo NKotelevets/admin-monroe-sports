@@ -1,5 +1,5 @@
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
-import { Breadcrumb, DatePicker, Flex } from 'antd'
+import { Breadcrumb, Flex } from 'antd'
 import { format } from 'date-fns'
 import dayjs from 'dayjs'
 import { FieldArray, Form, Formik } from 'formik'
@@ -18,7 +18,7 @@ import {
   seasonValidationSchema,
 } from '@/pages/Protected/Seasons/constants/formik'
 
-import { AccordionHeader, AddEntityButton, MainContainer } from '@/components/Elements'
+import { AccordionHeader, AddEntityButton, MainContainer, MonroeDatePicker } from '@/components/Elements'
 import {
   Accordion,
   CancelButton,
@@ -32,6 +32,7 @@ import {
   ProtectedPageSubtitleDescription,
   ProtectedPageTitle,
 } from '@/components/Elements'
+import { InputError } from '@/components/Inputs/InputElements'
 import MonroeInput from '@/components/Inputs/MonroeInput'
 import Loader from '@/components/Loader'
 import MonroeButton from '@/components/MonroeButton'
@@ -283,14 +284,37 @@ const EditSeason = () => {
       })),
     }
 
-    await bulkBracketDelete(ids).unwrap()
-
-    updateSeason({
-      id: data!.id as string,
-      body: editSeasonBody,
-    }).then(() => {
-      navigate(PATH_TO_SEASONS)
-    })
+    if (ids.length > 0) {
+      await bulkBracketDelete(ids)
+        .unwrap()
+        .then(() => {
+          updateSeason({
+            id: data!.id as string,
+            body: editSeasonBody,
+          })
+            .unwrap()
+            .then(() => {
+              navigate(PATH_TO_SEASONS)
+            })
+        })
+        .catch(() => {
+          // TODO: update message
+          setAppNotification({
+            message: "Can't delete bracket/bracket's. Please try again later",
+            timestamp: new Date().getTime(),
+            type: 'error',
+          })
+        })
+    } else {
+      updateSeason({
+        id: data!.id as string,
+        body: editSeasonBody,
+      })
+        .unwrap()
+        .then(() => {
+          navigate(PATH_TO_SEASONS)
+        })
+    }
   }
 
   if (!data && (isLoading || isFetching)) return <Loader />
@@ -377,7 +401,7 @@ const EditSeason = () => {
           validateOnChange
           validateOnMount
         >
-          {({ values, handleChange, handleSubmit, errors, setFieldValue }) => {
+          {({ values, handleChange, handleSubmit, errors, setFieldValue, validateField, setFieldError }) => {
             const isEnabledButton = Object.keys(errors).length === 0 && !isDuplicateNames
             const isAddSubdivisionBtnDisabled = !!errors.divisions?.length || isDuplicateNames
 
@@ -441,32 +465,38 @@ const EditSeason = () => {
 
                           <MainContainer>
                             <div style={{ marginBottom: '8px' }}>
-                              <OptionTitle style={{ padding: '0 0 5px 0' }}>Name *</OptionTitle>
                               <MonroeInput
                                 name="name"
                                 value={values.name}
                                 onChange={handleChange}
-                                placeholder="Enter league/tourn name"
+                                placeholder="Enter season name"
                                 style={{ height: '32px' }}
+                                label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Name *</OptionTitle>}
+                                error={errors.name}
+                                onBlur={() => validateField('name')}
                               />
                             </div>
 
                             <Flex vertical justify="flex-start">
                               <div style={{ marginBottom: '8px' }}>
-                                <OptionTitle>Linked League/Tourn *</OptionTitle>
+                                <Flex align="center" justify="space-between">
+                                  <OptionTitle>Linked League/Tourn *</OptionTitle>
+
+                                  {errors.league && <InputError>{errors.league}</InputError>}
+                                </Flex>
 
                                 <SearchLeagueTournament
                                   selectedLeague={selectedLeague}
+                                  isError={!!errors.league}
+                                  onBlur={() => validateField('league')}
+                                  setFieldError={setFieldError}
                                   setSelectedLeague={(data) => {
                                     setFieldValue('league', data.id)
-                                    setSelectedLeague(data.name)
 
                                     const updatedSubdivisions = values.divisions.map((division) => ({
-                                      ...division,
                                       name: division.name,
                                       description: division.description,
                                       subdivisions: division.subdivisions.map((subdivision) => ({
-                                        ...subdivision,
                                         name: subdivision.name,
                                         description: subdivision.description,
                                         playoffFormat: data.playoffFormat,
@@ -476,16 +506,26 @@ const EditSeason = () => {
                                     }))
 
                                     setFieldValue('divisions', updatedSubdivisions)
+
+                                    setSelectedLeague(data.name)
+
+                                    validateField('league')
                                   }}
                                 />
                               </div>
                             </Flex>
 
                             <Flex vertical justify="flex-start" style={{ marginBottom: '8px', width: '100%' }}>
-                              <OptionTitle>Start Date *</OptionTitle>
-                              <DatePicker
+                              <Flex align="center" justify="space-between">
+                                <OptionTitle>Start Date *</OptionTitle>
+
+                                {errors.startDate && <InputError>{errors.startDate}</InputError>}
+                              </Flex>
+
+                              <MonroeDatePicker
                                 name="startDate"
-                                value={dayjs(values.startDate, 'YYYY-MM-DD')}
+                                value={values.startDate ? dayjs(values.startDate, 'YYYY-MM-DD') : null}
+                                is_error={`${!!errors.startDate}`}
                                 onChange={(_: unknown, data: string | string[]) => {
                                   if (data) {
                                     setFieldValue('startDate', dayjs(data as string, 'YYYY-MM-DD'))
@@ -494,14 +534,20 @@ const EditSeason = () => {
                                   }
                                 }}
                                 maxDate={dayjs(values.expectedEndDate, 'YYYY-MM-DD')}
+                                onBlur={() => validateField('startDate')}
                               />
                             </Flex>
 
                             <Flex vertical justify="flex-start" style={{ marginBottom: '8px', width: '100%' }}>
-                              <OptionTitle>Expected End Date *</OptionTitle>
-                              <DatePicker
+                              <Flex align="center" justify="space-between">
+                                <OptionTitle>Expected End Date *</OptionTitle>
+                                {errors.expectedEndDate && <InputError>{errors.expectedEndDate}</InputError>}
+                              </Flex>
+
+                              <MonroeDatePicker
+                                is_error={`${!!errors.expectedEndDate}`}
                                 name="expectedEndDate"
-                                value={dayjs(values.expectedEndDate, 'YYYY-MM-DD')}
+                                value={values.expectedEndDate ? dayjs(values.expectedEndDate, 'YYYY-MM-DD') : null}
                                 onChange={(_: unknown, data: string | string[]) => {
                                   if (data) {
                                     setFieldValue('expectedEndDate', dayjs(data as string, 'YYYY-MM-DD'))
@@ -510,6 +556,7 @@ const EditSeason = () => {
                                   }
                                 }}
                                 minDate={dayjs(values.startDate, 'YYYY-MM-DD')}
+                                onBlur={() => validateField('expectedEndDate')}
                               />
                             </Flex>
                           </MainContainer>

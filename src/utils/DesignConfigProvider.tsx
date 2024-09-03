@@ -5,7 +5,6 @@ const DesignConfigProvider: FC<{ children: ReactNode }> = ({ children }) => (
   <ConfigProvider
     theme={{
       token: {
-        // primary button styles
         colorPrimary: '#BC261B',
         colorPrimaryHover: '#F44034',
         colorPrimaryActive: '#BC261B',
@@ -20,4 +19,3 @@ const DesignConfigProvider: FC<{ children: ReactNode }> = ({ children }) => (
 )
 
 export default DesignConfigProvider
-

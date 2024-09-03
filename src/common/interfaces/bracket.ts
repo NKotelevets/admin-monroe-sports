@@ -19,3 +19,10 @@ export interface IMatch {
   primaryId?: string
 }
 
+export interface IBracket {
+  id?: number
+  name: string
+  subdivisionsNames: string[]
+  playoffTeams: number
+  matches: IMatch[]
+}

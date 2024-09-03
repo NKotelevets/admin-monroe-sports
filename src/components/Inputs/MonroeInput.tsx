@@ -12,18 +12,22 @@ interface IMonroeInputProps {
   error?: string
   style?: CSSProperties
   disabled?: boolean
+  onBlur?: () => void
+  errorPosition?: 'top' | 'bottom'
 }
 
-const MonroeInput: FC<IMonroeInputProps> = ({ label, error, ...rest }) => (
+const MonroeInput: FC<IMonroeInputProps> = ({ label, error, errorPosition = 'top', ...rest }) => (
   <>
     {label && (
       <Flex vertical={false} justify="space-between" align="center">
         {typeof label === 'string' ? <InputLabel>{label}</InputLabel> : label}
-        {error && <InputError>{error}</InputError>}
+        {error && errorPosition === 'top' && <InputError>{error}</InputError>}
       </Flex>
     )}
 
-    <StyledInput {...rest} />
+    <StyledInput is_error={`${error ? 'true' : 'false'}`} {...rest} />
+
+    {error && errorPosition === 'bottom' && <InputError>{error}</InputError>}
   </>
 )
 

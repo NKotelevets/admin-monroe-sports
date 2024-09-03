@@ -119,49 +119,53 @@ const Match: FC<IMatchProps> = ({ brackets, matchProps, teamsOptions, options, s
           </TeamsWrapper>
         ) : (
           <>
-            {matchParticipants.map((participant) => (
-              <Flex
-                key={participant.id}
-                style={{
-                  height: '42px',
-                }}
-              >
-                {participant.isEmpty ? (
-                  <EmptyTeamWrapper>
-                    <MonroeBlueText>Bye</MonroeBlueText>
-                  </EmptyTeamWrapper>
-                ) : (
-                  <Flex
-                    style={{
-                      width: '100%',
-                    }}
-                  >
-                    <MonroeSelect
-                      styles={{ flex: '1 1 auto', height: '42px' }}
-                      placeholder="Choose Subpool"
-                      options={options}
-                      onChange={(value) => handleChange(value, `${participant.id}`, 'subpoolName')}
-                      value={
-                        participant.subpoolName?.length
-                          ? participant.subpoolName?.length > 16
-                            ? participant.subpoolName?.substring(0, 16) + '...'
-                            : participant?.subpoolName
-                          : undefined
-                      }
-                      name="subpoolname"
-                    />
+            {matchParticipants.map((participant) => {
+              const participantValue = participant.subpoolName?.length
+                ? participant.subpoolName?.length > 16
+                  ? participant.subpoolName?.substring(0, 16) + '...'
+                  : participant?.subpoolName
+                : undefined
 
-                    <MonroeSelectWrapper
-                      name="playoffsTeams"
-                      value={participant.seed ? `${participant.seed}` : null}
-                      options={teamsOptions}
-                      onChange={(value) => handleChange(value, `${participant.id}`, 'seed')}
-                      placeholder="Seed #"
-                    />
-                  </Flex>
-                )}
-              </Flex>
-            ))}
+              return (
+                <Flex
+                  key={participant.id}
+                  style={{
+                    height: '42px',
+                  }}
+                >
+                  {participant.isEmpty ? (
+                    <EmptyTeamWrapper>
+                      <MonroeBlueText>Bye</MonroeBlueText>
+                    </EmptyTeamWrapper>
+                  ) : (
+                    <Flex
+                      style={{
+                        width: '100%',
+                      }}
+                    >
+                      <MonroeSelect
+                        styles={{ flex: '1 1 auto', height: '42px' }}
+                        placeholder="Choose Subpool"
+                        options={options}
+                        onChange={(value) => handleChange(value, `${participant.id}`, 'subpoolName')}
+                        value={participantValue}
+                        name="subpoolname"
+                        is_error={`${participantValue === undefined}`}
+                      />
+
+                      <MonroeSelectWrapper
+                        name="playoffsTeams"
+                        value={participant.seed ? `${participant.seed}` : null}
+                        options={teamsOptions}
+                        onChange={(value) => handleChange(value, `${participant.id}`, 'seed')}
+                        placeholder="Seed #"
+                        is_error={`${!participant.seed}`}
+                      />
+                    </Flex>
+                  )}
+                </Flex>
+              )
+            })}
           </>
         )}
       </>

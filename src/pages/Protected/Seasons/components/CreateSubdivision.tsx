@@ -51,7 +51,7 @@ interface ICreateSubdivisionProps {
   divisionIndex: number
   division: ICreateSeasonDivision
   values: ICreateSeasonFormValues
-  setIds: React.Dispatch<React.SetStateAction<number[]>>
+  setIds?: React.Dispatch<React.SetStateAction<number[]>>
 }
 
 const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
@@ -88,6 +88,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
   const isError = !!subdivisionError || !!notUniqueNameErrorText
   const lastBracketIdx = subdivision.brackets?.length ? subdivision.brackets.length : 0
   const [isShowModal, setIsShowModal] = useState(false)
+  const subdivisionNameError = (subdivisionError as FormikErrors<IFESubdivision>)?.name
 
   useEffect(() => {
     if (!isComponentVisible) setIsOpenedDetails(false)
@@ -204,7 +205,8 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
               onChange={handleSubdivisionNameChange}
               placeholder="Enter name"
               style={{ width: '100%', height: '32px' }}
-              error={notUniqueNameErrorText}
+              error={notUniqueNameErrorText || subdivisionNameError}
+              errorPosition="bottom"
             />
           </div>
           <div style={{ marginBottom: '8px' }}>
@@ -280,7 +282,8 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
                                     style={{ width: '14px', height: '14px', cursor: 'pointer' }}
                                     onClick={() => {
                                       innerArrayHelpers.remove(idx)
-                                      if (bracketData.id) setIds((prev) => [...prev, bracketData.id as number])
+                                      if (bracketData.id && setIds)
+                                        setIds((prev) => [...prev, bracketData.id as number])
                                     }}
                                   />
                                 </Flex>

@@ -93,7 +93,12 @@ const CreateLeague = () => {
           <ProtectedPageTitle>Create League/Tournament</ProtectedPageTitle>
 
           <PageContent>
-            <Formik initialValues={initialFormValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
+            <Formik
+              initialValues={initialFormValues}
+              validationSchema={validationSchema}
+              onSubmit={handleSubmit}
+              validateOnBlur
+            >
               {({ values, handleChange, errors, handleSubmit, setFieldValue }) => {
                 const isEnabledButton = Object.keys(errors).length === 0 && values.name
 
@@ -106,12 +111,13 @@ const CreateLeague = () => {
 
                       <Flex vertical justify="flex-start" style={{ width: '352px' }}>
                         <div style={{ marginBottom: '8px', width: '100%' }}>
-                          <OptionTitle>Name *</OptionTitle>
                           <MonroeInput
                             name="name"
                             value={values.name}
                             onChange={handleChange}
                             placeholder="Enter league/tourn name"
+                            label={<OptionTitle>Name *</OptionTitle>}
+                            error={errors.name}
                           />
                         </div>
 

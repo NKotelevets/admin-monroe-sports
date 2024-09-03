@@ -25,6 +25,7 @@ export const PATH_TO_EDIT_USER = '/users/edit'
 export const PATH_TO_USERS_BULK_EDIT = '/users/bulk-edit'
 export const PATH_TO_USERS_BLOCKING_INFO = '/users/blocking-info'
 export const PATH_TO_USERS_IMPORT_INFO = '/users/import-info'
+export const PATH_TO_OPERATOR_ONBOARDING = '/users/operator-onboarding'
 
 export const PATH_TO_MASTER_TEAMS = '/master-teams'
 export const PATH_TO_LEAGUE_TEAMS = '/league-teams'

@@ -7,6 +7,7 @@ import { FC, useState } from 'react'
 import SeasonDetailsColumn from '@/pages/Protected/Seasons/components/SeasonsReviewUpdateModal/components/SeasonDetailsColumn'
 
 import Loader from '@/components/Loader'
+import Message from '@/components/Message'
 
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
 import { useGetSeasonBEDetailsQuery, useUpdateSeasonMutation } from '@/redux/seasons/seasons.api'
@@ -15,6 +16,9 @@ import { compareObjects } from '@/utils/compareObjects'
 
 import { IImportedSubdivision, IUpdateDivision } from '@/common/interfaces/division'
 import { IBESeason, ISeasonDuplicate, ISeasonReviewUpdateData } from '@/common/interfaces/season'
+
+const SUCCESS_MESSAGE = 'Record Updated'
+const ERROR_MESSAGE = "Record can't be updated. Please try again."
 
 const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx, onClose }) => {
   const [currentIdx, setCurrentIdx] = useState<number>(idx)
@@ -27,6 +31,8 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
     refetchOnMountOrArgChange: true,
     refetchOnFocus: true,
   })
+  const [isUpdatedSeason, setIsUpdatedSeason] = useState(false)
+  const [isError, setIsError] = useState(false)
 
   if (!data) return <Loader />
 
@@ -198,13 +204,33 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
         league_id: duplicateData.league.id,
         divisions,
       },
-    }).then(() => {
-      onClose()
-
-      setTimeout(() => {
-        removeDuplicate(idx)
-      }, 500)
     })
+      .unwrap()
+      .then(() => {
+        setIsUpdatedSeason(true)
+        setIsError(false)
+      })
+      .catch(() => {
+        setIsUpdatedSeason(true)
+        setIsError(true)
+      })
+  }
+
+  const handleNextRecord = () => {
+    if (duplicates.length === 1) onClose()
+
+    setIsUpdatedSeason(false)
+    handleNextDuplicate()
+    removeDuplicate(currentIdx)
+  }
+
+  const handleClose = () => {
+    if (isUpdatedSeason) {
+      setIsUpdatedSeason(false)
+      removeDuplicate(currentIdx)
+    }
+
+    onClose()
   }
 
   return (
@@ -232,6 +258,10 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
               differences={objectsDifferences}
             />
           </Flex>
+
+          {isUpdatedSeason && (
+            <Message type={isError ? 'error' : 'success'} text={!isError ? SUCCESS_MESSAGE : ERROR_MESSAGE} />
+          )}
         </Flex>
 
         <Flex
@@ -277,7 +307,7 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
           </Flex>
 
           <Flex>
-            <Button type="default" style={defaultButtonStyles} onClick={onClose}>
+            <Button type="default" style={defaultButtonStyles} onClick={handleClose}>
               Close
             </Button>
 
@@ -287,15 +317,31 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
               </Button>
             )}
 
-            <Button
-              type="primary"
-              style={{
-                borderRadius: '4px',
-              }}
-              onClick={handleUpdate}
-            >
-              Update current
-            </Button>
+            {isUpdatedSeason ? (
+              <>
+                {duplicates.length > 1 && (
+                  <Button
+                    type="primary"
+                    style={{
+                      borderRadius: '4px',
+                    }}
+                    onClick={handleNextRecord}
+                  >
+                    Next record
+                  </Button>
+                )}
+              </>
+            ) : (
+              <Button
+                type="primary"
+                style={{
+                  borderRadius: '4px',
+                }}
+                onClick={handleUpdate}
+              >
+                Update current
+              </Button>
+            )}
           </Flex>
         </Flex>
       </Flex>

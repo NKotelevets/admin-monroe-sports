@@ -1,3 +1,4 @@
+import MonroeTooltip from './MonroeTooltip'
 import styled from '@emotion/styled'
 import { Flex, Tooltip } from 'antd'
 import Typography from 'antd/es/typography'
@@ -88,6 +89,8 @@ const Spin = styled.div<{ isError: boolean }>`
   }
 `
 
+const MAX_FILE_NAME_CHARACTERS = 35
+
 const ImportModal: FC<IImportModalProps> = ({
   filename,
   title,
@@ -99,6 +102,7 @@ const ImportModal: FC<IImportModalProps> = ({
 }) => {
   const [isHoveredContent, setIsHoveredContent] = useState(false)
   const isError = status === 'red' || status === 'yellow'
+  const isMoreThanMaxCharacters = MAX_FILE_NAME_CHARACTERS < filename.length
 
   return (
     <ImportModalWrapper>
@@ -115,7 +119,14 @@ const ImportModal: FC<IImportModalProps> = ({
         >
           <Wrapper isError={isError}>
             <ReactSVG src={PaperClipIcon} />
-            <ImportModalFileName isError={isError}>{filename}</ImportModalFileName>
+
+            {isMoreThanMaxCharacters ? (
+              <MonroeTooltip text={filename} containerWidth="auto" width="200px">
+                <ImportModalFileName isError={isError}>{filename.substring(0, 30) + '...'}</ImportModalFileName>
+              </MonroeTooltip>
+            ) : (
+              <ImportModalFileName isError={isError}>{filename}</ImportModalFileName>
+            )}
           </Wrapper>
 
           {status === 'loading' && (
