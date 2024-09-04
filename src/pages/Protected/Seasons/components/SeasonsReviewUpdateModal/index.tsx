@@ -25,7 +25,7 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
   const { duplicates, removeDuplicate } = useSeasonSlice()
   const currentDuplicate = duplicates.find((duplicate) => duplicate.index === currentIdx)
   const actualIndex = duplicates.indexOf(currentDuplicate as ISeasonDuplicate)
-  const newData = currentDuplicate!.new
+  const newData = currentDuplicate?.new
   const [updateSeason] = useUpdateSeasonMutation()
   const { data } = useGetSeasonBEDetailsQuery(currentDuplicate?.existing.id as string, {
     refetchOnMountOrArgChange: true,
@@ -34,7 +34,7 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
   const [isUpdatedSeason, setIsUpdatedSeason] = useState(false)
   const [isError, setIsError] = useState(false)
 
-  if (!data) return <Loader />
+  if (!data || !newData) return <Loader />
 
   const duplicateData = data as IBESeason
   const normalizedNewData: ISeasonReviewUpdateData = {
@@ -311,7 +311,7 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
               Close
             </Button>
 
-            {duplicates.length > 1 && (
+            {duplicates.length > 1 && !isUpdatedSeason && (
               <Button type="default" style={defaultButtonStyles} onClick={handleSkipForThis}>
                 Skip for this
               </Button>
