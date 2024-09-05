@@ -89,7 +89,7 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
   const handlePrevDuplicate = () => setCurrentIdx((prev) => prev - 1)
 
   const handleSkipForThis = () => {
-    if (currentIdx + 1 === duplicates.length) {
+    if (actualIndex === duplicates.length - 1) {
       onClose()
       return
     }

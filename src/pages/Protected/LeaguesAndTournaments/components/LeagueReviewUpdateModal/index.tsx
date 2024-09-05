@@ -86,7 +86,7 @@ const LeagueReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx
   }
 
   const handleSkipForThis = () => {
-    if (currentIdx + 1 === duplicates.length) {
+    if (actualIndex + 1 === duplicates.length) {
       onClose()
       return
     }
