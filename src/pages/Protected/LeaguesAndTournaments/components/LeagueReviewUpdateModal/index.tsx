@@ -97,8 +97,14 @@ const LeagueReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx
   const handleNextRecord = () => {
     if (duplicates.length === 1) onClose()
 
+    if (currentIdx === duplicates.length) {
+      const firstIndex = duplicates[0].index
+      setCurrentIdx(firstIndex)
+    } else {
+      handleNextDuplicate()
+    }
+
     setIsUpdatedSeason(false)
-    handleNextDuplicate()
     removeDuplicate(currentIdx)
   }
 
