@@ -97,7 +97,7 @@ const LeagueReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx
   const handleNextRecord = () => {
     if (duplicates.length === 1) onClose()
 
-    if (currentIdx === duplicates.length) {
+    if (actualIndex === duplicates.length - 1) {
       const firstIndex = duplicates[0].index
       setCurrentIdx(firstIndex)
     } else {
