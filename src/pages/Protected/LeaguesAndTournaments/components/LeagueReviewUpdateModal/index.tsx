@@ -86,26 +86,39 @@ const LeagueReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx
   }
 
   const handleSkipForThis = () => {
-    if (actualIndex + 1 === duplicates.length) {
+    if (actualIndex === duplicates.length - 1) {
       onClose()
       return
     }
 
-    setCurrentIdx((prev) => prev + 1)
+    handleNextDuplicate()
   }
 
   const handleNextRecord = () => {
-    if (duplicates.length === 1) onClose()
+    if (duplicates.length === 1) {
+      onClose()
+      setIsUpdatedSeason(false)
+      removeDuplicate(currentIdx)
+
+      return
+    }
 
     if (actualIndex === duplicates.length - 1) {
-      const firstIndex = duplicates[0].index
-      setCurrentIdx(firstIndex)
+      setCurrentIdx(0)
     } else {
-      handleNextDuplicate()
+      const newIndex = currentIdx + 1
+
+      if (newIndex > duplicates.length - 2) {
+        setCurrentIdx(0)
+      } else {
+        setCurrentIdx((prev) => prev + 1)
+      }
     }
 
     setIsUpdatedSeason(false)
-    removeDuplicate(currentIdx)
+    setTimeout(() => {
+      removeDuplicate(currentIdx)
+    }, 500)
   }
 
   const handleClose = () => {

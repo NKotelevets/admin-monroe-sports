@@ -57,9 +57,11 @@ export const leaguesSlice = createSlice({
     removeDuplicate: (state, action: PayloadAction<number>) => {
       const remainingDuplicates = state.duplicates.filter((duplicate) => duplicate.index !== action.payload)
       const remainingTableRecords = state.tableRecords.filter((tableRecord) => tableRecord.idx !== action.payload)
+      const updatedDuplicates = remainingDuplicates.map((tR, idx) => ({ ...tR, index: idx }))
+      const updatedTableRecords = remainingTableRecords.map((tR, idx) => ({ ...tR, idx }))
 
-      state.duplicates = remainingDuplicates
-      state.tableRecords = remainingTableRecords
+      state.duplicates = updatedDuplicates
+      state.tableRecords = updatedTableRecords
     },
     removeCreatedRecordsNames: (state) => {
       state.createdRecordsNames = []

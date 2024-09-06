@@ -21,8 +21,8 @@ const SUCCESS_MESSAGE = 'Record Updated'
 const ERROR_MESSAGE = "Record can't be updated. Please try again."
 
 const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx, onClose }) => {
-  const [currentIdx, setCurrentIdx] = useState<number>(idx)
   const { duplicates, removeDuplicate } = useSeasonSlice()
+  const [currentIdx, setCurrentIdx] = useState<number>(idx)
   const currentDuplicate = duplicates.find((duplicate) => duplicate.index === currentIdx)
   const actualIndex = duplicates.indexOf(currentDuplicate as ISeasonDuplicate)
   const newData = currentDuplicate?.new
@@ -83,20 +83,6 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
     normalizedNewData,
     normalizedExistingData,
   )
-
-  const handleNextDuplicate = () => setCurrentIdx((prev) => prev + 1)
-
-  const handlePrevDuplicate = () => setCurrentIdx((prev) => prev - 1)
-
-  const handleSkipForThis = () => {
-    if (actualIndex === duplicates.length - 1) {
-      onClose()
-      return
-    }
-
-    setCurrentIdx((prev) => prev + 1)
-  }
-
   const currentDivision = normalizedExistingData.divisions.find(
     (division) => division.name === normalizedNewData.divisions[0].name,
   )
@@ -113,6 +99,19 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
       )
     : true
   const isDivisionOrSubdivisionChanged = currentDivision ? !!isDifference : true
+
+  const handleNextDuplicate = () => setCurrentIdx((prev) => prev + 1)
+
+  const handlePrevDuplicate = () => setCurrentIdx((prev) => prev - 1)
+
+  const handleSkipForThis = () => {
+    if (actualIndex === duplicates.length - 1) {
+      onClose()
+      return
+    }
+
+    handleNextDuplicate()
+  }
 
   const handleUpdate = () => {
     const mappedDivisions: IUpdateDivision[] = duplicateData.divisions.map((division) => ({
@@ -217,17 +216,30 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
   }
 
   const handleNextRecord = () => {
-    if (duplicates.length === 1) onClose()
+    if (duplicates.length === 1) {
+      onClose()
+      setIsUpdatedSeason(false)
+      removeDuplicate(currentIdx)
+
+      return
+    }
 
     if (actualIndex === duplicates.length - 1) {
-      const firstIndex = duplicates[0].index
-      setCurrentIdx(firstIndex)
+      setCurrentIdx(0)
     } else {
-      handleNextDuplicate()
+      const newIndex = currentIdx + 1
+
+      if (newIndex > duplicates.length - 2) {
+        setCurrentIdx(0)
+      } else {
+        setCurrentIdx((prev) => prev + 1)
+      }
     }
 
     setIsUpdatedSeason(false)
-    removeDuplicate(currentIdx)
+    setTimeout(() => {
+      removeDuplicate(currentIdx)
+    }, 500)
   }
 
   const handleClose = () => {
@@ -285,7 +297,7 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
         >
           <Flex align="center">
             <Button
-              disabled={actualIndex === 0}
+              disabled={actualIndex === 0 || isUpdatedSeason}
               style={{
                 background: 'transparent',
                 border: 0,
@@ -296,7 +308,7 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
               <LeftOutlined />
             </Button>
             <Button
-              disabled={actualIndex + 1 === duplicates.length}
+              disabled={actualIndex + 1 === duplicates.length || isUpdatedSeason}
               style={{
                 background: 'transparent',
                 border: 0,
