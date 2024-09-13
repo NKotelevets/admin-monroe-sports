@@ -10,7 +10,11 @@ export const validationSchema = Yup.object().shape({
   playoffFormat: Yup.number().required('Default Playoff Format is required'),
   standingsFormat: Yup.number().required('Default Standings Format is required'),
   tiebreakersFormat: Yup.number().required('Default Tiebreakers Format is required'),
-  playoffsTeams: Yup.number(),
+  playoffsTeams: Yup.number().when('playoffFormat', {
+    is: (value: string | number) => value === 'Single Elimination Bracket' || value === 1,
+    then: (schema) => schema.min(2),
+    otherwise: (schema) => schema.nullable(),
+  }),
 })
 
 export const initialFormValues: IFECreateLeagueBody = {

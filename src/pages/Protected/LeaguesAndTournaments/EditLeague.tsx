@@ -1,6 +1,6 @@
 import { Breadcrumb, Flex, Typography } from 'antd'
 import Radio from 'antd/es/radio'
-import { Form, Formik } from 'formik'
+import { Form, Formik, FormikHelpers } from 'formik'
 import { useCallback, useEffect } from 'react'
 import { Helmet } from 'react-helmet'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -78,14 +78,13 @@ const EditLeague = () => {
 
   const goBack = useCallback(() => navigate(PATH_TO_LEAGUES), [])
 
-  const handleSubmit = ({
-    playoffFormat,
-    standingsFormat,
-    tiebreakersFormat,
-    welcomeNote,
-    playoffsTeams,
-    ...rest
-  }: IFECreateLeagueBody) =>
+  const handleSubmit = async (values: IFECreateLeagueBody, formikHelpers: FormikHelpers<IFECreateLeagueBody>) => {
+    const result = await formikHelpers.validateForm(values)
+
+    if (Object.keys(result).length) return
+
+    const { playoffFormat, standingsFormat, tiebreakersFormat, welcomeNote, playoffsTeams, ...rest } = values
+
     updateLeague({
       id: leagueId,
       body: {
@@ -106,6 +105,7 @@ const EditLeague = () => {
         })
         goBack()
       })
+  }
 
   useEffect(() => {
     if (!data && !isLoading && !isFetching) navigate(PATH_TO_LEAGUES)
@@ -128,7 +128,7 @@ const EditLeague = () => {
 
             <PageContent>
               <Formik initialValues={initialFormValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
-                {({ values, handleChange, errors, handleSubmit, setFieldValue }) => {
+                {({ values, handleChange, errors, handleSubmit, setFieldValue, handleBlur }) => {
                   const isEnabledButton = Object.keys(errors).length === 0 && values.name
 
                   return (
@@ -147,6 +147,7 @@ const EditLeague = () => {
                               placeholder="Enter league/tourn name"
                               label={<OptionTitle>Name *</OptionTitle>}
                               error={errors.name}
+                              onBlur={handleBlur}
                             />
                           </div>
 
@@ -194,7 +195,11 @@ const EditLeague = () => {
                         <Flex vertical justify="flex-start">
                           <div style={{ marginBottom: '8px' }}>
                             <OptionTitle>Default Playoff Format *</OptionTitle>
-                            <RadioGroupContainer onChange={handleChange} value={values.playoffFormat}>
+                            <RadioGroupContainer
+                              name="playoffFormat"
+                              onChange={handleChange}
+                              value={values.playoffFormat}
+                            >
                               <Radio value={0}>Best Record Wins</Radio>
                               <Radio value={1}>Single Elimination Bracket</Radio>
                             </RadioGroupContainer>
