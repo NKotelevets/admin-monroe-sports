@@ -7,12 +7,13 @@ interface IMonroeInputProps {
   label?: string | ReactNode
   placeholder?: string
   value: string | number
-  onChange: ChangeEventHandler<HTMLInputElement>
+  onChange?: ChangeEventHandler<HTMLInputElement>
   name: string
   error?: string
   style?: CSSProperties
   disabled?: boolean
-  onBlur?: () => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onBlur?: (e: React.FocusEvent<any>) => void
   errorPosition?: 'top' | 'bottom'
 }
 
