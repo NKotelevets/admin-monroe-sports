@@ -205,7 +205,7 @@ const EditLeague = () => {
                             </RadioGroupContainer>
 
                             {values.playoffFormat === 1 && (
-                              <Flex align="center" style={{ marginBottom: '48px' }}>
+                              <Flex align="center">
                                 <Typography.Text
                                   style={{
                                     color: 'rgba(26, 22, 87, 1)',
