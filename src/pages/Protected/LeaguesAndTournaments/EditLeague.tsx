@@ -46,6 +46,8 @@ import { IFECreateLeagueBody } from '@/common/interfaces/league'
 
 import InfoCircleIcon from '@/assets/icons/info-circle.svg'
 
+const DEFAULT_PLAYOFFS_TEAMS_VALUE = 4
+
 const EditLeague = () => {
   const [updateLeague] = useUpdateLeagueMutation()
   const navigate = useNavigate()
@@ -92,7 +94,7 @@ const EditLeague = () => {
         standings_format: standingsFormat,
         tiebreakers_format: tiebreakersFormat,
         welcome_note: welcomeNote,
-        playoffs_teams: playoffsTeams,
+        playoffs_teams: playoffsTeams || DEFAULT_PLAYOFFS_TEAMS_VALUE,
         ...rest,
       },
     })
