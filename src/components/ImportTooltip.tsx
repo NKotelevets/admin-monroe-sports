@@ -14,16 +14,6 @@ import SpinIcon from '@/assets/icons/spin.svg'
 
 type TImportModalStatus = 'loading' | 'red' | 'green' | 'yellow'
 
-interface IImportModalProps {
-  title: string
-  filename: string
-  status: TImportModalStatus
-  errorMessage?: string
-  showInList: () => void
-  redirectToImportInfo: () => void
-  onClose: () => void
-}
-
 const ImportModalWrapper = styled(Flex)`
   position: fixed;
   bottom: 24px;
@@ -91,6 +81,17 @@ const Spin = styled.div<{ isError: boolean }>`
 
 const MAX_FILE_NAME_CHARACTERS = 35
 
+interface IImportModalProps {
+  title: string
+  filename: string
+  status: TImportModalStatus
+  errorMessage?: string
+  showInList: () => void
+  redirectToImportInfo: () => void
+  onClose: () => void
+  isHideRedirects?: boolean
+}
+
 const ImportModal: FC<IImportModalProps> = ({
   filename,
   title,
@@ -99,6 +100,7 @@ const ImportModal: FC<IImportModalProps> = ({
   showInList,
   redirectToImportInfo,
   onClose,
+  isHideRedirects = false,
 }) => {
   const [isHoveredContent, setIsHoveredContent] = useState(false)
   const isError = status === 'red' || status === 'yellow'
@@ -136,7 +138,7 @@ const ImportModal: FC<IImportModalProps> = ({
           )}
 
           {status === 'green' &&
-            (isHoveredContent ? (
+            (!isHideRedirects && isHoveredContent ? (
               <Typography style={{ color: 'rgba(62, 52, 202, 1)', cursor: 'pointer' }} onClick={showInList}>
                 Show in list
               </Typography>
@@ -147,7 +149,7 @@ const ImportModal: FC<IImportModalProps> = ({
           {status === 'red' && <ReactSVG src={ErrorIcon} />}
 
           {status === 'yellow' &&
-            (isHoveredContent ? (
+            (!isHideRedirects && isHoveredContent ? (
               <Typography style={{ color: 'rgba(62, 52, 202, 1)', cursor: 'pointer' }} onClick={redirectToImportInfo}>
                 Import info
               </Typography>

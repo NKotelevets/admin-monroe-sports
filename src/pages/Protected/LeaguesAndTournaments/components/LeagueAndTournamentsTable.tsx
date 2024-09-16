@@ -125,7 +125,7 @@ const LeagueAndTournamentsTable: FC<ILeagueAndTournamentsTableProps> = ({
 
   type TFilters = Record<TFilterValueKey, FilterValue | null>
 
-  const handleTableChange: TableProps['onChange'] = (pagination, filters: TFilters, sorter) => {
+  const handleTableChange: TableProps<IFELeague>['onChange'] = (pagination, filters: TFilters, sorter) => {
     const newOffset = (pagination?.current && (pagination?.current - 1) * (pagination?.pageSize || 10)) || 0
     const newLimit = pagination?.pageSize || 10
     setTableParams({

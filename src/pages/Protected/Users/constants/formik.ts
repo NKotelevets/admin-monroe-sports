@@ -5,18 +5,19 @@ import { ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES } from '@/pages/Protected/
 import { TRole } from '@/common/types'
 
 const userRoleValidationSchema = Yup.object({
-  name: Yup.string().required(),
+  name: Yup.string().required('Role is required'),
   linkedEntities: Yup.array()
     .of(Yup.string())
     .when('name', {
-      is: (value: string) => ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(value as TRole),
-      then: (schema) => schema.required().min(1),
+      is: (value: string) =>
+        ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(value as TRole) || (value as TRole) === 'Operator',
+      then: (schema) => schema.required('Required').min(1),
     }),
 })
 
 export const userValidationSchema = Yup.object<ICreateUserFormValues>().shape({
-  firstName: Yup.string().required(),
-  lastName: Yup.string().required(),
+  firstName: Yup.string().required('First Name is required'),
+  lastName: Yup.string().required('Last Name is required'),
   birthDate: Yup.string().nullable(),
   gender: Yup.string(),
   email: Yup.string()
@@ -24,7 +25,7 @@ export const userValidationSchema = Yup.object<ICreateUserFormValues>().shape({
     .test('is-email', 'Incorrect email', (value) =>
       value ? /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) : true,
     )
-    .required(),
+    .required('Email is required'),
   phoneNumber: Yup.string(),
   zipCode: Yup.string(),
   roles: Yup.array().of(userRoleValidationSchema),

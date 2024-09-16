@@ -53,7 +53,7 @@ const SeasonsImportInfo = () => {
   const [sortLeagueNameOrder, setSortLeagueNameOrder] = useState<TSortOption>(null)
   const { columns } = useSeasonsImportTable(sortSeasonNameOrder, sortLeagueNameOrder, setSelectedIdx)
 
-  const handleTableChange: TableProps['onChange'] = (pagination, _, sorter) => {
+  const handleTableChange: TableProps<IImportSeasonTableRecord>['onChange'] = (pagination, _, sorter) => {
     setTableParams({
       pagination: {
         ...pagination,

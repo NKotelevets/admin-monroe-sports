@@ -15,15 +15,26 @@ interface IMonroeMultipleSelectProps {
   placeholder?: string
   value: string[]
   renderInside?: boolean
+  onBlur?: () => void
 }
 
-const CustomSelect: FC<IMonroeMultipleSelectProps> = ({ styles, options, value, renderInside = false, ...props }) => (
+const CustomSelect: FC<IMonroeMultipleSelectProps> = ({
+  styles,
+  options,
+  value,
+  renderInside = false,
+  onBlur,
+  ...props
+}) => (
   <Select
     suffixIcon={<ReactSVG src={ArrowDownIcon} />}
     mode="multiple"
     style={styles}
     value={value as unknown as string}
     getPopupContainer={(trigger) => (renderInside ? trigger.parentNode : undefined)}
+    onDropdownVisibleChange={(isOpen) => {
+      if (!isOpen && !value.length && onBlur) onBlur()
+    }}
     {...props}
   >
     {options.map((option) => (

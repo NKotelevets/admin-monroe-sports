@@ -84,9 +84,7 @@ const SignIn = () => {
                         Welcome back!
                       </Typography.Title>
 
-                      <Typography.Title className={classnames.subtitle} level={5}>
-                        Please enter your details
-                      </Typography.Title>
+                      <Typography className={classnames.subtitle}>Please enter your details</Typography>
                     </Flex>
 
                     <Flex vertical>
@@ -97,6 +95,7 @@ const SignIn = () => {
                         value={values.email.toLowerCase()}
                         onChange={handleChange}
                         placeholder="Enter your email here"
+                        style={{ height: '32px' }}
                       />
                       <Flex vertical style={{ margin: '16px 0' }}>
                         <MonroePasswordInput
@@ -111,7 +110,11 @@ const SignIn = () => {
 
                     <Flex vertical={false} justify="space-between" style={{ marginBottom: '40px', cursor: 'pointer' }}>
                       <Flex vertical={false} align="center">
-                        <Checkbox checked={isStaySignedIn} onChange={() => setIsStaySignedIn((prev) => !prev)} />
+                        <Checkbox
+                          className="checkbox"
+                          checked={isStaySignedIn}
+                          onChange={() => setIsStaySignedIn((prev) => !prev)}
+                        />
 
                         <Typography.Text className={classnames['checkbox-text']}>Stay signed in</Typography.Text>
                       </Flex>

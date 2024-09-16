@@ -1,12 +1,17 @@
 import Breadcrumb from 'antd/es/breadcrumb/Breadcrumb'
 import Flex from 'antd/es/flex'
-import { Form, Formik } from 'formik'
+import { Form, Formik, FormikHelpers } from 'formik'
 
-import { operatorInitialFormData, operatorValidationSchema } from '@/pages/Protected/Users/constants/populateOperator'
+import {
+  ICreateOperatorFormValues,
+  operatorInitialFormData,
+  operatorValidationSchema,
+} from '@/pages/Protected/Users/constants/populateOperator'
 
 import {
   CancelButton,
   MainContainer,
+  MonroeBlueText,
   MonroeDivider,
   OptionTitle,
   PageContainer,
@@ -35,11 +40,18 @@ const CreateOperator = () => {
       title: <a onClick={() => setIsCreateOperatorScreen(false)}>Create user</a>,
     },
     {
-      title: <a>Add operator</a>,
+      title: <MonroeBlueText>Add operator</MonroeBlueText>,
     },
   ]
 
-  const handleSubmit = () => {}
+  const handleSubmit = async (
+    values: ICreateOperatorFormValues,
+    formikHelpers: FormikHelpers<ICreateOperatorFormValues>,
+  ) => {
+    const result = await formikHelpers.validateForm(values)
+
+    if (Object.keys(result).length) return
+  }
 
   return (
     <Formik
@@ -47,9 +59,9 @@ const CreateOperator = () => {
       validationSchema={operatorValidationSchema}
       onSubmit={handleSubmit}
       validateOnChange
-      validateOnMount
+      validateOnBlur
     >
-      {({ values, handleChange, handleSubmit, errors }) => {
+      {({ values, handleChange, handleSubmit, errors, touched, handleBlur }) => {
         const isEnabledButton = Object.keys(errors).length === 0
 
         return (
@@ -67,13 +79,15 @@ const CreateOperator = () => {
 
                   <MainContainer>
                     <div style={{ marginBottom: '8px' }}>
-                      <OptionTitle style={{ padding: '0 0 5px 0' }}> Name *</OptionTitle>
                       <MonroeInput
                         name="name"
                         value={values.name}
                         onChange={handleChange}
                         placeholder="Enter name"
                         style={{ height: '32px' }}
+                        label={<OptionTitle style={{ padding: '0 0 5px 0' }}> Name *</OptionTitle>}
+                        error={touched.name ? errors.name : ''}
+                        onBlur={handleBlur}
                       />
                     </div>
 
@@ -163,24 +177,28 @@ const CreateOperator = () => {
 
                   <MainContainer>
                     <div style={{ marginBottom: '8px' }}>
-                      <OptionTitle style={{ padding: '0 0 5px 0' }}>First Name *</OptionTitle>
                       <MonroeInput
                         name="firstName"
                         value={values.firstName}
                         onChange={handleChange}
-                        placeholder="Enter firstName"
+                        placeholder="Enter First Name"
                         style={{ height: '32px' }}
+                        label={<OptionTitle style={{ padding: '0 0 5px 0' }}>First Name *</OptionTitle>}
+                        error={touched.firstName ? errors.firstName : ''}
+                        onBlur={handleBlur}
                       />
                     </div>
 
                     <div style={{ marginBottom: '8px' }}>
-                      <OptionTitle>Last Name *</OptionTitle>
                       <MonroeInput
                         name="lastName"
                         value={values.lastName}
                         onChange={handleChange}
-                        placeholder="Enter lastName"
+                        placeholder="Enter Last Name"
                         style={{ height: '32px' }}
+                        label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Last Name *</OptionTitle>}
+                        error={touched.lastName ? errors.lastName : ''}
+                        onBlur={handleBlur}
                       />
                     </div>
 
@@ -192,7 +210,8 @@ const CreateOperator = () => {
                         onChange={handleChange}
                         placeholder="Enter email"
                         style={{ height: '32px' }}
-                        error={errors.pointOfContactEmail === 'Incorrect email' ? errors.pointOfContactEmail : ''}
+                        error={touched.pointOfContactEmail ? errors.pointOfContactEmail : ''}
+                        onBlur={handleBlur}
                       />
                     </div>
 
@@ -204,8 +223,10 @@ const CreateOperator = () => {
                         onChange={(event) => {
                           if (validateNumber(event.target.value)) handleChange(event)
                         }}
-                        placeholder="Enter email"
+                        placeholder="Enter phone"
                         style={{ height: '32px' }}
+                        error={touched.pointOfContactPhoneNumber ? errors.pointOfContactPhoneNumber : ''}
+                        onBlur={handleBlur}
                       />
                     </div>
                   </MainContainer>

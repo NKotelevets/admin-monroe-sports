@@ -3,6 +3,7 @@ import { createApi } from '@reduxjs/toolkit/query/react'
 import baseQueryWithReAuth from '@/redux/reauthBaseQuery'
 
 import { IGetEntityResponse } from '@/common/interfaces'
+import { IPaginationResponse } from '@/common/interfaces/api'
 import { IBEUser, IFEUser } from '@/common/interfaces/user'
 
 export const userApi = createApi({
@@ -57,12 +58,9 @@ export const userApi = createApi({
         url: '/users/list-of-users',
         params,
       }),
-      transformResponse: (
-        users: IBEUser[],
-        // IPaginationResponse<IBEUser[]>
-      ) => ({
-        count: users.length,
-        data: users.map((user) => ({
+      transformResponse: (response: IPaginationResponse<IBEUser[]>) => ({
+        count: response.count,
+        data: response.results.map((user) => ({
           id: user.id,
           email: user.email,
           gender: user.gender,

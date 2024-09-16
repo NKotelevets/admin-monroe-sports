@@ -86,6 +86,9 @@ export const StyledPasswordInput = styled(Input.Password)<{ is_error?: string }>
   @media (width > 1660px) {
     font-size: 18px !important;
     min-height: 40px !important;
+
+    & input {
+    }
   }
 `
 

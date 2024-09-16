@@ -1,6 +1,6 @@
 import { PlusOutlined } from '@ant-design/icons'
 import { Button, Flex } from 'antd'
-import { FieldArray, FormikErrors } from 'formik'
+import { FieldArray, FormikErrors, FormikTouched } from 'formik'
 import { ChangeEventHandler, FC, useEffect, useState } from 'react'
 import { ReactSVG } from 'react-svg'
 
@@ -30,7 +30,7 @@ import ShowAllIcon from '@/assets/icons/show-all.svg'
 interface ICreateDivisionProps {
   index: number
   division: ICreateSeasonDivision
-  onChange: ChangeEventHandler
+  onChange: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>
   errors: FormikErrors<IFECreateSeason>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setFieldValue: (field: string, value: any, shouldValidate?: boolean) => Promise<void | FormikErrors<IFECreateSeason>>
@@ -38,6 +38,9 @@ interface ICreateDivisionProps {
   isMultipleDivisions: boolean
   values: ICreateSeasonFormValues
   setIds?: React.Dispatch<React.SetStateAction<number[]>>
+  touched: FormikTouched<ICreateSeasonFormValues>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  handleBlur: (e: React.FocusEvent<any>) => void
 }
 
 const CreateDivision: FC<ICreateDivisionProps> = ({
@@ -50,6 +53,8 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
   isMultipleDivisions,
   values,
   setIds,
+  touched,
+  handleBlur,
 }) => {
   const [isOpenedDetails, setIsOpenedDetails] = useState(index === 0 ? true : false)
   const { isComponentVisible, ref } = useIsActiveComponent(index === 0 ? true : false)
@@ -60,7 +65,7 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
     .map((dN, idx, array) => (array.indexOf(dN) === idx ? false : dN))
     .filter((i) => i)
   const notUniqueNameErrorText = listOfDuplicatedNames.find((dN) => dN === division.name) ? 'Name already exists' : ''
-  const isError = !!errors?.divisions?.[index] || isDuplicateNames
+  const isError = touched?.divisions?.[index] ? !!errors?.divisions?.[index] || isDuplicateNames : false
 
   useEffect(() => {
     if (notUniqueNameErrorText === 'Name already exists') {
@@ -111,8 +116,13 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
                 onChange={onChange}
                 placeholder="Enter name"
                 style={{ height: '32px' }}
-                error={notUniqueNameErrorText || (errors?.divisions?.[index] as FormikErrors<IFEDivision>)?.name}
+                error={
+                  touched?.divisions?.[index]
+                    ? notUniqueNameErrorText || (errors?.divisions?.[index] as FormikErrors<IFEDivision>)?.name
+                    : ''
+                }
                 errorPosition="bottom"
+                onBlur={handleBlur}
               />
             </div>
             <div style={{ marginBottom: '8px' }}>
@@ -132,34 +142,40 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
 
           <FieldArray name={`divisions[${index}.subdivisions]`}>
             {(innerArrayHelpers) => {
-              const collapsedDivisionItems = division.subdivisions.map((subdivision, idx) => ({
-                key: idx,
-                children: (
-                  <CreateSubdivision
-                    index={idx}
-                    divisionIndex={index}
-                    onChange={onChange}
-                    subdivision={subdivision}
-                    namePrefix={`divisions.${index}.subdivisions.${idx}`}
-                    setFieldValue={setFieldValue}
-                    isMultipleSubdivisions={!!(division.subdivisions.length > 1)}
-                    removeFn={innerArrayHelpers.remove}
-                    errors={errors}
-                    division={division}
-                    values={values}
-                    setIds={setIds}
-                  />
-                ),
-                label: (
-                  <AccordionHeader
-                    style={{
-                      marginTop: idx > 0 ? '12px' : '0',
-                    }}
-                  >
-                    #{idx + 1} Subdivision/subpool
-                  </AccordionHeader>
-                ),
-              }))
+              const collapsedDivisionItems = division.subdivisions.map((subdivision, idx) => {
+                const namePrefix = `divisions.${index}.subdivisions.${idx}`
+
+                return {
+                  key: idx,
+                  children: (
+                    <CreateSubdivision
+                      index={idx}
+                      divisionIndex={index}
+                      onChange={onChange}
+                      subdivision={subdivision}
+                      namePrefix={namePrefix}
+                      setFieldValue={setFieldValue}
+                      isMultipleSubdivisions={!!(division.subdivisions.length > 1)}
+                      removeFn={innerArrayHelpers.remove}
+                      errors={errors}
+                      division={division}
+                      values={values}
+                      setIds={setIds}
+                      touched={touched}
+                      handleBlur={handleBlur}
+                    />
+                  ),
+                  label: (
+                    <AccordionHeader
+                      style={{
+                        marginTop: idx > 0 ? '12px' : '0',
+                      }}
+                    >
+                      #{idx + 1} Subdivision/subpool
+                    </AccordionHeader>
+                  ),
+                }
+              })
 
               return (
                 <div>

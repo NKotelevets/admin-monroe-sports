@@ -401,3 +401,9 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
 .red-text .ant-menu-title-content {
   color: #bc261b !important
 }
+
+@media (width > 1660px) {
+  .checkbox {
+    transform: scale(1.2);
+  }
+}

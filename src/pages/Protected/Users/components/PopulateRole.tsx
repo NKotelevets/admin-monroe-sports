@@ -14,6 +14,7 @@ import {
 
 import { OptionTitle } from '@/components/Elements'
 import { CreateEntityContainer, Subtext, TitleStyle } from '@/components/Elements/entity'
+import { InputError } from '@/components/Inputs/InputElements'
 import MonroeMultipleSelect from '@/components/MonroeMultipleSelect'
 import MonroeSelect from '@/components/MonroeSelect'
 
@@ -36,6 +37,11 @@ interface IPopulateRoleProps {
   removeFn: (index: number) => void
   isMultipleRoles: boolean
   values: ICreateUserFormValues
+  setFieldTouched: (
+    field: string,
+    isTouched?: boolean,
+    shouldValidate?: boolean,
+  ) => Promise<void | FormikErrors<ICreateUserFormValues>>
 }
 
 const PopulateRole: FC<IPopulateRoleProps> = ({
@@ -46,6 +52,7 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
   removeFn,
   isMultipleRoles,
   values,
+  setFieldTouched,
 }) => {
   const [isOpenedDetails, setIsOpenedDetails] = useState(index === 0 ? true : false)
   const { ref, isComponentVisible } = useIsActiveComponent(index === 0 ? true : false)
@@ -64,6 +71,12 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
   const isRoleWithTeams = ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(role.name as TRole)
   const isOperator = (role.name as TRole) === 'Operator'
   const [selectedOperator, setOperator] = useState('')
+  const isMissingName = !!(errors.roles?.[+index] as FormikErrors<IRole>)?.name
+  const isMissingEntities = !!(errors.roles?.[+index] as FormikErrors<IRole>)?.linkedEntities
+
+  const handleBlur = () => {
+    setFieldTouched(`roles.${index}.linkedEntities`, true)
+  }
 
   useEffect(() => {
     if (!isComponentVisible) setIsOpenedDetails(false)
@@ -79,7 +92,7 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
           style={{ cursor: 'pointer', padding: '16px' }}
         >
           <Flex vertical>
-            <TitleStyle isError={isError}>{isError ? 'Missing mandatory data' : role.name}</TitleStyle>
+            <TitleStyle isError={isError}>{isError ? 'Missing mandatory data' : role.name || 'Role'}</TitleStyle>
 
             {isRoleWithTeams && (
               <Flex>
@@ -105,7 +118,11 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
         <Flex vertical style={{ padding: '16px' }}>
           <Flex vertical>
             <div style={{ marginBottom: '8px' }}>
-              <OptionTitle>Role *</OptionTitle>
+              <Flex align="center" justify="space-between">
+                <OptionTitle>Role *</OptionTitle>
+
+                {isMissingName && <InputError>Role is required</InputError>}
+              </Flex>
               <MonroeSelect
                 onChange={(value) => {
                   setFieldValue(`roles.${index}.name`, value)
@@ -117,6 +134,10 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
                 styles={{
                   width: '100%',
                 }}
+                is_error={`${isMissingName}`}
+                onBlur={() => {
+                  setFieldTouched(`roles.${index}.name`, true)
+                }}
               />
             </div>
 
@@ -125,7 +146,11 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
                 <Divider />
 
                 <div>
-                  <OptionTitle>Master Teams *</OptionTitle>
+                  <Flex justify="space-between" align="center">
+                    <OptionTitle>Master Teams *</OptionTitle>
+
+                    {isMissingEntities && <InputError>Master Teams is required</InputError>}
+                  </Flex>
                   <MonroeMultipleSelect
                     renderInside
                     onChange={(value) => {
@@ -137,6 +162,10 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
                     styles={{
                       width: '100%',
                     }}
+                    is_error={`${isMissingEntities}`}
+                    onBlur={() => {
+                      setFieldTouched(`roles.${index}.linkedEntities`, true)
+                    }}
                   />
                 </div>
               </>
@@ -144,8 +173,18 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
 
             {isOperator && (
               <div>
-                <OptionTitle>Operator *</OptionTitle>
-                <OperatorsInput setOperator={setOperator} selectedOperator={selectedOperator} />
+                <Flex justify="space-between" align="center">
+                  <OptionTitle>Operator *</OptionTitle>
+
+                  {isMissingEntities && <InputError>Operator is required</InputError>}
+                </Flex>
+
+                <OperatorsInput
+                  isError={isMissingEntities}
+                  setOperator={setOperator}
+                  selectedOperator={selectedOperator}
+                  handleBlur={handleBlur}
+                />
               </div>
             )}
           </Flex>

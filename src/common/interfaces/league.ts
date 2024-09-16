@@ -1,6 +1,6 @@
 import { IIdName } from '@/common/interfaces'
 import { IBESeason } from '@/common/interfaces/season'
-import { TDeletionStatus, TErrorDuplicate } from '@/common/types'
+import { TErrorDuplicate, TImportDeleteStatus } from '@/common/types'
 import { TLeagueTourn, TPlayOffFormat, TWinningPoints } from '@/common/types/league'
 
 interface ICommonLeagueFields {
@@ -89,7 +89,7 @@ export interface IImportLeagueDuplicates {
 }
 
 export interface IImportLeagueResponse {
-  status: TDeletionStatus
+  status: TImportDeleteStatus
   success: IImportLeagueSuccess[]
   errors?: IImportLeagueError[]
   duplicates?: IImportLeagueDuplicates[]
@@ -124,7 +124,7 @@ export interface ILeagueDeletionItemError {
 }
 
 export interface ILeagueBulkDeleteResponse {
-  status: TDeletionStatus
+  status: TImportDeleteStatus
   total: number
   success: number
   items: ILeagueDeletionItemError[]

@@ -150,7 +150,7 @@ const UsersImportInfo = () => {
     },
   })
 
-  const handleTableChange: TableProps['onChange'] = (pagination, _, sorter) => {
+  const handleTableChange: TableProps<IImportUserData>['onChange'] = (pagination, _, sorter) => {
     setTableParams({
       pagination: {
         ...pagination,

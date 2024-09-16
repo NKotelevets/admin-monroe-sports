@@ -1,6 +1,6 @@
 import { Breadcrumb, Flex, Typography } from 'antd'
 import Radio from 'antd/es/radio'
-import { Form, Formik } from 'formik'
+import { Form, Formik, FormikHelpers } from 'formik'
 import { useCallback } from 'react'
 import { Helmet } from 'react-helmet'
 import { useNavigate } from 'react-router-dom'
@@ -59,14 +59,13 @@ const CreateLeague = () => {
 
   const goBack = useCallback(() => navigate(PATH_TO_LEAGUES), [])
 
-  const handleSubmit = ({
-    playoffFormat,
-    standingsFormat,
-    tiebreakersFormat,
-    welcomeNote,
-    playoffsTeams,
-    ...rest
-  }: IFECreateLeagueBody) =>
+  const handleSubmit = async (values: IFECreateLeagueBody, formikHelpers: FormikHelpers<IFECreateLeagueBody>) => {
+    const result = await formikHelpers.validateForm(values)
+
+    if (Object.keys(result).length) return
+
+    const { playoffFormat, standingsFormat, tiebreakersFormat, welcomeNote, playoffsTeams, ...rest } = values
+
     createLeague({
       playoff_format: playoffFormat,
       standings_format: standingsFormat,
@@ -79,6 +78,7 @@ const CreateLeague = () => {
       .then(() => {
         goBack()
       })
+  }
 
   return (
     <BaseLayout>
@@ -98,9 +98,10 @@ const CreateLeague = () => {
               validationSchema={validationSchema}
               onSubmit={handleSubmit}
               validateOnBlur
+              validateOnChange
             >
-              {({ values, handleChange, errors, handleSubmit, setFieldValue }) => {
-                const isEnabledButton = Object.keys(errors).length === 0 && values.name
+              {({ values, handleChange, errors, handleSubmit, setFieldValue, handleBlur }) => {
+                const isEnabledButton = Object.keys(errors).length === 0
 
                 return (
                   <Form onSubmit={handleSubmit}>
@@ -118,6 +119,7 @@ const CreateLeague = () => {
                             placeholder="Enter league/tourn name"
                             label={<OptionTitle>Name *</OptionTitle>}
                             error={errors.name}
+                            onBlur={handleBlur}
                           />
                         </div>
 

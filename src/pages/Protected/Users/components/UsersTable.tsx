@@ -62,7 +62,7 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
   const [_, setSelectedRecordId] = useState('')
   const { columns } = useUsersTableParams({
     setSelectedRecordId,
-    setShowDeleteSingleRecordModal: setShowBlockSingleUserModal,
+    setShowBlockSingleUserModal,
   })
 
   useEffect(() => {
@@ -95,7 +95,7 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
     }
   }, [data])
 
-  const handleTableChange: TableProps['onChange'] = (pagination, _, sorter) => {
+  const handleTableChange: TableProps<IFEUser>['onChange'] = (pagination, _, sorter) => {
     const newOffset = (pagination?.current && (pagination?.current - 1) * (pagination?.pageSize || 10)) || 0
     const newLimit = pagination?.pageSize || 10
     setTableParams({

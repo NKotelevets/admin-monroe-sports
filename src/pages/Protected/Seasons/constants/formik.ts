@@ -53,8 +53,8 @@ const subdivisionValidationSchema = Yup.object().shape({
     }),
 })
 
-const divisionValidationSchema = Yup.object<ICreateSeasonDivision[]>().shape({
-  name: Yup.string().required('Division name is required'),
+export const divisionValidationSchema = Yup.object<ICreateSeasonDivision[]>().shape({
+  name: Yup.string().required('Division Name is required'),
   description: Yup.string(),
   subdivisions: Yup.array().of(subdivisionValidationSchema).required(),
 })
@@ -62,8 +62,8 @@ const divisionValidationSchema = Yup.object<ICreateSeasonDivision[]>().shape({
 export const seasonValidationSchema = Yup.object<ICreateSeasonFormValues>().shape({
   name: Yup.string().required('Name is required'),
   league: Yup.string().required('Linked League/Tourn is required'),
-  startDate: Yup.string().required('Start date is required'),
-  expectedEndDate: Yup.string().required('Expected end date is required'),
+  startDate: Yup.string().required('Start Date is required'),
+  expectedEndDate: Yup.string().required('Expected End Date is required'),
   divisions: Yup.array().of(divisionValidationSchema).required(),
 })
 

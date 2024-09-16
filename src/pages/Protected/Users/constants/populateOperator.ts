@@ -1,16 +1,16 @@
 import * as Yup from 'yup'
 
 export const operatorValidationSchema = Yup.object<ICreateOperatorFormValues>().shape({
-  name: Yup.string().required(),
-  firstName: Yup.string().required(),
-  lastName: Yup.string().required(),
+  name: Yup.string().required('Name is required'),
+  firstName: Yup.string().required('First Name is required'),
+  lastName: Yup.string().required('Last Name is required'),
   pointOfContactEmail: Yup.string()
     .email('Incorrect email')
     .test('is-email', 'Incorrect email', (value) =>
       value ? /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) : true,
     )
-    .required(),
-  pointOfContactPhoneNumber: Yup.string(),
+    .required('Email is required'),
+  pointOfContactPhoneNumber: Yup.string().required('Phone is required'),
 })
 
 export const operatorInitialFormData: ICreateOperatorFormValues = {
@@ -47,30 +47,31 @@ export interface IFinishCreatingOperator extends ICreateOperatorFormValues {
 }
 
 export const finishCreateOperatorValidationSchema = Yup.object<ICreateOperatorFormValues>().shape({
-  name: Yup.string().required(),
-  firstName: Yup.string().required(),
-  lastName: Yup.string().required(),
+  name: Yup.string().required("Operator's name is required"),
+  firstName: Yup.string().required('First Name is required'),
+  lastName: Yup.string().required('Last Name is required'),
   pointOfContactEmail: Yup.string()
     .email('Incorrect email')
     .test('is-email', 'Incorrect email', (value) =>
       value ? /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) : true,
     )
-    .required(),
-  pointOfContactPhoneNumber: Yup.string(),
-  password: Yup.string().required('This field is required'),
+    .required('Email is required'),
+
+  pointOfContactPhoneNumber: Yup.string().required('Phone is required'),
+  password: Yup.string().required('Password is required'),
   confirmPassword: Yup.string()
-    .required('This field is required')
+    .required('Confirm password is required')
     .oneOf([Yup.ref('password'), ''], "Passwords don't match"),
   state: Yup.string().required(),
   city: Yup.string().required(),
   street: Yup.string().required(),
-  phone: Yup.string().required(),
+  phone: Yup.string().required().required("Operator's phone is required"),
   email: Yup.string()
     .email('Incorrect email')
     .test('is-email', 'Incorrect email', (value) =>
       value ? /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) : true,
     )
-    .required(),
+    .required("Operator's email is required"),
 })
 
 export const finishCreateOperatorFormData: IFinishCreatingOperator = {

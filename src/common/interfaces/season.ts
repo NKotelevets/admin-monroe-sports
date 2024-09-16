@@ -1,6 +1,6 @@
 import { IBEDivision, IFEDivision } from '@/common/interfaces/division'
 import { IBELeague } from '@/common/interfaces/league'
-import { TDeletionStatus, TErrorDuplicate } from '@/common/types'
+import { TErrorDuplicate, TImportDeleteStatus } from '@/common/types'
 
 interface ISeasonCommonFields {
   id: string
@@ -95,7 +95,7 @@ interface IImportSeasonDuplicate {
 }
 
 export interface IImportSeasonsResponse {
-  status: TDeletionStatus
+  status: TImportDeleteStatus
   success?: IImportSeasonSuccess[]
   errors?: IImportSeasonError[]
   duplicates?: IImportSeasonDuplicate[]
@@ -109,7 +109,7 @@ export interface IDeletionSeasonItemError {
 }
 
 export interface IDeleteSeasonsResponse {
-  status: TDeletionStatus
+  status: TImportDeleteStatus
   total: number
   success: number
   items: IDeletionSeasonItemError[]

@@ -1,7 +1,8 @@
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
+import styled from '@emotion/styled'
 import { Flex, Radio, RadioChangeEvent } from 'antd'
 import Typography from 'antd/es/typography'
-import { FieldArray, FormikErrors } from 'formik'
+import { FieldArray, FormikErrors, FormikTouched } from 'formik'
 import { ChangeEvent, ChangeEventHandler, FC, useEffect, useState } from 'react'
 import { ReactSVG } from 'react-svg'
 
@@ -38,9 +39,18 @@ import InfoCircleIcon from '@/assets/icons/info-circle.svg'
 import SmallDeleteIcon from '@/assets/icons/small-delete.svg'
 import SmallEditIcon from '@/assets/icons/small-edit.svg'
 
+const StyledFlex = styled(Flex)`
+  flex-direction: column;
+
+  @media (width > 1660px) {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+`
+
 interface ICreateSubdivisionProps {
   subdivision: ICreateSeasonSubdivision
-  onChange: ChangeEventHandler
+  onChange: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>
   errors: FormikErrors<IFECreateSeason>
   index: number
   namePrefix: string
@@ -52,6 +62,9 @@ interface ICreateSubdivisionProps {
   division: ICreateSeasonDivision
   values: ICreateSeasonFormValues
   setIds?: React.Dispatch<React.SetStateAction<number[]>>
+  touched: FormikTouched<ICreateSeasonFormValues>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  handleBlur: (e: React.FocusEvent<any>) => void
 }
 
 const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
@@ -67,12 +80,18 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
   division,
   values,
   setIds,
+  handleBlur,
+  touched,
 }) => {
   const { setBracketIdx, setBracketMode, setIsDuplicateNames } = useSeasonSlice()
   const [isOpenedDetails, setIsOpenedDetails] = useState(index === 0 ? true : false)
   const { isComponentVisible, ref } = useIsActiveComponent(index === 0 ? true : false)
-  const subdivisionError = (errors?.divisions?.[divisionIndex] as FormikErrors<IFEDivision>)?.subdivisions?.[index]
-  const isBlockAddBracketButton = !!(subdivisionError as FormikErrors<IFESubdivision>)?.name
+  const subdivisionError =
+    touched.divisions?.[+divisionIndex].subdivisions?.[+index] &&
+    (errors?.divisions?.[divisionIndex] as FormikErrors<IFEDivision>)?.subdivisions?.[index]
+  const isBlockAddBracketButton =
+    !!(subdivisionError as FormikErrors<IFESubdivision>)?.name ||
+    (subdivision.playoffFormat === 'Single Elimination Bracket' && !subdivision.name)
   const { setIsCreateBracketPage, setSelectedBracketId, setPathToSubdivisionDataAndIndexes } = useSeasonSlice()
   const allSubdivisionsNames = division.subdivisions.map((sd) => sd.name)
   const listOfDuplicatedNames = allSubdivisionsNames
@@ -85,10 +104,16 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
   const notUniqueNameErrorText = listOfDuplicatedNames.find((dN) => dN === subdivision.name)
     ? 'Name already exists'
     : ''
-  const isError = !!subdivisionError || !!notUniqueNameErrorText
+  const isBracketError = subdivision.playoffFormat === 'Single Elimination Bracket' && !subdivision.brackets.length
+  const isError = !!subdivisionError || !!notUniqueNameErrorText || isBracketError
   const lastBracketIdx = subdivision.brackets?.length ? subdivision.brackets.length : 0
   const [isShowModal, setIsShowModal] = useState(false)
   const subdivisionNameError = (subdivisionError as FormikErrors<IFESubdivision>)?.name
+  const isDivisionTouched = touched.divisions?.[divisionIndex]
+  const subdivError =
+    isDivisionTouched || touched.divisions?.[divisionIndex]?.subdivisions?.[index]?.name
+      ? notUniqueNameErrorText || subdivisionNameError
+      : ''
 
   useEffect(() => {
     if (!isComponentVisible) setIsOpenedDetails(false)
@@ -102,7 +127,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
     }
   }, [notUniqueNameErrorText])
 
-  const handleSubdivisionNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleSubdivisionNameChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const newSubdivisionName = event.target.value
     const oldSubdivisionName = subdivision.name
 
@@ -205,8 +230,9 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
               onChange={handleSubdivisionNameChange}
               placeholder="Enter name"
               style={{ width: '100%', height: '32px' }}
-              error={notUniqueNameErrorText || subdivisionNameError}
+              error={subdivError}
               errorPosition="bottom"
+              onBlur={handleBlur}
             />
           </div>
           <div style={{ marginBottom: '8px' }}>
@@ -230,7 +256,17 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
                 value={subdivision.playoffFormat}
               >
                 <Radio value="Best Record Wins">Best Record Wins</Radio>
-                <Radio value="Single Elimination Bracket">Single Elimination Bracket</Radio>
+                <Radio value="Single Elimination Bracket">
+                  <StyledFlex>
+                    <Typography style={{ marginRight: '4px' }}>Single Elimination Bracket</Typography>
+
+                    {isBracketError && (
+                      <Typography style={{ fontSize: '12px', fontWeight: 400, color: '#bc261b' }}>
+                        At least one bracket required
+                      </Typography>
+                    )}
+                  </StyledFlex>
+                </Radio>
               </RadioGroupContainer>
 
               <FieldArray name={`divisions[${divisionIndex}.subdivisions[${index}.brackets]]`}>
@@ -299,7 +335,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
                               : ''
                           }
                           width="200px"
-                          containerWidth="134px"
+                          containerWidth="158px"
                         >
                           <AddBracketButton
                             type="default"

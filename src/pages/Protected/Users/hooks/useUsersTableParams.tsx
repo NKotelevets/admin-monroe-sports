@@ -17,6 +17,7 @@ import MonroeFilter from '@/components/Table/MonroeFilter'
 import TextWithTooltip from '@/components/TextWithTooltip'
 
 import { useAppSlice } from '@/redux/hooks/useAppSlice'
+import { useUserSlice } from '@/redux/hooks/useUserSlice'
 import { useLazyGetUsersQuery } from '@/redux/user/user.api'
 
 import { PATH_TO_EDIT_USER, PATH_TO_USERS } from '@/constants/paths'
@@ -34,17 +35,18 @@ type TDataIndex = keyof IFEUser
 
 interface IParams {
   setSelectedRecordId: (value: string) => void
-  setShowDeleteSingleRecordModal: (value: boolean) => void
+  setShowBlockSingleUserModal: (value: boolean) => void
 }
 
 const getIconColor = (isFiltered: boolean) => (isFiltered ? 'rgba(26, 22, 87, 1)' : 'rgba(189, 188, 194, 1)')
 
-export const useUsersTableParams = ({ setSelectedRecordId, setShowDeleteSingleRecordModal }: IParams) => {
+export const useUsersTableParams = ({ setSelectedRecordId, setShowBlockSingleUserModal }: IParams) => {
   const navigate = useNavigate()
   const searchInput = useRef<InputRef>(null)
   const Icon = searchInput ? LockIcon : UnLockIcon
   const [getUsers] = useLazyGetUsersQuery()
   const { setAppNotification } = useAppSlice()
+  const { ordering } = useUserSlice()
 
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
 
@@ -112,17 +114,13 @@ export const useUsersTableParams = ({ setSelectedRecordId, setShowDeleteSingleRe
   }
 
   const handleCopyContent = async (email: string) => {
-    try {
-      await navigator.clipboard.writeText(email)
+    await navigator.clipboard.writeText(email)
 
-      setAppNotification({
-        message: 'Email successfully copied',
-        timestamp: new Date().getTime(),
-        type: 'success',
-      })
-    } catch {
-      // TODO: think about this issue
-    }
+    setAppNotification({
+      message: 'Email successfully copied',
+      timestamp: new Date().getTime(),
+      type: 'success',
+    })
   }
 
   const columns: TColumns<IFEUser> = [
@@ -182,6 +180,7 @@ export const useUsersTableParams = ({ setSelectedRecordId, setShowDeleteSingleRe
       title: 'Birth Date',
       dataIndex: 'birthDate',
       width: '128px',
+      sortOrder: ordering ? (ordering.startsWith('-') ? 'descend' : 'ascend') : null,
       sorter: (a, b) => new Date(a.birthDate).getTime() - new Date(b.birthDate).getTime(),
       render: (value) => <CellText>{format(new Date(value), 'MMM, dd yyyy') || '-'}</CellText>,
     },
@@ -226,7 +225,7 @@ export const useUsersTableParams = ({ setSelectedRecordId, setShowDeleteSingleRe
           <ReactSVG
             onClick={() => {
               setSelectedRecordId(value.id)
-              setShowDeleteSingleRecordModal(true)
+              setShowBlockSingleUserModal(true)
             }}
             src={Icon}
             style={{ marginLeft: '8px' }}

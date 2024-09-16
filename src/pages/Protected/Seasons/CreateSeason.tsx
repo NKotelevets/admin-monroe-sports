@@ -2,7 +2,7 @@ import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import { Breadcrumb, Flex } from 'antd'
 import { format } from 'date-fns'
 import dayjs from 'dayjs'
-import { FieldArray, Form, Formik } from 'formik'
+import { FieldArray, Form, Formik, FormikHelpers } from 'formik'
 import { useCallback, useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useNavigate } from 'react-router-dom'
@@ -74,7 +74,14 @@ const CreateSeason = () => {
 
   const goBack = useCallback(() => navigate(PATH_TO_SEASONS), [])
 
-  const handleSubmit = (values: ICreateSeasonFormValues) => {
+  const handleSubmit = async (
+    values: ICreateSeasonFormValues,
+    formikHelpers: FormikHelpers<ICreateSeasonFormValues>,
+  ) => {
+    const result = await formikHelpers.validateForm(values)
+
+    if (Object.keys(result).length || isDuplicateNames) return
+
     const createSeasonBody: IBECreateSeasonBody = {
       name: values.name,
       league_id: values.league,
@@ -117,9 +124,7 @@ const CreateSeason = () => {
 
     createSeason(createSeasonBody)
       .unwrap()
-      .then(() => {
-        navigate(PATH_TO_SEASONS)
-      })
+      .then(() => navigate(PATH_TO_SEASONS))
 
     setSelectedLeague(null)
   }
@@ -169,10 +174,20 @@ const CreateSeason = () => {
           validateOnBlur
           validateOnMount
         >
-          {({ values, handleChange, handleSubmit, errors, setFieldValue, validateField, setFieldError }) => {
-            const isEnabledButton = Object.keys(errors).length === 0 && !isDuplicateNames
-            const isAddSubdivisionBtnDisabled = !!errors.divisions?.length || isDuplicateNames
-
+          {({
+            values,
+            handleChange,
+            handleSubmit,
+            errors,
+            setFieldValue,
+            validateField,
+            setFieldError,
+            handleBlur,
+            touched,
+            setTouched,
+            setFieldTouched,
+          }) => {
+            const isAddDivisionBtnDisabled = !!errors.divisions?.length || isDuplicateNames
             const collapsedDivisionItems = (removeFn: (index: number) => void) =>
               values.divisions.map((division, idx) => ({
                 key: idx,
@@ -186,6 +201,8 @@ const CreateSeason = () => {
                     removeFn={removeFn}
                     isMultipleDivisions={values.divisions.length > 1}
                     values={values}
+                    touched={touched}
+                    handleBlur={handleBlur}
                   />
                 ),
                 label: <AccordionHeader>#{idx + 1} Division/Pool</AccordionHeader>,
@@ -199,7 +216,13 @@ const CreateSeason = () => {
                   <ProtectedPageTitle>Create season</ProtectedPageTitle>
                   {isCreateBracketPage && (
                     <PageContent>
-                      <CreateBracket setFieldValue={setFieldValue} values={values} />
+                      <CreateBracket
+                        setFieldValue={setFieldValue}
+                        values={values}
+                        handleBlur={handleBlur}
+                        touched={touched}
+                        setFieldTouched={setFieldTouched}
+                      />
                     </PageContent>
                   )}
 
@@ -219,8 +242,8 @@ const CreateSeason = () => {
                               placeholder="Enter season"
                               style={{ height: '32px' }}
                               label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Name *</OptionTitle>}
-                              error={errors.name}
-                              onBlur={() => validateField('name')}
+                              error={touched.name ? errors.name : ''}
+                              onBlur={handleBlur}
                             />
                           </div>
 
@@ -229,16 +252,20 @@ const CreateSeason = () => {
                               <Flex align="center" justify="space-between">
                                 <OptionTitle>Linked League/Tourn *</OptionTitle>
 
-                                {errors.league && <InputError>{errors.league}</InputError>}
+                                {touched.league && errors.league && <InputError>{errors.league}</InputError>}
                               </Flex>
 
                               <SearchLeagueTournament
                                 selectedLeague={selectedLeagueTournament}
-                                isError={!!errors.league}
-                                onBlur={() => validateField('league')}
+                                isError={touched.league ? !!errors.league : false}
+                                onBlur={() => {
+                                  setTouched({ ...touched, league: true })
+                                  validateField('league')
+                                }}
                                 setFieldError={setFieldError}
                                 setSelectedLeague={(data) => {
                                   setFieldValue('league', data.id)
+                                  setTouched({ ...touched, league: true })
 
                                   const updatedSubdivisions = values.divisions.map((division) => ({
                                     name: division.name,
@@ -253,10 +280,7 @@ const CreateSeason = () => {
                                   }))
 
                                   setFieldValue('divisions', updatedSubdivisions)
-
                                   setSelectedLeagueTournament(data.name)
-
-                                  validateField('league')
                                 }}
                               />
                             </div>
@@ -266,44 +290,60 @@ const CreateSeason = () => {
                             <Flex align="center" justify="space-between">
                               <OptionTitle>Start Date *</OptionTitle>
 
-                              {errors.startDate && <InputError>{errors.startDate}</InputError>}
+                              {touched.startDate && errors.startDate && <InputError>{errors.startDate}</InputError>}
                             </Flex>
 
                             <MonroeDatePicker
                               name="startDate"
                               value={values.startDate}
-                              is_error={`${!!errors.startDate}`}
+                              is_error={`${touched.startDate ? !!errors.startDate : false}`}
                               onChange={(_: unknown, data: string | string[]) => {
+                                setTouched({ ...touched, startDate: true })
+
                                 if (data) {
                                   setFieldValue('startDate', dayjs(data as string, 'YYYY-MM-DD'))
+                                  setFieldError('startDate', '')
                                 } else {
                                   setFieldValue('startDate', null)
+                                  setFieldError('startDate', 'Start Date is required')
                                 }
                               }}
                               maxDate={values.expectedEndDate as unknown as dayjs.Dayjs}
-                              onBlur={() => validateField('startDate')}
+                              onBlur={() => {
+                                setTouched({ ...touched, startDate: true })
+                                validateField('startDate')
+                              }}
                             />
                           </Flex>
 
                           <Flex vertical justify="flex-start" style={{ marginBottom: '8px', width: '100%' }}>
                             <Flex align="center" justify="space-between">
                               <OptionTitle>Expected End Date *</OptionTitle>
-                              {errors.expectedEndDate && <InputError>{errors.expectedEndDate}</InputError>}
+                              {touched.expectedEndDate && errors.expectedEndDate && (
+                                <InputError>{errors.expectedEndDate}</InputError>
+                              )}
                             </Flex>
 
                             <MonroeDatePicker
-                              is_error={`${!!errors.expectedEndDate}`}
+                              is_error={`${touched.expectedEndDate ? !!errors.expectedEndDate : false}`}
                               name="expectedEndDate"
                               value={values.expectedEndDate}
                               onChange={(_: unknown, data: string | string[]) => {
+                                setTouched({ ...touched, expectedEndDate: true })
+
                                 if (data) {
                                   setFieldValue('expectedEndDate', dayjs(data as string, 'YYYY-MM-DD'))
+                                  setFieldError('expectedEndDate', '')
                                 } else {
                                   setFieldValue('expectedEndDate', null)
+                                  setFieldError('expectedEndDate', 'Expected End Date is required')
                                 }
                               }}
                               minDate={values.startDate as unknown as dayjs.Dayjs}
-                              onBlur={() => validateField('expectedEndDate')}
+                              onBlur={() => {
+                                setTouched({ ...touched, expectedEndDate: true })
+                                validateField('expectedEndDate')
+                              }}
                             />
                           </Flex>
                         </MainContainer>
@@ -338,7 +378,7 @@ const CreateSeason = () => {
 
                               <MonroeTooltip
                                 text={
-                                  isAddSubdivisionBtnDisabled
+                                  isAddDivisionBtnDisabled
                                     ? "You can't create division/pool when you have errors in other divisions/pools"
                                     : ''
                                 }
@@ -346,7 +386,7 @@ const CreateSeason = () => {
                                 containerWidth="190px"
                               >
                                 <AddEntityButton
-                                  disabled={isAddSubdivisionBtnDisabled}
+                                  disabled={isAddDivisionBtnDisabled}
                                   type="default"
                                   icon={<PlusOutlined />}
                                   iconPosition="start"
@@ -372,14 +412,7 @@ const CreateSeason = () => {
                             Cancel
                           </CancelButton>
 
-                          <MonroeTooltip width="179px" text={!isEnabledButton ? 'Missing mandatory data' : ''}>
-                            <MonroeButton
-                              label="Create Season"
-                              type="primary"
-                              onClick={handleSubmit}
-                              isDisabled={!isEnabledButton}
-                            />
-                          </MonroeTooltip>
+                          <MonroeButton label="Create Season" type="primary" onClick={handleSubmit} />
                         </Flex>
                       </Flex>
                     </PageContent>

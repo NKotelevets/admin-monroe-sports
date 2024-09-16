@@ -110,8 +110,10 @@ const OperatorOnboarding = () => {
           validateOnBlur
           onSubmit={onSubmit}
           validationSchema={finishCreateOperatorValidationSchema}
+          validateOnChange
+          validateOnMount
         >
-          {({ values, handleChange, handleSubmit, errors }) => {
+          {({ values, handleChange, handleSubmit, errors, touched, handleBlur }) => {
             const passwordErrors = checkPassword(values.password)
             const isEnabledButton = Object.keys(errors).length === 0
 
@@ -141,24 +143,28 @@ const OperatorOnboarding = () => {
 
                       <MainContainer>
                         <div style={{ marginBottom: '8px' }}>
-                          <OptionTitle style={{ padding: '0 0 5px 0' }}>First Name *</OptionTitle>
                           <MonroeInput
                             name="firstName"
                             value={values.firstName}
                             onChange={handleChange}
                             placeholder="Enter firstName"
                             style={{ height: '32px' }}
+                            error={touched.firstName ? errors.firstName : ''}
+                            onBlur={handleBlur}
+                            label={<OptionTitle style={{ padding: '0 0 5px 0' }}>First Name *</OptionTitle>}
                           />
                         </div>
 
                         <div style={{ marginBottom: '8px' }}>
-                          <OptionTitle>Last Name *</OptionTitle>
                           <MonroeInput
                             name="lastName"
                             value={values.lastName}
                             onChange={handleChange}
                             placeholder="Enter lastName"
                             style={{ height: '32px' }}
+                            error={touched.lastName ? errors.lastName : ''}
+                            onBlur={handleBlur}
+                            label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Last Name *</OptionTitle>}
                           />
                         </div>
 
@@ -170,7 +176,8 @@ const OperatorOnboarding = () => {
                             onChange={handleChange}
                             placeholder="Enter email"
                             style={{ height: '32px' }}
-                            error={errors.pointOfContactEmail === 'Incorrect email' ? errors.pointOfContactEmail : ''}
+                            error={touched.pointOfContactEmail ? errors.pointOfContactEmail : ''}
+                            onBlur={handleBlur}
                           />
                         </div>
 
@@ -182,6 +189,8 @@ const OperatorOnboarding = () => {
                             onChange={handleChange}
                             placeholder="Enter email"
                             style={{ height: '32px' }}
+                            error={touched.pointOfContactPhoneNumber ? errors.pointOfContactPhoneNumber : ''}
+                            onBlur={handleBlur}
                           />
                         </div>
                       </MainContainer>
@@ -200,53 +209,61 @@ const OperatorOnboarding = () => {
 
                       <MainContainer>
                         <div style={{ marginBottom: '8px' }}>
-                          <Flex align="center">
-                            <OptionTitle style={{ padding: '0 0 5px 0', marginRight: '8px' }}>
-                              Operator's name *
-                            </OptionTitle>
-
-                            <MonroeTooltip text={DEFAULT_TOOLTIP_TEXT} width="358px" containerWidth="auto">
-                              <ReactSVG src={InfoCircleIcon} style={{ padding: '0 0 5px 0' }} />
-                            </MonroeTooltip>
-                          </Flex>
                           <MonroeInput
                             name="name"
                             value={values.name}
                             onChange={handleChange}
                             placeholder="Enter name"
                             style={{ height: '32px' }}
+                            error={touched.name ? errors.name : ''}
+                            onBlur={handleBlur}
+                            label={
+                              <Flex align="center">
+                                <OptionTitle style={{ padding: '0 0 5px 0', marginRight: '8px' }}>
+                                  Operator's name *
+                                </OptionTitle>
+
+                                <MonroeTooltip text={DEFAULT_TOOLTIP_TEXT} width="358px" containerWidth="auto">
+                                  <ReactSVG src={InfoCircleIcon} style={{ padding: '0 0 5px 0' }} />
+                                </MonroeTooltip>
+                              </Flex>
+                            }
                           />
                         </div>
 
                         <div style={{ marginBottom: '8px' }}>
-                          <Flex align="center">
-                            <OptionTitle style={{ padding: '0 0 5px 0', marginRight: '8px' }}>
-                              Operator's email *
-                            </OptionTitle>
-
-                            <MonroeTooltip text={DEFAULT_TOOLTIP_TEXT} width="358px" containerWidth="auto">
-                              <ReactSVG src={InfoCircleIcon} style={{ padding: '0 0 5px 0' }} />
-                            </MonroeTooltip>
-                          </Flex>
-
                           <MonroeInput
                             name="email"
                             value={values.email}
                             onChange={handleChange}
                             placeholder="Enter email"
                             style={{ height: '32px' }}
-                            error={errors.email === 'Incorrect email' ? errors.email : ''}
+                            error={touched.email ? errors.email : ''}
+                            onBlur={handleBlur}
+                            label={
+                              <Flex align="center">
+                                <OptionTitle style={{ padding: '0 0 5px 0', marginRight: '8px' }}>
+                                  Operator's email *
+                                </OptionTitle>
+
+                                <MonroeTooltip text={DEFAULT_TOOLTIP_TEXT} width="358px" containerWidth="auto">
+                                  <ReactSVG src={InfoCircleIcon} style={{ padding: '0 0 5px 0' }} />
+                                </MonroeTooltip>
+                              </Flex>
+                            }
                           />
                         </div>
 
                         <div style={{ marginBottom: '8px' }}>
-                          <OptionTitle style={{ padding: '0 0 5px 0' }}>Operator's phone *</OptionTitle>
                           <MonroeInput
                             name="phone"
                             value={values.phone}
                             onChange={handleChange}
                             placeholder="Enter phone"
                             style={{ height: '32px' }}
+                            error={touched.phone ? errors.phone : ''}
+                            onBlur={handleBlur}
+                            label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Operator's phone *</OptionTitle>}
                           />
                         </div>
 
@@ -315,6 +332,8 @@ const OperatorOnboarding = () => {
                             onChange={handleChange}
                             placeholder="Enter password"
                             label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Password *</OptionTitle>}
+                            error={touched.password ? errors.password : ''}
+                            onBlur={handleBlur}
                           />
 
                           {isComponentVisible && <PasswordTooltip passwordErrors={passwordErrors} />}
@@ -326,8 +345,9 @@ const OperatorOnboarding = () => {
                             value={values.confirmPassword}
                             onChange={handleChange}
                             placeholder="Enter password"
-                            error={errors.confirmPassword}
                             label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Confirm password *</OptionTitle>}
+                            error={touched.confirmPassword ? errors.confirmPassword : ''}
+                            onBlur={handleBlur}
                           />
                         </div>
                       </MainContainer>

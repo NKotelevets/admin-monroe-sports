@@ -198,13 +198,13 @@ export const useLeagueAndTournamentTableParams = ({ setSelectedRecordId, setShow
       title: 'Description',
       dataIndex: 'description',
       width: '250px',
-      render: (value) => <TextWithTooltip maxLength={25} text={value} />,
+      render: (value) => <TextWithTooltip maxLength={25} text={value} isRegularText />,
     },
     {
       title: 'Welcome note',
       dataIndex: 'welcomeNote',
       width: '250px',
-      render: (value) => <TextWithTooltip maxLength={25} text={value} />,
+      render: (value) => <TextWithTooltip maxLength={25} text={value} isRegularText />,
     },
     {
       title: 'Actions',

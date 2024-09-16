@@ -47,7 +47,7 @@ const LeaguesDeletingInfo = () => {
   })
   const { columns } = useLeaguesDeletingInfoTableProps(tableParams)
 
-  const handleTableChange: TableProps['onChange'] = (pagination, filters, sorter) => {
+  const handleTableChange: TableProps<ILeagueDeletionItemError>['onChange'] = (pagination, filters, sorter) => {
     setTableParams({
       pagination,
       filters,

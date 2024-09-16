@@ -5,16 +5,21 @@ import { CSSProperties, FC } from 'react'
 const textStyles: CSSProperties = {
   color: '#3E34CA',
   cursor: 'pointer',
-  zIndex: 9999,
+  zIndex: 990,
+}
+
+const regularTextStyles = {
+  color: 'rgba(26, 22, 87, 0.85)',
 }
 
 interface ITitleWithTooltipProps {
   maxLength: number
   text: string
   onClick?: () => void
+  isRegularText?: boolean
 }
 
-const TextWithTooltip: FC<ITitleWithTooltipProps> = ({ maxLength, text, onClick }) => (
+const TextWithTooltip: FC<ITitleWithTooltipProps> = ({ maxLength, text, onClick, isRegularText }) => (
   <>
     {text?.length > maxLength ? (
       <Tooltip
@@ -25,12 +30,12 @@ const TextWithTooltip: FC<ITitleWithTooltipProps> = ({ maxLength, text, onClick 
           width: '250px',
         }}
       >
-        <Typography.Text style={textStyles} onClick={onClick}>
+        <Typography.Text style={!isRegularText ? textStyles : regularTextStyles} onClick={onClick}>
           {text.substring(0, maxLength - 3).trim() + '...'}
         </Typography.Text>
       </Tooltip>
     ) : (
-      <Typography.Text style={textStyles} onClick={onClick}>
+      <Typography.Text style={!isRegularText ? textStyles : regularTextStyles} onClick={onClick}>
         {text}
       </Typography.Text>
     )}
@@ -38,4 +43,3 @@ const TextWithTooltip: FC<ITitleWithTooltipProps> = ({ maxLength, text, onClick 
 )
 
 export default TextWithTooltip
-

@@ -212,7 +212,7 @@ const BlockingInfo = () => {
     },
   ]
 
-  const handleTableChange: TableProps['onChange'] = (pagination, filters, sorter) => {
+  const handleTableChange: TableProps<IBlockedUserError>['onChange'] = (pagination, filters, sorter) => {
     setTableParams({
       pagination,
       filters,

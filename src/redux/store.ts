@@ -1,3 +1,5 @@
+import { gamesApi } from './games/games.api'
+import { masterTeamsApi } from './masterTeams/masterTeams.api'
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import { FLUSH, PAUSE, PERSIST, REGISTER, REHYDRATE, persistReducer, persistStore } from 'redux-persist'
 import createWebStorage from 'redux-persist/lib/storage/createWebStorage'
@@ -7,6 +9,7 @@ import { authApi } from '@/redux/auth/auth.api'
 import { authReducer } from '@/redux/auth/auth.reducer'
 import { leaguesApi } from '@/redux/leagues/leagues.api'
 import { leaguesReducer } from '@/redux/leagues/leagues.reducer'
+import { masterTeamsReducer } from '@/redux/masterTeams/masterTeams.reducer'
 import { seasonsApi } from '@/redux/seasons/seasons.api'
 import { seasonsReducer } from '@/redux/seasons/seasons.reducer'
 import { userApi } from '@/redux/user/user.api'
@@ -40,7 +43,9 @@ const rootReducer = combineReducers({
   ...userReducer,
   ...leaguesReducer,
   ...seasonsReducer,
-  [appSlice.reducerPath]: appSlice.reducer,
+  ...masterTeamsReducer,
+  [gamesApi.reducerPath]: gamesApi.reducer,
+  [appSlice.name]: appSlice.reducer,
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
@@ -53,7 +58,14 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, REGISTER],
       },
-    }).concat([authApi.middleware, userApi.middleware, leaguesApi.middleware, seasonsApi.middleware]),
+    }).concat([
+      authApi.middleware,
+      userApi.middleware,
+      leaguesApi.middleware,
+      seasonsApi.middleware,
+      masterTeamsApi.middleware,
+      gamesApi.middleware,
+    ]),
 })
 
 export type TRootState = ReturnType<typeof store.getState>

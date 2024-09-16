@@ -12,6 +12,7 @@ export const TitleStyle = styled.div<{ isError: boolean }>`
   color: ${(props) => (props.isError ? '#BC261B' : '#1A1657')};
   font-size: 14px;
   font-weight: 500;
+  margin: '5px 0';
 `
 
 export const Subtext = styled.div`

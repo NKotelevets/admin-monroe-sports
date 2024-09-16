@@ -20,15 +20,19 @@ interface IMonroeSelectProps {
   optionFilterProp?: string
   filterSort?: (optionA: DefaultOptionType, optionB: DefaultOptionType) => number
   onSearch?: (value: string) => void
+  onBlur?: () => void
 }
 
-const CustomSelect: FC<IMonroeSelectProps> = ({ styles, renderInside = false, ...props }) => (
+const CustomSelect: FC<IMonroeSelectProps> = ({ styles, renderInside = false, onBlur, ...props }) => (
   <Select
     showSearch={true}
     suffixIcon={<ReactSVG src={ArrowDownIcon} />}
     style={styles}
     {...props}
     getPopupContainer={(trigger) => (renderInside ? trigger.parentNode : undefined)}
+    onDropdownVisibleChange={(isOpen) => {
+      if (!isOpen && !props.value && onBlur) onBlur()
+    }}
   />
 )
 

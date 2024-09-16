@@ -52,7 +52,7 @@ const ImportInfo = () => {
   const [sortOrder, setSortOrder] = useState<TSortOption>(null)
   const { columns } = useLeaguesImportInfoTableParams(sortOrder, setSelectedIdx)
 
-  const handleTableChange: TableProps['onChange'] = (pagination, filters, sorter) => {
+  const handleTableChange: TableProps<ILeagueImportInfoTableRecord>['onChange'] = (pagination, filters, sorter) => {
     setTableParams({
       pagination: {
         ...pagination,

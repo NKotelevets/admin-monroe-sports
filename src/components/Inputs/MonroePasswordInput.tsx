@@ -10,6 +10,8 @@ interface IMonroePasswordInputProps {
   onChange: ChangeEventHandler<HTMLInputElement>
   name: string
   error?: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onBlur?: (e: React.FocusEvent<any>) => void
 }
 
 const MonroePasswordInput: FC<IMonroePasswordInputProps> = ({ label, error, ...rest }) => (

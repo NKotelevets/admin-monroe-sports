@@ -66,9 +66,11 @@ const AddOperatorButton = styled(Button)`
 interface IOperatorsInputProps {
   setOperator: (data: string) => void
   selectedOperator: undefined | string
+  isError: boolean
+  handleBlur: () => void
 }
 
-const OperatorsInput: FC<IOperatorsInputProps> = ({ setOperator, selectedOperator }) => {
+const OperatorsInput: FC<IOperatorsInputProps> = ({ setOperator, handleBlur, selectedOperator, isError }) => {
   const [value, setValue] = useState(selectedOperator || '')
   const { isComponentVisible, ref, onClose } = useIsActiveComponent(false)
   const [offset, setOffset] = useState(0)
@@ -167,6 +169,8 @@ const OperatorsInput: FC<IOperatorsInputProps> = ({ setOperator, selectedOperato
             value={value}
             placeholder="Select operator"
             style={{ height: '32px' }}
+            is_error={`${isError}`}
+            onBlur={handleBlur}
           />
 
           <SearchLeagueInputIcon isComponentVisible={isComponentVisible}>

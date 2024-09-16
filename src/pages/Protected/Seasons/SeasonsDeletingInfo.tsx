@@ -153,7 +153,7 @@ const SeasonsDeletingInfo = () => {
     },
   ]
 
-  const handleTableChange: TableProps['onChange'] = (pagination, filters, sorter) => {
+  const handleTableChange: TableProps<IDeletionSeasonItemError>['onChange'] = (pagination, filters, sorter) => {
     setTableParams({
       pagination,
       filters,

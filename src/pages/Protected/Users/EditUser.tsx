@@ -22,6 +22,7 @@ import {
   AddEntityButton,
   CancelButton,
   MainContainer,
+  MonroeBlueText,
   MonroeDatePicker,
   MonroeDivider,
   OptionTitle,
@@ -88,7 +89,7 @@ const EditUser = () => {
       title: <a href={PATH_TO_USERS}>Users</a>,
     },
     {
-      title: <a>{initialValues.firstName + ' ' + initialValues.lastName}</a>,
+      title: <MonroeBlueText>{initialValues.firstName + ' ' + initialValues.lastName}</MonroeBlueText>,
     },
   ]
 
@@ -104,8 +105,9 @@ const EditUser = () => {
           validationSchema={userValidationSchema}
           onSubmit={handleSubmit}
           validateOnChange
+          validateOnBlur
         >
-          {({ values, handleChange, handleSubmit, errors, setFieldValue }) => {
+          {({ values, handleChange, handleSubmit, errors, setFieldValue, setFieldTouched }) => {
             const isEnabledButton = Object.keys(errors).length === 0
             const isAddEntityButtonDisabled = !!errors.roles?.length
             const collapsedDivisionItems = (removeFn: (index: number) => void) =>
@@ -121,6 +123,7 @@ const EditUser = () => {
                     removeFn={removeFn}
                     isMultipleRoles={values.roles.length > 1}
                     values={values}
+                    setFieldTouched={setFieldTouched}
                   />
                 ),
                 label: <AccordionHeader>#{idx + 1} Role</AccordionHeader>,
@@ -249,12 +252,12 @@ const EditUser = () => {
 
                     <MonroeDivider
                       style={{
-                        margin: '24px  0',
+                        margin: '24px 0 12px 0',
                       }}
                     />
 
                     <Flex>
-                      <div style={{ flex: '0 0 40%' }}>
+                      <div style={{ flex: '0 0 40%', paddingTop: '12px' }}>
                         <ProtectedPageSubtitle>Roles</ProtectedPageSubtitle>
                       </div>
 

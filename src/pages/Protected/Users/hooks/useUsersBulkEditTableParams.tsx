@@ -1,4 +1,4 @@
-import { AddBracketButton } from '../../Seasons/components/Elements'
+import { AddRoleButton } from '../../Seasons/components/Elements'
 import { ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES, MOCKED_TEAMS, ROLES } from '../constants/roles'
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import Flex from 'antd/es/flex'
@@ -165,7 +165,7 @@ export const useUsersBulkEditTableParams = () => {
               width="220px"
               containerWidth="113px"
             >
-              <AddBracketButton
+              <AddRoleButton
                 disabled={isDisabledAddRoleButton}
                 onClick={handleAddRole}
                 icon={<PlusOutlined />}
@@ -174,7 +174,7 @@ export const useUsersBulkEditTableParams = () => {
                 }}
               >
                 Add role
-              </AddBracketButton>
+              </AddRoleButton>
             </MonroeTooltip>
           </Flex>
         )

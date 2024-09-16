@@ -125,7 +125,7 @@ const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({
       <div ref={ref} style={{ width: '100%' }}>
         <Container>
           <SearchLeagueInput
-            name="search"
+            name="league"
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
               handleChange(event.target.value)
               setFieldError('league', '')

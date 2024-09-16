@@ -111,9 +111,11 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
         return (
           <Flex align="center" justify="flex-start">
             {!!showIcon && (
-              <MonroeTooltip text="Season requires brackets setting." width="130px" containerWidth="auto">
-                <ReactSVG src={WarningIcon} style={{ marginRight: '8px' }} />
-              </MonroeTooltip>
+              <div style={{ marginRight: '8px' }}>
+                <MonroeTooltip text="Season requires brackets setting." width="130px" containerWidth="auto">
+                  <ReactSVG src={WarningIcon} />
+                </MonroeTooltip>
+              </div>
             )}
 
             <TextWithTooltip
@@ -177,7 +179,7 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
               <MonroeTooltip
                 width="150px"
                 containerWidth="auto"
-                height="120px"
+                height="140px"
                 text={
                   <Flex vertical>
                     {divisions.map((division) => (

@@ -2,6 +2,7 @@ import styled from '@emotion/styled'
 import { MatchComponentProps } from '@g-loot/react-tournament-brackets/dist/src/types'
 import { Flex } from 'antd'
 import { DefaultOptionType } from 'antd/es/select'
+import { FormikTouched } from 'formik'
 import { FC } from 'react'
 
 import {
@@ -17,13 +18,14 @@ import {
 import { MonroeBlueText } from '@/components/Elements'
 import MonroeSelect from '@/components/MonroeSelect'
 
-import { IMatch } from '@/common/interfaces/bracket'
+import { IMatch, IParticipant } from '@/common/interfaces/bracket'
 
 interface IMatchProps {
   matchProps: MatchComponentProps
   brackets: IMatch[]
   teamsOptions: DefaultOptionType[]
   options: DefaultOptionType[]
+  handleTouchFiled: (filedName: string) => void
   setNewBracketData: React.Dispatch<
     React.SetStateAction<{
       name: string
@@ -32,6 +34,7 @@ interface IMatchProps {
       matches: IMatch[]
     }>
   >
+  matches?: FormikTouched<IMatch>[]
 }
 
 const MonroeSelectWrapper = styled(MonroeSelect)`
@@ -43,7 +46,15 @@ const MonroeSelectWrapper = styled(MonroeSelect)`
   }
 `
 
-const Match: FC<IMatchProps> = ({ brackets, matchProps, teamsOptions, options, setNewBracketData }) => {
+const Match: FC<IMatchProps> = ({
+  brackets,
+  matchProps,
+  teamsOptions,
+  options,
+  setNewBracketData,
+  handleTouchFiled,
+  matches,
+}) => {
   const match = matchProps.match as IMatch
   const matchParticipants =
     match.participants.length === 1
@@ -126,6 +137,10 @@ const Match: FC<IMatchProps> = ({ brackets, matchProps, teamsOptions, options, s
                   : participant?.subpoolName
                 : undefined
 
+              const participantTouch = matches?.[match.id - 1]?.participants?.[
+                +participant.id - 1
+              ] as FormikTouched<IParticipant>
+
               return (
                 <Flex
                   key={participant.id}
@@ -147,19 +162,29 @@ const Match: FC<IMatchProps> = ({ brackets, matchProps, teamsOptions, options, s
                         styles={{ flex: '1 1 auto', height: '42px' }}
                         placeholder="Choose Subpool"
                         options={options}
-                        onChange={(value) => handleChange(value, `${participant.id}`, 'subpoolName')}
+                        onChange={(value) => {
+                          handleTouchFiled(`${match.id - 1}.participants.${+participant.id - 1}.subpoolName`)
+                          handleChange(value, `${+participant.id}`, 'subpoolName')
+                        }}
                         value={participantValue}
-                        name="subpoolname"
-                        is_error={`${participantValue === undefined}`}
+                        name="subpoolName"
+                        is_error={`${participantTouch?.subpoolName ? !participantValue : 'false'}`}
+                        onBlur={() =>
+                          handleTouchFiled(`${match.id - 1}.participants.${+participant.id - 1}.subpoolName`)
+                        }
                       />
 
                       <MonroeSelectWrapper
-                        name="playoffsTeams"
+                        name="seed"
                         value={participant.seed ? `${participant.seed}` : null}
                         options={teamsOptions}
-                        onChange={(value) => handleChange(value, `${participant.id}`, 'seed')}
+                        onChange={(value) => {
+                          handleTouchFiled(`${match.id - 1}.participants.${+participant.id - 1}.seed`)
+                          handleChange(value, `${+participant.id}`, 'seed')
+                        }}
                         placeholder="Seed #"
-                        is_error={`${!participant.seed}`}
+                        is_error={`${participantTouch?.seed ? !participant.seed : 'false'}`}
+                        onBlur={() => handleTouchFiled(`${match.id - 1}.participants.${+participant.id - 1}.seed`)}
                       />
                     </Flex>
                   )}

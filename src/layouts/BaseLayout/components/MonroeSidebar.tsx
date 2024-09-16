@@ -17,12 +17,12 @@ import {
   PATH_TO_EDIT_LEAGUE,
   PATH_TO_EDIT_SEASON,
   PATH_TO_EDIT_USER,
+  PATH_TO_EVENTS,
   PATH_TO_GROUPS,
   PATH_TO_LEAGUES,
   PATH_TO_LEAGUE_TEAMS,
   PATH_TO_MASTER_TEAMS,
   PATH_TO_PLAYOFF_FORMAT,
-  PATH_TO_SCHEDULE,
   PATH_TO_SEASONS,
   PATH_TO_STANDINGS_FORMAT,
   PATH_TO_TIEBREAKERS,
@@ -71,6 +71,8 @@ const MonroeSidebar = () => {
   const isLeagueTournamentPage = pathname.includes(PATH_TO_LEAGUES)
   const isSeasonsPage = pathname.includes(PATH_TO_SEASONS)
   const isUsersPage = pathname.includes(PATH_TO_USERS)
+  const isMasterTeamsPage = pathname.includes(PATH_TO_MASTER_TEAMS)
+
   const { setIsCreateBracketPage, setSelectedBracketId } = useSeasonSlice()
 
   const getSelectedSubMenu = () => {
@@ -79,6 +81,8 @@ const MonroeSidebar = () => {
     if (isLeagueTournamentPage || isSeasonsPage) return LEAGUE_AND_TOURN_KEY
 
     if (isUsersPage) return USERS_KEY
+
+    if (isMasterTeamsPage) return TEAMS_KEY
 
     if ([PATH_TO_PLAYOFF_FORMAT, PATH_TO_STANDINGS_FORMAT, PATH_TO_TIEBREAKERS].includes(pathname))
       return STANDINGS_DISPLAY_KEY
@@ -90,6 +94,8 @@ const MonroeSidebar = () => {
     if (isLeagueTournamentPage) return PATH_TO_LEAGUES
 
     if (isSeasonsPage) return PATH_TO_SEASONS
+
+    if (isMasterTeamsPage) return PATH_TO_MASTER_TEAMS
 
     return ''
   }
@@ -157,16 +163,16 @@ const MonroeSidebar = () => {
       ],
     },
     {
-      key: PATH_TO_SCHEDULE,
-      label: 'Schedule',
+      key: PATH_TO_EVENTS,
+      label: 'Events',
       icon: (
         <ReactSVG
-          className={location.pathname === PATH_TO_SCHEDULE ? 'red-icon' : ''}
+          className={location.pathname === PATH_TO_EVENTS ? 'red-icon' : ''}
           src={ScheduleIcon}
           style={{ marginLeft: '5px' }}
         />
       ),
-      onClick: () => navigateTo(PATH_TO_SCHEDULE),
+      onClick: () => navigateTo(PATH_TO_EVENTS),
     },
     {
       key: PATH_TO_GROUPS,

@@ -109,7 +109,7 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
     }
   }, [data])
 
-  const handleTableChange: TableProps['onChange'] = (pagination, filters, sorter) => {
+  const handleTableChange: TableProps<IFESeason>['onChange'] = (pagination, filters, sorter) => {
     const newOffset = (pagination?.current && (pagination?.current - 1) * (pagination?.pageSize || 10)) || 0
     const newLimit = pagination?.pageSize || 10
     setTableParams({

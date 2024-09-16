@@ -4,12 +4,17 @@ import Breadcrumb from 'antd/es/breadcrumb'
 import Flex from 'antd/es/flex'
 import { DefaultOptionType } from 'antd/es/select'
 import dayjs from 'dayjs'
-import { FieldArray, Form, Formik } from 'formik'
+import { FieldArray, Form, Formik, FormikHelpers } from 'formik'
 import { useNavigate } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
 import PopulateRole from '@/pages/Protected/Users/components/PopulateRole'
-import { INITIAL_ROLE_DATA, userInitialFormData, userValidationSchema } from '@/pages/Protected/Users/constants/formik'
+import {
+  ICreateUserFormValues,
+  INITIAL_ROLE_DATA,
+  userInitialFormData,
+  userValidationSchema,
+} from '@/pages/Protected/Users/constants/formik'
 
 import {
   Accordion,
@@ -17,6 +22,7 @@ import {
   AddEntityButton,
   CancelButton,
   MainContainer,
+  MonroeBlueText,
   MonroeDatePicker,
   MonroeDivider,
   OptionTitle,
@@ -41,7 +47,7 @@ const BREAD_CRUMB_ITEMS = [
     title: <a href={PATH_TO_USERS}>Users</a>,
   },
   {
-    title: <a>Create user</a>,
+    title: <MonroeBlueText>Create user</MonroeBlueText>,
   },
 ]
 
@@ -65,7 +71,11 @@ const UserForm = () => {
 
   const goBack = () => navigation(PATH_TO_USERS)
 
-  const handleSubmit = () => {}
+  const handleSubmit = async (values: ICreateUserFormValues, formikHelpers: FormikHelpers<ICreateUserFormValues>) => {
+    const result = await formikHelpers.validateForm(values)
+
+    if (Object.keys(result).length) return
+  }
 
   return (
     <Formik
@@ -73,9 +83,9 @@ const UserForm = () => {
       validationSchema={userValidationSchema}
       onSubmit={handleSubmit}
       validateOnChange
-      validateOnMount
+      validateOnBlur
     >
-      {({ values, handleChange, handleSubmit, errors, setFieldValue }) => {
+      {({ values, handleChange, handleSubmit, errors, setFieldValue, handleBlur, touched, setFieldTouched }) => {
         const isEnabledButton = Object.keys(errors).length === 0
         const isAddEntityButtonDisabled = !!errors.roles?.length
         const collapsedDivisionItems = (removeFn: (index: number) => void) =>
@@ -91,6 +101,7 @@ const UserForm = () => {
                 removeFn={removeFn}
                 isMultipleRoles={values.roles.length > 1}
                 values={values}
+                setFieldTouched={setFieldTouched}
               />
             ),
             label: <AccordionHeader>#{idx + 1} Role</AccordionHeader>,
@@ -111,29 +122,34 @@ const UserForm = () => {
 
                   <MainContainer>
                     <div style={{ marginBottom: '8px' }}>
-                      <OptionTitle style={{ padding: '0 0 5px 0' }}>First Name *</OptionTitle>
                       <MonroeInput
                         name="firstName"
+                        label={<OptionTitle style={{ padding: '0 0 5px 0' }}>First Name *</OptionTitle>}
                         value={values.firstName}
                         onChange={handleChange}
                         placeholder="Enter first name"
                         style={{ height: '32px' }}
+                        error={touched.firstName ? errors.firstName : ''}
+                        onBlur={handleBlur}
                       />
                     </div>
 
                     <div style={{ marginBottom: '8px' }}>
-                      <OptionTitle style={{ padding: '0 0 5px 0' }}>Last Name *</OptionTitle>
                       <MonroeInput
+                        label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Last Name *</OptionTitle>}
                         name="lastName"
                         value={values.lastName}
                         onChange={handleChange}
                         placeholder="Enter last name"
                         style={{ height: '32px' }}
+                        error={touched.lastName ? errors.lastName : ''}
+                        onBlur={handleBlur}
                       />
                     </div>
 
                     <Flex vertical justify="flex-start" style={{ marginBottom: '8px', width: '100%' }}>
                       <OptionTitle>Birth Date</OptionTitle>
+
                       <MonroeDatePicker
                         name="birthDate"
                         value={values.birthDate}
@@ -181,12 +197,12 @@ const UserForm = () => {
                         onChange={handleChange}
                         placeholder="Enter email"
                         style={{ height: '32px' }}
-                        error={errors.email === 'Incorrect email' ? errors.email : ''}
+                        error={touched.email ? errors.email : ''}
+                        onBlur={handleBlur}
                       />
                     </div>
 
                     <div style={{ marginBottom: '8px' }}>
-                      <OptionTitle style={{ padding: '0 0 5px 0' }}>Phone</OptionTitle>
                       <MonroeInput
                         name="phoneNumber"
                         value={values.phoneNumber}
@@ -195,11 +211,12 @@ const UserForm = () => {
                         }}
                         placeholder="Enter phone"
                         style={{ height: '32px' }}
+                        label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Phone</OptionTitle>}
+                        error={errors.phoneNumber}
                       />
                     </div>
 
                     <div style={{ marginBottom: '8px' }}>
-                      <OptionTitle>Zip Code</OptionTitle>
                       <MonroeInput
                         name="zipCode"
                         value={values.zipCode}
@@ -208,6 +225,8 @@ const UserForm = () => {
                         }}
                         placeholder="Enter zip code"
                         style={{ height: '32px' }}
+                        label={<OptionTitle>Zip Code</OptionTitle>}
+                        error={errors.zipCode}
                       />
                     </div>
                   </MainContainer>
@@ -215,12 +234,12 @@ const UserForm = () => {
 
                 <MonroeDivider
                   style={{
-                    margin: '24px  0',
+                    margin: '24px 0 12px 0',
                   }}
                 />
 
                 <Flex>
-                  <div style={{ flex: '0 0 40%' }}>
+                  <div style={{ flex: '0 0 40%', paddingTop: '12px' }}>
                     <ProtectedPageSubtitle>Roles</ProtectedPageSubtitle>
                   </div>
 

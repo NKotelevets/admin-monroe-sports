@@ -27,12 +27,18 @@ export const PATH_TO_USERS_BLOCKING_INFO = '/users/blocking-info'
 export const PATH_TO_USERS_IMPORT_INFO = '/users/import-info'
 export const PATH_TO_OPERATOR_ONBOARDING = '/users/operator-onboarding'
 
+// MASTER TEAMS
 export const PATH_TO_MASTER_TEAMS = '/master-teams'
+export const PATH_TO_CREATE_MASTER_TEAM = '/master-teams/create'
+export const PATH_TO_EDIT_MASTER_TEAM = '/master-teams/edit'
+export const PATH_TO_DELETING_INFO_MASTER_TEAMS = '/master-teams/deleting-info'
+export const PATH_TO_MASTER_TEAMS_IMPORT_INFO = '/master-teams/import-info'
+
 export const PATH_TO_LEAGUE_TEAMS = '/league-teams'
 export const PATH_TO_PLAYOFF_FORMAT = '/playoff-format'
 export const PATH_TO_STANDINGS_FORMAT = '/standings-format'
 export const PATH_TO_TIEBREAKERS = '/tiebreakers'
-export const PATH_TO_SCHEDULE = '/schedule'
+export const PATH_TO_EVENTS = '/events'
 export const PATH_TO_GROUPS = '/groups'
 
 export const PROTECTED_PAGES = [
@@ -44,7 +50,7 @@ export const PROTECTED_PAGES = [
   PATH_TO_PLAYOFF_FORMAT,
   PATH_TO_STANDINGS_FORMAT,
   PATH_TO_TIEBREAKERS,
-  PATH_TO_SCHEDULE,
+  PATH_TO_EVENTS,
   PATH_TO_GROUPS,
 ]
 
