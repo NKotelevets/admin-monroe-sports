@@ -12,8 +12,10 @@ import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
+import MonroeTooltip from '@/components/MonroeTooltip'
 import CellText from '@/components/Table/CellText'
 import MonroeFilter from '@/components/Table/MonroeFilter'
+import MonroeFilterRadio from '@/components/Table/MonroeFilterRadio'
 import TextWithTooltip from '@/components/TextWithTooltip'
 
 import { useAppSlice } from '@/redux/hooks/useAppSlice'
@@ -36,14 +38,18 @@ type TDataIndex = keyof IFEUser
 interface IParams {
   setSelectedRecordId: (value: string) => void
   setShowBlockSingleUserModal: (value: boolean) => void
+  setShowUnBlockSingleUserModal: (value: boolean) => void
 }
 
 const getIconColor = (isFiltered: boolean) => (isFiltered ? 'rgba(26, 22, 87, 1)' : 'rgba(189, 188, 194, 1)')
 
-export const useUsersTableParams = ({ setSelectedRecordId, setShowBlockSingleUserModal }: IParams) => {
+export const useUsersTableParams = ({
+  setSelectedRecordId,
+  setShowBlockSingleUserModal,
+  setShowUnBlockSingleUserModal,
+}: IParams) => {
   const navigate = useNavigate()
   const searchInput = useRef<InputRef>(null)
-  const Icon = searchInput ? LockIcon : UnLockIcon
   const [getUsers] = useLazyGetUsersQuery()
   const { setAppNotification } = useAppSlice()
   const { ordering } = useUserSlice()
@@ -94,7 +100,7 @@ export const useUsersTableParams = ({ setSelectedRecordId, setShowBlockSingleUse
     ),
     filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1A1657' : '#BDBCC2' }} />,
     onFilter: (value, record) =>
-      record[dataIndex]
+      (record[dataIndex] as string)
         .toString()
         .toLowerCase()
         .includes((value as string).toLowerCase()),
@@ -154,7 +160,7 @@ export const useUsersTableParams = ({ setSelectedRecordId, setShowBlockSingleUse
         { text: 'Other', value: 2 },
       ],
       render: (value) => <CellText> {SHORT_GENDER_NAMES[value as TGender]}</CellText>,
-      filterDropdown: MonroeFilter,
+      filterDropdown: MonroeFilterRadio,
       filterIcon: (filtered) => (
         <FilterFilled
           style={{
@@ -165,16 +171,34 @@ export const useUsersTableParams = ({ setSelectedRecordId, setShowBlockSingleUse
     },
     {
       title: 'Roles',
-      dataIndex: '',
+      dataIndex: 'roles',
       width: '240px',
-      render: () => <TextWithTooltip maxLength={28} text="Player, Coach, Head Coach, Operator" />,
+      render: (value) => <TextWithTooltip maxLength={28} text={value.join(', ')} />,
+      filterDropdown: MonroeFilter,
+      filterIcon: (filtered) => (
+        <FilterFilled
+          style={{
+            color: getIconColor(filtered),
+          }}
+        />
+      ),
+      filters: [
+        { text: 'Master Admin', value: 'master admin' },
+        { text: 'Operator', value: 'operator' },
+        { text: 'Team Admin', value: 'team admin' },
+        { text: 'Head Coach', value: 'head coach' },
+        { text: 'Coach', value: 'coach' },
+        { text: 'Player', value: 'player' },
+        { text: 'Guardian', value: 'guardian' },
+        { text: 'Child', value: 'child' },
+      ],
     },
     {
       title: 'Teams',
-      dataIndex: '',
+      dataIndex: 'teams',
       width: '240px',
-      render: () => <TextWithTooltip maxLength={28} text="Team 1 name, team 2 name, team 3 name" />,
-      ...getColumnSearchProps('firstName'),
+      ...getColumnSearchProps('teams'),
+      render: (value) => <TextWithTooltip maxLength={28} text={value.join(', ')} />,
     },
     {
       title: 'Birth Date',
@@ -184,7 +208,6 @@ export const useUsersTableParams = ({ setSelectedRecordId, setShowBlockSingleUse
       sorter: (a, b) => new Date(a.birthDate).getTime() - new Date(b.birthDate).getTime(),
       render: (value) => <CellText>{format(new Date(value), 'MMM, dd yyyy') || '-'}</CellText>,
     },
-
     {
       title: 'Email',
       dataIndex: 'email',
@@ -206,32 +229,44 @@ export const useUsersTableParams = ({ setSelectedRecordId, setShowBlockSingleUse
       dataIndex: '',
       width: '96px',
       fixed: 'right',
-      render: (value) => (
-        <Flex
-          vertical={false}
-          justify="center"
-          align="center"
-          style={{
-            cursor: 'pointer',
-          }}
-        >
-          <ReactSVG
-            src={EditIcon}
-            onClick={() => {
-              navigate(PATH_TO_EDIT_USER + `/${value.id}`)
-            }}
-          />
+      render: (value, record) => {
+        const Icon = record.isActive ? LockIcon : UnLockIcon
 
-          <ReactSVG
-            onClick={() => {
-              setSelectedRecordId(value.id)
-              setShowBlockSingleUserModal(true)
+        return (
+          <Flex
+            vertical={false}
+            justify="center"
+            align="center"
+            style={{
+              cursor: 'pointer',
             }}
-            src={Icon}
-            style={{ marginLeft: '8px' }}
-          />
-        </Flex>
-      ),
+          >
+            <ReactSVG
+              src={EditIcon}
+              onClick={() => {
+                navigate(PATH_TO_EDIT_USER + `/${value.id}`)
+              }}
+              style={{ marginRight: '8px' }}
+            />
+
+            <MonroeTooltip text={record.isActive ? 'Block user' : 'Unblock user'} containerWidth="auto" width="110px">
+              <ReactSVG
+                onClick={() => {
+                  setSelectedRecordId(value.id)
+
+                  if (!record.isActive) {
+                    setShowBlockSingleUserModal(true)
+                  } else {
+                    setShowUnBlockSingleUserModal(true)
+                  }
+                }}
+                src={Icon}
+                style={{ marginTop: '4px' }}
+              />
+            </MonroeTooltip>
+          </Flex>
+        )
+      },
     },
   ]
 

@@ -6,10 +6,10 @@ import { DefaultOptionType } from 'antd/es/select'
 import { CSSProperties, ChangeEvent, FC, RefObject, useEffect, useState } from 'react'
 import { ReactSVG } from 'react-svg'
 
-import { SearchLeagueInput, SearchLeagueInputIcon } from '@/components/Elements'
+import { SearchLeagueInput, SearchSelectIconWrapper } from '@/components/Elements'
 
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
-import { useLazyGetLeaguesQuery } from '@/redux/leagues/leagues.api'
+import { useLazyGetOperatorsQuery } from '@/redux/user/user.api'
 
 import useDebounceEffect from '@/hooks/useDebounceEffect'
 import useIsActiveComponent from '@/hooks/useIsActiveComponent'
@@ -29,17 +29,18 @@ const ListItem = styled.li<{ is_add_operator?: string }>`
 const List = styled.ul`
   position: absolute;
   left: 0;
+  right: 0;
   background-color: white;
   height: auto;
-  max-height: 240px;
+  max-height: 160px;
   width: 100%;
   box-shadow:
     0px 3px 6px -4px rgba(0, 0, 0, 0.12),
     0px 6px 16px 0px rgba(0, 0, 0, 0.08),
     0px 9px 28px 8px rgba(0, 0, 0, 0.05);
-  padding-right: 4px;
   z-index: 20;
   overflow: scroll;
+  padding: 0 4px;
 `
 
 const Container = styled.div`
@@ -64,17 +65,17 @@ const AddOperatorButton = styled(Button)`
 `
 
 interface IOperatorsInputProps {
-  setOperator: (data: string) => void
-  selectedOperator: undefined | string
+  setOperator: (data: [{ id: string; name: string }]) => void
+  selectedOperator: { id: string; name: string }
   isError: boolean
   handleBlur: () => void
 }
 
 const OperatorsInput: FC<IOperatorsInputProps> = ({ setOperator, handleBlur, selectedOperator, isError }) => {
-  const [value, setValue] = useState(selectedOperator || '')
+  const [value, setValue] = useState(selectedOperator.name || '')
   const { isComponentVisible, ref, onClose } = useIsActiveComponent(false)
   const [offset, setOffset] = useState(0)
-  const [getLeagues, { data }] = useLazyGetLeaguesQuery()
+  const [getOperators, { data }] = useLazyGetOperatorsQuery()
   const { setIsCreateOperatorScreen } = useUserSlice()
   const ADD_OPERATOR_PROPERTY: DefaultOptionType = {
     label: (
@@ -91,25 +92,24 @@ const OperatorsInput: FC<IOperatorsInputProps> = ({ setOperator, handleBlur, sel
     ),
     value: '',
   }
-
-  const [leaguesList, setLeaguesList] = useState<DefaultOptionType[]>([ADD_OPERATOR_PROPERTY])
+  const [operatorsList, setOperatorsList] = useState<DefaultOptionType[]>([ADD_OPERATOR_PROPERTY])
 
   const getData = async () => {
-    if (data && data?.count > leaguesList.length) {
+    if (data && data?.count > operatorsList.length) {
       setOffset((prev) => prev + DEFAULT_LIMIT_RECORDS)
 
-      const response = await getLeagues({
+      const response = await getOperators({
         limit: DEFAULT_LIMIT_RECORDS,
         offset,
-        league_name: value,
+        search: value,
       }).unwrap()
 
-      const options: DefaultOptionType[] = response.leagues.map((league) => ({
-        label: league.name,
-        value: league.name,
+      const options: DefaultOptionType[] = response.data.map((operator) => ({
+        label: operator.name,
+        value: operator.id,
       }))
 
-      if (response?.leagues) setLeaguesList((prev) => [...prev, ...options])
+      if (response?.data) setOperatorsList((prev) => [...prev, ...options])
     }
   }
 
@@ -118,45 +118,45 @@ const OperatorsInput: FC<IOperatorsInputProps> = ({ setOperator, handleBlur, sel
   useEffect(() => {
     // eslint-disable-next-line no-extra-semi
     ;(async () => {
-      const response = await getLeagues({
+      const response = await getOperators({
         limit: DEFAULT_LIMIT_RECORDS,
         offset,
       }).unwrap()
 
-      const options: DefaultOptionType[] = response.leagues.map((league) => ({
-        label: league.name,
-        value: league.name,
+      const options: DefaultOptionType[] = response.data.map((operator) => ({
+        label: operator.name,
+        value: operator.id,
       }))
 
-      setLeaguesList(() => [ADD_OPERATOR_PROPERTY, ...options])
+      setOperatorsList(() => [ADD_OPERATOR_PROPERTY, ...options])
     })()
   }, [])
 
   useEffect(() => {
-    if (selectedOperator && !value) setValue(selectedOperator)
+    if (selectedOperator && !value) setValue(selectedOperator.name)
   }, [selectedOperator])
 
-  const handleChange = async (leagueName: string) => setValue(leagueName)
+  const handleChange = async (operatorName: string) => setValue(operatorName)
 
   const getDataWithNewName = async () => {
-    const response = await getLeagues({
+    const response = await getOperators({
       limit: DEFAULT_LIMIT_RECORDS,
       offset: 0,
-      league_name: value === selectedOperator ? '' : value,
+      search: value === selectedOperator.name ? '' : value,
     }).unwrap()
 
-    const options: DefaultOptionType[] = response.leagues.map((league) => ({
-      label: league.name,
-      value: league.name,
+    const options: DefaultOptionType[] = response.data.map((operator) => ({
+      label: operator.name,
+      value: operator.id,
     }))
 
-    setLeaguesList(() => [ADD_OPERATOR_PROPERTY, ...options])
+    setOperatorsList(() => [ADD_OPERATOR_PROPERTY, ...options])
   }
 
   useDebounceEffect(getDataWithNewName, [value])
 
   useEffect(() => {
-    if (!isComponentVisible && selectedOperator) setValue(selectedOperator)
+    if (!isComponentVisible && selectedOperator) setValue(selectedOperator.name)
   }, [isComponentVisible])
 
   return (
@@ -173,25 +173,30 @@ const OperatorsInput: FC<IOperatorsInputProps> = ({ setOperator, handleBlur, sel
             onBlur={handleBlur}
           />
 
-          <SearchLeagueInputIcon isComponentVisible={isComponentVisible}>
+          <SearchSelectIconWrapper isComponentVisible={isComponentVisible}>
             <ReactSVG src={ShowAllIcon} />
-          </SearchLeagueInputIcon>
+          </SearchSelectIconWrapper>
         </Container>
 
         {isComponentVisible && (
           <Container style={defaultPadding}>
-            {leaguesList.length && (
+            {operatorsList.length && (
               <List ref={scrollRef as unknown as RefObject<HTMLUListElement>} onScroll={handleScroll}>
-                {leaguesList.map((league, idx) => (
+                {operatorsList.map((operator, idx) => (
                   <ListItem
                     is_add_operator={`${idx === 0 ? 'true' : 'false'}`}
-                    key={league.value}
+                    key={operator.value}
                     onClick={() => {
-                      setOperator(league.name)
+                      setOperator([
+                        {
+                          id: operator.value as string,
+                          name: operator.label as string,
+                        },
+                      ])
                       onClose()
                     }}
                   >
-                    {league.label}
+                    {operator.label}
                   </ListItem>
                 ))}
               </List>

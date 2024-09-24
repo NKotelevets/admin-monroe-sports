@@ -407,3 +407,13 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
     transform: scale(1.2);
   }
 }
+
+
+/* Margins */
+.mg-l4 {
+  margin-left: 4px;
+}
+
+.mg-l8 {
+  margin-left: 8px;
+}

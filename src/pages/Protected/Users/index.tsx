@@ -1,4 +1,3 @@
-import UsersTable from './components/UsersTable'
 import DownloadOutlined from '@ant-design/icons/lib/icons/DownloadOutlined'
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import UploadOutlined from '@ant-design/icons/lib/icons/UploadOutlined'
@@ -7,6 +6,8 @@ import { useCallback, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useNavigate } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
+
+import UsersTable from '@/pages/Protected/Users/components/UsersTable'
 
 import {
   CreateNewEntityButton,
@@ -21,7 +22,16 @@ import MonroeModal from '@/components/MonroeModal'
 
 import BaseLayout from '@/layouts/BaseLayout'
 
-import { PATH_TO_CREATE_USER, PATH_TO_USERS_BULK_EDIT, PATH_TO_USERS_IMPORT_INFO } from '@/constants/paths'
+import { useAppSlice } from '@/redux/hooks/useAppSlice'
+import { useUserSlice } from '@/redux/hooks/useUserSlice'
+import { useBulkBlockUsersMutation } from '@/redux/user/user.api'
+
+import {
+  PATH_TO_CREATE_USER,
+  PATH_TO_USERS_BLOCKING_INFO,
+  PATH_TO_USERS_BULK_EDIT,
+  PATH_TO_USERS_IMPORT_INFO,
+} from '@/constants/paths'
 
 import { IImportModalOptions } from '@/common/interfaces'
 
@@ -40,10 +50,13 @@ const Users = () => {
   })
   const inputRef = useRef<HTMLInputElement | null>()
   const navigate = useNavigate()
+  const { total } = useUserSlice()
   const [isBlockAllUsers, setIsBlockAllUsers] = useState(false)
   const [showCreatedRecords, setShowCreatedRecords] = useState(false)
-  const blockUsersModalCount = isBlockAllUsers ? 2 : selectedRecordsIds.length
+  const blockUsersModalCount = isBlockAllUsers ? total : selectedRecordsIds.length
   const blockUsersText = blockUsersModalCount > 1 ? 'users' : 'user'
+  const [blockUsers] = useBulkBlockUsersMutation()
+  const { setInfoNotification, setAppNotification } = useAppSlice()
 
   const handleCloseModal = useCallback(() => setIsOpenModal(false), [])
 
@@ -51,6 +64,31 @@ const Users = () => {
 
   const handleBlock = () => {
     handleCloseModal()
+    const blockHandler = isBlockAllUsers ? blockUsers([]) : blockUsers(selectedRecordsIds)
+
+    blockHandler.unwrap().then((response) => {
+      setSelectedRecordsIds([])
+      setShowAdditionalHeader(false)
+      setIsBlockAllUsers(false)
+
+      if (response.status !== 'green') {
+        setInfoNotification({
+          actionLabel: 'More info..',
+          message: `${response.success}/${response.total} users have been successfully blocked.`,
+          redirectedPageUrl: PATH_TO_USERS_BLOCKING_INFO,
+        })
+
+        return
+      }
+
+      if (response.status === 'green') {
+        setAppNotification({
+          message: `${response.success}/${response.total} users have been successfully blocked.`,
+          timestamp: new Date().getTime(),
+          type: 'success',
+        })
+      }
+    })
   }
 
   return (
@@ -62,9 +100,9 @@ const Users = () => {
       {isOpenModal && (
         <MonroeModal
           onCancel={handleCloseModal}
-          okText="Delete"
+          okText="Block"
           onOk={handleBlock}
-          title={`Delete ${blockUsersModalCount > 1 ? blockUsersModalCount : ''} ${blockUsersText}?`}
+          title={`Block ${blockUsersModalCount > 1 ? blockUsersModalCount : ''} ${blockUsersText}?`}
           type="warn"
           content={
             <p>

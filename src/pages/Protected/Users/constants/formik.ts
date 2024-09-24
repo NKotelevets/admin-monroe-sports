@@ -4,10 +4,15 @@ import { ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES } from '@/pages/Protected/
 
 import { TRole } from '@/common/types'
 
+const linkedEntityValidationSchema = Yup.object({
+  id: Yup.string().required(),
+  name: Yup.string(),
+})
+
 const userRoleValidationSchema = Yup.object({
   name: Yup.string().required('Role is required'),
   linkedEntities: Yup.array()
-    .of(Yup.string())
+    .of(linkedEntityValidationSchema)
     .when('name', {
       is: (value: string) =>
         ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(value as TRole) || (value as TRole) === 'Operator',
@@ -27,7 +32,7 @@ export const userValidationSchema = Yup.object<ICreateUserFormValues>().shape({
     )
     .required('Email is required'),
   phoneNumber: Yup.string(),
-  zipCode: Yup.string(),
+  zipCode: Yup.string().length(5, 'Should be 5 digits'),
   roles: Yup.array().of(userRoleValidationSchema),
 })
 
@@ -38,7 +43,7 @@ export const INITIAL_ROLE_DATA = {
 
 export interface IRole {
   name: TRole | string
-  linkedEntities?: string[]
+  linkedEntities?: { id: string; name: string }[]
 }
 
 export const userInitialFormData: ICreateUserFormValues = {

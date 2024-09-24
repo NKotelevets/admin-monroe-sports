@@ -79,7 +79,7 @@ const EditUser = () => {
       },
       {
         name: 'Player',
-        linkedEntities: ['Team 1', 'Team 2'],
+        linkedEntities: [],
       },
     ],
   }

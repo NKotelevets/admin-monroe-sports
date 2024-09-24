@@ -3,7 +3,7 @@ import { Flex } from 'antd'
 import { CSSProperties, ChangeEvent, FC, RefObject, useEffect, useState } from 'react'
 import { ReactSVG } from 'react-svg'
 
-import { SearchLeagueInput, SearchLeagueInputIcon } from '@/components/Elements'
+import { SearchLeagueInput, SearchSelectIconWrapper } from '@/components/Elements'
 import { Subtext } from '@/components/Elements/entity'
 
 import { useLazyGetLeaguesQuery } from '@/redux/leagues/leagues.api'
@@ -137,9 +137,9 @@ const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({
             onBlur={onBlur}
           />
 
-          <SearchLeagueInputIcon isComponentVisible={isComponentVisible}>
+          <SearchSelectIconWrapper isComponentVisible={isComponentVisible}>
             <ReactSVG src={ShowAllIcon} />
-          </SearchLeagueInputIcon>
+          </SearchSelectIconWrapper>
         </Container>
 
         {isComponentVisible && (

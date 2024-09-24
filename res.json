@@ -1,0 +1,129 @@
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "head_coach": "string",
+  "division": {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "sub_divisions": [
+      {
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "brackets": [
+          {
+            "id": 0,
+            "name": "string",
+            "subdivision": ["string"],
+            "number_of_teams": 2147483647,
+            "matches": [
+              {
+                "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                "match_participants": [
+                  {
+                    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "match": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                    "sub_division": "string",
+                    "updated_at": "2024-09-23T20:19:10.338Z",
+                    "created_at": "2024-09-23T20:19:10.338Z",
+                    "is_empty": true,
+                    "seed": 2147483647
+                  }
+                ],
+                "updated_at": "2024-09-23T20:19:10.338Z",
+                "created_at": "2024-09-23T20:19:10.338Z",
+                "top_team": "string",
+                "bottom_team": "string",
+                "start_time": "2024-09-23T20:19:10.338Z",
+                "state": "string",
+                "stage": "string",
+                "is_not_first_round": true,
+                "next_match_id": 2147483647,
+                "match_integer_id": 2147483647,
+                "game_number": 2147483647,
+                "tournament_round_text": "string",
+                "bracket": 0
+              }
+            ],
+            "published": true,
+            "updated_at": "2024-09-23T20:19:10.338Z",
+            "created_at": "2024-09-23T20:19:10.338Z"
+          }
+        ],
+        "updated_at": "2024-09-23T20:19:10.338Z",
+        "created_at": "2024-09-23T20:19:10.338Z",
+        "name": "string",
+        "description": "string",
+        "playoff_format": 0,
+        "standings_format": 0,
+        "tiebreakers_format": 0,
+        "changed": true
+      }
+    ],
+    "updated_at": "2024-09-23T20:19:10.338Z",
+    "created_at": "2024-09-23T20:19:10.338Z",
+    "name": "string",
+    "description": "string",
+    "sub_division": ["3fa85f64-5717-4562-b3fc-2c963f66afa6"]
+  },
+  "sub_division": {
+    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "brackets": [
+      {
+        "id": 0,
+        "name": "string",
+        "subdivision": ["string"],
+        "number_of_teams": 2147483647,
+        "matches": [
+          {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "match_participants": [
+              {
+                "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                "match": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                "sub_division": "string",
+                "updated_at": "2024-09-23T20:19:10.338Z",
+                "created_at": "2024-09-23T20:19:10.338Z",
+                "is_empty": true,
+                "seed": 2147483647
+              }
+            ],
+            "updated_at": "2024-09-23T20:19:10.338Z",
+            "created_at": "2024-09-23T20:19:10.338Z",
+            "top_team": "string",
+            "bottom_team": "string",
+            "start_time": "2024-09-23T20:19:10.338Z",
+            "state": "string",
+            "stage": "string",
+            "is_not_first_round": true,
+            "next_match_id": 2147483647,
+            "match_integer_id": 2147483647,
+            "game_number": 2147483647,
+            "tournament_round_text": "string",
+            "bracket": 0
+          }
+        ],
+        "published": true,
+        "updated_at": "2024-09-23T20:19:10.338Z",
+        "created_at": "2024-09-23T20:19:10.338Z"
+      }
+    ],
+    "updated_at": "2024-09-23T20:19:10.338Z",
+    "created_at": "2024-09-23T20:19:10.338Z",
+    "name": "string",
+    "description": "string",
+    "playoff_format": 0,
+    "standings_format": 0,
+    "tiebreakers_format": 0,
+    "changed": true
+  },
+  "updated_at": "2024-09-23T20:19:10.338Z",
+  "created_at": "2024-09-23T20:19:10.338Z",
+  "name": "string",
+  "logo_s3_url": "string",
+  "home_uniform": "string",
+  "away_uniform": "string",
+  "arrive_early_for_practice": 9223372036854776000,
+  "arrive_early_for_games": 9223372036854776000,
+  "who_can_join_this_team": 0,
+  "team_administrator_email": "user@example.com",
+  "head_coach_email": "user@example.com",
+  "team_administrator": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+}
+

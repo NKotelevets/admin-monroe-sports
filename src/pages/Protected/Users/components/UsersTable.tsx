@@ -1,7 +1,7 @@
 import { GetProp } from 'antd'
 import Table from 'antd/es/table'
 import { TableProps } from 'antd/es/table/InternalTable'
-import { SorterResult } from 'antd/es/table/interface'
+import { FilterValue, SorterResult } from 'antd/es/table/interface'
 import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 
 import { useUsersTableParams } from '@/pages/Protected/Users/hooks/useUsersTableParams'
@@ -9,8 +9,9 @@ import { useUsersTableParams } from '@/pages/Protected/Users/hooks/useUsersTable
 import { ExpandedHeaderLeftText, ExpandedTableHeader, MonroeBlueText, MonroeLightBlueText } from '@/components/Elements'
 import MonroeModal from '@/components/MonroeModal'
 
+import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
-import { useLazyGetUsersQuery } from '@/redux/user/user.api'
+import { useBulkBlockUsersMutation, useEditUserMutation, useLazyGetUsersQuery } from '@/redux/user/user.api'
 
 import { IFEUser } from '@/common/interfaces/user'
 
@@ -58,12 +59,16 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
     },
   })
   const [showBlockSingleUserModal, setShowBlockSingleUserModal] = useState(false)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, setSelectedRecordId] = useState('')
+  const [showUnBlockSingleUserModal, setShowUnBlockSingleUserModal] = useState(false)
+  const [selectedRecordId, setSelectedRecordId] = useState('')
   const { columns } = useUsersTableParams({
     setSelectedRecordId,
     setShowBlockSingleUserModal,
+    setShowUnBlockSingleUserModal,
   })
+  const [blockUser] = useBulkBlockUsersMutation()
+  const { setAppNotification } = useAppSlice()
+  const [editUser] = useEditUserMutation()
 
   useEffect(() => {
     setPaginationParams({
@@ -95,7 +100,9 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
     }
   }, [data])
 
-  const handleTableChange: TableProps<IFEUser>['onChange'] = (pagination, _, sorter) => {
+  type TFilter = Record<'firstName' | 'lastName' | 'gender' | 'roles', FilterValue | null>
+
+  const handleTableChange: TableProps<IFEUser>['onChange'] = (pagination, filters: TFilter, sorter) => {
     const newOffset = (pagination?.current && (pagination?.current - 1) * (pagination?.pageSize || 10)) || 0
     const newLimit = pagination?.pageSize || 10
     setTableParams({
@@ -116,30 +123,103 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
         ? sorter.order === 'ascend'
           ? 'birth_date'
           : '-birth_date'
-        : ''
+        : undefined
+
+    const firstName = (filters?.['firstName']?.[0] as string) ?? undefined
+    const lastName = (filters?.['lastName']?.[0] as string) ?? undefined
+    const gender = filters?.['gender']?.[0] as string
+    const roles =
+      filters?.['roles']?.length === 1 ? (filters?.['roles'][0] as string) : (filters?.['roles']?.join(',') as string)
 
     getUsers({
       offset: newOffset,
       limit: newLimit,
       ordering: orderingValue,
+      first_name: firstName,
+      last_name: lastName,
+      gender,
+      role: roles,
     })
 
     setPaginationParams({
       offset: newOffset,
       limit: newLimit,
-      ordering: `${orderingValue}`,
+      ordering: orderingValue,
+      firstName,
+      lastName,
+      gender,
+      role: roles,
     })
   }
 
-  const handleBlock = () => {}
+  const handleBlockSingleUser = () => {
+    blockUser([selectedRecordId])
+      .unwrap()
+      .then((response) => {
+        setShowBlockSingleUserModal(false)
+
+        if (response.status !== 'green') {
+          setAppNotification({
+            message: response.items[0].warning,
+            timestamp: new Date().getTime(),
+            type: 'error',
+          })
+
+          return
+        }
+
+        if (response.status === 'green') {
+          setAppNotification({
+            message: 'User have been successfully blocked.',
+            timestamp: new Date().getTime(),
+            type: 'success',
+          })
+        }
+      })
+  }
+
+  const handleUnblockSingleUser = () => {
+    editUser({
+      userId: selectedRecordId,
+      body: {
+        is_active: true,
+      },
+    })
+      .unwrap()
+      .then(() => {
+        setAppNotification({
+          message: 'User have been successfully blocked.',
+          timestamp: new Date().getTime(),
+          type: 'success',
+        })
+      })
+      .catch(() => {
+        setAppNotification({
+          message: 'User have been successfully blocked.', // TODO: update error message
+          timestamp: new Date().getTime(),
+          type: 'error',
+        })
+      })
+  }
 
   return (
     <>
       {showBlockSingleUserModal && (
         <MonroeModal
+          okText="Unblock"
+          onCancel={() => setShowUnBlockSingleUserModal(false)}
+          onOk={handleUnblockSingleUser}
+          title="Unblock user?"
+          type="warn"
+          content={<p>Are you sure you want to unblock this user?</p>}
+        />
+      )}
+
+      {showUnBlockSingleUserModal && (
+        <MonroeModal
           okText="Block"
           onCancel={() => setShowBlockSingleUserModal(false)}
-          onOk={handleBlock}
+          onOk={handleBlockSingleUser}
           title="Block user?"
           type="warn"
           content={<p>Are you sure you want to block this user?</p>}

@@ -18,18 +18,13 @@ import TextWithTooltip from '@/components/TextWithTooltip'
 
 import BaseLayout from '@/layouts/BaseLayout'
 
+import { useUserSlice } from '@/redux/hooks/useUserSlice'
+
 import { PATH_TO_USERS } from '@/constants/paths'
 
 import { SHORT_GENDER_NAMES } from '@/common/constants'
+import { IBlockedUserError } from '@/common/interfaces/user'
 import { TGender } from '@/common/types'
-
-interface IBlockedUserError {
-  id: string
-  firstName: string
-  lastName: string
-  gender: number
-  message: string
-}
 
 type TColumns<T> = TableProps<T>['columns']
 type TTablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>
@@ -42,30 +37,6 @@ interface ITableParams {
   sortOrder?: SorterResult<IBlockedUserError>['order']
   filters?: Parameters<GetProp<TableProps, 'onChange'>>[1]
 }
-
-const mockedData: IBlockedUserError[] = [
-  {
-    id: '123',
-    firstName: 'Joe',
-    lastName: 'Doe',
-    gender: 0,
-    message: 'Description error..',
-  },
-  {
-    id: '123456',
-    firstName: 'Alex',
-    lastName: 'Appleseed',
-    gender: 1,
-    message: 'Description error..',
-  },
-  {
-    id: '123456789',
-    firstName: 'Milan',
-    lastName: 'Lastname',
-    gender: 1,
-    message: 'Description error..',
-  },
-]
 
 const BREADCRUMB_ITEMS = [
   {
@@ -91,6 +62,7 @@ const BlockingInfo = () => {
     },
   })
   const navigate = useNavigate()
+  const { blockedUserErrors } = useUserSlice()
 
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
 
@@ -152,15 +124,15 @@ const BlockingInfo = () => {
   const columns: TColumns<IBlockedUserError> = [
     {
       title: 'First Name',
-      dataIndex: 'firstName',
+      dataIndex: 'first_name',
       filterSearch: true,
       filterMode: 'tree',
-      onFilter: (value, record) => record.firstName.includes(value as string),
+      onFilter: (value, record) => record.first_name.includes(value as string),
       fixed: 'left',
       width: '240px',
-      sorter: (a, b) => a.firstName.length - b.firstName.length,
+      sorter: (a, b) => a.first_name.length - b.first_name.length,
       sortOrder: tableParams.sortOrder,
-      ...getColumnSearchProps('firstName'),
+      ...getColumnSearchProps('first_name'),
       render: (value, record) => (
         <CellText isLink onClick={() => navigate(PATH_TO_USERS + '/' + record.id)}>
           {value}
@@ -169,14 +141,14 @@ const BlockingInfo = () => {
     },
     {
       title: 'Last Name',
-      dataIndex: '',
+      dataIndex: 'last_name',
       width: '240px',
-      sorter: (a, b) => a.lastName.length - b.lastName.length,
+      sorter: (a, b) => a.last_name.length - b.last_name.length,
       sortOrder: tableParams.sortOrder,
-      ...getColumnSearchProps('lastName'),
+      ...getColumnSearchProps('last_name'),
       render: (_, record) => (
         <CellText isLink onClick={() => navigate(`${PATH_TO_USERS}/${record.id}`)}>
-          {record.lastName}
+          {record.last_name}
         </CellText>
       ),
     },
@@ -207,19 +179,18 @@ const BlockingInfo = () => {
     },
     {
       title: 'Error info',
-      dataIndex: 'message',
+      dataIndex: 'warning',
       render: (value) => <TextWithTooltip maxLength={100} text={value} />,
     },
   ]
 
-  const handleTableChange: TableProps<IBlockedUserError>['onChange'] = (pagination, filters, sorter) => {
+  const handleTableChange: TableProps<IBlockedUserError>['onChange'] = (pagination, filters, sorter) =>
     setTableParams({
       pagination,
       filters,
       sortOrder: Array.isArray(sorter) ? undefined : sorter.order,
       sortField: Array.isArray(sorter) ? undefined : sorter.field,
     })
-  }
 
   return (
     <BaseLayout>
@@ -236,7 +207,7 @@ const BlockingInfo = () => {
         <Table
           columns={columns}
           rowKey={(record) => record.id}
-          dataSource={mockedData}
+          dataSource={blockedUserErrors}
           pagination={tableParams.pagination}
           onChange={handleTableChange}
         />

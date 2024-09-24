@@ -9,6 +9,7 @@ import { ReactSVG } from 'react-svg'
 import { MonroeDivider } from '@/components/Elements'
 
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
+import { useUserSlice } from '@/redux/hooks/useUserSlice'
 
 import {
   PATH_TO_CREATE_LEAGUE,
@@ -61,6 +62,7 @@ const USERS_KEY = 'users'
 const MonroeSidebar = () => {
   const location = useLocation()
   const pathname = location.pathname
+  const { setIsCreateOperatorScreen } = useUserSlice()
   const isPageThatWillHaveChanges =
     [PATH_TO_CREATE_LEAGUE].includes(pathname) ||
     pathname.includes(PATH_TO_EDIT_LEAGUE) ||
@@ -193,6 +195,7 @@ const MonroeSidebar = () => {
 
     setIsCreateBracketPage(false)
     setSelectedBracketId(null)
+    setIsCreateOperatorScreen(false)
   }
 
   useEffect(() => {

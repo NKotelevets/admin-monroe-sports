@@ -1,22 +1,20 @@
-import OperatorsInput from './OperatorsInput'
 import { Divider, Flex } from 'antd'
 import { DefaultOptionType } from 'antd/es/select'
 import { FormikErrors } from 'formik'
 import { ChangeEventHandler, FC, useEffect, useState } from 'react'
 import { ReactSVG } from 'react-svg'
 
+import OperatorsInput from '@/pages/Protected/Users/components/OperatorsInput'
 import { ICreateUserFormValues, IRole } from '@/pages/Protected/Users/constants/formik'
-import {
-  ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES,
-  MOCKED_TEAMS,
-  ROLES,
-} from '@/pages/Protected/Users/constants/roles'
+import { ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES, ROLES } from '@/pages/Protected/Users/constants/roles'
 
 import { OptionTitle } from '@/components/Elements'
 import { CreateEntityContainer, Subtext, TitleStyle } from '@/components/Elements/entity'
 import { InputError } from '@/components/Inputs/InputElements'
-import MonroeMultipleSelect from '@/components/MonroeMultipleSelect'
+import MasterTeamsMultipleSelectWithSearch from '@/components/MasterTeamsMultipleSelectWithSearch'
 import MonroeSelect from '@/components/MonroeSelect'
+
+import { useUserSlice } from '@/redux/hooks/useUserSlice'
 
 import useIsActiveComponent from '@/hooks/useIsActiveComponent'
 
@@ -31,7 +29,7 @@ interface IPopulateRoleProps {
   errors: FormikErrors<ICreateUserFormValues>
   setFieldValue: (
     field: string,
-    value: string,
+    value: string | { id: string; name: string }[],
     shouldValidate?: boolean,
   ) => Promise<void | FormikErrors<ICreateUserFormValues>>
   removeFn: (index: number) => void
@@ -57,26 +55,25 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
   const [isOpenedDetails, setIsOpenedDetails] = useState(index === 0 ? true : false)
   const { ref, isComponentVisible } = useIsActiveComponent(index === 0 ? true : false)
   const isError = !!errors?.roles?.[index]
+  const { user } = useUserSlice()
+  const isAdmin = user?.isSuperuser
   const selectedRoles = values.roles.map((role) => role.name)
-  const options: DefaultOptionType[] = ROLES.filter((initialRole) => !selectedRoles.includes(initialRole)).map(
-    (role) => ({
-      label: role,
-      value: role,
-    }),
-  )
-  const teamsOptions: DefaultOptionType[] = MOCKED_TEAMS.map((team) => ({
-    label: team,
-    value: team,
+  const options: DefaultOptionType[] = ROLES.filter((initialRole) => {
+    if (!isAdmin && initialRole === 'Operator') return false
+    if (!selectedRoles.includes(initialRole)) return true
+    return false
+  }).map((role) => ({
+    label: role,
+    value: role,
   }))
+
   const isRoleWithTeams = ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(role.name as TRole)
   const isOperator = (role.name as TRole) === 'Operator'
-  const [selectedOperator, setOperator] = useState('')
+  const operator = values.roles.find((role) => role.name === 'Operator')?.linkedEntities?.[0] || { id: '', name: '' }
   const isMissingName = !!(errors.roles?.[+index] as FormikErrors<IRole>)?.name
   const isMissingEntities = !!(errors.roles?.[+index] as FormikErrors<IRole>)?.linkedEntities
 
-  const handleBlur = () => {
-    setFieldTouched(`roles.${index}.linkedEntities`, true)
-  }
+  const handleBlur = () => setFieldTouched(`roles.${index}.linkedEntities`, true)
 
   useEffect(() => {
     if (!isComponentVisible) setIsOpenedDetails(false)
@@ -98,8 +95,8 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
               <Flex>
                 {!!role.linkedEntities?.length &&
                   role.linkedEntities.map((linkedEntity, idx, arr) => (
-                    <Subtext key={linkedEntity}>
-                      {linkedEntity} {idx === arr.length - 1 ? '' : ', '}
+                    <Subtext key={linkedEntity.id}>
+                      {linkedEntity.name} {idx === arr.length - 1 ? '' : ', '}
                     </Subtext>
                   ))}
               </Flex>
@@ -124,9 +121,7 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
                 {isMissingName && <InputError>Role is required</InputError>}
               </Flex>
               <MonroeSelect
-                onChange={(value) => {
-                  setFieldValue(`roles.${index}.name`, value)
-                }}
+                onChange={(value) => setFieldValue(`roles.${index}.name`, value)}
                 options={options}
                 placeholder="Select role"
                 value={role.name || null}
@@ -135,9 +130,7 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
                   width: '100%',
                 }}
                 is_error={`${isMissingName}`}
-                onBlur={() => {
-                  setFieldTouched(`roles.${index}.name`, true)
-                }}
+                onBlur={() => setFieldTouched(`roles.${index}.name`, true)}
               />
             </div>
 
@@ -151,21 +144,14 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
 
                     {isMissingEntities && <InputError>Master Teams is required</InputError>}
                   </Flex>
-                  <MonroeMultipleSelect
-                    renderInside
+
+                  <MasterTeamsMultipleSelectWithSearch
                     onChange={(value) => {
                       setFieldValue(`roles.${index}.linkedEntities`, value)
                     }}
-                    options={teamsOptions}
-                    placeholder="Select teams"
-                    value={role.linkedEntities || []}
-                    styles={{
-                      width: '100%',
-                    }}
-                    is_error={`${isMissingEntities}`}
-                    onBlur={() => {
-                      setFieldTouched(`roles.${index}.linkedEntities`, true)
-                    }}
+                    onBlur={() => setFieldTouched(`roles.${index}.linkedEntities`, true)}
+                    isError={isMissingEntities}
+                    selectedTeams={role.linkedEntities || []}
                   />
                 </div>
               </>
@@ -181,8 +167,10 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
 
                 <OperatorsInput
                   isError={isMissingEntities}
-                  setOperator={setOperator}
-                  selectedOperator={selectedOperator}
+                  setOperator={(value) => {
+                    setFieldValue(`roles.${index}.linkedEntities`, value)
+                  }}
+                  selectedOperator={operator}
                   handleBlur={handleBlur}
                 />
               </div>

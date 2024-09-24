@@ -16,7 +16,8 @@ const backgroundStyles: CSSProperties = {
 }
 
 const alertStyles: CSSProperties = {
-  width: 'calc(40vw - 48px)',
+  minWidth: 'calc(40vw - 48px)',
+  width: 'auto',
   padding: '9px 16px',
   backgroundColor: '#FFF1F0',
   borderColor: '#FFCCC7',
@@ -65,4 +66,3 @@ const InfoAlert = () => {
 }
 
 export default InfoAlert
-

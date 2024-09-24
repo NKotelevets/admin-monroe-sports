@@ -159,7 +159,7 @@ export const SearchLeagueInput = styled(MonroeInput)<{ is_error?: string }>`
   }
 `
 
-export const SearchLeagueInputIcon = styled.div<{ isComponentVisible: boolean }>`
+export const SearchSelectIconWrapper = styled.div<{ isComponentVisible: boolean }>`
   position: absolute;
   right: 12px;
   top: 50%;

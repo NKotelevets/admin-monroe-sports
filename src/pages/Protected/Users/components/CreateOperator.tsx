@@ -1,6 +1,7 @@
 import Breadcrumb from 'antd/es/breadcrumb/Breadcrumb'
 import Flex from 'antd/es/flex'
 import { Form, Formik, FormikHelpers } from 'formik'
+import { FC } from 'react'
 
 import {
   ICreateOperatorFormValues,
@@ -24,13 +25,21 @@ import MonroeButton from '@/components/MonroeButton'
 import MonroeTooltip from '@/components/MonroeTooltip'
 
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
+import { useCreateOperatorMutation } from '@/redux/user/user.api'
 
 import { validateNumber } from '@/utils'
 
 import { PATH_TO_USERS } from '@/constants/paths'
 
-const CreateOperator = () => {
+import { IBEOperator } from '@/common/interfaces/operator'
+
+interface ICreateOperatorProps {
+  setOperator: (value: { id: string; name: string }) => void
+}
+
+const CreateOperator: FC<ICreateOperatorProps> = ({ setOperator }) => {
   const { setIsCreateOperatorScreen } = useUserSlice()
+  const [createOperator] = useCreateOperatorMutation()
 
   const BREAD_CRUMB_ITEMS = [
     {
@@ -51,6 +60,30 @@ const CreateOperator = () => {
     const result = await formikHelpers.validateForm(values)
 
     if (Object.keys(result).length) return
+
+    const createOperatorBody: Omit<IBEOperator, 'id'> = {
+      city: values.city,
+      email: values.email,
+      email_contact: values.pointOfContactEmail,
+      first_name: values.firstName,
+      last_name: values.lastName,
+      name: values.name,
+      phone_number: values.phone,
+      phone_number_contact: values.pointOfContactPhoneNumber,
+      state: values.state,
+      street: values.street,
+      zip_code: values.zipCode,
+    }
+
+    createOperator(createOperatorBody)
+      .unwrap()
+      .then((response) => {
+        setIsCreateOperatorScreen(false)
+        setOperator({
+          id: response.id,
+          name: response.name,
+        })
+      })
   }
 
   return (
@@ -92,14 +125,15 @@ const CreateOperator = () => {
                     </div>
 
                     <div style={{ marginBottom: '8px' }}>
-                      <OptionTitle style={{ padding: '0 0 5px 0' }}>Email</OptionTitle>
                       <MonroeInput
                         name="email"
                         value={values.email}
                         onChange={handleChange}
                         placeholder="Enter email"
                         style={{ height: '32px' }}
-                        error={errors.email === 'Incorrect email' ? errors.email : ''}
+                        error={errors.email}
+                        label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Email</OptionTitle>}
+                        onBlur={handleBlur}
                       />
                     </div>
 
@@ -117,15 +151,16 @@ const CreateOperator = () => {
                     </div>
 
                     <div style={{ marginBottom: '8px' }}>
-                      <OptionTitle style={{ padding: '0 0 5px 0' }}>Zip Code</OptionTitle>
                       <MonroeInput
                         name="zipCode"
                         value={values.zipCode}
+                        label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Zip Code</OptionTitle>}
                         onChange={(event) => {
                           if (validateNumber(event.target.value)) handleChange(event)
                         }}
                         placeholder="Enter zip code"
                         style={{ height: '32px' }}
+                        error={errors.zipCode}
                       />
                     </div>
 

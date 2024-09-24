@@ -62,7 +62,7 @@ export const StyledInput = styled(Input)<{ is_error?: string }>`
 `
 
 export const StyledPasswordInput = styled(Input.Password)<{ is_error?: string }>`
-  background-color: #ffffff !important;
+  background-color: #ffffff;
   border-color: ${(props) => (props.is_error === 'true' ? '#BC261B' : '#d8d7db')};
   border-radius: 2px;
   box-shadow: none;

@@ -13,7 +13,7 @@ import {
   DEFAULT_TIEBREAKERS_FORMAT_WINNING_TOOLTIP,
 } from '@/pages/Protected/LeaguesAndTournaments/constants/tooltips'
 import { BRACKETS_OPTIONS } from '@/pages/Protected/Seasons/CreateBracket/constants/bracketData'
-import { AddBracketButton } from '@/pages/Protected/Seasons/components/Elements'
+import { AddBracketButton, BracketNameWrapper, IconsWrapper } from '@/pages/Protected/Seasons/components/Elements'
 import {
   ICreateSeasonDivision,
   ICreateSeasonFormValues,
@@ -284,17 +284,9 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
                                   marginTop: '5px',
                                 }}
                               >
-                                <Typography
-                                  style={{
-                                    color: 'rgba(26, 22, 87, 1)',
-                                    fontWeight: 500,
-                                    fontSize: '14px',
-                                  }}
-                                >
-                                  {bracketData.name}
-                                </Typography>
+                                <BracketNameWrapper>{bracketData.name}</BracketNameWrapper>
 
-                                <Flex>
+                                <IconsWrapper>
                                   <div
                                     style={{
                                       marginRight: '4px',
@@ -322,7 +314,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
                                         setIds((prev) => [...prev, bracketData.id as number])
                                     }}
                                   />
-                                </Flex>
+                                </IconsWrapper>
                               </Flex>
                             ))}
                           </Flex>

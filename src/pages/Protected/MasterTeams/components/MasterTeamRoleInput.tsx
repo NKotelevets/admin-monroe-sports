@@ -4,7 +4,7 @@ import { DefaultOptionType } from 'antd/es/select'
 import { CSSProperties, ChangeEvent, FC, RefObject, useEffect, useState } from 'react'
 import { ReactSVG } from 'react-svg'
 
-import { SearchLeagueInput, SearchLeagueInputIcon } from '@/components/Elements'
+import { SearchLeagueInput, SearchSelectIconWrapper } from '@/components/Elements'
 
 import { useLazyGetUsersQuery } from '@/redux/user/user.api'
 
@@ -131,9 +131,9 @@ const MasterTeamRoleInput: FC<IMasterTeamRoleInputProps> = ({ handleClick, handl
             onBlur={handleBlur}
           />
 
-          <SearchLeagueInputIcon isComponentVisible={isComponentVisible}>
+          <SearchSelectIconWrapper isComponentVisible={isComponentVisible}>
             <ReactSVG src={ShowAllIcon} />
-          </SearchLeagueInputIcon>
+          </SearchSelectIconWrapper>
         </Container>
 
         {isComponentVisible && (

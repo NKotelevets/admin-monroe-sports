@@ -37,14 +37,14 @@ const EMPTY_INFO_NOTIFICATION: IInfoNotification = {
   redirectedPageUrl: '',
 }
 
-const authSliceState: IAppSliceState = {
+const appSliceState: IAppSliceState = {
   notification: EMPTY_NOTIFICATION,
   infoNotification: EMPTY_INFO_NOTIFICATION,
 }
 
 export const appSlice = createSlice({
   name: 'appSlice',
-  initialState: authSliceState,
+  initialState: appSliceState,
   reducers: {
     clearNotification: (state) => {
       state.notification = EMPTY_NOTIFICATION

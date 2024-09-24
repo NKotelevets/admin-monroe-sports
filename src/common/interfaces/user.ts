@@ -1,3 +1,5 @@
+import { TGender, TRole } from '@/common/types'
+
 export interface IBEUser {
   id: string
   email: string
@@ -18,6 +20,10 @@ export interface IBEUser {
   zip_code: string
   emergency_contact_name: string
   emergency_contact_phone: string
+  is_active: boolean
+  is_superuser: boolean
+  roles: string[]
+  teams: string[]
 }
 
 export interface IFEUser {
@@ -40,8 +46,43 @@ export interface IFEUser {
   zipCode: string
   emergencyContactName: string
   emergencyContactPhone: string
-  roles: {
-    name: string
-    linkedEntities: string[]
-  }[]
+  isActive: boolean
+  isSuperuser: boolean
+  roles: string[]
+  teams: string[]
+}
+
+export interface IGetUsersRequestParams {
+  ordering?: string
+  first_name?: string
+  last_name?: string
+  gender?: string
+  limit: number
+  offset: number
+  role?: string
+}
+
+export interface IRole {
+  role: TRole
+  team_id?: string
+  operator_id?: string
+}
+export interface ICreateUserAsAdminRequestBody {
+  first_name: string
+  last_name: string
+  birth_date: string
+  gender: TGender
+  email: string
+  phone_number: string
+  zip_code: string
+  roles: IRole[]
+}
+
+export interface IBlockedUserError {
+  email: string
+  id: string
+  warning: string
+  first_name: string
+  last_name: string
+  gender: number
 }

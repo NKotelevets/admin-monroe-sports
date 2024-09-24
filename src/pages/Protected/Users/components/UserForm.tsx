@@ -1,3 +1,4 @@
+import CreateOperator from './CreateOperator'
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import { Divider } from 'antd'
 import Breadcrumb from 'antd/es/breadcrumb'
@@ -36,9 +37,15 @@ import MonroeButton from '@/components/MonroeButton'
 import MonroeSelect from '@/components/MonroeSelect'
 import MonroeTooltip from '@/components/MonroeTooltip'
 
+import { useUserSlice } from '@/redux/hooks/useUserSlice'
+import { useCreateUserAsAdminMutation } from '@/redux/user/user.api'
+
 import { validateNumber } from '@/utils'
 
 import { PATH_TO_USERS } from '@/constants/paths'
+
+import { ICreateUserAsAdminRequestBody, IRole } from '@/common/interfaces/user'
+import { TGender, TRole } from '@/common/types'
 
 import ShowAllIcon from '@/assets/icons/show-all.svg'
 
@@ -53,21 +60,25 @@ const BREAD_CRUMB_ITEMS = [
 
 const GENDER_OPTIONS: DefaultOptionType[] = [
   {
-    label: 'Male',
-    value: 'Male',
+    label: 'Female',
+    value: 0,
   },
   {
-    label: 'Female',
-    value: 'Female',
+    label: 'Male',
+    value: 1,
   },
   {
     label: 'Other',
-    value: 'Other',
+    value: 2,
   },
 ]
 
+const ROLES_WITH_TEAMS: TRole[] = ['Head Coach', 'Coach', 'Player', 'Team Admin']
+
 const UserForm = () => {
   const navigation = useNavigate()
+  const { isCreateOperatorScreen } = useUserSlice()
+  const [createUserAsAdmin] = useCreateUserAsAdminMutation()
 
   const goBack = () => navigation(PATH_TO_USERS)
 
@@ -75,6 +86,44 @@ const UserForm = () => {
     const result = await formikHelpers.validateForm(values)
 
     if (Object.keys(result).length) return
+
+    const createUserAsAdminRequestBody: ICreateUserAsAdminRequestBody = {
+      first_name: values.firstName,
+      last_name: values.lastName,
+      birth_date: values.birthDate ? dayjs(values.birthDate).toISOString().split('T')[0] : '',
+      email: values.email,
+      gender: (values?.gender ? +values.gender : 2) as TGender,
+      phone_number: values.phoneNumber,
+      roles: values.roles.flatMap((role) => {
+        if (ROLES_WITH_TEAMS.includes(role.name as TRole)) {
+          return role!.linkedEntities!.map(
+            (linkedEntity) =>
+              ({
+                role: role.name,
+                team_id: linkedEntity.id,
+              }) as IRole,
+          )
+        }
+
+        if (role.name === 'Operator') {
+          return {
+            role: role.name,
+            operator_id: role.linkedEntities?.[0].id,
+          } as IRole
+        }
+
+        return {
+          role: role.name,
+        } as IRole
+      }),
+      zip_code: values.zipCode,
+    }
+
+    createUserAsAdmin(createUserAsAdminRequestBody)
+      .unwrap()
+      .then(() => {
+        navigation(PATH_TO_USERS)
+      })
   }
 
   return (
@@ -86,7 +135,6 @@ const UserForm = () => {
       validateOnBlur
     >
       {({ values, handleChange, handleSubmit, errors, setFieldValue, handleBlur, touched, setFieldTouched }) => {
-        const isEnabledButton = Object.keys(errors).length === 0
         const isAddEntityButtonDisabled = !!errors.roles?.length
         const collapsedDivisionItems = (removeFn: (index: number) => void) =>
           values.roles.map((role, idx) => ({
@@ -107,204 +155,211 @@ const UserForm = () => {
             label: <AccordionHeader>#{idx + 1} Role</AccordionHeader>,
           }))
 
+        const setOperator = (value: { id: string; name: string }) => {
+          const operatorIndex = values.roles.findIndex((role) => role.name === 'Operator')
+          setFieldValue(`roles.${operatorIndex}.linkedEntities`, [value])
+        }
+
         return (
-          <Form onSubmit={handleSubmit}>
-            <PageContainer vertical>
-              <Breadcrumb items={BREAD_CRUMB_ITEMS} />
+          <>
+            {isCreateOperatorScreen && <CreateOperator setOperator={setOperator} />}
 
-              <ProtectedPageTitle>Create user</ProtectedPageTitle>
+            {!isCreateOperatorScreen && (
+              <Form onSubmit={handleSubmit}>
+                <PageContainer vertical>
+                  <Breadcrumb items={BREAD_CRUMB_ITEMS} />
 
-              <PageContent>
-                <Flex>
-                  <div style={{ flex: '0 0 40%' }}>
-                    <ProtectedPageSubtitle>Main Info</ProtectedPageSubtitle>
-                  </div>
+                  <ProtectedPageTitle>Create user</ProtectedPageTitle>
 
-                  <MainContainer>
-                    <div style={{ marginBottom: '8px' }}>
-                      <MonroeInput
-                        name="firstName"
-                        label={<OptionTitle style={{ padding: '0 0 5px 0' }}>First Name *</OptionTitle>}
-                        value={values.firstName}
-                        onChange={handleChange}
-                        placeholder="Enter first name"
-                        style={{ height: '32px' }}
-                        error={touched.firstName ? errors.firstName : ''}
-                        onBlur={handleBlur}
-                      />
-                    </div>
+                  <PageContent>
+                    <Flex>
+                      <div style={{ flex: '0 0 40%' }}>
+                        <ProtectedPageSubtitle>Main Info</ProtectedPageSubtitle>
+                      </div>
 
-                    <div style={{ marginBottom: '8px' }}>
-                      <MonroeInput
-                        label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Last Name *</OptionTitle>}
-                        name="lastName"
-                        value={values.lastName}
-                        onChange={handleChange}
-                        placeholder="Enter last name"
-                        style={{ height: '32px' }}
-                        error={touched.lastName ? errors.lastName : ''}
-                        onBlur={handleBlur}
-                      />
-                    </div>
-
-                    <Flex vertical justify="flex-start" style={{ marginBottom: '8px', width: '100%' }}>
-                      <OptionTitle>Birth Date</OptionTitle>
-
-                      <MonroeDatePicker
-                        name="birthDate"
-                        value={values.birthDate}
-                        onChange={(_: unknown, data: string | string[]) => {
-                          if (data) {
-                            setFieldValue('birthDate', dayjs(data as string, 'YYYY-MM-DD'))
-                          } else {
-                            setFieldValue('birthDate', null)
-                          }
-                        }}
-                        maxDate={dayjs(new Date())}
-                      />
-                    </Flex>
-
-                    <Flex vertical justify="flex-start" style={{ marginBottom: '8px', width: '100%' }}>
-                      <OptionTitle>Gender</OptionTitle>
-
-                      <MonroeSelect
-                        onChange={handleChange}
-                        options={GENDER_OPTIONS}
-                        name="gender"
-                        placeholder="Select gender"
-                      />
-                    </Flex>
-                  </MainContainer>
-                </Flex>
-
-                <MonroeDivider
-                  style={{
-                    margin: '24px  0',
-                  }}
-                />
-
-                <Flex>
-                  <div style={{ flex: '0 0 40%' }}>
-                    <ProtectedPageSubtitle>Contact info</ProtectedPageSubtitle>
-                  </div>
-
-                  <MainContainer>
-                    <div style={{ marginBottom: '8px' }}>
-                      <MonroeInput
-                        label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Email *</OptionTitle>}
-                        name="email"
-                        value={values.email}
-                        onChange={handleChange}
-                        placeholder="Enter email"
-                        style={{ height: '32px' }}
-                        error={touched.email ? errors.email : ''}
-                        onBlur={handleBlur}
-                      />
-                    </div>
-
-                    <div style={{ marginBottom: '8px' }}>
-                      <MonroeInput
-                        name="phoneNumber"
-                        value={values.phoneNumber}
-                        onChange={(event) => {
-                          if (validateNumber(event.target.value)) handleChange(event)
-                        }}
-                        placeholder="Enter phone"
-                        style={{ height: '32px' }}
-                        label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Phone</OptionTitle>}
-                        error={errors.phoneNumber}
-                      />
-                    </div>
-
-                    <div style={{ marginBottom: '8px' }}>
-                      <MonroeInput
-                        name="zipCode"
-                        value={values.zipCode}
-                        onChange={(event) => {
-                          if (validateNumber(event.target.value)) handleChange(event)
-                        }}
-                        placeholder="Enter zip code"
-                        style={{ height: '32px' }}
-                        label={<OptionTitle>Zip Code</OptionTitle>}
-                        error={errors.zipCode}
-                      />
-                    </div>
-                  </MainContainer>
-                </Flex>
-
-                <MonroeDivider
-                  style={{
-                    margin: '24px 0 12px 0',
-                  }}
-                />
-
-                <Flex>
-                  <div style={{ flex: '0 0 40%', paddingTop: '12px' }}>
-                    <ProtectedPageSubtitle>Roles</ProtectedPageSubtitle>
-                  </div>
-
-                  <MainContainer>
-                    <FieldArray name="roles">
-                      {({ push, remove }) => (
-                        <Flex vertical>
-                          <Accordion
-                            items={collapsedDivisionItems(remove)}
-                            expandIconPosition="end"
-                            defaultActiveKey={[0]}
-                            expandIcon={() => <ReactSVG src={ShowAllIcon} />}
-                            accordion
+                      <MainContainer>
+                        <div style={{ marginBottom: '8px' }}>
+                          <MonroeInput
+                            name="firstName"
+                            label={<OptionTitle style={{ padding: '0 0 5px 0' }}>First Name *</OptionTitle>}
+                            value={values.firstName}
+                            onChange={handleChange}
+                            placeholder="Enter first name"
+                            style={{ height: '32px' }}
+                            error={touched.firstName ? errors.firstName : ''}
+                            onBlur={handleBlur}
                           />
+                        </div>
 
-                          <MonroeTooltip
-                            text={
-                              isAddEntityButtonDisabled
-                                ? "You can't create role when you have errors in other roles"
-                                : ''
-                            }
-                            width="220px"
-                            containerWidth="113px"
-                          >
-                            <AddEntityButton
-                              disabled={isAddEntityButtonDisabled}
-                              type="default"
-                              icon={<PlusOutlined />}
-                              iconPosition="start"
-                              onClick={() => push(INITIAL_ROLE_DATA)}
-                              style={{
-                                width: 'auto',
-                              }}
-                            >
-                              Add Role
-                            </AddEntityButton>
-                          </MonroeTooltip>
+                        <div style={{ marginBottom: '8px' }}>
+                          <MonroeInput
+                            label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Last Name *</OptionTitle>}
+                            name="lastName"
+                            value={values.lastName}
+                            onChange={handleChange}
+                            placeholder="Enter last name"
+                            style={{ height: '32px' }}
+                            error={touched.lastName ? errors.lastName : ''}
+                            onBlur={handleBlur}
+                          />
+                        </div>
+
+                        <Flex vertical justify="flex-start" style={{ marginBottom: '8px', width: '100%' }}>
+                          <OptionTitle>Birth Date</OptionTitle>
+
+                          <MonroeDatePicker
+                            name="birthDate"
+                            value={values.birthDate}
+                            onChange={(_: unknown, data: string | string[]) => {
+                              if (data) {
+                                setFieldValue('birthDate', dayjs(data as string, 'YYYY-MM-DD'))
+                              } else {
+                                setFieldValue('birthDate', null)
+                              }
+                            }}
+                            maxDate={dayjs(new Date())}
+                          />
                         </Flex>
-                      )}
-                    </FieldArray>
-                  </MainContainer>
-                </Flex>
 
-                <Divider />
+                        <Flex vertical justify="flex-start" style={{ marginBottom: '8px', width: '100%' }}>
+                          <OptionTitle>Gender</OptionTitle>
 
-                <Flex>
-                  <div style={{ flex: '0 0 40%' }} />
-                  <Flex>
-                    <CancelButton type="default" onClick={goBack}>
-                      Cancel
-                    </CancelButton>
+                          <MonroeSelect
+                            onChange={(value) => {
+                              setFieldValue('gender', value)
+                            }}
+                            options={GENDER_OPTIONS}
+                            name="gender"
+                            placeholder="Select gender"
+                            value={values.gender}
+                          />
+                        </Flex>
+                      </MainContainer>
+                    </Flex>
 
-                    <MonroeTooltip width="179px" text={!isEnabledButton ? 'Missing mandatory data' : ''}>
-                      <MonroeButton
-                        label="Create User"
-                        type="primary"
-                        onClick={handleSubmit}
-                        isDisabled={!isEnabledButton}
-                      />
-                    </MonroeTooltip>
-                  </Flex>
-                </Flex>
-              </PageContent>
-            </PageContainer>
-          </Form>
+                    <MonroeDivider
+                      style={{
+                        margin: '24px  0',
+                      }}
+                    />
+
+                    <Flex>
+                      <div style={{ flex: '0 0 40%' }}>
+                        <ProtectedPageSubtitle>Contact info</ProtectedPageSubtitle>
+                      </div>
+
+                      <MainContainer>
+                        <div style={{ marginBottom: '8px' }}>
+                          <MonroeInput
+                            label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Email *</OptionTitle>}
+                            name="email"
+                            value={values.email}
+                            onChange={handleChange}
+                            placeholder="Enter email"
+                            style={{ height: '32px' }}
+                            error={touched.email ? errors.email : ''}
+                            onBlur={handleBlur}
+                          />
+                        </div>
+
+                        <div style={{ marginBottom: '8px' }}>
+                          <MonroeInput
+                            name="phoneNumber"
+                            value={values.phoneNumber}
+                            onChange={(event) => {
+                              if (validateNumber(event.target.value)) handleChange(event)
+                            }}
+                            placeholder="Enter phone"
+                            style={{ height: '32px' }}
+                            label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Phone</OptionTitle>}
+                            error={errors.phoneNumber}
+                          />
+                        </div>
+
+                        <div style={{ marginBottom: '8px' }}>
+                          <MonroeInput
+                            name="zipCode"
+                            value={values.zipCode}
+                            onChange={(event) => {
+                              if (validateNumber(event.target.value)) handleChange(event)
+                            }}
+                            placeholder="Enter zip code"
+                            style={{ height: '32px' }}
+                            label={<OptionTitle>Zip Code</OptionTitle>}
+                            error={errors.zipCode}
+                          />
+                        </div>
+                      </MainContainer>
+                    </Flex>
+
+                    <MonroeDivider
+                      style={{
+                        margin: '24px 0 12px 0',
+                      }}
+                    />
+
+                    <Flex>
+                      <div style={{ flex: '0 0 40%', paddingTop: '12px' }}>
+                        <ProtectedPageSubtitle>Roles</ProtectedPageSubtitle>
+                      </div>
+
+                      <MainContainer>
+                        <FieldArray name="roles">
+                          {({ push, remove }) => (
+                            <Flex vertical>
+                              <Accordion
+                                items={collapsedDivisionItems(remove)}
+                                expandIconPosition="end"
+                                defaultActiveKey={[0]}
+                                expandIcon={() => <ReactSVG src={ShowAllIcon} />}
+                                accordion
+                              />
+
+                              <MonroeTooltip
+                                text={
+                                  isAddEntityButtonDisabled
+                                    ? "You can't create role when you have errors in other roles"
+                                    : ''
+                                }
+                                width="220px"
+                                containerWidth="113px"
+                              >
+                                <AddEntityButton
+                                  disabled={isAddEntityButtonDisabled}
+                                  type="default"
+                                  icon={<PlusOutlined />}
+                                  iconPosition="start"
+                                  onClick={() => push(INITIAL_ROLE_DATA)}
+                                  style={{
+                                    width: 'auto',
+                                  }}
+                                >
+                                  Add Role
+                                </AddEntityButton>
+                              </MonroeTooltip>
+                            </Flex>
+                          )}
+                        </FieldArray>
+                      </MainContainer>
+                    </Flex>
+
+                    <Divider />
+
+                    <Flex>
+                      <div style={{ flex: '0 0 40%' }} />
+                      <Flex>
+                        <CancelButton type="default" onClick={goBack}>
+                          Cancel
+                        </CancelButton>
+
+                        <MonroeButton label="Create User" type="primary" onClick={handleSubmit} />
+                      </Flex>
+                    </Flex>
+                  </PageContent>
+                </PageContainer>
+              </Form>
+            )}
+          </>
         )
       }}
     </Formik>

@@ -1,12 +1,13 @@
 import { Flex, Typography } from 'antd'
 import { Form, Formik } from 'formik'
+import { useEffect } from 'react'
 import { Helmet } from 'react-helmet'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
 import PasswordTooltip from '@/pages/Protected/Users/components/PasswordTooltip'
 import {
-  finishCreateOperatorFormData,
+  IFinishCreatingOperator,
   finishCreateOperatorValidationSchema,
 } from '@/pages/Protected/Users/constants/populateOperator'
 
@@ -22,11 +23,15 @@ import {
 } from '@/components/Elements'
 import MonroeInput from '@/components/Inputs/MonroeInput'
 import MonroePasswordInput from '@/components/Inputs/MonroePasswordInput'
+import Loader from '@/components/Loader'
 import MonroeButton from '@/components/MonroeButton'
 import MonroeTooltip from '@/components/MonroeTooltip'
 
-import BaseLayout from '@/layouts/BaseLayout'
+import { useAuthSlice } from '@/redux/hooks/useAuthSlice'
+import { useUserSlice } from '@/redux/hooks/useUserSlice'
+import { useGetPrefilledDataQuery } from '@/redux/user/user.api'
 
+import { useCookies } from '@/hooks/useCookies'
 import useIsActiveComponent from '@/hooks/useIsActiveComponent'
 
 import { PATH_TO_USERS } from '@/constants/paths'
@@ -90,6 +95,22 @@ const OperatorOnboarding = () => {
   const params = useParams<{ id: string }>()
   const navigation = useNavigate()
   const { isComponentVisible, ref } = useIsActiveComponent(false)
+  const { data, isLoading, isFetching } = useGetPrefilledDataQuery(
+    { invitation_token: params.id as string },
+    { skip: !params.id },
+  )
+  const { removeTokens, access } = useAuthSlice()
+  const { deleteCookie } = useCookies()
+  const { clearUserData } = useUserSlice()
+
+  useEffect(() => {
+    if (access && params.id) {
+      removeTokens()
+      clearUserData()
+      deleteCookie('accessToken')
+      deleteCookie('refreshToken')
+    }
+  }, [])
 
   const onSubmit = () => {}
 
@@ -98,290 +119,305 @@ const OperatorOnboarding = () => {
     return <></>
   }
 
+  if (!data || isLoading || isFetching) return <Loader />
+
+  const finishCreateOperatorFormData: IFinishCreatingOperator = {
+    city: data?.city,
+    email: data?.email,
+    firstName: data?.first_name,
+    lastName: data?.last_name,
+    name: data?.operator.name,
+    phone: data?.phone_number,
+    pointOfContactEmail: data?.operator.email_contact,
+    pointOfContactPhoneNumber: data?.operator.phone_number_contact,
+    state: data?.state,
+    street: data?.operator.street,
+    zipCode: data?.zip_code,
+    confirmPassword: '',
+    password: '',
+  }
+
   return (
-    <BaseLayout>
-      <>
-        <Helmet>
-          <title>Admin Panel | Operator Onboarding</title>
-        </Helmet>
+    <>
+      <Helmet>
+        <title>Admin Panel | Operator Onboarding</title>
+      </Helmet>
 
-        <Formik
-          initialValues={finishCreateOperatorFormData}
-          validateOnBlur
-          onSubmit={onSubmit}
-          validationSchema={finishCreateOperatorValidationSchema}
-          validateOnChange
-          validateOnMount
-        >
-          {({ values, handleChange, handleSubmit, errors, touched, handleBlur }) => {
-            const passwordErrors = checkPassword(values.password)
-            const isEnabledButton = Object.keys(errors).length === 0
+      <Formik
+        initialValues={finishCreateOperatorFormData}
+        validateOnBlur
+        onSubmit={onSubmit}
+        validationSchema={finishCreateOperatorValidationSchema}
+        validateOnChange
+        validateOnMount
+      >
+        {({ values, handleChange, handleSubmit, errors, touched, handleBlur }) => {
+          const passwordErrors = checkPassword(values.password)
+          const isEnabledButton = Object.keys(errors).length === 0
 
-            return (
-              <Form onSubmit={handleSubmit}>
-                <PageContainer vertical align="center">
-                  <ProtectedPageTitle style={{ margin: '8px 0' }}>Add operator</ProtectedPageTitle>
+          return (
+            <Form onSubmit={handleSubmit}>
+              <PageContainer vertical align="center">
+                <ProtectedPageTitle style={{ margin: '8px 0' }}>Add operator</ProtectedPageTitle>
 
-                  <Typography
+                <Typography
+                  style={{
+                    color: '#333',
+                    textAlign: 'center',
+                    width: '808px',
+                    marginBottom: '24px',
+                  }}
+                >
+                  Your profile has been created by Swift Schedule Master Admin. You may edit the information or leave it
+                  as it is to complete the profile creation and gain access to all features of the administration panel.
+                </Typography>
+
+                <PageContent style={{ width: '100%' }}>
+                  <Flex>
+                    <div style={{ flex: '0 0 40%' }}>
+                      <ProtectedPageSubtitle>User Info </ProtectedPageSubtitle>
+                    </div>
+
+                    <MainContainer>
+                      <div style={{ marginBottom: '8px' }}>
+                        <MonroeInput
+                          name="firstName"
+                          value={values.firstName}
+                          onChange={handleChange}
+                          placeholder="Enter First Name"
+                          style={{ height: '32px' }}
+                          error={touched.firstName ? errors.firstName : ''}
+                          onBlur={handleBlur}
+                          label={<OptionTitle style={{ padding: '0 0 5px 0' }}>First Name *</OptionTitle>}
+                        />
+                      </div>
+
+                      <div style={{ marginBottom: '8px' }}>
+                        <MonroeInput
+                          name="lastName"
+                          value={values.lastName}
+                          onChange={handleChange}
+                          placeholder="Enter Last Name"
+                          style={{ height: '32px' }}
+                          error={touched.lastName ? errors.lastName : ''}
+                          onBlur={handleBlur}
+                          label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Last Name *</OptionTitle>}
+                        />
+                      </div>
+
+                      <div style={{ marginBottom: '8px' }}>
+                        <MonroeInput
+                          label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Email *</OptionTitle>}
+                          name="pointOfContactEmail"
+                          value={values.pointOfContactEmail}
+                          onChange={handleChange}
+                          placeholder="Enter email"
+                          style={{ height: '32px' }}
+                          error={touched.pointOfContactEmail ? errors.pointOfContactEmail : ''}
+                          onBlur={handleBlur}
+                        />
+                      </div>
+
+                      <div style={{ marginBottom: '8px' }}>
+                        <MonroeInput
+                          label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Phone *</OptionTitle>}
+                          name="pointOfContactPhoneNumber"
+                          value={values.pointOfContactPhoneNumber}
+                          onChange={handleChange}
+                          placeholder="Enter email"
+                          style={{ height: '32px' }}
+                          error={touched.pointOfContactPhoneNumber ? errors.pointOfContactPhoneNumber : ''}
+                          onBlur={handleBlur}
+                        />
+                      </div>
+                    </MainContainer>
+                  </Flex>
+
+                  <MonroeDivider
                     style={{
-                      color: '#333',
-                      textAlign: 'center',
-                      width: '808px',
-                      marginBottom: '24px',
+                      margin: '24px  0',
                     }}
-                  >
-                    Your profile has been created by Swift Schedule Master Admin. You may edit the information or leave
-                    it as it is to complete the profile creation and gain access to all features of the administration
-                    panel.
-                  </Typography>
+                  />
 
-                  <PageContent style={{ width: '100%' }}>
-                    <Flex>
-                      <div style={{ flex: '0 0 40%' }}>
-                        <ProtectedPageSubtitle>User Info </ProtectedPageSubtitle>
+                  <Flex>
+                    <div style={{ flex: '0 0 40%' }}>
+                      <ProtectedPageSubtitle>Operator's Info</ProtectedPageSubtitle>
+                    </div>
+
+                    <MainContainer>
+                      <div style={{ marginBottom: '8px' }}>
+                        <MonroeInput
+                          name="name"
+                          value={values.name}
+                          onChange={handleChange}
+                          placeholder="Enter name"
+                          style={{ height: '32px' }}
+                          error={touched.name ? errors.name : ''}
+                          onBlur={handleBlur}
+                          label={
+                            <Flex align="center">
+                              <OptionTitle style={{ padding: '0 0 5px 0', marginRight: '8px' }}>
+                                Operator's name *
+                              </OptionTitle>
+
+                              <MonroeTooltip text={DEFAULT_TOOLTIP_TEXT} width="358px" containerWidth="auto">
+                                <ReactSVG src={InfoCircleIcon} style={{ padding: '0 0 5px 0' }} />
+                              </MonroeTooltip>
+                            </Flex>
+                          }
+                        />
                       </div>
 
-                      <MainContainer>
-                        <div style={{ marginBottom: '8px' }}>
-                          <MonroeInput
-                            name="firstName"
-                            value={values.firstName}
-                            onChange={handleChange}
-                            placeholder="Enter firstName"
-                            style={{ height: '32px' }}
-                            error={touched.firstName ? errors.firstName : ''}
-                            onBlur={handleBlur}
-                            label={<OptionTitle style={{ padding: '0 0 5px 0' }}>First Name *</OptionTitle>}
-                          />
-                        </div>
+                      <div style={{ marginBottom: '8px' }}>
+                        <MonroeInput
+                          name="email"
+                          value={values.email}
+                          onChange={handleChange}
+                          placeholder="Enter email"
+                          style={{ height: '32px' }}
+                          error={touched.email ? errors.email : ''}
+                          onBlur={handleBlur}
+                          label={
+                            <Flex align="center">
+                              <OptionTitle style={{ padding: '0 0 5px 0', marginRight: '8px' }}>
+                                Operator's email *
+                              </OptionTitle>
 
-                        <div style={{ marginBottom: '8px' }}>
-                          <MonroeInput
-                            name="lastName"
-                            value={values.lastName}
-                            onChange={handleChange}
-                            placeholder="Enter lastName"
-                            style={{ height: '32px' }}
-                            error={touched.lastName ? errors.lastName : ''}
-                            onBlur={handleBlur}
-                            label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Last Name *</OptionTitle>}
-                          />
-                        </div>
-
-                        <div style={{ marginBottom: '8px' }}>
-                          <MonroeInput
-                            label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Email *</OptionTitle>}
-                            name="pointOfContactEmail"
-                            value={values.pointOfContactEmail}
-                            onChange={handleChange}
-                            placeholder="Enter email"
-                            style={{ height: '32px' }}
-                            error={touched.pointOfContactEmail ? errors.pointOfContactEmail : ''}
-                            onBlur={handleBlur}
-                          />
-                        </div>
-
-                        <div style={{ marginBottom: '8px' }}>
-                          <MonroeInput
-                            label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Phone *</OptionTitle>}
-                            name="pointOfContactPhoneNumber"
-                            value={values.pointOfContactPhoneNumber}
-                            onChange={handleChange}
-                            placeholder="Enter email"
-                            style={{ height: '32px' }}
-                            error={touched.pointOfContactPhoneNumber ? errors.pointOfContactPhoneNumber : ''}
-                            onBlur={handleBlur}
-                          />
-                        </div>
-                      </MainContainer>
-                    </Flex>
-
-                    <MonroeDivider
-                      style={{
-                        margin: '24px  0',
-                      }}
-                    />
-
-                    <Flex>
-                      <div style={{ flex: '0 0 40%' }}>
-                        <ProtectedPageSubtitle>Operator's Info</ProtectedPageSubtitle>
+                              <MonroeTooltip text={DEFAULT_TOOLTIP_TEXT} width="358px" containerWidth="auto">
+                                <ReactSVG src={InfoCircleIcon} style={{ padding: '0 0 5px 0' }} />
+                              </MonroeTooltip>
+                            </Flex>
+                          }
+                        />
                       </div>
 
-                      <MainContainer>
-                        <div style={{ marginBottom: '8px' }}>
-                          <MonroeInput
-                            name="name"
-                            value={values.name}
-                            onChange={handleChange}
-                            placeholder="Enter name"
-                            style={{ height: '32px' }}
-                            error={touched.name ? errors.name : ''}
-                            onBlur={handleBlur}
-                            label={
-                              <Flex align="center">
-                                <OptionTitle style={{ padding: '0 0 5px 0', marginRight: '8px' }}>
-                                  Operator's name *
-                                </OptionTitle>
-
-                                <MonroeTooltip text={DEFAULT_TOOLTIP_TEXT} width="358px" containerWidth="auto">
-                                  <ReactSVG src={InfoCircleIcon} style={{ padding: '0 0 5px 0' }} />
-                                </MonroeTooltip>
-                              </Flex>
-                            }
-                          />
-                        </div>
-
-                        <div style={{ marginBottom: '8px' }}>
-                          <MonroeInput
-                            name="email"
-                            value={values.email}
-                            onChange={handleChange}
-                            placeholder="Enter email"
-                            style={{ height: '32px' }}
-                            error={touched.email ? errors.email : ''}
-                            onBlur={handleBlur}
-                            label={
-                              <Flex align="center">
-                                <OptionTitle style={{ padding: '0 0 5px 0', marginRight: '8px' }}>
-                                  Operator's email *
-                                </OptionTitle>
-
-                                <MonroeTooltip text={DEFAULT_TOOLTIP_TEXT} width="358px" containerWidth="auto">
-                                  <ReactSVG src={InfoCircleIcon} style={{ padding: '0 0 5px 0' }} />
-                                </MonroeTooltip>
-                              </Flex>
-                            }
-                          />
-                        </div>
-
-                        <div style={{ marginBottom: '8px' }}>
-                          <MonroeInput
-                            name="phone"
-                            value={values.phone}
-                            onChange={handleChange}
-                            placeholder="Enter phone"
-                            style={{ height: '32px' }}
-                            error={touched.phone ? errors.phone : ''}
-                            onBlur={handleBlur}
-                            label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Operator's phone *</OptionTitle>}
-                          />
-                        </div>
-
-                        <div style={{ marginBottom: '8px' }}>
-                          <OptionTitle style={{ padding: '0 0 5px 0' }}>Zip Code</OptionTitle>
-                          <MonroeInput
-                            name="zipCode"
-                            value={values.zipCode}
-                            onChange={handleChange}
-                            placeholder="Enter zip code"
-                            style={{ height: '32px' }}
-                          />
-                        </div>
-
-                        <div style={{ marginBottom: '8px' }}>
-                          <OptionTitle style={{ padding: '0 0 5px 0' }}>State</OptionTitle>
-                          <MonroeInput
-                            name="state"
-                            value={values.state}
-                            onChange={handleChange}
-                            placeholder="Enter state"
-                            style={{ height: '32px' }}
-                          />
-                        </div>
-
-                        <div style={{ marginBottom: '8px' }}>
-                          <OptionTitle style={{ padding: '0 0 5px 0' }}>City</OptionTitle>
-                          <MonroeInput
-                            name="city"
-                            value={values.city}
-                            onChange={handleChange}
-                            placeholder="Enter city"
-                            style={{ height: '32px' }}
-                          />
-                        </div>
-
-                        <div style={{ marginBottom: '8px' }}>
-                          <OptionTitle style={{ padding: '0 0 5px 0' }}>Street</OptionTitle>
-                          <MonroeInput
-                            name="street"
-                            value={values.street}
-                            onChange={handleChange}
-                            placeholder="Enter street"
-                            style={{ height: '32px' }}
-                          />
-                        </div>
-                      </MainContainer>
-                    </Flex>
-
-                    <MonroeDivider
-                      style={{
-                        margin: '24px  0',
-                      }}
-                    />
-
-                    <Flex>
-                      <div style={{ flex: '0 0 40%' }}>
-                        <ProtectedPageSubtitle>Password</ProtectedPageSubtitle>
+                      <div style={{ marginBottom: '8px' }}>
+                        <MonroeInput
+                          name="phone"
+                          value={values.phone}
+                          onChange={handleChange}
+                          placeholder="Enter phone"
+                          style={{ height: '32px' }}
+                          error={touched.phone ? errors.phone : ''}
+                          onBlur={handleBlur}
+                          label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Operator's phone *</OptionTitle>}
+                        />
                       </div>
 
-                      <MainContainer>
-                        <div ref={ref} style={{ marginBottom: '8px', position: 'relative' }}>
-                          <MonroePasswordInput
-                            name="password"
-                            value={values.password}
-                            onChange={handleChange}
-                            placeholder="Enter password"
-                            label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Password *</OptionTitle>}
-                            error={touched.password ? errors.password : ''}
-                            onBlur={handleBlur}
-                          />
+                      <div style={{ marginBottom: '8px' }}>
+                        <OptionTitle style={{ padding: '0 0 5px 0' }}>Zip Code</OptionTitle>
+                        <MonroeInput
+                          name="zipCode"
+                          value={values.zipCode}
+                          onChange={handleChange}
+                          placeholder="Enter zip code"
+                          style={{ height: '32px' }}
+                        />
+                      </div>
 
-                          {isComponentVisible && <PasswordTooltip passwordErrors={passwordErrors} />}
-                        </div>
+                      <div style={{ marginBottom: '8px' }}>
+                        <OptionTitle style={{ padding: '0 0 5px 0' }}>State</OptionTitle>
+                        <MonroeInput
+                          name="state"
+                          value={values.state}
+                          onChange={handleChange}
+                          placeholder="Enter state"
+                          style={{ height: '32px' }}
+                        />
+                      </div>
 
-                        <div style={{ marginBottom: '8px' }}>
-                          <MonroePasswordInput
-                            name="confirmPassword"
-                            value={values.confirmPassword}
-                            onChange={handleChange}
-                            placeholder="Enter password"
-                            label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Confirm password *</OptionTitle>}
-                            error={touched.confirmPassword ? errors.confirmPassword : ''}
-                            onBlur={handleBlur}
-                          />
-                        </div>
-                      </MainContainer>
-                    </Flex>
+                      <div style={{ marginBottom: '8px' }}>
+                        <OptionTitle style={{ padding: '0 0 5px 0' }}>City</OptionTitle>
+                        <MonroeInput
+                          name="city"
+                          value={values.city}
+                          onChange={handleChange}
+                          placeholder="Enter city"
+                          style={{ height: '32px' }}
+                        />
+                      </div>
 
-                    <MonroeDivider
-                      style={{
-                        margin: '24px  0',
-                      }}
-                    />
+                      <div style={{ marginBottom: '8px' }}>
+                        <OptionTitle style={{ padding: '0 0 5px 0' }}>Street</OptionTitle>
+                        <MonroeInput
+                          name="street"
+                          value={values.street}
+                          onChange={handleChange}
+                          placeholder="Enter street"
+                          style={{ height: '32px' }}
+                        />
+                      </div>
+                    </MainContainer>
+                  </Flex>
 
+                  <MonroeDivider
+                    style={{
+                      margin: '24px  0',
+                    }}
+                  />
+
+                  <Flex>
+                    <div style={{ flex: '0 0 40%' }}>
+                      <ProtectedPageSubtitle>Password</ProtectedPageSubtitle>
+                    </div>
+
+                    <MainContainer>
+                      <div ref={ref} style={{ marginBottom: '8px', position: 'relative' }}>
+                        <MonroePasswordInput
+                          name="password"
+                          value={values.password}
+                          onChange={handleChange}
+                          placeholder="Enter password"
+                          label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Password *</OptionTitle>}
+                          error={touched.password ? errors.password : ''}
+                          onBlur={handleBlur}
+                        />
+
+                        {isComponentVisible && <PasswordTooltip passwordErrors={passwordErrors} />}
+                      </div>
+
+                      <div style={{ marginBottom: '8px' }}>
+                        <MonroePasswordInput
+                          name="confirmPassword"
+                          value={values.confirmPassword}
+                          onChange={handleChange}
+                          placeholder="Enter password"
+                          label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Confirm password *</OptionTitle>}
+                          error={touched.confirmPassword ? errors.confirmPassword : ''}
+                          onBlur={handleBlur}
+                        />
+                      </div>
+                    </MainContainer>
+                  </Flex>
+
+                  <MonroeDivider
+                    style={{
+                      margin: '24px  0',
+                    }}
+                  />
+
+                  <Flex>
+                    <div style={{ flex: '0 0 40%' }} />
                     <Flex>
-                      <div style={{ flex: '0 0 40%' }} />
-                      <Flex>
-                        <CancelButton type="default">Cancel</CancelButton>
+                      <CancelButton type="default">Cancel</CancelButton>
 
-                        <MonroeTooltip width="179px" text={!isEnabledButton ? 'Missing mandatory data' : ''}>
-                          <MonroeButton
-                            label="Create Operator"
-                            type="primary"
-                            onClick={handleSubmit}
-                            isDisabled={!isEnabledButton}
-                          />
-                        </MonroeTooltip>
-                      </Flex>
+                      <MonroeTooltip width="179px" text={!isEnabledButton ? 'Missing mandatory data' : ''}>
+                        <MonroeButton
+                          label="Create Operator"
+                          type="primary"
+                          onClick={handleSubmit}
+                          isDisabled={!isEnabledButton}
+                        />
+                      </MonroeTooltip>
                     </Flex>
-                  </PageContent>
-                </PageContainer>
-              </Form>
-            )
-          }}
-        </Formik>
-      </>
-    </BaseLayout>
+                  </Flex>
+                </PageContent>
+              </PageContainer>
+            </Form>
+          )
+        }}
+      </Formik>
+    </>
   )
 }
 

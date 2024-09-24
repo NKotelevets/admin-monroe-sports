@@ -4,6 +4,11 @@ export const operatorValidationSchema = Yup.object<ICreateOperatorFormValues>().
   name: Yup.string().required('Name is required'),
   firstName: Yup.string().required('First Name is required'),
   lastName: Yup.string().required('Last Name is required'),
+  email: Yup.string()
+    .email('Incorrect email')
+    .test('is-email', 'Incorrect email', (value) =>
+      value ? /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) : true,
+    ),
   pointOfContactEmail: Yup.string()
     .email('Incorrect email')
     .test('is-email', 'Incorrect email', (value) =>
@@ -11,6 +16,7 @@ export const operatorValidationSchema = Yup.object<ICreateOperatorFormValues>().
     )
     .required('Email is required'),
   pointOfContactPhoneNumber: Yup.string().required('Phone is required'),
+  zipCode: Yup.string().length(5, 'Should be 5 digits'),
 })
 
 export const operatorInitialFormData: ICreateOperatorFormValues = {

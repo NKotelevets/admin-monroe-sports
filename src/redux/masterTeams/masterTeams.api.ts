@@ -3,6 +3,7 @@ import { createApi } from '@reduxjs/toolkit/query/react'
 import baseQueryWithReAuth from '@/redux/reauthBaseQuery'
 
 import { IPaginationResponse } from '@/common/interfaces/api'
+import { IMasterTeam } from '@/common/interfaces/masterTeams'
 
 const MASTER_TEAMS_TAG = 'MASTER_TEAMS'
 
@@ -12,15 +13,16 @@ export const masterTeamsApi = createApi({
   tagTypes: [MASTER_TEAMS_TAG],
   endpoints: (builder) => ({
     getMasterTeams: builder.query<
-      IPaginationResponse<[]>,
+      IPaginationResponse<IMasterTeam[]>,
       {
         limit: number
         offset: number
         ordering?: string | null
+        search?: string
       }
     >({
       query: (params) => ({
-        url: 'teams/seasons/',
+        url: 'teams/teams/all',
         params,
       }),
       providesTags: [MASTER_TEAMS_TAG],

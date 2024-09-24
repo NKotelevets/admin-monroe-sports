@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { Button } from 'antd'
+import { Button, Flex, Typography } from 'antd'
 
 import { MonroeSecondaryButton } from '@/components/Elements'
 
@@ -29,5 +29,23 @@ export const AddBracketButton = styled(MonroeSecondaryButton)`
     border-color: #d8d7db !important;
     background-color: #f4f4f5 !important;
     color: #bdbcc2 !important;
+  }
+`
+
+export const BracketNameWrapper = styled(Typography)`
+  color: rgba(26, 22, 87, 1);
+  font-weight: 500;
+  font-size: 14px;
+
+  @media (width > 1660px) {
+    font-size: 16px;
+  }
+`
+
+export const IconsWrapper = styled(Flex)`
+  @media (width > 1660px) {
+    & svg {
+      transform: scale(1.2);
+    }
   }
 `
