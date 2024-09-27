@@ -53,7 +53,7 @@ const UserDetails = () => {
       }),
     )
 
-  const handleBlock = () => {
+  const handleBlock = () =>
     bulkBlockUser([data?.id as string])
       .unwrap()
       .then((response) => {
@@ -63,15 +63,16 @@ const UserDetails = () => {
             timestamp: new Date().getTime(),
             type: 'success',
           })
+          setShowBlockModal(false)
         } else {
           setAppNotification({
             message: response.items[0].warning,
             timestamp: new Date().getTime(),
-            type: 'success',
+            type: 'error',
           })
+          setShowBlockModal(false)
         }
       })
-  }
 
   if (!data || isLoading || isFetching) return <Loader />
 
@@ -93,16 +94,12 @@ const UserDetails = () => {
       <BaseLayout>
         {showBlockModal && (
           <MonroeModal
-            okText="Delete"
+            okText="Block"
             onCancel={() => setShowBlockModal(false)}
             onOk={handleBlock}
             title="Block user?"
             type="warn"
-            content={
-              <>
-                <p>Are you sure you want to block this user?</p>
-              </>
-            }
+            content={<p>Are you sure you want to block this user?</p>}
           />
         )}
 
@@ -117,7 +114,6 @@ const UserDetails = () => {
                 icon={<ReactSVG src={LockIcon} />}
                 iconPosition="start"
                 onClick={() => setShowBlockModal(true)}
-                disabled={!data.isActive}
               >
                 Block
               </MonroeDeleteButton>
