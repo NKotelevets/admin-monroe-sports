@@ -297,7 +297,7 @@ const UserForm = () => {
 
                     <Flex>
                       <div style={{ flex: '0 0 40%', paddingTop: '12px' }}>
-                        <ProtectedPageSubtitle>Roles</ProtectedPageSubtitle>
+                        <ProtectedPageSubtitle>Role</ProtectedPageSubtitle>
                       </div>
 
                       <MainContainer>

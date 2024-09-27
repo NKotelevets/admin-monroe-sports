@@ -10,7 +10,7 @@ const linkedEntityValidationSchema = Yup.object({
 })
 
 const userRoleValidationSchema = Yup.object({
-  name: Yup.string().required('Role is required'),
+  name: Yup.string(),
   linkedEntities: Yup.array()
     .of(linkedEntityValidationSchema)
     .when('name', {
