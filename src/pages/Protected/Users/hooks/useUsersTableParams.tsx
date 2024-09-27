@@ -135,6 +135,7 @@ export const useUsersTableParams = ({
       dataIndex: 'firstName',
       fixed: 'left',
       width: '240px',
+      className: 'hide-right-border',
       ...getColumnSearchProps('firstName'),
       render: (value, record) => (
         <TextWithTooltip maxLength={25} text={value} onClick={() => navigate(PATH_TO_USERS + '/' + record.id)} />
@@ -145,6 +146,7 @@ export const useUsersTableParams = ({
       dataIndex: 'lastName',
       fixed: 'left',
       width: '240px',
+      className: 'hide-right-border',
       ...getColumnSearchProps('lastName'),
       render: (value, record) => (
         <TextWithTooltip maxLength={25} text={value} onClick={() => navigate(PATH_TO_USERS + '/' + record.id)} />
@@ -153,6 +155,7 @@ export const useUsersTableParams = ({
     {
       title: '',
       dataIndex: 'gender',
+      fixed: 'left',
       width: '50px',
       filters: [
         { text: 'Male', value: 0 },
@@ -173,7 +176,7 @@ export const useUsersTableParams = ({
       title: 'Roles',
       dataIndex: 'roles',
       width: '240px',
-      render: (value) => <TextWithTooltip maxLength={28} text={value.join(', ')} />,
+      render: (value) => <TextWithTooltip isRegularText maxLength={28} text={value.length ? value.join(', ') : '-'} />,
       filterDropdown: MonroeFilter,
       filterIcon: (filtered) => (
         <FilterFilled
@@ -198,15 +201,15 @@ export const useUsersTableParams = ({
       dataIndex: 'teams',
       width: '240px',
       ...getColumnSearchProps('teams'),
-      render: (value) => <TextWithTooltip maxLength={28} text={value.join(', ')} />,
+      render: (value) => <TextWithTooltip isRegularText maxLength={28} text={value.length ? value.join(', ') : '-'} />,
     },
     {
       title: 'Birth Date',
       dataIndex: 'birthDate',
+      sorter: true,
       width: '128px',
       sortOrder: ordering ? (ordering.startsWith('-') ? 'descend' : 'ascend') : null,
-      sorter: (a, b) => new Date(a.birthDate).getTime() - new Date(b.birthDate).getTime(),
-      render: (value) => <CellText>{format(new Date(value), 'MMM, dd yyyy') || '-'}</CellText>,
+      render: (value) => <CellText>{value ? format(new Date(value), 'MMM, dd yyyy') : '-'}</CellText>,
     },
     {
       title: 'Email',
@@ -225,12 +228,18 @@ export const useUsersTableParams = ({
       render: (value) => <CellText>{value || '-'}</CellText>,
     },
     {
+      title: 'Zip Code',
+      dataIndex: 'zipCode',
+      width: '192px',
+      render: (value) => <CellText>{value || '-'}</CellText>,
+    },
+    {
       title: 'Actions',
       dataIndex: '',
       width: '96px',
       fixed: 'right',
       render: (value, record) => {
-        const Icon = record.isActive ? LockIcon : UnLockIcon
+        const Icon = !record.isActive ? LockIcon : UnLockIcon
 
         return (
           <Flex
@@ -255,9 +264,9 @@ export const useUsersTableParams = ({
                   setSelectedRecordId(value.id)
 
                   if (!record.isActive) {
-                    setShowBlockSingleUserModal(true)
-                  } else {
                     setShowUnBlockSingleUserModal(true)
+                  } else {
+                    setShowBlockSingleUserModal(true)
                   }
                 }}
                 src={Icon}

@@ -5,15 +5,15 @@ import UserForm from '@/pages/Protected/Users/components/UserForm'
 import BaseLayout from '@/layouts/BaseLayout'
 
 const CreateUser = () => (
-  <BaseLayout>
-    <>
-      <Helmet>
-        <title>Admin Panel | Create User</title>
-      </Helmet>
+  <>
+    <Helmet>
+      <title>Admin Panel | Create User</title>
+    </Helmet>
 
+    <BaseLayout>
       <UserForm />
-    </>
-  </BaseLayout>
+    </BaseLayout>
+  </>
 )
 
 export default CreateUser

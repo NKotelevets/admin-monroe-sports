@@ -114,7 +114,6 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
   selectedTeams,
 }) => {
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedOptions, setSelectedOptions] = useState<IMasterTeam[]>([])
   const { isComponentVisible, ref } = useIsActiveComponent(false)
   const inputRef = useRef<HTMLInputElement | null>()
   const [offset, setOffset] = useState(0)
@@ -123,17 +122,15 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
 
   const handleSearchChange: ChangeEventHandler<HTMLInputElement> = (event) => setSearchTerm(event.target.value)
 
-  const handleOptionToggle = (option: IMasterTeam) => {
-    const isSelectedTeam = selectedTeams.filter((item) => item.id !== option.id)
+  const handleOptionToggle = (option: { id: string; name: string }) => {
+    const isSelectedTeam = !!selectedTeams.find((item) => item.id === option.id)
 
     if (isSelectedTeam) {
       const updatedMasterTeams = selectedTeams.filter((item) => item.id !== option.id)
 
       onChange(updatedMasterTeams)
-
-      setSelectedOptions(selectedOptions.filter((item) => item !== option))
     } else {
-      setSelectedOptions([...selectedOptions, option])
+      onChange([...selectedTeams, option])
     }
   }
 
@@ -176,7 +173,7 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
         is_error={`${isError}`}
       >
         <Flex>
-          {!isComponentVisible && !selectedOptions.length && (
+          {!isComponentVisible && !selectedTeams.length && (
             <Typography style={{ color: 'rgb(189, 188, 194)' }}>Select team</Typography>
           )}
 
@@ -192,13 +189,13 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
             />
           )}
 
-          {!!selectedOptions.length && (
+          {!!selectedTeams.length && (
             <Flex
               style={{
                 listStyle: 'none',
               }}
             >
-              {selectedOptions.map((option) => (
+              {selectedTeams.map((option) => (
                 <TeamNameWrapper key={option.id}>
                   {option.name}
 
@@ -222,7 +219,7 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
                 <ListItem key={masterTeam.id}>
                   <Checkbox
                     className="checkbox"
-                    checked={!!selectedOptions.find((sO) => sO.id === masterTeam.id)}
+                    checked={!!selectedTeams.find((sO) => sO.id === masterTeam.id)}
                     onChange={() => handleOptionToggle(masterTeam)}
                   />
 

@@ -11,18 +11,19 @@ import {
   DetailValue,
   MonroeBlueText,
   MonroeDeleteButton,
-  MonroeLightBlueText,
   MonroeLinkText,
   PageContainer,
   ProtectedPageTitle,
   ViewText,
 } from '@/components/Elements'
+import Loader from '@/components/Loader'
 import MonroeButton from '@/components/MonroeButton'
 import MonroeModal from '@/components/MonroeModal'
 
 import BaseLayout from '@/layouts/BaseLayout'
 
 import { useAppSlice } from '@/redux/hooks/useAppSlice'
+import { useGetUserDetailsQuery } from '@/redux/user/user.api'
 
 import { PATH_TO_EDIT_USER, PATH_TO_USERS } from '@/constants/paths'
 
@@ -33,69 +34,38 @@ import CopyIcon from '@/assets/icons/copy.svg'
 import LockIcon from '@/assets/icons/small-lock.svg'
 
 const UserDetails = () => {
-  useParams<{ id: string }>()
+  const params = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [showBlockModal, setShowBlockModal] = useState(false)
   const { setAppNotification } = useAppSlice()
+  const [showBlockModal, setShowBlockModal] = useState(false)
+  const { data, isLoading, isFetching } = useGetUserDetailsQuery(
+    { id: params?.id || '' },
+    { skip: !params.id, refetchOnMountOrArgChange: true },
+  )
 
-  const handleCopyContent = async (text: string, type: 'email' | 'phone') => {
-    try {
-      await navigator.clipboard.writeText(text)
-
+  const handleCopyContent = async (text: string, type: 'email' | 'phone') =>
+    navigator.clipboard.writeText(text).then(() =>
       setAppNotification({
         message: `${type === 'phone' ? 'Phone' : 'Email'} successfully copied`,
         timestamp: new Date().getTime(),
         type: 'success',
-      })
-    } catch {
-      // TODO: think about this issue
-    }
-  }
+      }),
+    )
 
-  const mockedUserData = {
-    id: '123ds123d',
-    name: 'Joe Doe',
-    birthDate: '1999-10-07',
-    email: 'joedoe@example.com',
-    phoneNumber: '(405) 555-0128',
-    zipCode: '8502',
-    roles: [
-      {
-        name: 'Player',
-        linkedEntities: [
-          {
-            name: 'Team name 1',
-          },
-          {
-            name: 'Team name 2',
-          },
-          {
-            name: 'Team name 3',
-          },
-        ],
-      },
-      {
-        name: 'Guardian',
-        linkedEntities: [
-          {
-            name: 'Lily Colins',
-          },
-        ],
-      },
-    ],
-    gender: 0,
-  }
+  const handleBlock = () => {}
+
+  if (!data || isLoading || isFetching) return <Loader />
+
+  const userFullName = data.firstName + ' ' + data.lastName
 
   const BREAD_CRUMB_ITEMS = [
     {
       title: <a href={PATH_TO_USERS}>Users</a>,
     },
     {
-      title: <MonroeBlueText>{mockedUserData?.name}</MonroeBlueText>,
+      title: <MonroeBlueText>{userFullName}</MonroeBlueText>,
     },
   ]
-
-  const handleBlock = () => {}
 
   return (
     <>
@@ -117,101 +87,185 @@ const UserDetails = () => {
           />
         )}
 
-        {!!mockedUserData && (
-          <PageContainer>
-            <Breadcrumb items={BREAD_CRUMB_ITEMS} />
+        <PageContainer>
+          <Breadcrumb items={BREAD_CRUMB_ITEMS} />
 
-            <Flex justify="space-between">
-              <ProtectedPageTitle>{mockedUserData?.name}</ProtectedPageTitle>
+          <Flex justify="space-between">
+            <ProtectedPageTitle>{userFullName}</ProtectedPageTitle>
 
-              <Flex>
-                <MonroeDeleteButton
-                  icon={<ReactSVG src={LockIcon} />}
-                  iconPosition="start"
-                  onClick={() => setShowBlockModal(true)}
-                >
-                  Delete
-                </MonroeDeleteButton>
+            <Flex>
+              <MonroeDeleteButton
+                icon={<ReactSVG src={LockIcon} />}
+                iconPosition="start"
+                onClick={() => setShowBlockModal(true)}
+              >
+                Delete
+              </MonroeDeleteButton>
 
-                <MonroeButton
-                  isDisabled={false}
-                  label="Edit"
-                  type="primary"
-                  icon={<EditOutlined />}
-                  iconPosition="start"
-                  onClick={() => navigate(`${PATH_TO_EDIT_USER}/${mockedUserData.id}`)}
-                  style={{ height: '32px' }}
-                />
-              </Flex>
+              <MonroeButton
+                isDisabled={false}
+                label="Edit"
+                type="primary"
+                icon={<EditOutlined />}
+                iconPosition="start"
+                onClick={() => navigate(`${PATH_TO_EDIT_USER}/${data.id}`)}
+                style={{ height: '32px' }}
+              />
+            </Flex>
+          </Flex>
+
+          <Flex vertical>
+            <Flex className="mb-16">
+              <ViewText>Gender:</ViewText>
+              <DetailValue>{FULL_GENDER_NAMES[data.gender as TGender]}</DetailValue>
             </Flex>
 
-            <Flex vertical>
-              <Flex className="mb-16">
-                <ViewText>Gender:</ViewText>
-                <DetailValue>{FULL_GENDER_NAMES[mockedUserData.gender as TGender]}</DetailValue>
-              </Flex>
+            <Flex className="mb-16">
+              <ViewText>Birth Date:</ViewText>
+              <DetailValue>{data.birthDate ? format(new Date(data.birthDate), 'MMM d, yyyy') : '-'}</DetailValue>
+            </Flex>
 
-              <Flex className="mb-16">
-                <ViewText>Birth Date:</ViewText>
-                <DetailValue>{format(new Date(mockedUserData.birthDate), 'MMM d, yyyy')}</DetailValue>
-              </Flex>
+            <Flex className="mb-16" align="center" style={{ cursor: 'pointer' }}>
+              <ViewText>Email:</ViewText>
+              <ViewText style={{ width: 'auto', marginRight: '0px' }}>{data.email}</ViewText>
 
-              <Flex className="mb-16" align="center" style={{ cursor: 'pointer' }}>
-                <ViewText>Email:</ViewText>
-                <MonroeLightBlueText>{mockedUserData.email}</MonroeLightBlueText>
+              <div
+                onClick={() => handleCopyContent(data.email, 'email')}
+                style={{ marginLeft: '8px', cursor: 'pointer' }}
+              >
+                <ReactSVG src={CopyIcon} />
+              </div>
+            </Flex>
 
-                <div
-                  onClick={() => handleCopyContent(mockedUserData.email, 'email')}
-                  style={{ marginLeft: '8px', cursor: 'pointer' }}
-                >
-                  <ReactSVG src={CopyIcon} />
-                </div>
-              </Flex>
+            <Flex className="mb-16">
+              <ViewText>Phone:</ViewText>
 
-              <Flex className="mb-16">
-                <ViewText>Phone:</ViewText>
+              <Flex align="center">
+                <ViewText style={{ width: 'auto' }}>{data.phoneNumber || '-'}</ViewText>
 
-                <Flex align="center">
-                  <ViewText style={{ width: 'auto' }}>{mockedUserData.phoneNumber}</ViewText>
-
-                  <div
-                    onClick={() => handleCopyContent(mockedUserData.phoneNumber, 'phone')}
-                    style={{ cursor: 'pointer' }}
-                  >
+                {data.phoneNumber && (
+                  <div onClick={() => handleCopyContent(data.phoneNumber, 'phone')} style={{ cursor: 'pointer' }}>
                     <ReactSVG src={CopyIcon} />
                   </div>
-                </Flex>
-              </Flex>
-
-              <Flex className="mb-16">
-                <ViewText>Zip Code:</ViewText>
-                <ViewText>{mockedUserData.zipCode}</ViewText>
-              </Flex>
-
-              <Flex className="mb-16">
-                <ViewText>Roles:</ViewText>
-
-                <Flex vertical>
-                  {mockedUserData.roles.map((role) => (
-                    <Flex key={role.name} vertical style={{ marginBottom: '8px' }}>
-                      <ViewText>{role.name}</ViewText>
-                      <Flex>
-                        {role.linkedEntities.map((entity, idx) => (
-                          <>
-                            <MonroeLinkText key={entity.name} style={{ marginRight: '4px' }}>
-                              {entity.name}
-                              {role.linkedEntities.length - 1 === idx ? '' : ','}
-                            </MonroeLinkText>
-                          </>
-                        ))}
-                      </Flex>
-                    </Flex>
-                  ))}
-                </Flex>
+                )}
               </Flex>
             </Flex>
-          </PageContainer>
-        )}
+
+            <Flex className="mb-16">
+              <ViewText>Zip Code:</ViewText>
+              <ViewText>{data.zipCode || '-'}</ViewText>
+            </Flex>
+
+            <Flex className="mb-16">
+              <ViewText>Roles:</ViewText>
+
+              <Flex vertical>
+                {data.isSuperuser && (
+                  <ViewText style={{ width: '250px', marginBottom: '8px' }}>Swift Schedule Master Admin</ViewText>
+                )}
+
+                {data.operator && (
+                  <Flex vertical>
+                    <ViewText style={{ width: '250px', marginBottom: '8px' }}>Operator</ViewText>
+
+                    <MonroeLinkText
+                      onClick={() => navigate(PATH_TO_USERS + '/' + data.operator?.id)}
+                      style={{ marginRight: '4px' }}
+                    >
+                      {data.operator.name}
+                    </MonroeLinkText>
+                  </Flex>
+                )}
+
+                {data.asTeamAdmin && (
+                  <Flex key="teamAdmin" vertical style={{ marginBottom: '8px' }}>
+                    <ViewText>Team Admin</ViewText>
+                    <Flex>
+                      {data.asTeamAdmin.map((team, idx, arr) => (
+                        <>
+                          <MonroeLinkText key={team.name} style={{ marginRight: '4px' }}>
+                            {team.name}
+                            {arr.length - 1 === idx ? ';' : ','}
+                          </MonroeLinkText>
+                        </>
+                      ))}
+                    </Flex>
+                  </Flex>
+                )}
+
+                {data.asHeadCoach && (
+                  <Flex key="teamAdmin" vertical style={{ marginBottom: '8px' }}>
+                    <ViewText>Head Coach</ViewText>
+                    <Flex>
+                      {data.asHeadCoach.map((team, idx, arr) => (
+                        <>
+                          <MonroeLinkText key={team.name} style={{ marginRight: '4px' }}>
+                            {team.name}
+                            {arr.length - 1 === idx ? ';' : ','}
+                          </MonroeLinkText>
+                        </>
+                      ))}
+                    </Flex>
+                  </Flex>
+                )}
+
+                {data.asCoach && (
+                  <Flex key="coach" vertical style={{ marginBottom: '8px' }}>
+                    <ViewText>Coach</ViewText>
+                    <Flex>
+                      {data.asCoach.teams.map((team, idx, arr) => (
+                        <>
+                          <MonroeLinkText key={team.name} style={{ marginRight: '4px' }}>
+                            {team.name}
+                            {arr.length - 1 === idx ? ';' : ','}
+                          </MonroeLinkText>
+                        </>
+                      ))}
+                    </Flex>
+                  </Flex>
+                )}
+
+                {data.asPlayer && (
+                  <Flex key="player" vertical style={{ marginBottom: '8px' }}>
+                    <ViewText>Player</ViewText>
+                    <Flex>
+                      {data.asPlayer.teams.map((team, idx, arr) => (
+                        <>
+                          <MonroeLinkText key={team.name} style={{ marginRight: '4px' }}>
+                            {team.name}
+                            {arr.length - 1 === idx ? ';' : ','}
+                          </MonroeLinkText>
+                        </>
+                      ))}
+                    </Flex>
+                  </Flex>
+                )}
+
+                {data.asParent && (
+                  <Flex key="player" vertical style={{ marginBottom: '8px' }}>
+                    <ViewText>Guardian</ViewText>
+                    <Flex>
+                      {data.asParent.map((child, idx, arr) => (
+                        <>
+                          <MonroeLinkText
+                            key={child.id}
+                            style={{ marginRight: '4px' }}
+                            onClick={() => navigate(PATH_TO_USERS + '/' + child.id)}
+                          >
+                            {child.firstName} {child.lastName}
+                            {arr.length - 1 === idx ? ';' : ','}
+                          </MonroeLinkText>
+                        </>
+                      ))}
+                    </Flex>
+                  </Flex>
+                )}
+
+                {data.isChild && <ViewText>Child</ViewText>}
+              </Flex>
+            </Flex>
+          </Flex>
+        </PageContainer>
       </BaseLayout>
     </>
   )

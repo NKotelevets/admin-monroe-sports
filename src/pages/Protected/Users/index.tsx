@@ -73,8 +73,8 @@ const Users = () => {
 
       if (response.status !== 'green') {
         setInfoNotification({
-          actionLabel: 'More info..',
-          message: `${response.success}/${response.total} users have been successfully blocked.`,
+          actionLabel: 'More info...',
+          message: `Cannot block users.`,
           redirectedPageUrl: PATH_TO_USERS_BLOCKING_INFO,
         })
 

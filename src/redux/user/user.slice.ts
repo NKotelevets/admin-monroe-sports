@@ -14,9 +14,6 @@ interface IUserSliceState {
   createdRecordsNames: { name: string; showIcon: boolean }[]
   selectedRecords: IFEUser[]
   isCreateOperatorScreen: boolean
-  firstName: string
-  lastName: string
-  role: string
   blockedUserErrors: IBlockedUserError[]
 }
 
@@ -30,9 +27,6 @@ const userSliceState: IUserSliceState = {
   createdRecordsNames: [],
   selectedRecords: [],
   isCreateOperatorScreen: false,
-  firstName: '',
-  lastName: '',
-  role: '',
   blockedUserErrors: [],
 }
 
@@ -49,18 +43,11 @@ export const userSlice = createSlice({
         limit: number
         offset: number
         ordering?: string
-        firstName?: string
-        lastName?: string
-        role?: string
-        gender?: string
       }>,
     ) => {
       state.limit = action.payload.limit
       state.offset = action.payload.offset
       state.ordering = action.payload.ordering || ''
-      state.firstName = action.payload.firstName || ''
-      state.lastName = action.payload.lastName || ''
-      state.role = action.payload.role || ''
     },
     setRecords: (state, action: PayloadAction<IFEUser[]>) => {
       state.selectedRecords = action.payload

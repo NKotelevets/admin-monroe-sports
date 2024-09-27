@@ -60,6 +60,7 @@ export interface IGetUsersRequestParams {
   limit: number
   offset: number
   role?: string
+  team?: string
 }
 
 export interface IRole {
@@ -70,12 +71,13 @@ export interface IRole {
 export interface ICreateUserAsAdminRequestBody {
   first_name: string
   last_name: string
-  birth_date: string
+  birth_date?: string
   gender: TGender
   email: string
-  phone_number: string
-  zip_code: string
+  phone_number?: string
+  zip_code?: string
   roles: IRole[]
+  team?: string
 }
 
 export interface IBlockedUserError {
@@ -85,4 +87,64 @@ export interface IBlockedUserError {
   first_name: string
   last_name: string
   gender: number
+}
+
+interface ITeam {
+  id: string
+  name: string
+}
+
+interface IAsEntity {
+  teams: ITeam[]
+}
+
+interface IOperator {
+  id: string
+  updated_at: string
+  created_at: string
+  name: string
+  email: string
+  phone_number: string
+  zip_code: string
+  state: string
+  city: string
+  street: string
+  first_name: string
+  last_name: string
+  phone_number_contact: string
+  email_contact: string
+}
+
+export interface IExtendedBEUser extends IBEUser {
+  as_coach: IAsEntity | null
+  as_player: IAsEntity | null
+  operator: IOperator | null
+  as_head_coach: { id: string; name: string }[] | null
+  as_team_admin: { id: string; name: string }[] | null
+  is_child: boolean
+  as_supervisor: {
+    relation_type: number
+    supervised: {
+      id: string
+      first_name: string
+      last_name: string
+      // TODO: add rest fields
+    }[]
+  } | null
+}
+
+interface IChildren {
+  id: string
+  firstName: string
+  lastName: string
+}
+
+export interface IExtendedFEUser extends IFEUser {
+  asCoach: IAsEntity | null
+  asPlayer: IAsEntity | null
+  operator: IOperator | null
+  asHeadCoach: { id: string; name: string }[] | null
+  asTeamAdmin: { id: string; name: string }[] | null
+  isChild: boolean
+  asParent: null | IChildren[]
 }

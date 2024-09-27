@@ -1,6 +1,6 @@
 import * as Yup from 'yup'
 
-export const operatorValidationSchema = Yup.object<ICreateOperatorFormValues>().shape({
+export const operatorValidationSchema = Yup.object<ICreateOperatorFormValues>({
   name: Yup.string().required('Name is required'),
   firstName: Yup.string().required('First Name is required'),
   lastName: Yup.string().required('Last Name is required'),

@@ -100,7 +100,7 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
     }
   }, [data])
 
-  type TFilter = Record<'firstName' | 'lastName' | 'gender' | 'roles', FilterValue | null>
+  type TFilter = Record<'firstName' | 'lastName' | 'gender' | 'roles' | 'teams', FilterValue | null>
 
   const handleTableChange: TableProps<IFEUser>['onChange'] = (pagination, filters: TFilter, sorter) => {
     const newOffset = (pagination?.current && (pagination?.current - 1) * (pagination?.pageSize || 10)) || 0
@@ -130,6 +130,7 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
     const gender = filters?.['gender']?.[0] as string
     const roles =
       filters?.['roles']?.length === 1 ? (filters?.['roles'][0] as string) : (filters?.['roles']?.join(',') as string)
+    const team = filters?.['teams']?.[0] as string
 
     getUsers({
       offset: newOffset,
@@ -139,16 +140,13 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
       last_name: lastName,
       gender,
       role: roles,
+      team,
     })
 
     setPaginationParams({
       offset: newOffset,
       limit: newLimit,
       ordering: orderingValue,
-      firstName,
-      lastName,
-      gender,
-      role: roles,
     })
   }
 
@@ -188,7 +186,7 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
       .unwrap()
       .then(() => {
         setAppNotification({
-          message: 'User have been successfully blocked.',
+          message: 'User have been successfully unblocked.',
           timestamp: new Date().getTime(),
           type: 'success',
         })
@@ -200,11 +198,14 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
           type: 'error',
         })
       })
+      .finally(() => {
+        setShowUnBlockSingleUserModal(false)
+      })
   }
 
   return (
     <>
-      {showBlockSingleUserModal && (
+      {showUnBlockSingleUserModal && (
         <MonroeModal
           okText="Unblock"
           onCancel={() => setShowUnBlockSingleUserModal(false)}
@@ -215,7 +216,7 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
         />
       )}
 
-      {showUnBlockSingleUserModal && (
+      {showBlockSingleUserModal && (
         <MonroeModal
           okText="Block"
           onCancel={() => setShowBlockSingleUserModal(false)}

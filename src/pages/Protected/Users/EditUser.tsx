@@ -6,7 +6,7 @@ import { DefaultOptionType } from 'antd/es/select'
 import dayjs from 'dayjs'
 import { FieldArray, Form, Formik } from 'formik'
 import { Helmet } from 'react-helmet'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
 import PopulateRole from '@/pages/Protected/Users/components/PopulateRole'
@@ -32,13 +32,20 @@ import {
   ProtectedPageTitle,
 } from '@/components/Elements'
 import MonroeInput from '@/components/Inputs/MonroeInput'
+import Loader from '@/components/Loader'
 import MonroeButton from '@/components/MonroeButton'
 import MonroeSelect from '@/components/MonroeSelect'
 import MonroeTooltip from '@/components/MonroeTooltip'
 
 import BaseLayout from '@/layouts/BaseLayout'
 
+import { useGetUserDetailsQuery } from '@/redux/user/user.api'
+
 import { PATH_TO_USERS } from '@/constants/paths'
+
+import { FULL_GENDER_NAMES } from '@/common/constants'
+// import { IExtendedFEUser, IRole } from '@/common/interfaces/user'
+import { TGender } from '@/common/types'
 
 import ShowAllIcon from '@/assets/icons/show-all.svg'
 
@@ -58,31 +65,42 @@ const GENDER_OPTIONS: DefaultOptionType[] = [
 ]
 
 const EditUser = () => {
+  const params = useParams<{ id: string }>()
   const navigation = useNavigate()
+  const { data, isLoading } = useGetUserDetailsQuery(
+    {
+      id: params?.id || '',
+    },
+    {
+      skip: !params.id,
+    },
+  )
 
   const goBack = () => navigation(PATH_TO_USERS)
 
   const handleSubmit = () => {}
 
+  if (isLoading) return <Loader />
+
+  if (!data) return <h1>Smth went wrong..</h1>
+
   const initialValues: ICreateUserFormValues = {
-    firstName: 'First Name',
-    lastName: 'Last name',
-    birthDate: null,
-    email: 'joedoe@example.com',
-    gender: 'Male',
-    phoneNumber: '(405) 512-1144',
-    zipCode: '32456',
-    roles: [
-      {
-        name: 'Operator',
-        linkedEntities: [],
-      },
-      {
-        name: 'Player',
-        linkedEntities: [],
-      },
-    ],
+    firstName: data.firstName,
+    lastName: data.lastName,
+    birthDate: data.birthDate,
+    email: data.email,
+    gender: FULL_GENDER_NAMES[data.gender as TGender],
+    phoneNumber: data.phoneNumber,
+    zipCode: data.zipCode,
+    roles: [],
   }
+
+  // const calculateUserRoles = (data: IExtendedFEUser) => {
+  //   const roles: IRole[] = []
+
+  //   if (data.isSuperuser) {
+  //   }
+  // }
 
   const BREAD_CRUMB_ITEMS = [
     {

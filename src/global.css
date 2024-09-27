@@ -52,6 +52,10 @@ svg {
   z-index: 0 !important;
 }
 
+.ant-table-wrapper table tr th.ant-table-selection-column.ant-table-cell-fix-left:first-child {
+  z-index: 500 !important;
+}
+
 
 .ant-table-thead th {
   font-weight: 500;
@@ -416,4 +420,11 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
 
 .mg-l8 {
   margin-left: 8px;
+}
+
+
+/* Else */
+
+.hide-right-border::before {
+  height: 0 !important;
 }

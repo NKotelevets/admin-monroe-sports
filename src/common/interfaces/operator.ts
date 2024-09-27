@@ -2,8 +2,8 @@ export interface IBEOperator {
   id: string
   name: string
   email: string
-  phone_number: string
-  zip_code: string
+  phone_number: string | null
+  zip_code: string | null
   state: string
   city: string
   street: string
@@ -17,8 +17,8 @@ export interface IFEOperator {
   id: string
   name: string
   email: string
-  phoneNumber: string
-  zipCode: string
+  phoneNumber: string | null
+  zipCode: string | null
   state: string
   city: string
   street: string
@@ -33,3 +33,4 @@ export interface IGetOperatorRequestParams {
   offset: number
   search?: string
 }
+

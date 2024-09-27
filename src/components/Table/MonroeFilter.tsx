@@ -66,7 +66,10 @@ const MonroeFilter: FC<FilterDropdownProps> = ({ confirm, selectedKeys, setSelec
     >
       <Button
         type="default"
-        onClick={() => clearFilters && clearFilters()}
+        onClick={() => {
+          clearFilters && clearFilters()
+          confirm()
+        }}
         style={{
           ...resetButtonStyles,
           color: selectedKeys.length ? 'rgba(188, 38, 27, 1)' : 'rgba(189, 188, 194, 1)',

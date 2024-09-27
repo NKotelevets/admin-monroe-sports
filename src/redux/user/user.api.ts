@@ -9,6 +9,8 @@ import {
   IBEUser,
   IBlockedUserError,
   ICreateUserAsAdminRequestBody,
+  IExtendedBEUser,
+  IExtendedFEUser,
   IFEUser,
   IGetUsersRequestParams,
 } from '@/common/interfaces/user'
@@ -16,61 +18,6 @@ import {
 const USER_TAG = 'USER'
 
 const OPERATOR_TAG = 'OPERATOR'
-
-export interface Root {
-  id: string
-  email: string
-  phone_number: string
-  additional_emails: AdditionalEmail[]
-  additional_phones: AdditionalPhone[]
-  phone_number_verified: boolean
-  email_verified: boolean
-  invite_accepted: string
-  invite_date: string
-  operator: Operator
-  is_superuser: boolean
-  updated_at: string
-  created_at: string
-  system_role: number
-  photo_s3_url: string
-  first_name: string
-  last_name: string
-  birth_date: string
-  gender: number
-  zip_code: string
-  city: string
-  state: string
-  emergency_contact_name: string
-  emergency_contact_phone: string
-  is_active: boolean
-}
-
-export interface AdditionalEmail {
-  email: string
-  is_verified: boolean
-}
-
-export interface AdditionalPhone {
-  phone_number: string
-  is_verified: boolean
-}
-
-export interface Operator {
-  id: string
-  updated_at: string
-  created_at: string
-  name: string
-  email: string
-  phone_number: string
-  zip_code: string
-  state: string
-  city: string
-  street: string
-  first_name: string
-  last_name: string
-  phone_number_contact: string
-  email_contact: string
-}
 
 export const userApi = createApi({
   reducerPath: 'userApi',
@@ -105,6 +52,49 @@ export const userApi = createApi({
         isSuperuser: user.is_superuser,
         roles: [],
         teams: [],
+      }),
+    }),
+    getUserDetails: builder.query<IExtendedFEUser, { id: string }>({
+      query: ({ id }) => ({
+        url: 'users/' + id + '/profile',
+      }),
+      keepUnusedDataFor: 0.0001,
+      transformResponse: (user: IExtendedBEUser) => ({
+        id: user.id,
+        email: user.email,
+        gender: user.gender,
+        city: user.city,
+        state: user.state,
+        phoneNumber: user.phone_number,
+        phoneNumberVerified: user.phone_number_verified,
+        emailVerified: user.email_verified,
+        inviteAccepted: user.invite_accepted,
+        inviteDate: user.invite_date,
+        updatedAt: user.updated_at,
+        createdAt: user.created_at,
+        photoS3Url: user.photo_s3_url,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        birthDate: user.birth_date,
+        zipCode: user.zip_code,
+        emergencyContactName: user.emergency_contact_name,
+        emergencyContactPhone: user.emergency_contact_phone,
+        isActive: user.is_active,
+        isSuperuser: user.is_superuser,
+        roles: user.roles,
+        teams: user.teams,
+        asCoach: user.as_coach,
+        asPlayer: user.as_player,
+        operator: user.operator,
+        asHeadCoach: user.as_head_coach,
+        asTeamAdmin: user.as_team_admin,
+        isChild: user.is_child,
+        asParent:
+          user.as_supervisor?.supervised.map((s) => ({
+            id: s.id,
+            firstName: s.first_name,
+            lastName: s.last_name,
+          })) || null,
       }),
     }),
     getUsers: builder.query<IGetEntityResponse<IFEUser>, IGetUsersRequestParams>({
@@ -142,6 +132,7 @@ export const userApi = createApi({
       }),
       providesTags: [USER_TAG],
     }),
+
     editUser: builder.mutation<void, { userId: string; body: Partial<IBEUser> }>({
       query: ({ userId, body }) => ({
         url: 'users/' + userId,
@@ -207,13 +198,6 @@ export const userApi = createApi({
         method: 'POST',
       }),
     }),
-
-    getPrefilledData: builder.query<Root, { invitation_token: string }>({
-      query: (params) => ({
-        url: 'users/get-prefilled-data',
-        params,
-      }),
-    }),
   }),
 })
 
@@ -226,5 +210,5 @@ export const {
   useCreateOperatorMutation,
   useBulkBlockUsersMutation,
   useCreateUserAsAdminMutation,
-  useGetPrefilledDataQuery,
+  useGetUserDetailsQuery,
 } = userApi

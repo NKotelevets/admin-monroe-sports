@@ -91,7 +91,7 @@ const Root = () => (
       <Route path={PATH_TO_USERS_BULK_EDIT} element={<UsersBulkEdit />} />
       <Route path={PATH_TO_USERS_BLOCKING_INFO} element={<BlockingInfo />} />
       <Route path={PATH_TO_USERS_IMPORT_INFO} element={<UsersImportInfo />} />
-      <Route path={`${PATH_TO_OPERATOR_ONBOARDING}/:id`} element={<OperatorOnboarding />} />
+      <Route path={`${PATH_TO_OPERATOR_ONBOARDING}/:token`} element={<OperatorOnboarding />} />
 
       {/* Master Teams */}
       <Route path={PATH_TO_MASTER_TEAMS} element={<MasterTeams />} />

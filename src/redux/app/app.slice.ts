@@ -94,6 +94,12 @@ export const appSlice = createSlice({
         state.notification.message = (action.payload?.data as { error: string }).error
         state.notification.timestamp = new Date().getTime()
       })
+
+      .addMatcher(userApi.endpoints.createUserAsAdmin.matchRejected, (state, action) => {
+        state.notification.message = (action.payload?.data as { error: string }).error
+        state.notification.timestamp = new Date().getTime()
+      })
+
       .addMatcher(
         isAnyOf(seasonsApi.endpoints.createSeason.matchRejected, seasonsApi.endpoints.updateSeason.matchRejected),
         (state, action) => {

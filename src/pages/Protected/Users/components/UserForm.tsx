@@ -90,10 +90,8 @@ const UserForm = () => {
     const createUserAsAdminRequestBody: ICreateUserAsAdminRequestBody = {
       first_name: values.firstName,
       last_name: values.lastName,
-      birth_date: values.birthDate ? dayjs(values.birthDate).toISOString().split('T')[0] : '',
       email: values.email,
       gender: (values?.gender ? +values.gender : 2) as TGender,
-      phone_number: values.phoneNumber,
       roles: values.roles.flatMap((role) => {
         if (ROLES_WITH_TEAMS.includes(role.name as TRole)) {
           return role!.linkedEntities!.map(
@@ -116,8 +114,13 @@ const UserForm = () => {
           role: role.name,
         } as IRole
       }),
-      zip_code: values.zipCode,
     }
+
+    if (values.birthDate) createUserAsAdminRequestBody.birth_date = dayjs(values.birthDate).toISOString().split('T')[0]
+
+    if (values.phoneNumber) createUserAsAdminRequestBody.phone_number = values.phoneNumber
+
+    if (values.zipCode) createUserAsAdminRequestBody.zip_code = values.zipCode
 
     createUserAsAdmin(createUserAsAdminRequestBody)
       .unwrap()
@@ -127,13 +130,7 @@ const UserForm = () => {
   }
 
   return (
-    <Formik
-      initialValues={userInitialFormData}
-      validationSchema={userValidationSchema}
-      onSubmit={handleSubmit}
-      validateOnChange
-      validateOnBlur
-    >
+    <Formik initialValues={userInitialFormData} validationSchema={userValidationSchema} onSubmit={handleSubmit}>
       {({ values, handleChange, handleSubmit, errors, setFieldValue, handleBlur, touched, setFieldTouched }) => {
         const isAddEntityButtonDisabled = !!errors.roles?.length
         const collapsedDivisionItems = (removeFn: (index: number) => void) =>
@@ -367,4 +364,3 @@ const UserForm = () => {
 }
 
 export default UserForm
-

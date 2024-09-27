@@ -27,14 +27,15 @@ import Loader from '@/components/Loader'
 import MonroeButton from '@/components/MonroeButton'
 import MonroeTooltip from '@/components/MonroeTooltip'
 
+import { useGetPrefilledDataQuery } from '@/redux/auth/auth.api'
+import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useAuthSlice } from '@/redux/hooks/useAuthSlice'
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
-import { useGetPrefilledDataQuery } from '@/redux/user/user.api'
 
 import { useCookies } from '@/hooks/useCookies'
 import useIsActiveComponent from '@/hooks/useIsActiveComponent'
 
-import { PATH_TO_USERS } from '@/constants/paths'
+import { PATH_TO_SIGN_IN } from '@/constants/paths'
 
 import InfoCircleIcon from '@/assets/icons/info-circle.svg'
 
@@ -92,32 +93,46 @@ const checkPassword = (password: string): IPasswordErrors => {
 }
 
 const OperatorOnboarding = () => {
-  const params = useParams<{ id: string }>()
+  const params = useParams<{ token: string }>()
   const navigation = useNavigate()
   const { isComponentVisible, ref } = useIsActiveComponent(false)
-  const { data, isLoading, isFetching } = useGetPrefilledDataQuery(
-    { invitation_token: params.id as string },
-    { skip: !params.id },
+  const { data, isLoading, isFetching, isError } = useGetPrefilledDataQuery(
+    { invitation_token: params.token as string },
+    { skip: !params.token },
   )
-  const { removeTokens, access } = useAuthSlice()
+  const { removeTokens, access, setRedirectToLogin } = useAuthSlice()
   const { deleteCookie } = useCookies()
   const { clearUserData } = useUserSlice()
+  const { setAppNotification } = useAppSlice()
 
   useEffect(() => {
-    if (access && params.id) {
+    if (access && params.token) {
       removeTokens()
       clearUserData()
       deleteCookie('accessToken')
       deleteCookie('refreshToken')
+      setRedirectToLogin(false)
     }
   }, [])
 
   const onSubmit = () => {}
 
-  if (!params.id) {
-    navigation(PATH_TO_USERS)
+  const redirectToSignIn = () => {
+    setAppNotification({
+      message: 'Invite expired',
+      timestamp: new Date().getTime(),
+      type: 'error',
+    })
+
+    navigation(PATH_TO_SIGN_IN)
+  }
+
+  if (!params.token) {
+    navigation(PATH_TO_SIGN_IN)
     return <></>
   }
+
+  if ((!data && !isLoading) || isError) redirectToSignIn()
 
   if (!data || isLoading || isFetching) return <Loader />
 
