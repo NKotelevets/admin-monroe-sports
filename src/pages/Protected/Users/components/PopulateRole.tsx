@@ -116,7 +116,7 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
           <Flex vertical>
             <div style={{ marginBottom: '8px' }}>
               <Flex align="center" justify="space-between">
-                <OptionTitle>Role *</OptionTitle>
+                <OptionTitle>Role</OptionTitle>
 
                 {isMissingName && <InputError>Role is required</InputError>}
               </Flex>

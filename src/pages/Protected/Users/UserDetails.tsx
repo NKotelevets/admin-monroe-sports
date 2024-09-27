@@ -23,7 +23,7 @@ import MonroeModal from '@/components/MonroeModal'
 import BaseLayout from '@/layouts/BaseLayout'
 
 import { useAppSlice } from '@/redux/hooks/useAppSlice'
-import { useGetUserDetailsQuery } from '@/redux/user/user.api'
+import { useBulkBlockUsersMutation, useGetUserDetailsQuery } from '@/redux/user/user.api'
 
 import { PATH_TO_EDIT_USER, PATH_TO_USERS } from '@/constants/paths'
 
@@ -42,6 +42,7 @@ const UserDetails = () => {
     { id: params?.id || '' },
     { skip: !params.id, refetchOnMountOrArgChange: true },
   )
+  const [bulkBlockUser] = useBulkBlockUsersMutation()
 
   const handleCopyContent = async (text: string, type: 'email' | 'phone') =>
     navigator.clipboard.writeText(text).then(() =>
@@ -52,7 +53,25 @@ const UserDetails = () => {
       }),
     )
 
-  const handleBlock = () => {}
+  const handleBlock = () => {
+    bulkBlockUser([data?.id as string])
+      .unwrap()
+      .then((response) => {
+        if (response.status === 'green') {
+          setAppNotification({
+            message: 'User successfully blocked.',
+            timestamp: new Date().getTime(),
+            type: 'success',
+          })
+        } else {
+          setAppNotification({
+            message: response.items[0].warning,
+            timestamp: new Date().getTime(),
+            type: 'success',
+          })
+        }
+      })
+  }
 
   if (!data || isLoading || isFetching) return <Loader />
 
@@ -98,8 +117,9 @@ const UserDetails = () => {
                 icon={<ReactSVG src={LockIcon} />}
                 iconPosition="start"
                 onClick={() => setShowBlockModal(true)}
+                disabled={!data.isActive}
               >
-                Delete
+                Block
               </MonroeDeleteButton>
 
               <MonroeButton
@@ -178,23 +198,21 @@ const UserDetails = () => {
                 )}
 
                 {data.asTeamAdmin && (
-                  <Flex key="teamAdmin" vertical style={{ marginBottom: '8px' }}>
+                  <Flex vertical style={{ marginBottom: '8px' }}>
                     <ViewText>Team Admin</ViewText>
                     <Flex>
                       {data.asTeamAdmin.map((team, idx, arr) => (
-                        <>
-                          <MonroeLinkText key={team.name} style={{ marginRight: '4px' }}>
-                            {team.name}
-                            {arr.length - 1 === idx ? ';' : ','}
-                          </MonroeLinkText>
-                        </>
+                        <MonroeLinkText key={team.name} style={{ marginRight: '4px' }}>
+                          {team.name}
+                          {arr.length - 1 === idx ? ';' : ','}
+                        </MonroeLinkText>
                       ))}
                     </Flex>
                   </Flex>
                 )}
 
                 {data.asHeadCoach && (
-                  <Flex key="teamAdmin" vertical style={{ marginBottom: '8px' }}>
+                  <Flex vertical style={{ marginBottom: '8px' }}>
                     <ViewText>Head Coach</ViewText>
                     <Flex>
                       {data.asHeadCoach.map((team, idx, arr) => (
@@ -210,7 +228,7 @@ const UserDetails = () => {
                 )}
 
                 {data.asCoach && (
-                  <Flex key="coach" vertical style={{ marginBottom: '8px' }}>
+                  <Flex vertical style={{ marginBottom: '8px' }}>
                     <ViewText>Coach</ViewText>
                     <Flex>
                       {data.asCoach.teams.map((team, idx, arr) => (
@@ -226,7 +244,7 @@ const UserDetails = () => {
                 )}
 
                 {data.asPlayer && (
-                  <Flex key="player" vertical style={{ marginBottom: '8px' }}>
+                  <Flex vertical style={{ marginBottom: '8px' }}>
                     <ViewText>Player</ViewText>
                     <Flex>
                       {data.asPlayer.teams.map((team, idx, arr) => (
@@ -242,7 +260,7 @@ const UserDetails = () => {
                 )}
 
                 {data.asParent && (
-                  <Flex key="player" vertical style={{ marginBottom: '8px' }}>
+                  <Flex vertical style={{ marginBottom: '8px' }}>
                     <ViewText>Guardian</ViewText>
                     <Flex>
                       {data.asParent.map((child, idx, arr) => (

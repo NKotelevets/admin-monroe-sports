@@ -13,6 +13,7 @@ import {
   IExtendedFEUser,
   IFEUser,
   IGetUsersRequestParams,
+  IRole,
 } from '@/common/interfaces/user'
 
 const USER_TAG = 'USER'
@@ -197,6 +198,29 @@ export const userApi = createApi({
         },
         method: 'POST',
       }),
+      invalidatesTags: [USER_TAG],
+    }),
+
+    bulkEdit: builder.mutation<
+      {
+        total: number
+        success: number
+        status: 'red' | 'green' | 'yellow'
+        failed: []
+      },
+      {
+        id: string
+        role: IRole[]
+      }[]
+    >({
+      query: (users) => ({
+        url: 'users/operator/bulk-edit-roles-as-admin',
+        body: {
+          users,
+        },
+        method: 'POST',
+      }),
+      invalidatesTags: [USER_TAG],
     }),
   }),
 })
@@ -211,4 +235,5 @@ export const {
   useBulkBlockUsersMutation,
   useCreateUserAsAdminMutation,
   useGetUserDetailsQuery,
+  useBulkEditMutation,
 } = userApi
