@@ -27,6 +27,10 @@ const Wrapper = styled(Flex)<{ is_error: string }>`
   box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.02);
 
   padding: 5px 12px;
+
+  @media (width > 1660px) {
+    min-height: 40px;
+  }
 `
 
 const ListItem = styled.li`
@@ -90,12 +94,20 @@ const TeamNameWrapper = styled.li`
   border: 1px solid #d8d7db;
   background: #fafafa;
 
-  margin-left: 4px;
+  margin: 2px;
 
   padding: 0 8px;
 
   display: flex;
   align-items: center;
+`
+
+const SelectTeamText = styled(Typography)`
+  color: rgb(189, 188, 194);
+
+  @media (width > 1660px) {
+    font-size: 16px;
+  }
 `
 
 const DEFAULT_LIMIT_RECORDS = 20
@@ -173,9 +185,7 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
         is_error={`${isError}`}
       >
         <Flex>
-          {!isComponentVisible && !selectedTeams.length && (
-            <Typography style={{ color: 'rgb(189, 188, 194)' }}>Select team</Typography>
-          )}
+          {!isComponentVisible && !selectedTeams.length && <SelectTeamText>Select team</SelectTeamText>}
 
           {isComponentVisible && (
             <SearchInput
@@ -189,21 +199,20 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
             />
           )}
 
-          {!!selectedTeams.length && (
-            <Flex
-              style={{
-                listStyle: 'none',
-              }}
-            >
-              {selectedTeams.map((option) => (
-                <TeamNameWrapper key={option.id}>
-                  {option.name}
+          <Flex
+            style={{
+              listStyle: 'none',
+              flexWrap: 'wrap',
+            }}
+          >
+            {selectedTeams.map((option) => (
+              <TeamNameWrapper key={option.id}>
+                {option.name}
 
-                  <ReactSVG onClick={() => handleOptionToggle(option)} src={SilverCloseIcon} className="mg-l4" />
-                </TeamNameWrapper>
-              ))}
-            </Flex>
-          )}
+                <ReactSVG onClick={() => handleOptionToggle(option)} src={SilverCloseIcon} className="mg-l4 c-p" />
+              </TeamNameWrapper>
+            ))}
+          </Flex>
         </Flex>
 
         <SearchSelectIconWrapper isComponentVisible={isComponentVisible}>

@@ -25,15 +25,17 @@ import { useLazyGetUsersQuery } from '@/redux/user/user.api'
 import { PATH_TO_EDIT_USER, PATH_TO_USERS } from '@/constants/paths'
 
 import { SHORT_GENDER_NAMES } from '@/common/constants'
-import { IFEUser } from '@/common/interfaces/user'
+import { IExtendedFEUser } from '@/common/interfaces/user'
 import { TGender } from '@/common/types'
 
+import CopyEmailIcon from '@/assets/icons/copy.svg'
 import EditIcon from '@/assets/icons/edit.svg'
+import SearchEmailIcon from '@/assets/icons/email-search.svg'
 import LockIcon from '@/assets/icons/lock.svg'
 import UnLockIcon from '@/assets/icons/unlock.svg'
 
 type TColumns<T> = TableProps<T>['columns']
-type TDataIndex = keyof IFEUser
+type TDataIndex = keyof IExtendedFEUser
 
 interface IParams {
   setSelectedRecordId: (value: string) => void
@@ -56,7 +58,7 @@ export const useUsersTableParams = ({
 
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
 
-  const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IFEUser> => ({
+  const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IExtendedFEUser> => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
@@ -129,12 +131,12 @@ export const useUsersTableParams = ({
     })
   }
 
-  const columns: TColumns<IFEUser> = [
+  const columns: TColumns<IExtendedFEUser> = [
     {
       title: 'First Name',
       dataIndex: 'firstName',
       fixed: 'left',
-      width: '240px',
+      width: '146px',
       className: 'hide-right-border',
       ...getColumnSearchProps('firstName'),
       render: (value, record) => (
@@ -145,7 +147,7 @@ export const useUsersTableParams = ({
       title: 'Last Name',
       dataIndex: 'lastName',
       fixed: 'left',
-      width: '240px',
+      width: '146px',
       className: 'hide-right-border',
       ...getColumnSearchProps('lastName'),
       render: (value, record) => (
@@ -158,8 +160,8 @@ export const useUsersTableParams = ({
       fixed: 'left',
       width: '50px',
       filters: [
-        { text: 'Male', value: 0 },
-        { text: 'Female', value: 1 },
+        { text: 'Female', value: 0 },
+        { text: 'Male', value: 1 },
         { text: 'Other', value: 2 },
       ],
       render: (value) => <CellText> {SHORT_GENDER_NAMES[value as TGender]}</CellText>,
@@ -176,7 +178,9 @@ export const useUsersTableParams = ({
       title: 'Roles',
       dataIndex: 'roles',
       width: '240px',
-      render: (value) => <TextWithTooltip isRegularText maxLength={28} text={value.length ? value.join(', ') : '-'} />,
+      render: (_, record) => (
+        <TextWithTooltip isRegularText maxLength={28} text={record.roles.length ? record.roles.join(', ') : '-'} />
+      ),
       filterDropdown: MonroeFilter,
       filterIcon: (filtered) => (
         <FilterFilled
@@ -186,10 +190,10 @@ export const useUsersTableParams = ({
         />
       ),
       filters: [
-        { text: 'Master Admin', value: 'master admin' },
+        { text: 'Master Admin', value: 'superuser' },
         { text: 'Operator', value: 'operator' },
-        { text: 'Team Admin', value: 'team admin' },
-        { text: 'Head Coach', value: 'head coach' },
+        { text: 'Team Admin', value: 'team_admin' },
+        { text: 'Head Coach', value: 'head_coach' },
         { text: 'Coach', value: 'coach' },
         { text: 'Player', value: 'player' },
         { text: 'Guardian', value: 'guardian' },
@@ -216,9 +220,23 @@ export const useUsersTableParams = ({
       dataIndex: 'email',
       width: '192px',
       render: (value) => (
-        <div onClick={() => handleCopyContent(value)}>
+        <Flex>
           <TextWithTooltip maxLength={18} text={value} />
-        </div>
+          <Flex
+            style={{
+              marginLeft: '8px',
+            }}
+            align="center"
+          >
+            <MonroeTooltip width="auto" text="Resend email">
+              <ReactSVG src={SearchEmailIcon} />
+            </MonroeTooltip>
+
+            <div style={{ marginLeft: '4px' }}>
+              <ReactSVG src={CopyEmailIcon} onClick={() => handleCopyContent(value)} />
+            </div>
+          </Flex>
+        </Flex>
       ),
     },
     {

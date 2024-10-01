@@ -55,6 +55,7 @@ export const userApi = createApi({
         teams: [],
       }),
     }),
+
     getUserDetails: builder.query<IExtendedFEUser, { id: string }>({
       query: ({ id }) => ({
         url: 'users/' + id + '/profile',
@@ -98,12 +99,13 @@ export const userApi = createApi({
           })) || null,
       }),
     }),
-    getUsers: builder.query<IGetEntityResponse<IFEUser>, IGetUsersRequestParams>({
+
+    getUsers: builder.query<IGetEntityResponse<IExtendedFEUser>, IGetUsersRequestParams>({
       query: (params) => ({
         url: '/users/list-of-users',
         params,
       }),
-      transformResponse: (response: IPaginationResponse<IBEUser[]>) => ({
+      transformResponse: (response: IPaginationResponse<IExtendedBEUser[]>) => ({
         count: response.count,
         data: response.results.map((user) => ({
           id: user.id,
@@ -129,18 +131,21 @@ export const userApi = createApi({
           isSuperuser: user.is_superuser,
           roles: user.roles,
           teams: user.teams,
+          asCoach: user.as_coach,
+          asPlayer: user.as_player,
+          operator: user.operator,
+          asHeadCoach: user.as_head_coach,
+          asTeamAdmin: user.as_team_admin,
+          isChild: user.is_child,
+          asParent:
+            user.as_supervisor?.supervised.map((s) => ({
+              id: s.id,
+              firstName: s.first_name,
+              lastName: s.last_name,
+            })) || null,
         })),
       }),
       providesTags: [USER_TAG],
-    }),
-
-    editUser: builder.mutation<void, { userId: string; body: Partial<IBEUser> }>({
-      query: ({ userId, body }) => ({
-        url: 'users/' + userId,
-        body,
-        method: 'PUT',
-      }),
-      invalidatesTags: [USER_TAG],
     }),
 
     getOperators: builder.query<IGetEntityResponse<IFEOperator>, IGetOperatorRequestParams>({
@@ -210,7 +215,8 @@ export const userApi = createApi({
       },
       {
         id: string
-        role: IRole[]
+        roles?: IRole[]
+        is_active?: boolean
       }[]
     >({
       query: (users) => ({
@@ -222,6 +228,14 @@ export const userApi = createApi({
       }),
       invalidatesTags: [USER_TAG],
     }),
+
+    importUsersCSV: builder.mutation<void, FormData>({
+      query: (body) => ({
+        method: 'POST',
+        url: 'users/confirmation/import-users-from-csv',
+        body,
+      }),
+    }),
   }),
 })
 
@@ -229,11 +243,11 @@ export const {
   useGetUserQuery,
   useLazyGetUserQuery,
   useLazyGetUsersQuery,
-  useEditUserMutation,
   useLazyGetOperatorsQuery,
   useCreateOperatorMutation,
   useBulkBlockUsersMutation,
   useCreateUserAsAdminMutation,
   useGetUserDetailsQuery,
   useBulkEditMutation,
+  useImportUsersCSVMutation,
 } = userApi

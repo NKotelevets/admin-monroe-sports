@@ -375,6 +375,11 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
   border-color: #3E34CA !important;
 }
 
+.checkbox-disable .ant-checkbox-checked .ant-checkbox-inner {
+  background: rgba(0, 0, 0, 0.04) !important;
+  border-color: rgba(136, 135, 145, 1) !important;
+}
+
 .ant-checkbox-wrapper:hover .ant-checkbox-inner {
   border-color: rgba(136, 135, 145, 1) !important;
 }
@@ -427,4 +432,8 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
 
 .hide-right-border::before {
   height: 0 !important;
+}
+
+.c-p {
+  cursor: pointer;
 }

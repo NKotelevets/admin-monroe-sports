@@ -1,3 +1,4 @@
+import { IFERole } from '@/common/interfaces/role'
 import { TGender, TRole } from '@/common/types'
 
 export interface IBEUser {
@@ -147,4 +148,8 @@ export interface IExtendedFEUser extends IFEUser {
   asTeamAdmin: { id: string; name: string }[] | null
   isChild: boolean
   asParent: null | IChildren[]
+}
+
+export interface IBulkEditFEUser extends IExtendedFEUser {
+  userRoles: IFERole[]
 }

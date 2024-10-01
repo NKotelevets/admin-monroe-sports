@@ -92,28 +92,30 @@ const UserForm = () => {
       last_name: values.lastName,
       email: values.email,
       gender: (values?.gender ? +values.gender : 2) as TGender,
-      roles: values.roles.flatMap((role) => {
-        if (ROLES_WITH_TEAMS.includes(role.name as TRole)) {
-          return role!.linkedEntities!.map(
-            (linkedEntity) =>
-              ({
-                role: role.name,
-                team_id: linkedEntity.id,
-              }) as IRole,
-          )
-        }
+      roles: values.roles
+        .flatMap((role) => {
+          if (ROLES_WITH_TEAMS.includes(role.name as TRole)) {
+            return role!.linkedEntities!.map(
+              (linkedEntity) =>
+                ({
+                  role: role.name,
+                  team_id: linkedEntity.id,
+                }) as IRole,
+            )
+          }
 
-        if (role.name === 'Operator') {
+          if (role.name === 'Operator') {
+            return {
+              role: role.name,
+              operator_id: role.linkedEntities?.[0].id,
+            } as IRole
+          }
+
           return {
             role: role.name,
-            operator_id: role.linkedEntities?.[0].id,
           } as IRole
-        }
-
-        return {
-          role: role.name,
-        } as IRole
-      }),
+        })
+        .filter((r) => r.role),
     }
 
     if (values.birthDate) createUserAsAdminRequestBody.birth_date = dayjs(values.birthDate).toISOString().split('T')[0]
@@ -144,7 +146,6 @@ const UserForm = () => {
                 onChange={handleChange}
                 setFieldValue={setFieldValue}
                 removeFn={removeFn}
-                isMultipleRoles={values.roles.length > 1}
                 values={values}
                 setFieldTouched={setFieldTouched}
               />

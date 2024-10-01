@@ -2,6 +2,7 @@ import * as Yup from 'yup'
 
 import { ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES } from '@/pages/Protected/Users/constants/roles'
 
+import { IFERole } from '@/common/interfaces/role'
 import { TRole } from '@/common/types'
 
 const linkedEntityValidationSchema = Yup.object({
@@ -31,19 +32,14 @@ export const userValidationSchema = Yup.object<ICreateUserFormValues>().shape({
       value ? /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) : true,
     )
     .required('Email is required'),
-  phoneNumber: Yup.string(),
-  zipCode: Yup.string().length(5, 'Should be 5 digits'),
+  phoneNumber: Yup.string().nullable(),
+  zipCode: Yup.string().length(5, 'Should be 5 digits').nullable(),
   roles: Yup.array().of(userRoleValidationSchema),
 })
 
 export const INITIAL_ROLE_DATA = {
   name: '',
   linkedEntities: [],
-}
-
-export interface IRole {
-  name: TRole | string
-  linkedEntities?: { id: string; name: string }[]
 }
 
 export const userInitialFormData: ICreateUserFormValues = {
@@ -70,6 +66,6 @@ export interface ICreateUserFormValues {
   email: string
   phoneNumber: string
   zipCode: string
-  roles: IRole[]
+  roles: IFERole[]
 }
 

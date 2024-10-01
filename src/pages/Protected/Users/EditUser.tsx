@@ -4,7 +4,7 @@ import Breadcrumb from 'antd/es/breadcrumb'
 import Flex from 'antd/es/flex'
 import { DefaultOptionType } from 'antd/es/select'
 import dayjs from 'dayjs'
-import { FieldArray, Form, Formik } from 'formik'
+import { FieldArray, Form, Formik, FormikHelpers } from 'formik'
 import { Helmet } from 'react-helmet'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
@@ -39,13 +39,15 @@ import MonroeTooltip from '@/components/MonroeTooltip'
 
 import BaseLayout from '@/layouts/BaseLayout'
 
-import { useGetUserDetailsQuery } from '@/redux/user/user.api'
+import { useBulkEditMutation, useGetUserDetailsQuery } from '@/redux/user/user.api'
+
+import { calculateUserRoles } from '@/utils/user'
 
 import { PATH_TO_USERS } from '@/constants/paths'
 
 import { FULL_GENDER_NAMES } from '@/common/constants'
-// import { IExtendedFEUser, IRole } from '@/common/interfaces/user'
-import { TGender } from '@/common/types'
+import { IRole } from '@/common/interfaces/user'
+import { TGender, TRole } from '@/common/types'
 
 import ShowAllIcon from '@/assets/icons/show-all.svg'
 
@@ -64,6 +66,8 @@ const GENDER_OPTIONS: DefaultOptionType[] = [
   },
 ]
 
+const ROLES_WITH_TEAMS: TRole[] = ['Head Coach', 'Coach', 'Player', 'Team Admin']
+
 const EditUser = () => {
   const params = useParams<{ id: string }>()
   const navigation = useNavigate()
@@ -75,10 +79,47 @@ const EditUser = () => {
       skip: !params.id,
     },
   )
+  const [bulkEdit] = useBulkEditMutation()
 
   const goBack = () => navigation(PATH_TO_USERS)
 
-  const handleSubmit = () => {}
+  const handleSubmit = async (values: ICreateUserFormValues, formikHelpers: FormikHelpers<ICreateUserFormValues>) => {
+    const result = await formikHelpers.validateForm(values)
+
+    if (Object.keys(result).length) return
+
+    const updateUserAsAdminBody = {
+      id: data!.id,
+      roles: values.roles.flatMap((role) => {
+        if (ROLES_WITH_TEAMS.includes(role.name as TRole)) {
+          return role!.linkedEntities!.map(
+            (linkedEntity) =>
+              ({
+                role: role.name,
+                team_id: linkedEntity.id,
+              }) as IRole,
+          )
+        }
+
+        if (role.name === 'Operator') {
+          return {
+            role: role.name,
+            operator_id: role.linkedEntities?.[0].id,
+          } as IRole
+        }
+
+        return {
+          role: role.name,
+        } as IRole
+      }),
+    }
+
+    bulkEdit([updateUserAsAdminBody])
+      .unwrap()
+      .then(() => {
+        navigation(PATH_TO_USERS)
+      })
+  }
 
   if (isLoading) return <Loader />
 
@@ -92,15 +133,8 @@ const EditUser = () => {
     gender: FULL_GENDER_NAMES[data.gender as TGender],
     phoneNumber: data.phoneNumber,
     zipCode: data.zipCode,
-    roles: [],
+    roles: calculateUserRoles(data),
   }
-
-  // const calculateUserRoles = (data: IExtendedFEUser) => {
-  //   const roles: IRole[] = []
-
-  //   if (data.isSuperuser) {
-  //   }
-  // }
 
   const BREAD_CRUMB_ITEMS = [
     {
@@ -126,7 +160,6 @@ const EditUser = () => {
           validateOnBlur
         >
           {({ values, handleChange, handleSubmit, errors, setFieldValue, setFieldTouched }) => {
-            const isEnabledButton = Object.keys(errors).length === 0
             const isAddEntityButtonDisabled = !!errors.roles?.length
             const collapsedDivisionItems = (removeFn: (index: number) => void) =>
               values.roles.map((role, idx) => ({
@@ -139,7 +172,6 @@ const EditUser = () => {
                     onChange={handleChange}
                     setFieldValue={setFieldValue}
                     removeFn={removeFn}
-                    isMultipleRoles={values.roles.length > 1}
                     values={values}
                     setFieldTouched={setFieldTouched}
                   />
@@ -189,7 +221,7 @@ const EditUser = () => {
                           <OptionTitle>Birth Date</OptionTitle>
                           <MonroeDatePicker
                             name="birthDate"
-                            value={values.birthDate}
+                            value={values.birthDate ? dayjs(values.birthDate, 'YYYY-MM-DD') : null}
                             onChange={(_: unknown, data: string | string[]) => {
                               if (data) {
                                 setFieldValue('birthDate', dayjs(data as string, 'YYYY-MM-DD'))
@@ -328,14 +360,7 @@ const EditUser = () => {
                           Cancel
                         </CancelButton>
 
-                        <MonroeTooltip width="179px" text={!isEnabledButton ? 'Missing mandatory data' : ''}>
-                          <MonroeButton
-                            label="Save"
-                            type="primary"
-                            onClick={handleSubmit}
-                            isDisabled={!isEnabledButton}
-                          />
-                        </MonroeTooltip>
+                        <MonroeButton label="Save" type="primary" onClick={handleSubmit} />
                       </Flex>
                     </Flex>
                   </PageContent>

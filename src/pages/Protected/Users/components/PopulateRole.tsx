@@ -5,7 +5,7 @@ import { ChangeEventHandler, FC, useEffect, useState } from 'react'
 import { ReactSVG } from 'react-svg'
 
 import OperatorsInput from '@/pages/Protected/Users/components/OperatorsInput'
-import { ICreateUserFormValues, IRole } from '@/pages/Protected/Users/constants/formik'
+import { ICreateUserFormValues } from '@/pages/Protected/Users/constants/formik'
 import { ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES, ROLES } from '@/pages/Protected/Users/constants/roles'
 
 import { OptionTitle } from '@/components/Elements'
@@ -18,13 +18,14 @@ import { useUserSlice } from '@/redux/hooks/useUserSlice'
 
 import useIsActiveComponent from '@/hooks/useIsActiveComponent'
 
+import { IFERole } from '@/common/interfaces/role'
 import { TRole } from '@/common/types'
 
 import DeleteIcon from '@/assets/icons/delete.svg'
 
 interface IPopulateRoleProps {
   index: number
-  role: IRole
+  role: IFERole
   onChange: ChangeEventHandler
   errors: FormikErrors<ICreateUserFormValues>
   setFieldValue: (
@@ -33,7 +34,6 @@ interface IPopulateRoleProps {
     shouldValidate?: boolean,
   ) => Promise<void | FormikErrors<ICreateUserFormValues>>
   removeFn: (index: number) => void
-  isMultipleRoles: boolean
   values: ICreateUserFormValues
   setFieldTouched: (
     field: string,
@@ -48,7 +48,6 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
   errors,
   setFieldValue,
   removeFn,
-  isMultipleRoles,
   values,
   setFieldTouched,
 }) => {
@@ -60,18 +59,18 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
   const selectedRoles = values.roles.map((role) => role.name)
   const options: DefaultOptionType[] = ROLES.filter((initialRole) => {
     if (!isAdmin && initialRole === 'Operator') return false
+    if (!isAdmin && initialRole === 'Swift Schedule Master Admin') return false
     if (!selectedRoles.includes(initialRole)) return true
     return false
   }).map((role) => ({
     label: role,
     value: role,
   }))
-
   const isRoleWithTeams = ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(role.name as TRole)
   const isOperator = (role.name as TRole) === 'Operator'
   const operator = values.roles.find((role) => role.name === 'Operator')?.linkedEntities?.[0] || { id: '', name: '' }
-  const isMissingName = !!(errors.roles?.[+index] as FormikErrors<IRole>)?.name
-  const isMissingEntities = !!(errors.roles?.[+index] as FormikErrors<IRole>)?.linkedEntities
+  const isMissingName = !!(errors.roles?.[+index] as FormikErrors<IFERole>)?.name
+  const isMissingEntities = !!(errors.roles?.[+index] as FormikErrors<IFERole>)?.linkedEntities
 
   const handleBlur = () => setFieldTouched(`roles.${index}.linkedEntities`, true)
 
@@ -103,11 +102,9 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
             )}
           </Flex>
 
-          {isMultipleRoles && (
-            <div onClick={() => removeFn(index)}>
-              <ReactSVG src={DeleteIcon} />
-            </div>
-          )}
+          <div onClick={() => removeFn(index)}>
+            <ReactSVG src={DeleteIcon} />
+          </div>
         </Flex>
       )}
 

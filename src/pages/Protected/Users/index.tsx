@@ -2,7 +2,7 @@ import DownloadOutlined from '@ant-design/icons/lib/icons/DownloadOutlined'
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import UploadOutlined from '@ant-design/icons/lib/icons/UploadOutlined'
 import { Flex } from 'antd'
-import { useCallback, useRef, useState } from 'react'
+import { ChangeEvent, useCallback, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useNavigate } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
@@ -24,8 +24,9 @@ import BaseLayout from '@/layouts/BaseLayout'
 
 import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
-import { useBulkBlockUsersMutation } from '@/redux/user/user.api'
+import { useBulkBlockUsersMutation, useImportUsersCSVMutation } from '@/redux/user/user.api'
 
+import { DEFAULT_IMPORT_MODAL_OPTIONS } from '@/constants/import'
 import {
   PATH_TO_CREATE_USER,
   PATH_TO_USERS_BLOCKING_INFO,
@@ -51,25 +52,63 @@ const Users = () => {
   const inputRef = useRef<HTMLInputElement | null>()
   const navigate = useNavigate()
   const { total } = useUserSlice()
-  const [isBlockAllUsers, setIsBlockAllUsers] = useState(false)
+  const [isSelectedAllUsers, setIsSelectedAllUsers] = useState(false)
   const [showCreatedRecords, setShowCreatedRecords] = useState(false)
-  const blockUsersModalCount = isBlockAllUsers ? total : selectedRecordsIds.length
+  const blockUsersModalCount = isSelectedAllUsers ? total : selectedRecordsIds.length
   const blockUsersText = blockUsersModalCount > 1 ? 'users' : 'user'
   const [blockUsers] = useBulkBlockUsersMutation()
   const { setInfoNotification, setAppNotification } = useAppSlice()
+  const [importUsersCSV] = useImportUsersCSVMutation()
+  const [fileKey, setFileKey] = useState('')
 
   const handleCloseModal = useCallback(() => setIsOpenModal(false), [])
 
-  const handleChange = () => {}
+  const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    setImportModalOptions(DEFAULT_IMPORT_MODAL_OPTIONS)
+    const file = event.target.files?.[0]
+
+    if (file) {
+      setImportModalOptions({
+        filename: file.name,
+        isOpen: true,
+        status: 'loading',
+        errorMessage: '',
+      })
+
+      const body = new FormData()
+      body.set('file', file)
+
+      await importUsersCSV(body)
+        .unwrap()
+        .then(() => {
+          setImportModalOptions({
+            filename: file.name,
+            isOpen: true,
+            status: 'green',
+            errorMessage: '',
+          })
+        })
+        .catch((error) => {
+          setImportModalOptions({
+            filename: file.name,
+            isOpen: true,
+            status: 'red',
+            errorMessage: (error.data as { code: string; details: string }).details,
+          })
+        })
+
+      setFileKey(new Date().toISOString())
+    }
+  }
 
   const handleBlock = () => {
     handleCloseModal()
-    const blockHandler = isBlockAllUsers ? blockUsers([]) : blockUsers(selectedRecordsIds)
+    const blockHandler = isSelectedAllUsers ? blockUsers([]) : blockUsers(selectedRecordsIds)
 
     blockHandler.unwrap().then((response) => {
       setSelectedRecordsIds([])
       setShowAdditionalHeader(false)
-      setIsBlockAllUsers(false)
+      setIsSelectedAllUsers(false)
 
       if (response.status !== 'green') {
         setInfoNotification({
@@ -145,23 +184,18 @@ const Users = () => {
                     Block users
                   </MonroeDeleteButton>
 
-                  <MonroeSecondaryButton
-                    type="default"
-                    icon={<ReactSVG src={EditIcon} />}
-                    iconPosition="start"
-                    onClick={() => navigate(PATH_TO_USERS_BULK_EDIT)}
-                  >
-                    {selectedRecordsIds.length === 1 ? 'Edit roles' : 'Bulk edit'}
-                  </MonroeSecondaryButton>
+                  {!isSelectedAllUsers && (
+                    <MonroeSecondaryButton
+                      type="default"
+                      icon={<ReactSVG src={EditIcon} />}
+                      iconPosition="start"
+                      onClick={() => navigate(PATH_TO_USERS_BULK_EDIT)}
+                    >
+                      {selectedRecordsIds.length === 1 ? 'Edit roles' : 'Bulk edit'}
+                    </MonroeSecondaryButton>
+                  )}
 
-                  <ImportButton
-                    icon={<UploadOutlined />}
-                    iconPosition="start"
-                    type="default"
-                    onClick={() => {
-                      inputRef.current?.click()
-                    }}
-                  >
+                  <ImportButton icon={<UploadOutlined />} iconPosition="start" type="default">
                     Export CSV
                   </ImportButton>
                 </Flex>
@@ -196,20 +230,21 @@ const Users = () => {
               inputRef.current = ref
             }}
             type="file"
-            name="seasons"
+            name="users"
             accept=".csv"
             onChange={handleChange}
             style={{ display: 'none' }}
+            key={fileKey}
           />
 
           <Flex flex="1 1 auto" vertical>
             <UsersTable
-              isBlockAllUsers={isBlockAllUsers}
+              isBlockAllUsers={isSelectedAllUsers}
               setSelectedRecordsIds={setSelectedRecordsIds}
               selectedRecordIds={selectedRecordsIds}
               showAdditionalHeader={showAdditionalHeader}
               setShowAdditionalHeader={setShowAdditionalHeader}
-              setIsDeleteAllRecords={setIsBlockAllUsers}
+              setIsDeleteAllRecords={setIsSelectedAllUsers}
               showCreatedRecords={showCreatedRecords}
             />
           </Flex>

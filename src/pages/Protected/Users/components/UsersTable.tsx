@@ -11,16 +11,18 @@ import MonroeModal from '@/components/MonroeModal'
 
 import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
-import { useBulkBlockUsersMutation, useEditUserMutation, useLazyGetUsersQuery } from '@/redux/user/user.api'
+import { useBulkBlockUsersMutation, useBulkEditMutation, useLazyGetUsersQuery } from '@/redux/user/user.api'
 
-import { IFEUser } from '@/common/interfaces/user'
+import { calculateUserRoles } from '@/utils/user'
+
+import { IBulkEditFEUser, IExtendedFEUser } from '@/common/interfaces/user'
 
 type TTablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>
 
 interface ITableParams {
   pagination?: TTablePaginationConfig
-  sortField?: SorterResult<IFEUser>['field']
-  sortOrder?: SorterResult<IFEUser>['order']
+  sortField?: SorterResult<IExtendedFEUser>['field']
+  sortOrder?: SorterResult<IExtendedFEUser>['order']
   filters?: Parameters<GetProp<TableProps, 'onChange'>>[1]
 }
 
@@ -68,7 +70,7 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
   })
   const [blockUser] = useBulkBlockUsersMutation()
   const { setAppNotification } = useAppSlice()
-  const [editUser] = useEditUserMutation()
+  const [bulkEdit] = useBulkEditMutation()
 
   useEffect(() => {
     setPaginationParams({
@@ -102,7 +104,7 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
 
   type TFilter = Record<'firstName' | 'lastName' | 'gender' | 'roles' | 'teams', FilterValue | null>
 
-  const handleTableChange: TableProps<IFEUser>['onChange'] = (pagination, filters: TFilter, sorter) => {
+  const handleTableChange: TableProps<IExtendedFEUser>['onChange'] = (pagination, filters: TFilter, sorter) => {
     const newOffset = (pagination?.current && (pagination?.current - 1) * (pagination?.pageSize || 10)) || 0
     const newLimit = pagination?.pageSize || 10
     setTableParams({
@@ -177,12 +179,12 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
   }
 
   const handleUnblockSingleUser = () => {
-    editUser({
-      userId: selectedRecordId,
-      body: {
+    bulkEdit([
+      {
+        id: selectedRecordId,
         is_active: true,
       },
-    })
+    ])
       .unwrap()
       .then(() => {
         setAppNotification({
@@ -193,7 +195,7 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
       })
       .catch(() => {
         setAppNotification({
-          message: 'User have been successfully blocked.', // TODO: update error message
+          message: 'Something went wrong',
           timestamp: new Date().getTime(),
           type: 'error',
         })
@@ -272,7 +274,13 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
             if (selected.length < limit) setShowAdditionalHeader(false)
             setSelectedRecordsIds(selected as string[])
             if (!selected.length && showAdditionalHeader && isBlockAllUsers) setIsDeleteAllRecords(false)
-            setRecords(selectedRows)
+
+            const updatedSelectedRows: IBulkEditFEUser[] = selectedRows.map((row) => ({
+              ...row,
+              userRoles: calculateUserRoles(row),
+            }))
+
+            setRecords(updatedSelectedRows)
           },
         }}
         scroll={{

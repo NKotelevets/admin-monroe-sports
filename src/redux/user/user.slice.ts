@@ -2,17 +2,17 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 import { userApi } from '@/redux/user/user.api'
 
-import { IBlockedUserError, IFEUser } from '@/common/interfaces/user'
+import { IBlockedUserError, IBulkEditFEUser, IExtendedFEUser, IFEUser } from '@/common/interfaces/user'
 
 interface IUserSliceState {
   user: IFEUser | null
   limit: number
   offset: number
-  users: IFEUser[]
+  users: IExtendedFEUser[]
   total: number
   ordering: string
   createdRecordsNames: { name: string; showIcon: boolean }[]
-  selectedRecords: IFEUser[]
+  selectedRecords: IBulkEditFEUser[]
   isCreateOperatorScreen: boolean
   blockedUserErrors: IBlockedUserError[]
 }
@@ -49,7 +49,7 @@ export const userSlice = createSlice({
       state.offset = action.payload.offset
       state.ordering = action.payload.ordering || ''
     },
-    setRecords: (state, action: PayloadAction<IFEUser[]>) => {
+    setRecords: (state, action: PayloadAction<IBulkEditFEUser[]>) => {
       state.selectedRecords = action.payload
     },
     setIsCreateOperatorScreen: (state, action: PayloadAction<boolean>) => {
