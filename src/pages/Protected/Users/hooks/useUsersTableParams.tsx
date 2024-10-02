@@ -196,7 +196,7 @@ export const useUsersTableParams = ({
         { text: 'Head Coach', value: 'head_coach' },
         { text: 'Coach', value: 'coach' },
         { text: 'Player', value: 'player' },
-        { text: 'Guardian', value: 'guardian' },
+        { text: 'Guardian', value: 'supervisor' },
         { text: 'Child', value: 'child' },
       ],
     },
