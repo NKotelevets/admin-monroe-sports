@@ -186,12 +186,20 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
       },
     ])
       .unwrap()
-      .then(() => {
-        setAppNotification({
-          message: 'User have been successfully unblocked.',
-          timestamp: new Date().getTime(),
-          type: 'success',
-        })
+      .then((response) => {
+        if (response.status === 'green') {
+          setAppNotification({
+            message: 'User have been successfully unblocked.',
+            timestamp: new Date().getTime(),
+            type: 'success',
+          })
+        } else {
+          setAppNotification({
+            message: 'Something went wrong',
+            timestamp: new Date().getTime(),
+            type: 'error',
+          })
+        }
       })
       .catch(() => {
         setAppNotification({

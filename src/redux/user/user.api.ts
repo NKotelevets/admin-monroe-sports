@@ -98,6 +98,7 @@ export const userApi = createApi({
             lastName: s.last_name,
           })) || null,
       }),
+      providesTags: [USER_TAG],
     }),
 
     getUsers: builder.query<IGetEntityResponse<IExtendedFEUser>, IGetUsersRequestParams>({

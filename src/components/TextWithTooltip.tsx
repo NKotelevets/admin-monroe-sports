@@ -5,7 +5,6 @@ import { CSSProperties, FC } from 'react'
 const textStyles: CSSProperties = {
   color: '#3E34CA',
   cursor: 'pointer',
-  zIndex: 990,
 }
 
 const regularTextStyles = {

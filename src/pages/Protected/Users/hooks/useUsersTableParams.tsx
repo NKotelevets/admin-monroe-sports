@@ -219,24 +219,41 @@ export const useUsersTableParams = ({
       title: 'Email',
       dataIndex: 'email',
       width: '192px',
-      render: (value) => (
-        <Flex>
-          <TextWithTooltip maxLength={18} text={value} />
-          <Flex
-            style={{
-              marginLeft: '8px',
-            }}
-            align="center"
-          >
-            <MonroeTooltip width="auto" text="Resend email">
-              <ReactSVG src={SearchEmailIcon} />
-            </MonroeTooltip>
+      render: (value, record) => (
+        <>
+          {value ? (
+            <Flex
+              style={{
+                zIndex: 4,
+              }}
+            >
+              <TextWithTooltip maxLength={14} text={value} />
+              <Flex
+                style={{
+                  marginLeft: '8px',
+                }}
+                align="center"
+              >
+                <div
+                  style={{
+                    opacity: record.operator ? 1 : 0,
+                    visibility: record.operator ? 'visible' : 'hidden',
+                  }}
+                >
+                  <MonroeTooltip width="auto" text="Resend email">
+                    <ReactSVG src={SearchEmailIcon} />
+                  </MonroeTooltip>
+                </div>
 
-            <div style={{ marginLeft: '4px' }}>
-              <ReactSVG src={CopyEmailIcon} onClick={() => handleCopyContent(value)} />
-            </div>
-          </Flex>
-        </Flex>
+                <div style={{ marginLeft: '4px' }}>
+                  <ReactSVG src={CopyEmailIcon} onClick={() => handleCopyContent(value)} />
+                </div>
+              </Flex>
+            </Flex>
+          ) : (
+            '-'
+          )}
+        </>
       ),
     },
     {

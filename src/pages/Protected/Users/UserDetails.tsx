@@ -12,6 +12,7 @@ import {
   MonroeBlueText,
   MonroeDeleteButton,
   MonroeLinkText,
+  MonroeSecondaryButton,
   PageContainer,
   ProtectedPageTitle,
   ViewText,
@@ -23,7 +24,7 @@ import MonroeModal from '@/components/MonroeModal'
 import BaseLayout from '@/layouts/BaseLayout'
 
 import { useAppSlice } from '@/redux/hooks/useAppSlice'
-import { useBulkBlockUsersMutation, useGetUserDetailsQuery } from '@/redux/user/user.api'
+import { useBulkBlockUsersMutation, useBulkEditMutation, useGetUserDetailsQuery } from '@/redux/user/user.api'
 
 import { PATH_TO_EDIT_USER, PATH_TO_USERS } from '@/constants/paths'
 
@@ -32,17 +33,20 @@ import { TGender } from '@/common/types'
 
 import CopyIcon from '@/assets/icons/copy.svg'
 import LockIcon from '@/assets/icons/small-lock.svg'
+import UnblockSilverIcon from '@/assets/icons/unblock-silver.svg'
 
 const UserDetails = () => {
   const params = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { setAppNotification } = useAppSlice()
   const [showBlockModal, setShowBlockModal] = useState(false)
+  const [showUnblockModal, setShowUnblockModal] = useState(false)
   const { data, isLoading, isFetching } = useGetUserDetailsQuery(
     { id: params?.id || '' },
     { skip: !params.id, refetchOnMountOrArgChange: true },
   )
   const [bulkBlockUser] = useBulkBlockUsersMutation()
+  const [bulkEdit] = useBulkEditMutation()
 
   const handleCopyContent = async (text: string, type: 'email' | 'phone') =>
     navigator.clipboard.writeText(text).then(() =>
@@ -74,6 +78,41 @@ const UserDetails = () => {
         }
       })
 
+  const handleUnblockSingleUser = () => {
+    bulkEdit([
+      {
+        id: data?.id as string,
+        is_active: true,
+      },
+    ])
+      .unwrap()
+      .then((response) => {
+        if (response.status === 'green') {
+          setAppNotification({
+            message: 'User have been successfully unblocked.',
+            timestamp: new Date().getTime(),
+            type: 'success',
+          })
+        } else {
+          setAppNotification({
+            message: 'Something went wrong',
+            timestamp: new Date().getTime(),
+            type: 'error',
+          })
+        }
+      })
+      .catch(() => {
+        setAppNotification({
+          message: 'Something went wrong',
+          timestamp: new Date().getTime(),
+          type: 'error',
+        })
+      })
+      .finally(() => {
+        setShowUnblockModal(false)
+      })
+  }
+
   if (!data || isLoading || isFetching) return <Loader />
 
   const userFullName = data.firstName + ' ' + data.lastName
@@ -103,6 +142,17 @@ const UserDetails = () => {
           />
         )}
 
+        {showUnblockModal && (
+          <MonroeModal
+            okText="Unblock"
+            onCancel={() => setShowUnblockModal(false)}
+            onOk={handleUnblockSingleUser}
+            title="Unblock user?"
+            type="warn"
+            content={<p>Are you sure you want to unblock this user?</p>}
+          />
+        )}
+
         <PageContainer>
           <Breadcrumb items={BREAD_CRUMB_ITEMS} />
 
@@ -110,13 +160,25 @@ const UserDetails = () => {
             <ProtectedPageTitle>{userFullName}</ProtectedPageTitle>
 
             <Flex>
-              <MonroeDeleteButton
-                icon={<ReactSVG src={LockIcon} />}
-                iconPosition="start"
-                onClick={() => setShowBlockModal(true)}
-              >
-                Block
-              </MonroeDeleteButton>
+              {data.isActive && (
+                <MonroeDeleteButton
+                  icon={<ReactSVG src={LockIcon} />}
+                  iconPosition="start"
+                  onClick={() => setShowBlockModal(true)}
+                >
+                  Block
+                </MonroeDeleteButton>
+              )}
+
+              {!data.isActive && (
+                <MonroeSecondaryButton
+                  iconPosition="start"
+                  icon={<ReactSVG src={UnblockSilverIcon} />}
+                  onClick={() => setShowUnblockModal(true)}
+                >
+                  Unblock
+                </MonroeSecondaryButton>
+              )}
 
               <MonroeButton
                 isDisabled={false}
