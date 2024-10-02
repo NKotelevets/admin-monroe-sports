@@ -61,15 +61,15 @@ const BREAD_CRUMB_ITEMS = [
 const GENDER_OPTIONS: DefaultOptionType[] = [
   {
     label: 'Female',
-    value: 0,
-  },
-  {
-    label: 'Male',
     value: 1,
   },
   {
-    label: 'Other',
+    label: 'Male',
     value: 2,
+  },
+  {
+    label: 'Other',
+    value: 3,
   },
 ]
 
@@ -91,7 +91,7 @@ const UserForm = () => {
       first_name: values.firstName,
       last_name: values.lastName,
       email: values.email,
-      gender: (values?.gender ? +values.gender : 2) as TGender,
+      gender: (values?.gender ? +values.gender - 1 : 2) as TGender,
       roles: values.roles
         .flatMap((role) => {
           if (ROLES_WITH_TEAMS.includes(role.name as TRole)) {
