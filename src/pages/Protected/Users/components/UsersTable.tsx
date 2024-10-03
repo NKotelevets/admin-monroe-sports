@@ -13,7 +13,7 @@ import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
 import { useBulkBlockUsersMutation, useBulkEditMutation, useLazyGetUsersQuery } from '@/redux/user/user.api'
 
-import { calculateUserRoles } from '@/utils/user'
+import { calculateAllUserRoles } from '@/utils/user'
 
 import { IBulkEditFEUser, IExtendedFEUser } from '@/common/interfaces/user'
 
@@ -285,7 +285,7 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
 
             const updatedSelectedRows: IBulkEditFEUser[] = selectedRows.map((row) => ({
               ...row,
-              userRoles: calculateUserRoles(row),
+              userRoles: calculateAllUserRoles(row),
             }))
 
             setRecords(updatedSelectedRows)

@@ -178,9 +178,11 @@ export const useUsersTableParams = ({
       title: 'Roles',
       dataIndex: 'roles',
       width: '240px',
-      render: (_, record) => (
-        <TextWithTooltip isRegularText maxLength={28} text={record.roles.length ? record.roles.join(', ') : '-'} />
-      ),
+      render: (_, record) => {
+        const allRoles = record.isChild && record.roles.includes('Child') ? record.roles : [...record.roles, 'Child']
+
+        return <TextWithTooltip isRegularText maxLength={28} text={allRoles.length ? allRoles.join(', ') : '-'} />
+      },
       filterDropdown: MonroeFilter,
       filterIcon: (filtered) => (
         <FilterFilled
@@ -226,6 +228,7 @@ export const useUsersTableParams = ({
               style={{
                 zIndex: 4,
               }}
+              justify="space-between"
             >
               <TextWithTooltip maxLength={14} text={value} />
               <Flex
@@ -234,16 +237,11 @@ export const useUsersTableParams = ({
                 }}
                 align="center"
               >
-                <div
-                  style={{
-                    opacity: record.operator ? 1 : 0,
-                    visibility: record.operator ? 'visible' : 'hidden',
-                  }}
-                >
+                {record.operator && (
                   <MonroeTooltip width="auto" text="Resend email">
                     <ReactSVG src={SearchEmailIcon} />
                   </MonroeTooltip>
-                </div>
+                )}
 
                 <div style={{ marginLeft: '4px' }}>
                   <ReactSVG src={CopyEmailIcon} onClick={() => handleCopyContent(value)} />
@@ -293,7 +291,12 @@ export const useUsersTableParams = ({
               style={{ marginRight: '8px' }}
             />
 
-            <MonroeTooltip text={record.isActive ? 'Block user' : 'Unblock user'} containerWidth="auto" width="110px">
+            <MonroeTooltip
+              isHideModalOnIconClick
+              text={record.isActive ? 'Block user' : 'Unblock user'}
+              containerWidth="auto"
+              width="110px"
+            >
               <ReactSVG
                 onClick={() => {
                   setSelectedRecordId(value.id)

@@ -68,10 +68,19 @@ interface IOperatorsInputProps {
   setOperator: (data: [{ id: string; name: string }]) => void
   selectedOperator: { id: string; name: string }
   isError: boolean
-  handleBlur: () => void
+  handleBlur?: () => void
+  isHideAddOperatorBtn?: boolean
+  isDisabled?: boolean
 }
 
-const OperatorsInput: FC<IOperatorsInputProps> = ({ setOperator, handleBlur, selectedOperator, isError }) => {
+const OperatorsInput: FC<IOperatorsInputProps> = ({
+  setOperator,
+  handleBlur,
+  selectedOperator,
+  isError,
+  isHideAddOperatorBtn = false,
+  isDisabled = false,
+}) => {
   const [value, setValue] = useState(selectedOperator.name || '')
   const { isComponentVisible, ref, onClose } = useIsActiveComponent(false)
   const [offset, setOffset] = useState(0)
@@ -92,7 +101,9 @@ const OperatorsInput: FC<IOperatorsInputProps> = ({ setOperator, handleBlur, sel
     ),
     value: '',
   }
-  const [operatorsList, setOperatorsList] = useState<DefaultOptionType[]>([ADD_OPERATOR_PROPERTY])
+  const [operatorsList, setOperatorsList] = useState<DefaultOptionType[]>(
+    isHideAddOperatorBtn ? [ADD_OPERATOR_PROPERTY] : [],
+  )
 
   const getData = async () => {
     if (data && data?.count > operatorsList.length) {
@@ -128,7 +139,11 @@ const OperatorsInput: FC<IOperatorsInputProps> = ({ setOperator, handleBlur, sel
         value: operator.id,
       }))
 
-      setOperatorsList(() => [ADD_OPERATOR_PROPERTY, ...options])
+      if (isHideAddOperatorBtn) {
+        setOperatorsList(options)
+      } else {
+        setOperatorsList(() => [ADD_OPERATOR_PROPERTY, ...options])
+      }
     })()
   }, [])
 
@@ -150,7 +165,11 @@ const OperatorsInput: FC<IOperatorsInputProps> = ({ setOperator, handleBlur, sel
       value: operator.id,
     }))
 
-    setOperatorsList(() => [ADD_OPERATOR_PROPERTY, ...options])
+    if (isHideAddOperatorBtn) {
+      setOperatorsList(options)
+    } else {
+      setOperatorsList(() => [ADD_OPERATOR_PROPERTY, ...options])
+    }
   }
 
   useDebounceEffect(getDataWithNewName, [value])
@@ -171,6 +190,7 @@ const OperatorsInput: FC<IOperatorsInputProps> = ({ setOperator, handleBlur, sel
             style={{ height: '32px' }}
             is_error={`${isError}`}
             onBlur={handleBlur}
+            disabled={isDisabled}
           />
 
           <SearchSelectIconWrapper isComponentVisible={isComponentVisible}>
@@ -184,7 +204,7 @@ const OperatorsInput: FC<IOperatorsInputProps> = ({ setOperator, handleBlur, sel
               <List ref={scrollRef as unknown as RefObject<HTMLUListElement>} onScroll={handleScroll}>
                 {operatorsList.map((operator, idx) => (
                   <ListItem
-                    is_add_operator={`${idx === 0 ? 'true' : 'false'}`}
+                    is_add_operator={`${!isHideAddOperatorBtn && idx === 0 ? 'true' : 'false'}`}
                     key={operator.value}
                     onClick={() => {
                       setOperator([

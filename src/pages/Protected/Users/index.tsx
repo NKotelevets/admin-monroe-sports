@@ -23,6 +23,7 @@ import MonroeModal from '@/components/MonroeModal'
 import BaseLayout from '@/layouts/BaseLayout'
 
 import { useAppSlice } from '@/redux/hooks/useAppSlice'
+import { useAuthSlice } from '@/redux/hooks/useAuthSlice'
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
 import { useBulkBlockUsersMutation, useImportUsersCSVMutation } from '@/redux/user/user.api'
 
@@ -60,6 +61,7 @@ const Users = () => {
   const { setInfoNotification, setAppNotification } = useAppSlice()
   const [importUsersCSV] = useImportUsersCSVMutation()
   const [fileKey, setFileKey] = useState('')
+  const { access } = useAuthSlice()
 
   const handleCloseModal = useCallback(() => setIsOpenModal(false), [])
 
@@ -130,6 +132,37 @@ const Users = () => {
     })
   }
 
+  const handleExport = async () => {
+    const body = isSelectedAllUsers
+      ? JSON.stringify({})
+      : JSON.stringify({
+          ids: selectedRecordsIds,
+        })
+
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}users/export`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${access}`,
+        'Content-Type': 'application/json',
+      },
+      body,
+    })
+
+    const fileData = await response.blob()
+
+    if (!fileData) return
+
+    const blob = new Blob([fileData], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', 'users.csv')
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <>
       <Helmet>
@@ -195,7 +228,7 @@ const Users = () => {
                     </MonroeSecondaryButton>
                   )}
 
-                  <ImportButton icon={<UploadOutlined />} iconPosition="start" type="default">
+                  <ImportButton icon={<UploadOutlined />} iconPosition="start" type="default" onClick={handleExport}>
                     Export CSV
                   </ImportButton>
                 </Flex>

@@ -75,6 +75,8 @@ const GENDER_OPTIONS: DefaultOptionType[] = [
 
 const ROLES_WITH_TEAMS: TRole[] = ['Head Coach', 'Coach', 'Player', 'Team Admin']
 
+const MAX_ROLES_LENGTH = 6
+
 const UserForm = () => {
   const navigation = useNavigate()
   const { isCreateOperatorScreen } = useUserSlice()
@@ -132,9 +134,16 @@ const UserForm = () => {
   }
 
   return (
-    <Formik initialValues={userInitialFormData} validationSchema={userValidationSchema} onSubmit={handleSubmit}>
+    <Formik
+      initialValues={userInitialFormData}
+      validationSchema={userValidationSchema}
+      onSubmit={handleSubmit}
+      validateOnMount
+      validateOnChange
+      validateOnBlur
+    >
       {({ values, handleChange, handleSubmit, errors, setFieldValue, handleBlur, touched, setFieldTouched }) => {
-        const isAddEntityButtonDisabled = !!errors.roles?.length
+        const isAddEntityButtonDisabled = !!errors.roles?.length || values.roles.length === MAX_ROLES_LENGTH
         const collapsedDivisionItems = (removeFn: (index: number) => void) =>
           values.roles.map((role, idx) => ({
             key: idx,
@@ -316,7 +325,9 @@ const UserForm = () => {
                               <MonroeTooltip
                                 text={
                                   isAddEntityButtonDisabled
-                                    ? "You can't create role when you have errors in other roles"
+                                    ? values.roles.length === MAX_ROLES_LENGTH
+                                      ? 'Maximum roles is 6'
+                                      : "You can't create role when you have errors in other roles"
                                     : ''
                                 }
                                 width="220px"

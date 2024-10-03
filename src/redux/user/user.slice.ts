@@ -2,10 +2,10 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 import { userApi } from '@/redux/user/user.api'
 
-import { IBlockedUserError, IBulkEditFEUser, IExtendedFEUser, IFEUser } from '@/common/interfaces/user'
+import { IBlockedUserError, IBulkEditFEUser, IExtendedFEUser } from '@/common/interfaces/user'
 
 interface IUserSliceState {
-  user: IFEUser | null
+  user: IExtendedFEUser | null
   limit: number
   offset: number
   users: IExtendedFEUser[]

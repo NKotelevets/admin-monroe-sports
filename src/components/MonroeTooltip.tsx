@@ -39,9 +39,17 @@ interface IMonroeTooltipProps {
   width: string
   containerWidth?: string
   height?: string
+  isHideModalOnIconClick?: boolean
 }
 
-const MonroeTooltip: FC<IMonroeTooltipProps> = ({ children, text, width, height = 'auto', containerWidth }) => {
+const MonroeTooltip: FC<IMonroeTooltipProps> = ({
+  children,
+  text,
+  width,
+  height = 'auto',
+  containerWidth,
+  isHideModalOnIconClick = false,
+}) => {
   const [showTooltip, setShowTooltip] = useState(false)
   const ref = useRef<HTMLDivElement>()
   const boundingClientRect = ref.current?.getBoundingClientRect()
@@ -80,7 +88,13 @@ const MonroeTooltip: FC<IMonroeTooltipProps> = ({ children, text, width, height 
           document.body,
         )}
 
-      {children}
+      <div
+        onClick={() => {
+          if (isHideModalOnIconClick) setShowTooltip(false)
+        }}
+      >
+        {children}
+      </div>
     </MonroeTooltipContainer>
   )
 }

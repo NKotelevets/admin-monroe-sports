@@ -1,3 +1,4 @@
+import OperatorsInput from '../components/OperatorsInput'
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import Flex from 'antd/es/flex'
 import { DefaultOptionType } from 'antd/es/select'
@@ -11,17 +12,15 @@ import { ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES, ROLES } from '@/pages/Pro
 import MasterTeamsMultipleSelectWithSearch from '@/components/MasterTeamsMultipleSelectWithSearch'
 import MonroeSelect from '@/components/MonroeSelect'
 import MonroeTooltip from '@/components/MonroeTooltip'
-import CellText from '@/components/Table/CellText'
 import TextWithTooltip from '@/components/TextWithTooltip'
 
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
 
 import { PATH_TO_USERS } from '@/constants/paths'
 
-import { SHORT_GENDER_NAMES } from '@/common/constants'
 import { IFERole } from '@/common/interfaces/role'
 import { IBulkEditFEUser } from '@/common/interfaces/user'
-import { TGender, TRole } from '@/common/types'
+import { TRole } from '@/common/types'
 
 import DeleteIcon from '@/assets/icons/delete.svg'
 
@@ -30,6 +29,8 @@ type TColumns<T> = TableProps<T>['columns']
 export const useUsersBulkEditTableParams = () => {
   const navigate = useNavigate()
   const { setRecords, selectedRecords } = useUserSlice()
+  const { user } = useUserSlice()
+  const isOperatorWithoutAdmin = !!user?.operator && !user.isSuperuser
 
   const columns: TColumns<IBulkEditFEUser> = [
     {
@@ -51,15 +52,9 @@ export const useUsersBulkEditTableParams = () => {
       ),
     },
     {
-      title: '',
-      dataIndex: 'gender',
-      width: '50px',
-      render: (_, record) => <CellText> {SHORT_GENDER_NAMES[record.gender as TGender]}</CellText>,
-    },
-    {
       title: 'Roles',
       dataIndex: 'userRoles',
-      width: '240px',
+      width: '540px',
       render: (_, record) => {
         const existingRoles = record.userRoles.map((role) => role.name)
         const options: DefaultOptionType[] = ROLES.filter((initialRole) => !existingRoles.includes(initialRole)).map(
@@ -82,7 +77,7 @@ export const useUsersBulkEditTableParams = () => {
           })
           .filter((i) => !!i)?.length
 
-        const handleChangeData = (oldRole: string, newRole: string) => {
+        const handleChangeRole = (oldRole: string, newRole: string) => {
           const updatedRecord: IBulkEditFEUser = {
             ...record,
             userRoles: record.userRoles.map((role) => {
@@ -140,62 +135,6 @@ export const useUsersBulkEditTableParams = () => {
           setRecords(updatedRecords)
         }
 
-        return (
-          <Flex
-            vertical
-            justify="flex-start"
-            style={{
-              height: '100%',
-            }}
-          >
-            {record.userRoles.length
-              ? record.userRoles.map((role) => (
-                  <Flex
-                    key={role.name}
-                    style={{
-                      marginBottom: '20px',
-                    }}
-                    align="center"
-                  >
-                    <MonroeSelect
-                      options={options}
-                      onChange={(newRole) => handleChangeData(role.name, newRole)}
-                      styles={{ width: '100%' }}
-                      value={role.name}
-                    />
-
-                    <div style={{ marginLeft: '8px' }} onClick={() => handleDeleteRole(role.name)}>
-                      <ReactSVG src={DeleteIcon} />
-                    </div>
-                  </Flex>
-                ))
-              : '-'}
-
-            <MonroeTooltip
-              text={isDisabledAddRoleButton ? "You can't create role when you have errors in other roles" : ''}
-              width="220px"
-              containerWidth="113px"
-            >
-              <AddRoleButton
-                disabled={isDisabledAddRoleButton}
-                onClick={handleAddRole}
-                icon={<PlusOutlined />}
-                style={{
-                  width: '100px',
-                }}
-              >
-                Add role
-              </AddRoleButton>
-            </MonroeTooltip>
-          </Flex>
-        )
-      },
-    },
-    {
-      title: 'Teams',
-      dataIndex: '',
-      width: '240px',
-      render: (_, record) => {
         const handleChangeData = (
           roleName: string,
           teams: {
@@ -229,70 +168,117 @@ export const useUsersBulkEditTableParams = () => {
         }
 
         return (
-          <Flex vertical>
-            {record.userRoles.map((role) => (
-              <Flex
-                key={role.name}
+          <Flex
+            vertical
+            justify="flex-start"
+            style={{
+              height: '100%',
+            }}
+          >
+            {record.userRoles.map((role) => {
+              const isOperator = role.name === 'Operator'
+              const operatorObject = {
+                id: role.linkedEntities?.[0]?.id || '',
+                name: role.linkedEntities?.[0]?.name || '',
+              }
+              const isRoleWithTeams = ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(role.name as TRole)
+
+              return (
+                <Flex
+                  style={{
+                    marginBottom: '20px',
+                  }}
+                  align="start"
+                  key={role.name}
+                >
+                  <Flex
+                    style={{
+                      marginRight: '20px',
+                      width: '250px',
+                    }}
+                    align="center"
+                  >
+                    <MonroeSelect
+                      options={options}
+                      onChange={(newRole) => handleChangeRole(role.name, newRole)}
+                      styles={{ width: '100%' }}
+                      value={role.name}
+                      disabled={
+                        ['Swift Schedule Master Admin', 'Parent', 'Child'].includes(role.name) ||
+                        !!(isOperatorWithoutAdmin && role.name === 'Operator')
+                      }
+                    />
+
+                    {!(
+                      ['Swift Schedule Master Admin', 'Parent', 'Child'].includes(role.name) ||
+                      !!(isOperatorWithoutAdmin && role.name === 'Operator')
+                    ) && (
+                      <div style={{ marginLeft: '8px' }} onClick={() => handleDeleteRole(role.name)}>
+                        <ReactSVG src={DeleteIcon} />
+                      </div>
+                    )}
+                  </Flex>
+
+                  {isRoleWithTeams && (
+                    <div
+                      style={{
+                        width: '100%',
+                      }}
+                    >
+                      <MasterTeamsMultipleSelectWithSearch
+                        onChange={(newRole) => handleChangeData(role.name, newRole)}
+                        isError={!role?.linkedEntities?.length}
+                        onBlur={() => {}}
+                        selectedTeams={role?.linkedEntities || []}
+                      />
+                    </div>
+                  )}
+
+                  {!isRoleWithTeams && !isOperator && (
+                    <div
+                      style={{
+                        opacity: 0,
+                        visibility: 'hidden',
+                        width: '100%',
+                        height: '32px',
+                      }}
+                    />
+                  )}
+
+                  {isOperator && (
+                    <OperatorsInput
+                      isError={!operatorObject.id}
+                      setOperator={(value) => {
+                        handleChangeData('Operator', value)
+                      }}
+                      selectedOperator={operatorObject}
+                      isHideAddOperatorBtn
+                      isDisabled={isOperatorWithoutAdmin}
+                    />
+                  )}
+                </Flex>
+              )
+            })}
+
+            <MonroeTooltip
+              text={isDisabledAddRoleButton ? "You can't create role when you have errors in other roles" : ''}
+              width="220px"
+              containerWidth="113px"
+            >
+              <AddRoleButton
+                disabled={isDisabledAddRoleButton}
+                onClick={handleAddRole}
+                icon={<PlusOutlined />}
                 style={{
-                  marginBottom: '20px',
+                  width: '100px',
                 }}
               >
-                {ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(role.name as TRole) ? (
-                  <div
-                    style={{
-                      width: '100%',
-                    }}
-                  >
-                    <MasterTeamsMultipleSelectWithSearch
-                      onChange={(newRole) => handleChangeData(role.name, newRole)}
-                      isError={!role?.linkedEntities?.length}
-                      onBlur={() => {}}
-                      selectedTeams={role?.linkedEntities || []}
-                    />
-                  </div>
-                ) : (
-                  <div
-                    style={{
-                      opacity: 0,
-                      visibility: 'hidden',
-                      width: '100%',
-                      height: '32px',
-                    }}
-                  ></div>
-                )}
-              </Flex>
-            ))}
-
-            <button
-              style={{
-                opacity: 0,
-                visibility: 'hidden',
-                height: '32px',
-              }}
-            >
-              Add role
-            </button>
+                Add role
+              </AddRoleButton>
+            </MonroeTooltip>
           </Flex>
         )
       },
-    },
-    {
-      title: 'Birth Date',
-      dataIndex: 'birthDate',
-      width: '128px',
-      render: (value) => <CellText>{value || '-'}</CellText>,
-    },
-    {
-      title: 'Email',
-      dataIndex: 'email',
-      width: '192px',
-      render: (value) => <TextWithTooltip maxLength={18} text={value} />,
-    },
-    {
-      title: 'Phone',
-      dataIndex: 'phoneNumber',
-      width: '192px',
-      render: (value) => <CellText>{value || '-'}</CellText>,
     },
   ]
 

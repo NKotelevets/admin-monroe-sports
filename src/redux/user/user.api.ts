@@ -6,12 +6,10 @@ import { IGetEntityResponse } from '@/common/interfaces'
 import { IPaginationResponse } from '@/common/interfaces/api'
 import { IBEOperator, IFEOperator, IGetOperatorRequestParams } from '@/common/interfaces/operator'
 import {
-  IBEUser,
   IBlockedUserError,
   ICreateUserAsAdminRequestBody,
   IExtendedBEUser,
   IExtendedFEUser,
-  IFEUser,
   IGetUsersRequestParams,
   IRole,
 } from '@/common/interfaces/user'
@@ -25,11 +23,11 @@ export const userApi = createApi({
   baseQuery: baseQueryWithReAuth,
   tagTypes: [USER_TAG, OPERATOR_TAG],
   endpoints: (builder) => ({
-    getUser: builder.query<IFEUser, void>({
+    getUser: builder.query<IExtendedFEUser, void>({
       query: () => ({
         url: '/users/me',
       }),
-      transformResponse: (user: IBEUser) => ({
+      transformResponse: (user: IExtendedBEUser) => ({
         id: user.id,
         email: user.email,
         gender: user.gender,
@@ -51,8 +49,20 @@ export const userApi = createApi({
         emergencyContactPhone: user.emergency_contact_phone,
         isActive: user.is_active,
         isSuperuser: user.is_superuser,
-        roles: [],
-        teams: [],
+        roles: user.roles,
+        teams: user.teams,
+        asCoach: user.as_coach,
+        asPlayer: user.as_player,
+        operator: user.operator,
+        asHeadCoach: user.as_head_coach,
+        asTeamAdmin: user.as_team_admin,
+        isChild: user.is_child,
+        asParent:
+          user.as_supervisor?.supervised.map((s) => ({
+            id: s.id,
+            firstName: s.first_name,
+            lastName: s.last_name,
+          })) || null,
       }),
     }),
 
@@ -233,7 +243,7 @@ export const userApi = createApi({
     importUsersCSV: builder.mutation<void, FormData>({
       query: (body) => ({
         method: 'POST',
-        url: 'users/confirmation/import-users-from-csv',
+        url: 'users/confirmation/import-users-from-csv-as-admin',
         body,
       }),
     }),

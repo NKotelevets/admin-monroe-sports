@@ -1,3 +1,4 @@
+import { ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES } from './constants/roles'
 import { Flex, Table } from 'antd'
 import { Helmet } from 'react-helmet'
 import { useNavigate } from 'react-router-dom'
@@ -25,6 +26,21 @@ const UsersBulkEdit = () => {
   const navigation = useNavigate()
   const [bulkEdit] = useBulkEditMutation()
 
+  const isDisabledSaveChangesBtn = !!selectedRecords
+    .flatMap((record) =>
+      record.userRoles.filter((role) => {
+        if (
+          (ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(role.name as TRole) &&
+            !role?.linkedEntities?.length) ||
+          !role.name
+        )
+          return true
+
+        return false
+      }),
+    )
+    .filter((i) => !!i)?.length
+
   const handleSave = () => {
     const editRolesData = selectedRecords.map((record) => ({
       id: record.id,
@@ -34,7 +50,7 @@ const UsersBulkEdit = () => {
             (linkedEntity) =>
               ({
                 role: role.name,
-                team_id: linkedEntity.id,
+                team_id: linkedEntity?.id || '',
               }) as IRole,
           )
         }
@@ -73,7 +89,12 @@ const UsersBulkEdit = () => {
                 Cancel
               </MonroeSecondaryButton>
 
-              <CreateNewEntityButton iconPosition="start" type="primary" onClick={handleSave}>
+              <CreateNewEntityButton
+                iconPosition="start"
+                type="primary"
+                onClick={handleSave}
+                disabled={isDisabledSaveChangesBtn}
+              >
                 Save changes
               </CreateNewEntityButton>
             </Flex>

@@ -68,6 +68,8 @@ const GENDER_OPTIONS: DefaultOptionType[] = [
 
 const ROLES_WITH_TEAMS: TRole[] = ['Head Coach', 'Coach', 'Player', 'Team Admin']
 
+const MAX_ROLES_LENGTH = 6
+
 const EditUser = () => {
   const params = useParams<{ id: string }>()
   const navigation = useNavigate()
@@ -158,9 +160,10 @@ const EditUser = () => {
           onSubmit={handleSubmit}
           validateOnChange
           validateOnBlur
+          validateOnMount
         >
           {({ values, handleChange, handleSubmit, errors, setFieldValue, setFieldTouched }) => {
-            const isAddEntityButtonDisabled = !!errors.roles?.length
+            const isAddEntityButtonDisabled = !!errors.roles?.length || values.roles.length === MAX_ROLES_LENGTH
             const collapsedDivisionItems = (removeFn: (index: number) => void) =>
               values.roles.map((role, idx) => ({
                 key: idx,
@@ -326,7 +329,9 @@ const EditUser = () => {
                               <MonroeTooltip
                                 text={
                                   isAddEntityButtonDisabled
-                                    ? "You can't create role when you have errors in other roles"
+                                    ? values.roles.length === MAX_ROLES_LENGTH
+                                      ? 'Maximum roles is 6'
+                                      : "You can't create role when you have errors in other roles"
                                     : ''
                                 }
                                 width="220px"
