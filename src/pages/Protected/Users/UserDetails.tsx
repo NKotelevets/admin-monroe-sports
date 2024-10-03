@@ -238,9 +238,7 @@ const UserDetails = () => {
               <ViewText>Roles:</ViewText>
 
               <Flex vertical>
-                {data.isSuperuser && (
-                  <ViewText style={{ width: '250px', marginBottom: '8px' }}>Swift Schedule Master Admin</ViewText>
-                )}
+                {data.isSuperuser && <ViewText style={{ width: '250px', marginBottom: '8px' }}>Master Admin</ViewText>}
 
                 {data.operator && (
                   <Flex vertical>
@@ -255,7 +253,7 @@ const UserDetails = () => {
                   </Flex>
                 )}
 
-                {data.asTeamAdmin && (
+                {data.asTeamAdmin?.length && (
                   <Flex vertical style={{ marginBottom: '8px' }}>
                     <ViewText>Team Admin</ViewText>
                     <Flex>
@@ -269,7 +267,7 @@ const UserDetails = () => {
                   </Flex>
                 )}
 
-                {data.asHeadCoach && (
+                {data.asHeadCoach?.length && (
                   <Flex vertical style={{ marginBottom: '8px' }}>
                     <ViewText>Head Coach</ViewText>
                     <Flex>
