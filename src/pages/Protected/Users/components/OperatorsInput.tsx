@@ -107,11 +107,9 @@ const OperatorsInput: FC<IOperatorsInputProps> = ({
 
   const getData = async () => {
     if (data && data?.count > operatorsList.length) {
-      setOffset((prev) => prev + DEFAULT_LIMIT_RECORDS)
-
       const response = await getOperators({
         limit: DEFAULT_LIMIT_RECORDS,
-        offset,
+        offset: offset + DEFAULT_LIMIT_RECORDS,
         search: value,
       }).unwrap()
 
@@ -121,6 +119,8 @@ const OperatorsInput: FC<IOperatorsInputProps> = ({
       }))
 
       if (response?.data) setOperatorsList((prev) => [...prev, ...options])
+
+      setOffset((prev) => prev + DEFAULT_LIMIT_RECORDS)
     }
   }
 

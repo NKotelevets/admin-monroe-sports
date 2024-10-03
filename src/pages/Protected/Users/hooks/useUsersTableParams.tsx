@@ -178,11 +178,9 @@ export const useUsersTableParams = ({
       title: 'Roles',
       dataIndex: 'roles',
       width: '240px',
-      render: (_, record) => {
-        const allRoles = record.isChild && record.roles.includes('Child') ? record.roles : [...record.roles, 'Child']
-
-        return <TextWithTooltip isRegularText maxLength={28} text={allRoles.length ? allRoles.join(', ') : '-'} />
-      },
+      render: (_, record) => (
+        <TextWithTooltip isRegularText maxLength={28} text={record.roles.length ? record.roles.join(', ') : '-'} />
+      ),
       filterDropdown: MonroeFilter,
       filterIcon: (filtered) => (
         <FilterFilled
