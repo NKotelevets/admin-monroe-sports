@@ -68,8 +68,6 @@ export const finishCreateOperatorValidationSchema = Yup.object<ICreateOperatorFo
   confirmPassword: Yup.string()
     .required('Confirm password is required')
     .oneOf([Yup.ref('password'), ''], "Passwords don't match"),
-  state: Yup.string().required(),
-  city: Yup.string().required(),
   street: Yup.string().required(),
   phone: Yup.string().required().required("Operator's phone is required"),
   email: Yup.string()

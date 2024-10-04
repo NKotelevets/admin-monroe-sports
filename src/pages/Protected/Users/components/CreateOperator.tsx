@@ -45,7 +45,20 @@ const CreateOperator: FC<ICreateOperatorProps> = ({ setOperator }) => {
       title: <a href={PATH_TO_USERS}>Users</a>,
     },
     {
-      title: <a onClick={() => setIsCreateOperatorScreen(false)}>Create user</a>,
+      title: (
+        <a
+          onClick={() => {
+            setOperator({
+              id: '',
+              name: '',
+            })
+
+            setIsCreateOperatorScreen(false)
+          }}
+        >
+          Create user
+        </a>
+      ),
     },
     {
       title: <MonroeBlueText>Add operator</MonroeBlueText>,

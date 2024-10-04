@@ -1,67 +1,13 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-import { ISignInResponse } from '@/common/interfaces/auth'
-
-interface ISignInRequestBody {
-  email: string
-  password: string
-  isStaySignIn: boolean
-}
-
-export interface Root {
-  id: string
-  email: string
-  phone_number: string
-  additional_emails: AdditionalEmail[]
-  additional_phones: AdditionalPhone[]
-  phone_number_verified: boolean
-  email_verified: boolean
-  invite_accepted: string
-  invite_date: string
-  operator: Operator
-  is_superuser: boolean
-  updated_at: string
-  created_at: string
-  system_role: number
-  photo_s3_url: string
-  first_name: string
-  last_name: string
-  birth_date: string
-  gender: number
-  zip_code: string
-  city: string
-  state: string
-  emergency_contact_name: string
-  emergency_contact_phone: string
-  is_active: boolean
-}
-
-export interface AdditionalEmail {
-  email: string
-  is_verified: boolean
-}
-
-export interface AdditionalPhone {
-  phone_number: string
-  is_verified: boolean
-}
-
-export interface Operator {
-  id: string
-  updated_at: string
-  created_at: string
-  name: string
-  email: string
-  phone_number: string
-  zip_code: string
-  state: string
-  city: string
-  street: string
-  first_name: string
-  last_name: string
-  phone_number_contact: string
-  email_contact: string
-}
+import {
+  ICreateUserBody,
+  IPrefilledData,
+  ISignInRequestBody,
+  ISignInResponse,
+  IUpdateOperator,
+} from '@/common/interfaces/auth'
+import { IBEOperator } from '@/common/interfaces/operator'
 
 export const authApi = createApi({
   baseQuery: fetchBaseQuery({
@@ -79,13 +25,36 @@ export const authApi = createApi({
         method: 'POST',
       }),
     }),
-    getPrefilledData: builder.query<Root, { invitation_token: string }>({
+
+    getPrefilledData: builder.query<IPrefilledData, { invitation_token: string }>({
       query: (params) => ({
         url: 'users/get-prefilled-data',
         params,
       }),
     }),
+
+    createUser: builder.mutation<void, { id: string; body: ICreateUserBody }>({
+      query: ({ body, id }) => ({
+        url: `users/${id}/profile`,
+        body,
+        method: 'POST',
+      }),
+    }),
+
+    updateOperator: builder.mutation<
+      IBEOperator,
+      {
+        id: string
+        body: IUpdateOperator
+      }
+    >({
+      query: ({ body, id }) => ({
+        url: `users/operator/${id}`,
+        body,
+        method: 'PUT',
+      }),
+    }),
   }),
 })
 
-export const { useSignInMutation, useGetPrefilledDataQuery } = authApi
+export const { useSignInMutation, useGetPrefilledDataQuery, useCreateUserMutation, useUpdateOperatorMutation } = authApi

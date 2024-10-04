@@ -241,19 +241,14 @@ const UserDetails = () => {
                 {data.isSuperuser && <ViewText style={{ width: '250px', marginBottom: '8px' }}>Master Admin</ViewText>}
 
                 {data.operator && (
-                  <Flex vertical>
-                    <ViewText style={{ width: '250px', marginBottom: '8px' }}>Operator</ViewText>
+                  <Flex vertical style={{ marginBottom: '8px' }}>
+                    <ViewText>Operator</ViewText>
 
-                    <MonroeLinkText
-                      onClick={() => navigate(PATH_TO_USERS + '/' + data.operator?.id)}
-                      style={{ marginRight: '4px' }}
-                    >
-                      {data.operator.name}
-                    </MonroeLinkText>
+                    <ViewText style={{ marginRight: '4px' }}>{data.operator.name}</ViewText>
                   </Flex>
                 )}
 
-                {data.asTeamAdmin?.length && (
+                {!!data.asTeamAdmin?.length && (
                   <Flex vertical style={{ marginBottom: '8px' }}>
                     <ViewText>Team Admin</ViewText>
                     <Flex>
@@ -267,7 +262,7 @@ const UserDetails = () => {
                   </Flex>
                 )}
 
-                {data.asHeadCoach?.length && (
+                {!!data.asHeadCoach?.length && (
                   <Flex vertical style={{ marginBottom: '8px' }}>
                     <ViewText>Head Coach</ViewText>
                     <Flex>

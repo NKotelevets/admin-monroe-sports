@@ -236,7 +236,7 @@ export const useUsersTableParams = ({
                 align="center"
               >
                 {record.operator && (
-                  <MonroeTooltip width="auto" text="Resend email">
+                  <MonroeTooltip width="auto" text="Resend email to Operator">
                     <ReactSVG src={SearchEmailIcon} />
                   </MonroeTooltip>
                 )}

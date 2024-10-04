@@ -18,6 +18,8 @@ const USER_TAG = 'USER'
 
 const OPERATOR_TAG = 'OPERATOR'
 
+const OPERATOR_INVITE_TYPE = 5
+
 export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: baseQueryWithReAuth,
@@ -247,6 +249,23 @@ export const userApi = createApi({
         body,
       }),
     }),
+
+    sendInvitation: builder.mutation<
+      void,
+      {
+        emails: string[]
+      }
+    >({
+      query: ({ emails }) => ({
+        url: 'users/invitation/send-invitation',
+        method: 'POST',
+        body: {
+          invite_type: OPERATOR_INVITE_TYPE,
+          is_admin_invite: true,
+          emails,
+        },
+      }),
+    }),
   }),
 })
 
@@ -261,4 +280,5 @@ export const {
   useGetUserDetailsQuery,
   useBulkEditMutation,
   useImportUsersCSVMutation,
+  useSendInvitationMutation,
 } = userApi
