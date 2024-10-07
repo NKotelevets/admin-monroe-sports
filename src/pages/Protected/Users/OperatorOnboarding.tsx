@@ -396,11 +396,11 @@ const OperatorOnboarding = () => {
                             style={{ height: '32px' }}
                             label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Zip Code *</OptionTitle>}
                             error={touched.zipCode ? errors.zipCode : ''}
+                            onBlur={handleBlur}
                           />
                         </div>
 
                         <div style={{ marginBottom: '8px' }}>
-                          <OptionTitle style={{ padding: '0 0 5px 0' }}>State *</OptionTitle>
                           <MonroeInput
                             name="state"
                             value={values.state}
@@ -408,6 +408,8 @@ const OperatorOnboarding = () => {
                             placeholder="Enter state"
                             style={{ height: '32px' }}
                             error={touched.state ? errors.state : ''}
+                            label={<OptionTitle style={{ padding: '0 0 5px 0' }}>State *</OptionTitle>}
+                            onBlur={handleBlur}
                           />
                         </div>
 
@@ -420,6 +422,7 @@ const OperatorOnboarding = () => {
                             style={{ height: '32px' }}
                             error={touched.city ? errors.city : ''}
                             label={<OptionTitle style={{ padding: '0 0 5px 0' }}>City *</OptionTitle>}
+                            onBlur={handleBlur}
                           />
                         </div>
 
@@ -431,6 +434,7 @@ const OperatorOnboarding = () => {
                             placeholder="Enter street"
                             style={{ height: '32px' }}
                             label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Street *</OptionTitle>}
+                            onBlur={handleBlur}
                             error={touched.street ? errors.street : ''}
                           />
                         </div>
