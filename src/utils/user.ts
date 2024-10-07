@@ -6,7 +6,7 @@ export const calculateUserRoles = (data: IExtendedFEUser) => {
 
   if (data.isSuperuser)
     roles.push({
-      name: 'Swift Schedule Master Admin',
+      name: 'Master Admin',
     })
 
   if (data.operator)
@@ -20,7 +20,7 @@ export const calculateUserRoles = (data: IExtendedFEUser) => {
       ],
     })
 
-  if (data.asTeamAdmin)
+  if (data.asTeamAdmin?.length)
     roles.push({
       name: 'Team Admin',
       linkedEntities: data.asTeamAdmin.map((e) => ({
@@ -29,7 +29,7 @@ export const calculateUserRoles = (data: IExtendedFEUser) => {
       })),
     })
 
-  if (data.asHeadCoach)
+  if (data.asHeadCoach?.length)
     roles.push({
       name: 'Head Coach',
       linkedEntities: data.asHeadCoach.map((e) => ({
@@ -62,57 +62,7 @@ export const calculateUserRoles = (data: IExtendedFEUser) => {
 export const calculateAllUserRoles = (data: IExtendedFEUser) => {
   const roles: IFERole[] = []
 
-  if (data.isSuperuser)
-    roles.push({
-      name: 'Master Admin',
-    })
-
-  if (data.operator)
-    roles.push({
-      name: 'Operator',
-      linkedEntities: [
-        {
-          id: data.operator.id,
-          name: data.operator.name,
-        },
-      ],
-    })
-
-  if (data.asTeamAdmin)
-    roles.push({
-      name: 'Team Admin',
-      linkedEntities: data.asTeamAdmin.map((e) => ({
-        id: e.id,
-        name: e.name,
-      })),
-    })
-
-  if (data.asHeadCoach)
-    roles.push({
-      name: 'Head Coach',
-      linkedEntities: data.asHeadCoach.map((e) => ({
-        id: e.id,
-        name: e.name,
-      })),
-    })
-
-  if (data.asCoach)
-    roles.push({
-      name: 'Coach',
-      linkedEntities: data.asCoach.teams.map((e) => ({
-        id: e.id,
-        name: e.name,
-      })),
-    })
-
-  if (data.asPlayer)
-    roles.push({
-      name: 'Player',
-      linkedEntities: data.asPlayer.teams.map((e) => ({
-        id: e.id,
-        name: e.name,
-      })),
-    })
+  const changedRoles = calculateUserRoles(data)
 
   if (data.isChild)
     roles.push({
@@ -124,6 +74,6 @@ export const calculateAllUserRoles = (data: IExtendedFEUser) => {
       name: 'Parent',
     })
 
-  return roles
+  return [...changedRoles, ...roles]
 }
 

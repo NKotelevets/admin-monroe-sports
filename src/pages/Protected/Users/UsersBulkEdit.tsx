@@ -62,6 +62,12 @@ const UsersBulkEdit = () => {
           } as IRole
         }
 
+        if (role.name === 'Master Admin') {
+          return {
+            role: 'Swift Schedule Master Admin',
+          } as unknown as IRole
+        }
+
         return {
           role: role.name,
         } as IRole

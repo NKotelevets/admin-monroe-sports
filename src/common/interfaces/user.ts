@@ -10,7 +10,7 @@ export interface IBEUser {
   phone_number: string
   phone_number_verified: boolean
   email_verified: boolean
-  invite_accepted: string
+  invite_accepted: boolean
   invite_date: string
   updated_at: string
   created_at: string
@@ -36,7 +36,7 @@ export interface IFEUser {
   phoneNumber: string
   phoneNumberVerified: boolean
   emailVerified: boolean
-  inviteAccepted: string
+  inviteAccepted: boolean
   inviteDate: string
   updatedAt: string
   createdAt: string

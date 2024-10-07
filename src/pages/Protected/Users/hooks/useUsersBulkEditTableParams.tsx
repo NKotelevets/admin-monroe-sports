@@ -204,13 +204,13 @@ export const useUsersBulkEditTableParams = () => {
                       styles={{ width: '100%' }}
                       value={role.name}
                       disabled={
-                        ['Swift Schedule Master Admin', 'Parent', 'Child'].includes(role.name) ||
+                        ['Master Admin', 'Parent', 'Child'].includes(role.name) ||
                         !!(isOperatorWithoutAdmin && role.name === 'Operator')
                       }
                     />
 
                     {!(
-                      ['Swift Schedule Master Admin', 'Parent', 'Child'].includes(role.name) ||
+                      ['Master Admin', 'Parent', 'Child'].includes(role.name) ||
                       !!(isOperatorWithoutAdmin && role.name === 'Operator')
                     ) && (
                       <div style={{ marginLeft: '8px' }} onClick={() => handleDeleteRole(role.name)}>

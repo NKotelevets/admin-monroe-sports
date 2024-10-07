@@ -1,4 +1,3 @@
-import MasterTeamMultipleSelect from './components/MasterTeamsMultipleSelect'
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import { Flex } from 'antd'
 import Breadcrumb from 'antd/es/breadcrumb'
@@ -9,6 +8,7 @@ import { ReactSVG } from 'react-svg'
 
 import PopulateEntity from '@/pages/Protected/MasterTeams/components/PopulateEntity'
 import {
+  ICreateMasterTeam,
   IMasterTeamRole,
   getInitialEntity,
   initialCreateMasterTeamValues,
@@ -32,10 +32,16 @@ import {
 import MonroeInput from '@/components/Inputs/MonroeInput'
 import MonroeButton from '@/components/MonroeButton'
 import MonroeTooltip from '@/components/MonroeTooltip'
+import UsersMultipleSelectWithSearch from '@/components/UsersMultipleSelectWithSearch'
 
 import BaseLayout from '@/layouts/BaseLayout'
 
+import { useAppSlice } from '@/redux/hooks/useAppSlice'
+import { useCreateMasterTeamMutation } from '@/redux/masterTeams/masterTeams.api'
+
 import { PATH_TO_MASTER_TEAMS } from '@/constants/paths'
+
+import { IDetailedError } from '@/common/interfaces'
 
 import ShowAllIcon from '@/assets/icons/show-all.svg'
 
@@ -50,10 +56,36 @@ const BREAD_CRUMB_ITEMS = [
 
 const CreateMasterTeam = () => {
   const navigation = useNavigate()
+  const [createMasterTeam] = useCreateMasterTeamMutation()
+  const { setAppNotification } = useAppSlice()
 
   const goBack = () => navigation(PATH_TO_MASTER_TEAMS)
 
-  const handleSubmit = () => {}
+  const handleSubmit = (values: ICreateMasterTeam) => {
+    const coachesIds = values.coaches.filter((value) => value.role !== 'head-coach').map((coach) => coach.id)
+    const playersIds = values.players.map((player) => player.id)
+    const teamAdminIds = values.teamAdministrators.map((teamAdmin) => teamAdmin.id)
+
+    createMasterTeam({
+      name: values.name,
+      head_coach: values.coaches[0].id,
+      coaches: coachesIds,
+      players: playersIds,
+      team_admins: teamAdminIds,
+    })
+      .unwrap()
+      .then(() => {
+        goBack()
+      })
+      .catch((error) => {
+        const message = (error as IDetailedError).details
+
+        setAppNotification({
+          message,
+          type: 'error',
+        })
+      })
+  }
 
   return (
     <>
@@ -81,12 +113,12 @@ const CreateMasterTeam = () => {
                     index={idx}
                     entity={teamAdministrator}
                     errors={errors.teamAdministrators as FormikErrors<IMasterTeamRole>[]}
-                    onChange={handleChange}
                     setFieldValue={setFieldValue}
                     removeFn={removeFn}
                     setFieldTouched={setFieldTouched}
                     entityName="teamAdministrators"
                     touched={touched}
+                    totalNumberOfItems={values.teamAdministrators.length}
                   />
                 ),
                 label: <AccordionHeader>#{idx + 1} Admin</AccordionHeader>,
@@ -100,12 +132,12 @@ const CreateMasterTeam = () => {
                     index={idx}
                     entity={coach}
                     errors={errors.coaches as FormikErrors<IMasterTeamRole>[]}
-                    onChange={handleChange}
                     setFieldValue={setFieldValue}
                     removeFn={removeFn}
                     setFieldTouched={setFieldTouched}
                     entityName="coaches"
                     touched={touched}
+                    totalNumberOfItems={values.coaches.length}
                   />
                 ),
                 label: <AccordionHeader>{idx === 0 ? 'Head Coach' : <>#{idx + 1} Coach</>}</AccordionHeader>,
@@ -247,14 +279,20 @@ const CreateMasterTeam = () => {
                         <ProtectedPageSubtitle>Players</ProtectedPageSubtitle>
                       </div>
 
-                      <MasterTeamMultipleSelect
-                        handleBlur={() => {
-                          setFieldTouched('players', true)
-                        }}
-                        setFieldValue={setFieldValue}
-                        isError={false}
-                        values={values.players}
-                      />
+                      <div>
+                        <AccordionHeader style={{ margin: '5px 0' }}>Players</AccordionHeader>
+
+                        <UsersMultipleSelectWithSearch
+                          isError={false}
+                          onBlur={() => {
+                            setFieldTouched('players', true)
+                          }}
+                          onChange={(values) => {
+                            setFieldValue(`players`, values)
+                          }}
+                          selectedUsers={values.players}
+                        />
+                      </div>
                     </Flex>
 
                     <MonroeDivider

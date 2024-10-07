@@ -16,16 +16,16 @@ import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice'
 import { useLazyGetMasterTeamsQuery } from '@/redux/masterTeams/masterTeams.api'
 
-import { PATH_TO_EDIT_MASTER_TEAM } from '@/constants/paths'
+import { PATH_TO_EDIT_MASTER_TEAM, PATH_TO_MASTER_TEAMS, PATH_TO_USERS } from '@/constants/paths'
 
-import { IFELeague } from '@/common/interfaces/league'
+import { IFEMasterTeam } from '@/common/interfaces/masterTeams'
 
 import CopyIcon from '@/assets/icons/copy.svg'
 import DeleteIcon from '@/assets/icons/delete.svg'
 import EditIcon from '@/assets/icons/edit.svg'
 
 type TColumns<T> = TableProps<T>['columns']
-type TDataIndex = keyof IFELeague
+type TDataIndex = keyof IFEMasterTeam
 
 interface IParams {
   setSelectedRecordId: (value: string) => void
@@ -43,7 +43,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
 
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
 
-  const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IFELeague> => ({
+  const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IFEMasterTeam> => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
@@ -87,7 +87,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
     ),
     filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: getIconColor(filtered) }} />,
     onFilter: (value, record) =>
-      record[dataIndex]
+      (record[dataIndex] || '')
         .toString()
         .toLowerCase()
         .includes((value as string).toLowerCase()),
@@ -102,7 +102,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
     getMasterTeams({
       limit,
       offset,
-      ordering: ordering || undefined,
+      order_by: ordering || undefined,
     })
     clearFilters()
   }
@@ -117,7 +117,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
     })
   }
 
-  const columns: TColumns<IFELeague> = [
+  const columns: TColumns<IFEMasterTeam> = [
     {
       title: 'Team Name',
       dataIndex: 'name',
@@ -126,44 +126,50 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
       width: '240px',
       sortOrder: ordering?.includes('name') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
       ...getColumnSearchProps('name'),
-      render: (value) => (
+      render: (_, record) => (
         <TextWithTooltip
           maxLength={25}
-          text={value}
-          onClick={
-            () => {}
-            // navigate(PATH_TO_MASTER_TEAMS + '/' + record.id)
-          }
+          text={record.name}
+          onClick={() => navigate(PATH_TO_MASTER_TEAMS + '/' + record.id)}
         />
       ),
     },
     {
       title: 'Team Administrator',
-      dataIndex: 'admin',
+      dataIndex: 'teamAdmin',
       sorter: true,
       width: '240px',
-      sortOrder: ordering?.includes('admin') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
-      ...getColumnSearchProps('name'),
-      render: (value) => (
-        <TextWithTooltip
-          maxLength={25}
-          text={value}
-          onClick={
-            () => {}
-            // navigate(PATH_TO_USERS + '/' + record.id)
-          }
-        />
+      sortOrder: ordering?.includes('teamAdmin') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
+      ...getColumnSearchProps('teamAdmin'),
+      render: (_, record) => (
+        <>
+          {record.teamAdmin ? (
+            <TextWithTooltip
+              maxLength={25}
+              text={record.teamAdmin?.fullName}
+              onClick={() => navigate(PATH_TO_USERS + '/' + record.teamAdmin?.id)}
+            />
+          ) : (
+            '-'
+          )}
+        </>
       ),
     },
     {
       title: 'Team Admin Email',
-      dataIndex: 'adminEmail',
+      dataIndex: 'teamAdmin',
       width: '240px',
-      render: (value) => (
-        <Flex align="center" onClick={() => handleCopyContent(value)}>
-          <TextWithTooltip maxLength={25} text={value} isRegularText />
-          <ReactSVG src={CopyIcon} style={{ marginLeft: '4px' }} />
-        </Flex>
+      render: (_, record) => (
+        <>
+          {record.teamAdmin ? (
+            <Flex align="center" justify="space-between" onClick={() => handleCopyContent(record.teamAdmin!.email)}>
+              <TextWithTooltip maxLength={25} text={record.teamAdmin!.email} isRegularText />
+              <ReactSVG src={CopyIcon} style={{ marginLeft: '4px' }} />
+            </Flex>
+          ) : (
+            '-'
+          )}
+        </>
       ),
     },
 
@@ -174,27 +180,35 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
       sorter: true,
       width: '240px',
       sortOrder: ordering?.includes('headCoach') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
-      render: (value) => (
-        <TextWithTooltip
-          maxLength={25}
-          text={value}
-          onClick={
-            () => {}
-            // navigate(PATH_TO_USERS + '/' + record.id)
-          }
-        />
+      render: (_, record) => (
+        <>
+          {record.headCoach ? (
+            <TextWithTooltip
+              maxLength={25}
+              text={record.headCoach?.fullName}
+              onClick={() => navigate(PATH_TO_USERS + '/' + record.headCoach?.id)}
+            />
+          ) : (
+            '-'
+          )}
+        </>
       ),
     },
     {
       title: 'Coach email',
-      dataIndex: 'headCoachEmail',
+      dataIndex: '',
       width: '240px',
-      render: (value) => (
-        <Flex align="center" onClick={() => handleCopyContent(value)}>
-          <TextWithTooltip maxLength={25} text={value} isRegularText />
-
-          <ReactSVG src={CopyIcon} style={{ marginLeft: '4px' }} />
-        </Flex>
+      render: (_, record) => (
+        <>
+          {record.headCoach ? (
+            <Flex align="center" justify="space-between" onClick={() => handleCopyContent(record.headCoach!.email)}>
+              <TextWithTooltip maxLength={25} text={record.headCoach!.email} isRegularText />
+              <ReactSVG src={CopyIcon} style={{ marginLeft: '4px' }} />
+            </Flex>
+          ) : (
+            '-'
+          )}
+        </>
       ),
     },
 
@@ -202,16 +216,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
       title: 'Linked Leagues/Tourns',
       dataIndex: 'leagues',
       width: '200px',
-      render: (value) => (
-        <TextWithTooltip
-          maxLength={25}
-          text={value}
-          onClick={
-            () => {}
-            // navigate(PATH_TO_USERS + '/' + record.id)
-          }
-        />
-      ),
+      render: () => '-',
     },
 
     {

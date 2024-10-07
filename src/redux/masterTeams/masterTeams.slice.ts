@@ -1,7 +1,10 @@
+import { masterTeamsApi } from './masterTeams.api'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
+import { IFEMasterTeam } from '@/common/interfaces/masterTeams'
+
 interface IMasterTeamsSliceState {
-  masterTeams: unknown[]
+  masterTeams: IFEMasterTeam[]
   limit: number
   offset: number
   total: number
@@ -14,26 +17,7 @@ interface IMasterTeamsSliceState {
 }
 
 const masterTeamsSliceState: IMasterTeamsSliceState = {
-  masterTeams: [
-    {
-      id: '123',
-      name: 'Sky',
-      admin: 'Joe Doe',
-      adminEmail: 'joedoe@example.com',
-      headCoach: 'John Appleseed',
-      headCoachEmail: 'jappleseed@example.com',
-      leagues: 'league1, league2, league3, league4',
-    },
-    {
-      id: '1234',
-      name: 'Dog',
-      admin: 'Mike Orthon',
-      adminEmail: 'mikeo@example.com',
-      headCoach: 'Kevin Li',
-      headCoachEmail: 'keli@example.com',
-      leagues: 'league1, league2, league3, league4',
-    },
-  ],
+  masterTeams: [],
   limit: 10,
   offset: 0,
   total: 0,
@@ -65,6 +49,10 @@ export const masterTeamsSlice = createSlice({
       state.createdRecordsNames = []
     },
   },
-  extraReducers: (builder) => builder,
+  extraReducers: (builder) =>
+    builder.addMatcher(masterTeamsApi.endpoints.getMasterTeams.matchFulfilled, (state, action) => {
+      state.total = action.payload.count
+      state.masterTeams = action.payload.results
+    }),
 })
 

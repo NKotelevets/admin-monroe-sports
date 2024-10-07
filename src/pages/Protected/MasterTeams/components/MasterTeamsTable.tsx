@@ -1,30 +1,26 @@
-// import type { GetProp, TableProps } from 'antd'
-// import { Table } from 'antd'
-// import type { SorterResult } from 'antd/es/table/interface'
+import type { GetProp, TableProps } from 'antd'
+import { Table } from 'antd'
+import type { FilterValue, SorterResult } from 'antd/es/table/interface'
 import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 
 import { useMasterTeamsTable } from '@/pages/Protected/MasterTeams/hooks/useMasterTeamsTable'
 
-import {
-  ExpandedHeaderLeftText,
-  ExpandedTableHeader, //  MonroeBlueText,
-  MonroeLightBlueText,
-} from '@/components/Elements'
+import { ExpandedHeaderLeftText, ExpandedTableHeader, MonroeBlueText, MonroeLightBlueText } from '@/components/Elements'
 import MonroeModal from '@/components/MonroeModal'
 
 import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice'
 import { useLazyGetMasterTeamsQuery, useMasterTeamsDeleteRecordMutation } from '@/redux/masterTeams/masterTeams.api'
 
-// import { IFELeague } from '@/common/interfaces/league'
+import { IFEMasterTeam, IGetMasterTeamsRequest } from '@/common/interfaces/masterTeams'
 
-// type TTablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>
+type TTablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>
 
-// interface ITableParams {
-//   pagination?: TTablePaginationConfig
-//   sortField?: SorterResult<IFELeague>['field']
-//   sortOrder?: SorterResult<IFELeague>['order']
-//   filters?: Parameters<GetProp<TableProps, 'onChange'>>[1]
-// }
+interface ITableParams {
+  pagination?: TTablePaginationConfig
+  sortField?: SorterResult<IFEMasterTeam>['field']
+  sortOrder?: SorterResult<IFEMasterTeam>['order']
+  filters?: Parameters<GetProp<TableProps, 'onChange'>>[1]
+}
 
 interface IMasterTeamsTableProps {
   setSelectedRecordsIds: Dispatch<SetStateAction<string[]>>
@@ -36,11 +32,11 @@ interface IMasterTeamsTableProps {
   showCreatedRecords: boolean
 }
 
-// const showTotal = (total: number) => <MonroeBlueText>Total {total} items</MonroeBlueText>
+const showTotal = (total: number) => <MonroeBlueText>Total {total} items</MonroeBlueText>
 
 const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
   setSelectedRecordsIds,
-  // selectedRecordIds,
+  selectedRecordIds,
   setShowAdditionalHeader,
   showAdditionalHeader,
   setIsDeleteAllRecords,
@@ -55,25 +51,24 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
     ordering,
     removeCreatedRecordsNames,
     setPaginationParams,
-    // masterTeams,
+    masterTeams,
   } = useMasterTeamsSlice()
-
-  const [getMasterTeams] = useLazyGetMasterTeamsQuery()
-  // const [_, setTableParams] = useState<ITableParams>({
-  //   pagination: {
-  //     current: offset / limit + 1,
-  //     pageSize: limit,
-  //     pageSizeOptions: [5, 10, 30, 50],
-  //     showQuickJumper: true,
-  //     showSizeChanger: true,
-  //     total: data?.count,
-  //     showTotal,
-  //   },
-  // })
+  const [getMasterTeams, { isLoading, isFetching, data }] = useLazyGetMasterTeamsQuery()
+  const [tableParams, setTableParams] = useState<ITableParams>({
+    pagination: {
+      current: offset / limit + 1,
+      pageSize: limit,
+      pageSizeOptions: [5, 10, 30, 50],
+      showQuickJumper: true,
+      showSizeChanger: true,
+      total,
+      showTotal,
+    },
+  })
   const [showDeleteSingleRecordModal, setShowDeleteSingleRecordModal] = useState(false)
   const [selectedRecordId, setSelectedRecordId] = useState('')
   const [deleteRecord] = useMasterTeamsDeleteRecordMutation()
-  useMasterTeamsTable({
+  const { columns } = useMasterTeamsTable({
     setSelectedRecordId,
     setShowDeleteSingleRecordModal,
   })
@@ -97,7 +92,7 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
     getMasterTeams({
       limit,
       offset,
-      ordering: ordering || undefined,
+      order_by: ordering || undefined,
     })
 
     return () => {
@@ -107,52 +102,56 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
     }
   }, [])
 
-  // useEffect(() => {
-  //   if (data?.count) {
-  //     setTableParams((params) => ({
-  //       pagination: {
-  //         ...params.pagination,
-  //         total: data.count,
-  //         showTotal,
-  //       },
-  //     }))
-  //   }
+  useEffect(() => {
+    if (data?.count) {
+      setTableParams((params) => ({
+        pagination: {
+          ...params.pagination,
+          total,
+          showTotal,
+        },
+      }))
+    }
 
-  //   if (isDeleteAllRecords && data?.leagues.length) {
-  //     const recordIds = data?.leagues.map((league) => league.id)
-  //     setSelectedRecordsIds((prev) => [...prev, ...recordIds])
-  //   }
-  // }, [data, isDeleteAllRecords])
+    if (isDeleteAllRecords && data?.results.length) {
+      const recordIds = data?.results.map((mT) => mT.id)
+      setSelectedRecordsIds((prev) => [...prev, ...recordIds])
+    }
+  }, [data?.count, isDeleteAllRecords])
 
-  // const handleTableChange: TableProps['onChange'] = (pagination, _, sorter) => {
-  //   const newOffset = (pagination?.current && (pagination?.current - 1) * (pagination?.pageSize || 10)) || 0
-  //   const newLimit = pagination?.pageSize || 10
-  //   setTableParams({
-  //     pagination: {
-  //       ...pagination,
-  //       showTotal,
-  //     },
-  //   })
+  type TFilterValueKey = 'name'
+  type TFilters = Record<TFilterValueKey, FilterValue | null>
 
-  //   if (!isDeleteAllRecords) {
-  //     setSelectedRecordsIds([])
-  //     setShowAdditionalHeader(false)
-  //   }
+  const handleTableChange: TableProps<IFEMasterTeam>['onChange'] = (pagination, filters: TFilters, sorter) => {
+    const newOffset = (pagination?.current && (pagination?.current - 1) * (pagination?.pageSize || 10)) || 0
+    const newLimit = pagination?.pageSize || 10
+    setTableParams({
+      pagination: {
+        ...pagination,
+        showTotal,
+      },
+    })
 
-  //   const getLeaguesParams = {
-  //     offset: newOffset,
-  //     limit: newLimit,
-  //     order_by: !Array.isArray(sorter) && sorter.order ? (sorter.order === 'descend' ? 'desc' : 'asc') : undefined,
-  //   }
+    if (!isDeleteAllRecords) {
+      setSelectedRecordsIds([])
+      setShowAdditionalHeader(false)
+    }
 
-  //   getMasterTeams(getLeaguesParams)
+    const getMasterTeamsParams: IGetMasterTeamsRequest = {
+      offset: newOffset,
+      limit: newLimit,
+      order_by: !Array.isArray(sorter) && sorter.order ? (sorter.order === 'descend' ? 'desc' : 'asc') : undefined,
+      team_name: (filters?.['name']?.[0] as string) ?? undefined,
+    }
 
-  //   setPaginationParams({
-  //     offset: newOffset,
-  //     limit: newLimit,
-  //     ordering: !Array.isArray(sorter) && sorter.order ? (sorter.order === 'descend' ? 'desc' : 'asc') : null,
-  //   })
-  // }
+    getMasterTeams(getMasterTeamsParams)
+
+    setPaginationParams({
+      offset: newOffset,
+      limit: newLimit,
+      ordering: !Array.isArray(sorter) && sorter.order ? (sorter.order === 'descend' ? 'desc' : 'asc') : null,
+    })
+  }
 
   return (
     <>
@@ -161,9 +160,9 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
           okText="Delete"
           onCancel={() => setShowDeleteSingleRecordModal(false)}
           onOk={handleDelete}
-          title="Delete league/tournament?"
+          title="Delete master team?"
           type="warn"
-          content={<p>Are you sure you want to delete this league/tournament?</p>}
+          content={<p>Are you sure you want to delete this master team?</p>}
         />
       )}
 
@@ -171,13 +170,13 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
         <ExpandedTableHeader>
           <ExpandedHeaderLeftText>
             {isDeleteAllRecords
-              ? `All ${total} records are selected.`
-              : `All ${limit} records on this page are selected.`}
+              ? `All ${total} master teams are selected.`
+              : `All ${limit} master teams on this page are selected.`}
           </ExpandedHeaderLeftText>
 
           {!isDeleteAllRecords ? (
             <MonroeLightBlueText onClick={() => setIsDeleteAllRecords(true)}>
-              Select all {total} records in Leagues/Tournaments instead.
+              Select all {total} master teams instead.
             </MonroeLightBlueText>
           ) : (
             <MonroeLightBlueText
@@ -187,13 +186,13 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
                 setShowAdditionalHeader(false)
               }}
             >
-              Unselect all records
+              Unselect all master teams
             </MonroeLightBlueText>
           )}
         </ExpandedTableHeader>
       )}
 
-      {/* <Table
+      <Table
         columns={columns}
         rowKey={(record) => record.id}
         dataSource={masterTeams}
@@ -217,7 +216,7 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
         scroll={{
           x: 1000,
         }}
-      /> */}
+      />
     </>
   )
 }

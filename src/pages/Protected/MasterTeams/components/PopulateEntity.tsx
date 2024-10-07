@@ -1,6 +1,6 @@
 import { Flex } from 'antd'
 import { FormikErrors, FormikTouched } from 'formik'
-import { ChangeEventHandler, FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { ReactSVG } from 'react-svg'
 
 import MasterTeamRoleInput from '@/pages/Protected/MasterTeams/components/MasterTeamRoleInput'
@@ -23,7 +23,6 @@ import DeleteIcon from '@/assets/icons/delete.svg'
 interface IPopulateRoleProps {
   index: number
   entity: IMasterTeamRole
-  onChange: ChangeEventHandler
   errors: FormikErrors<IMasterTeamRole>[]
   setFieldValue: (
     field: string,
@@ -38,6 +37,7 @@ interface IPopulateRoleProps {
   ) => Promise<void | FormikErrors<ICreateMasterTeam>>
   entityName: 'teamAdministrators' | 'coaches'
   touched: FormikTouched<ICreateMasterTeam>
+  totalNumberOfItems: number
 }
 
 const PopulateEntity: FC<IPopulateRoleProps> = ({
@@ -49,10 +49,11 @@ const PopulateEntity: FC<IPopulateRoleProps> = ({
   setFieldTouched,
   entityName,
   touched,
+  totalNumberOfItems,
 }) => {
   const [isOpenedDetails, setIsOpenedDetails] = useState(index === 0 ? true : false)
   const { ref, isComponentVisible } = useIsActiveComponent(index === 0 ? true : false)
-  const [selectedName, setSelectedName] = useState(entity.firstName + ' ' + entity.lastName || '')
+  const [selectedName, setSelectedName] = useState(entity.fullName || '')
   const { user } = useUserSlice()
   const isTheSameUser = user?.email === entity.email
   const touchedEntity = !!touched?.[entityName]?.[index]
@@ -73,8 +74,8 @@ const PopulateEntity: FC<IPopulateRoleProps> = ({
     const entityValue: IMasterTeamRole = {
       email: user.email,
       role: entity.role,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      fullName: userName,
+      id: user.id,
     }
 
     setFieldValue(`${entityName}.${index}`, entityValue)
@@ -94,9 +95,7 @@ const PopulateEntity: FC<IPopulateRoleProps> = ({
 
             {!isError && (
               <Flex vertical>
-                <TitleStyle isError={false}>
-                  {entity.firstName ? entity.firstName + ' ' + entity.lastName : 'User full name'}
-                </TitleStyle>
+                <TitleStyle isError={false}>{entity.fullName || '-'}</TitleStyle>
 
                 <Subtext>{entity.email ? entity.email : 'User email'}</Subtext>
               </Flex>
@@ -115,7 +114,17 @@ const PopulateEntity: FC<IPopulateRoleProps> = ({
             <div
               style={{ marginTop: '8px' }}
               onClick={() => {
-                removeFn(index)
+                if (totalNumberOfItems === 1) {
+                  setFieldValue(`${entityName}.${index}`, {
+                    role: entity.role,
+                    email: '',
+                    fullName: '',
+                    id: '',
+                  })
+                } else {
+                  removeFn(index)
+                }
+
                 setSelectedName('')
               }}
             >

@@ -13,9 +13,11 @@ import { useUserSlice } from '@/redux/hooks/useUserSlice'
 
 import {
   PATH_TO_CREATE_LEAGUE,
+  PATH_TO_CREATE_MASTER_TEAM,
   PATH_TO_CREATE_SEASON,
   PATH_TO_CREATE_USER,
   PATH_TO_EDIT_LEAGUE,
+  PATH_TO_EDIT_MASTER_TEAM,
   PATH_TO_EDIT_SEASON,
   PATH_TO_EDIT_USER,
   PATH_TO_EVENTS,
@@ -69,7 +71,9 @@ const MonroeSidebar = () => {
     pathname.includes(PATH_TO_CREATE_SEASON) ||
     pathname.includes(PATH_TO_EDIT_SEASON) ||
     pathname.includes(PATH_TO_CREATE_USER) ||
-    pathname.includes(PATH_TO_EDIT_USER)
+    pathname.includes(PATH_TO_EDIT_USER) ||
+    pathname.includes(PATH_TO_EDIT_MASTER_TEAM) ||
+    pathname.includes(PATH_TO_CREATE_MASTER_TEAM)
   const isLeagueTournamentPage = pathname.includes(PATH_TO_LEAGUES)
   const isSeasonsPage = pathname.includes(PATH_TO_SEASONS)
   const isUsersPage = pathname.includes(PATH_TO_USERS)

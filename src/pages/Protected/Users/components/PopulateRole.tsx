@@ -59,7 +59,7 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
   const selectedRoles = values.roles.map((role) => role.name)
   const options: DefaultOptionType[] = ROLES.filter((initialRole) => {
     if (!isAdmin && initialRole === 'Operator') return false
-    if (!isAdmin && initialRole === 'Swift Schedule Master Admin') return false
+    if (!isAdmin && initialRole === 'Master Admin') return false
     if (!selectedRoles.includes(initialRole)) return true
     return false
   }).map((role) => ({
@@ -102,9 +102,11 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
             )}
           </Flex>
 
-          <div onClick={() => removeFn(index)}>
-            <ReactSVG src={DeleteIcon} />
-          </div>
+          {['Master Admin', 'Operator'].includes(role.name) && isAdmin && (
+            <div onClick={() => removeFn(index)}>
+              <ReactSVG src={DeleteIcon} />
+            </div>
+          )}
         </Flex>
       )}
 

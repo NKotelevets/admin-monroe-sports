@@ -1,12 +1,10 @@
 import * as Yup from 'yup'
 
-import { IFEUser } from '@/common/interfaces/user'
-
 export type TMasterTeamRole = 'admin' | 'coach' | 'head-coach' | 'player'
 
 export interface IMasterTeamRole {
-  firstName: string
-  lastName: string
+  fullName: string
+  id: string
   email: string
   role: TMasterTeamRole
 }
@@ -15,13 +13,13 @@ export interface ICreateMasterTeam {
   name: string
   teamAdministrators: IMasterTeamRole[]
   coaches: IMasterTeamRole[]
-  players: IFEUser[]
+  players: { id: string; name: string }[]
 }
 
 export const getInitialEntity = (entityRole: TMasterTeamRole): IMasterTeamRole => ({
   email: '',
-  firstName: '',
-  lastName: '',
+  fullName: '',
+  id: '',
   role: entityRole,
 })
 
@@ -33,8 +31,8 @@ export const initialCreateMasterTeamValues: ICreateMasterTeam = {
 }
 
 const masterTeamRoleValidationSchema = Yup.object<ICreateMasterTeam>().shape({
-  firstName: Yup.string().required(),
-  lastName: Yup.string().required(),
+  fullName: Yup.string().required(),
+  id: Yup.string().required(),
   email: Yup.string().required(),
   role: Yup.string().required(),
 })

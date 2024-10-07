@@ -6,16 +6,26 @@ import Checkbox from 'antd/es/checkbox/Checkbox'
 import { CSSProperties, ChangeEventHandler, FC, RefObject, useRef, useState } from 'react'
 import { ReactSVG } from 'react-svg'
 
-import { useLazyGetMasterTeamsQuery } from '@/redux/masterTeams/masterTeams.api'
+import { useLazyGetUsersQuery } from '@/redux/user/user.api'
 
 import useDebounceEffect from '@/hooks/useDebounceEffect'
 import useIsActiveComponent from '@/hooks/useIsActiveComponent'
 import useScroll from '@/hooks/useScroll'
 
-import { IFEMasterTeam } from '@/common/interfaces/masterTeams'
+import { IExtendedFEUser } from '@/common/interfaces/user'
 
 import ShowAllIcon from '@/assets/icons/show-all.svg'
 import SilverCloseIcon from '@/assets/icons/silver-close.svg'
+
+const PageContainer = styled(Flex)`
+  flex-direction: column;
+
+  width: 352px;
+
+  @media (width > 1660px) {
+    width: 600px;
+  }
+`
 
 const Wrapper = styled(Flex)<{ is_error: string }>`
   position: relative;
@@ -48,7 +58,7 @@ const List = styled.ul`
   left: 0;
   background-color: white;
   height: auto;
-  max-height: 240px;
+  max-height: 120px;
   width: 100%;
   box-shadow:
     0px 3px 6px -4px rgba(0, 0, 0, 0.12),
@@ -114,70 +124,89 @@ const SelectTeamText = styled(Typography)`
 
 const DEFAULT_LIMIT_RECORDS = 20
 
-interface IMasterTeamsMultipleSelectWithSearchProps {
+interface IUsersMultipleSelectWithSearchProps {
   onChange: (value: { id: string; name: string }[]) => void
   onBlur: () => void
   isError: boolean
-  selectedTeams: { id: string; name: string }[]
+  selectedUsers: { id: string; name: string }[]
 }
 
-const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSearchProps> = ({
+const UsersMultipleSelectWithSearch: FC<IUsersMultipleSelectWithSearchProps> = ({
   onChange,
   isError,
   onBlur,
-  selectedTeams,
+  selectedUsers,
 }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const { isComponentVisible, ref } = useIsActiveComponent(false)
   const inputRef = useRef<HTMLInputElement | null>()
   const [offset, setOffset] = useState(0)
-  const [getMasterTeams, { data }] = useLazyGetMasterTeamsQuery()
-  const [masterTeams, setMasterTeams] = useState<IFEMasterTeam[]>([])
-
-  const handleSearchChange: ChangeEventHandler<HTMLInputElement> = (event) => setSearchTerm(event.target.value)
-
-  const handleOptionToggle = (option: { id: string; name: string }) => {
-    const isSelectedTeam = !!selectedTeams.find((item) => item.id === option.id)
-
-    if (isSelectedTeam) {
-      const updatedMasterTeams = selectedTeams.filter((item) => item.id !== option.id)
-
-      onChange(updatedMasterTeams)
-    } else {
-      onChange([...selectedTeams, option])
-    }
-  }
+  const [getUsers, { data }] = useLazyGetUsersQuery()
+  const [users, setUsers] = useState<IExtendedFEUser[]>([])
 
   const getData = async () => {
-    if (data && data?.count > masterTeams.length) {
-      setOffset((prev) => prev + DEFAULT_LIMIT_RECORDS)
-
-      const response = await getMasterTeams({
+    if (data && data?.count > users.length) {
+      const response = await getUsers({
         limit: DEFAULT_LIMIT_RECORDS,
-        offset,
-        team_name: searchTerm,
+        offset: offset + DEFAULT_LIMIT_RECORDS,
+        first_name: searchTerm || undefined,
       }).unwrap()
 
-      if (response?.results) setMasterTeams((prev) => [...prev, ...response.results])
+      setUsers((prev) => [...prev, ...response.data])
+
+      setOffset((prev) => prev + DEFAULT_LIMIT_RECORDS)
     }
   }
 
   const { handleScroll, ref: scrollRef } = useScroll(getData)
 
   const getDataWithNewName = async () => {
-    const res = await getMasterTeams({
+    const response = await getUsers({
       limit: DEFAULT_LIMIT_RECORDS,
       offset: 0,
-      team_name: searchTerm,
+      first_name: searchTerm || undefined,
     }).unwrap()
 
-    setMasterTeams(res?.results || [])
+    setUsers(() => response.data)
+
+    if (users.length) {
+      setOffset(0)
+    } else {
+      setOffset(20)
+    }
   }
 
   useDebounceEffect(getDataWithNewName, [searchTerm])
 
+  const handleSearchChange: ChangeEventHandler<HTMLInputElement> = (event) => setSearchTerm(event.target.value)
+
+  const handleOptionToggle = (option: { id: string; name: string }) => {
+    const isSelectedTeam = !!selectedUsers.find((item) => item.id === option.id)
+
+    if (isSelectedTeam) {
+      const updatedMasterTeams = selectedUsers.filter((item) => item.id !== option.id)
+
+      onChange(updatedMasterTeams)
+    } else {
+      onChange([...selectedUsers, option])
+    }
+  }
+
+  // useEffect(() => {
+  //   const getData = async () => {
+  //     const response = await getUsers({
+  //       limit: DEFAULT_LIMIT_RECORDS,
+  //       offset,
+  //     }).unwrap()
+
+  //     setUsers(response.data)
+  //   }
+
+  //   getData()
+  // }, [])
+
   return (
-    <Flex ref={ref} vertical>
+    <PageContainer ref={ref}>
       <Wrapper
         align="center"
         onClick={() => {
@@ -187,7 +216,7 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
         is_error={`${isError}`}
       >
         <Flex>
-          {!isComponentVisible && !selectedTeams.length && <SelectTeamText>Select team</SelectTeamText>}
+          {!isComponentVisible && !selectedUsers.length && <SelectTeamText>Select users</SelectTeamText>}
 
           {isComponentVisible && (
             <SearchInput
@@ -207,7 +236,7 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
               flexWrap: 'wrap',
             }}
           >
-            {selectedTeams.map((option) => (
+            {selectedUsers.map((option) => (
               <TeamNameWrapper key={option.id}>
                 {option.name}
 
@@ -230,17 +259,22 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
 
       {isComponentVisible && (
         <Container>
-          {masterTeams.length > 0 ? (
+          {users.length > 0 ? (
             <List ref={scrollRef as unknown as RefObject<HTMLUListElement>} onScroll={handleScroll}>
-              {masterTeams.map((masterTeam) => (
-                <ListItem key={masterTeam.id}>
+              {users.map((user) => (
+                <ListItem key={user.id}>
                   <Checkbox
                     className="checkbox"
-                    checked={!!selectedTeams.find((sO) => sO.id === masterTeam.id)}
-                    onChange={() => handleOptionToggle(masterTeam)}
+                    checked={!!selectedUsers.find((sO) => sO.id === user.id)}
+                    onChange={() =>
+                      handleOptionToggle({
+                        id: user.id,
+                        name: user.firstName + ' ' + user.lastName,
+                      })
+                    }
                   />
 
-                  <MonroeBlueText className="mg-l8">{masterTeam.name}</MonroeBlueText>
+                  <MonroeBlueText className="mg-l8">{user.firstName + ' ' + user.lastName}</MonroeBlueText>
                 </ListItem>
               ))}
             </List>
@@ -251,9 +285,9 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
           )}
         </Container>
       )}
-    </Flex>
+    </PageContainer>
   )
 }
 
-export default MasterTeamsMultipleSelectWithSearch
+export default UsersMultipleSelectWithSearch
 

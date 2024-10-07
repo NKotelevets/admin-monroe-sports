@@ -5,6 +5,7 @@ import { CSSProperties, ChangeEvent, FC, RefObject, useEffect, useState } from '
 import { ReactSVG } from 'react-svg'
 
 import { SearchLeagueInput, SearchSelectIconWrapper } from '@/components/Elements'
+import { Subtext } from '@/components/Elements/entity'
 
 import { useLazyGetUsersQuery } from '@/redux/user/user.api'
 
@@ -60,7 +61,7 @@ const MasterTeamRoleInput: FC<IMasterTeamRoleInputProps> = ({ handleClick, handl
   const [value, setValue] = useState(selectedName || '')
   const { isComponentVisible, ref, onClose } = useIsActiveComponent(false)
   const [offset, setOffset] = useState(0)
-  const [getLeagues, { data }] = useLazyGetUsersQuery()
+  const [getUsers, { data }] = useLazyGetUsersQuery()
   const [users, setUsers] = useState<IFEUser[]>([])
   const userOptions: DefaultOptionType[] = users.map((user) => ({
     label: user.firstName + ' ' + user.lastName,
@@ -71,10 +72,10 @@ const MasterTeamRoleInput: FC<IMasterTeamRoleInputProps> = ({ handleClick, handl
     if (data && data?.count > users.length) {
       setOffset((prev) => prev + DEFAULT_LIMIT_RECORDS)
 
-      const response = await getLeagues({
+      const response = await getUsers({
         limit: DEFAULT_LIMIT_RECORDS,
         offset,
-        // filter by user
+        first_name: value || undefined,
       }).unwrap()
 
       if (response?.data) setUsers((prev) => [...prev, ...response.data])
@@ -82,19 +83,6 @@ const MasterTeamRoleInput: FC<IMasterTeamRoleInputProps> = ({ handleClick, handl
   }
 
   const { handleScroll, ref: scrollRef } = useScroll(getData)
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const response = await getLeagues({
-        limit: DEFAULT_LIMIT_RECORDS,
-        offset,
-      }).unwrap()
-
-      if (response?.data) setUsers((prev) => [...prev, ...response.data])
-    }
-
-    fetchUsers()
-  }, [])
 
   useEffect(() => {
     if (selectedName && !value) setValue(selectedName)
@@ -107,12 +95,19 @@ const MasterTeamRoleInput: FC<IMasterTeamRoleInputProps> = ({ handleClick, handl
   const handleChange = async (leagueName: string) => setValue(leagueName)
 
   const getDataWithNewName = async () => {
-    const response = await getLeagues({
+    const response = await getUsers({
       limit: DEFAULT_LIMIT_RECORDS,
       offset: 0,
+      first_name: value || undefined,
     }).unwrap()
 
-    setUsers((prev) => [...prev, ...response.data])
+    setUsers(() => response.data)
+
+    if (users.length) {
+      setOffset(0)
+    } else {
+      setOffset(20)
+    }
   }
 
   useDebounceEffect(getDataWithNewName, [value])
@@ -138,9 +133,9 @@ const MasterTeamRoleInput: FC<IMasterTeamRoleInputProps> = ({ handleClick, handl
 
         {isComponentVisible && (
           <Container style={defaultPadding}>
-            {users.length && (
-              <List ref={scrollRef as unknown as RefObject<HTMLUListElement>} onScroll={handleScroll}>
-                {userOptions.map((user) => (
+            <List ref={scrollRef as unknown as RefObject<HTMLUListElement>} onScroll={handleScroll}>
+              {userOptions.length ? (
+                userOptions.map((user) => (
                   <ListItem
                     key={user.value}
                     onClick={() => {
@@ -154,9 +149,17 @@ const MasterTeamRoleInput: FC<IMasterTeamRoleInputProps> = ({ handleClick, handl
                   >
                     {user.label}
                   </ListItem>
-                ))}
-              </List>
-            )}
+                ))
+              ) : (
+                <div
+                  style={{
+                    padding: '10px',
+                  }}
+                >
+                  <Subtext>There's no match. Try a different name.</Subtext>
+                </div>
+              )}
+            </List>
           </Container>
         )}
       </div>

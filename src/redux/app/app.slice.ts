@@ -16,7 +16,7 @@ interface IInfoNotification {
 
 interface IAppNotification {
   message: string
-  timestamp: number
+  timestamp?: number
   type: 'success' | 'error' | 'info'
 }
 
@@ -53,7 +53,9 @@ export const appSlice = createSlice({
       state.infoNotification = EMPTY_INFO_NOTIFICATION
     },
     setAppNotification: (state, action: PayloadAction<IAppNotification>) => {
-      state.notification = action.payload
+      state.notification.message = action.payload.message
+      state.notification.type = action.payload.type
+      state.notification.timestamp = new Date().getTime()
     },
     setInfoNotification: (state, action: PayloadAction<IInfoNotification>) => {
       state.infoNotification = action.payload

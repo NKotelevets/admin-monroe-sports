@@ -20,7 +20,7 @@ import TextWithTooltip from '@/components/TextWithTooltip'
 
 import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
-import { useLazyGetUsersQuery } from '@/redux/user/user.api'
+import { useLazyGetUsersQuery, useSendInvitationMutation } from '@/redux/user/user.api'
 
 import { PATH_TO_EDIT_USER, PATH_TO_USERS } from '@/constants/paths'
 
@@ -55,6 +55,7 @@ export const useUsersTableParams = ({
   const [getUsers] = useLazyGetUsersQuery()
   const { setAppNotification } = useAppSlice()
   const { ordering } = useUserSlice()
+  const [sendInvitation] = useSendInvitationMutation()
 
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
 
@@ -235,9 +236,22 @@ export const useUsersTableParams = ({
                 }}
                 align="center"
               >
-                {record.operator && (
+                {record.operator && !record.inviteAccepted && (
                   <MonroeTooltip width="auto" text="Resend email to Operator">
-                    <ReactSVG src={SearchEmailIcon} />
+                    <ReactSVG
+                      src={SearchEmailIcon}
+                      onClick={() => {
+                        sendInvitation({ emails: [record.email] })
+                          .unwrap()
+                          .then(() => {
+                            setAppNotification({
+                              message: `Invitation successfully sended to ${record.email}`,
+                              timestamp: new Date().getTime(),
+                              type: 'success',
+                            })
+                          })
+                      }}
+                    />
                   </MonroeTooltip>
                 )}
 

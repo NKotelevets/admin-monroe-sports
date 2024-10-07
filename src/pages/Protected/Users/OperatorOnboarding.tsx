@@ -196,17 +196,17 @@ const OperatorOnboarding = () => {
   if (!data || isLoading || isFetching) return <Loader />
 
   const finishCreateOperatorFormData: IFinishCreatingOperator = {
-    city: data?.city,
     email: data?.operator.email,
     firstName: data?.first_name,
     lastName: data?.last_name,
     name: data?.operator.name,
-    phone: data?.phone_number,
     pointOfContactEmail: data?.email,
-    pointOfContactPhoneNumber: data?.operator.phone_number_contact,
-    state: data?.state,
+    phone: data?.operator.phone_number_contact,
+    pointOfContactPhoneNumber: data?.phone_number,
+    state: data?.operator.state,
     street: data?.operator.street,
-    zipCode: data?.zip_code,
+    zipCode: data?.operator.zip_code || '',
+    city: data?.operator.city,
     confirmPassword: '',
     password: '',
   }
@@ -230,7 +230,6 @@ const OperatorOnboarding = () => {
         >
           {({ values, handleChange, handleSubmit, errors, touched, handleBlur }) => {
             const passwordErrors = checkPassword(values.password)
-            const isEnabledButton = Object.keys(errors).length === 0
 
             return (
               <Form onSubmit={handleSubmit}>
@@ -383,46 +382,50 @@ const OperatorOnboarding = () => {
                         </div>
 
                         <div style={{ marginBottom: '8px' }}>
-                          <OptionTitle style={{ padding: '0 0 5px 0' }}>Zip Code</OptionTitle>
                           <MonroeInput
                             name="zipCode"
                             value={values.zipCode}
                             onChange={handleChange}
                             placeholder="Enter zip code"
                             style={{ height: '32px' }}
+                            label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Zip Code *</OptionTitle>}
+                            error={touched.zipCode ? errors.zipCode : ''}
                           />
                         </div>
 
                         <div style={{ marginBottom: '8px' }}>
-                          <OptionTitle style={{ padding: '0 0 5px 0' }}>State</OptionTitle>
+                          <OptionTitle style={{ padding: '0 0 5px 0' }}>State *</OptionTitle>
                           <MonroeInput
                             name="state"
                             value={values.state}
                             onChange={handleChange}
                             placeholder="Enter state"
                             style={{ height: '32px' }}
+                            error={touched.state ? errors.state : ''}
                           />
                         </div>
 
                         <div style={{ marginBottom: '8px' }}>
-                          <OptionTitle style={{ padding: '0 0 5px 0' }}>City</OptionTitle>
                           <MonroeInput
                             name="city"
                             value={values.city}
                             onChange={handleChange}
                             placeholder="Enter city"
                             style={{ height: '32px' }}
+                            error={touched.city ? errors.city : ''}
+                            label={<OptionTitle style={{ padding: '0 0 5px 0' }}>City *</OptionTitle>}
                           />
                         </div>
 
                         <div style={{ marginBottom: '8px' }}>
-                          <OptionTitle style={{ padding: '0 0 5px 0' }}>Street</OptionTitle>
                           <MonroeInput
                             name="street"
                             value={values.street}
                             onChange={handleChange}
                             placeholder="Enter street"
                             style={{ height: '32px' }}
+                            label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Street *</OptionTitle>}
+                            error={touched.street ? errors.street : ''}
                           />
                         </div>
                       </MainContainer>
@@ -481,14 +484,7 @@ const OperatorOnboarding = () => {
                           Cancel
                         </CancelButton>
 
-                        <MonroeTooltip width="179px" text={!isEnabledButton ? 'Missing mandatory data' : ''}>
-                          <MonroeButton
-                            label="Create Operator"
-                            type="primary"
-                            onClick={handleSubmit}
-                            isDisabled={!isEnabledButton}
-                          />
-                        </MonroeTooltip>
+                        <MonroeButton label="Create Operator" type="primary" onClick={handleSubmit} />
                       </Flex>
                     </Flex>
                   </PageContent>
