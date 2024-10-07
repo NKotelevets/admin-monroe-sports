@@ -205,14 +205,16 @@ const UserDetails = () => {
 
             <Flex className="mb-16" align="center" style={{ cursor: 'pointer' }}>
               <ViewText>Email:</ViewText>
-              <ViewText style={{ width: 'auto', marginRight: '0px' }}>{data.email}</ViewText>
+              <ViewText style={{ width: 'auto', marginRight: '0px' }}>{data.email || '-'}</ViewText>
 
-              <div
-                onClick={() => handleCopyContent(data.email, 'email')}
-                style={{ marginLeft: '8px', cursor: 'pointer' }}
-              >
-                <ReactSVG src={CopyIcon} />
-              </div>
+              {data.email && (
+                <div
+                  onClick={() => handleCopyContent(data.email, 'email')}
+                  style={{ marginLeft: '8px', cursor: 'pointer' }}
+                >
+                  <ReactSVG src={CopyIcon} />
+                </div>
+              )}
             </Flex>
 
             <Flex className="mb-16">
