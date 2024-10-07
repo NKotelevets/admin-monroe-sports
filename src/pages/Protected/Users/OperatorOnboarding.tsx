@@ -37,6 +37,8 @@ import { useUserSlice } from '@/redux/hooks/useUserSlice'
 import { useCookies } from '@/hooks/useCookies'
 import useIsActiveComponent from '@/hooks/useIsActiveComponent'
 
+import { validateNumber } from '@/utils'
+
 import { PATH_TO_SIGN_IN } from '@/constants/paths'
 
 import { IUpdateOperator } from '@/common/interfaces/auth'
@@ -163,7 +165,7 @@ const OperatorOnboarding = () => {
       navigation(PATH_TO_SIGN_IN)
 
       setAppNotification({
-        message: 'Operator successfully on boarded',
+        message: 'User successfully created',
         timestamp: new Date().getTime(),
         type: 'success',
       })
@@ -214,7 +216,7 @@ const OperatorOnboarding = () => {
   return (
     <>
       <Helmet>
-        <title>Admin Panel | Operator Onboarding</title>
+        <title>Admin Panel | Create User</title>
       </Helmet>
 
       <Layout style={layoutStyle}>
@@ -234,7 +236,7 @@ const OperatorOnboarding = () => {
             return (
               <Form onSubmit={handleSubmit}>
                 <PageContainer vertical align="center">
-                  <ProtectedPageTitle style={{ margin: '8px 0' }}>Add operator</ProtectedPageTitle>
+                  <ProtectedPageTitle style={{ margin: '8px 0' }}>Create user</ProtectedPageTitle>
 
                   <Typography
                     style={{
@@ -372,7 +374,9 @@ const OperatorOnboarding = () => {
                           <MonroeInput
                             name="phone"
                             value={values.phone}
-                            onChange={handleChange}
+                            onChange={(event) => {
+                              if (validateNumber(event.target.value)) handleChange(event)
+                            }}
                             placeholder="Enter phone"
                             style={{ height: '32px' }}
                             error={touched.phone ? errors.phone : ''}
@@ -385,7 +389,9 @@ const OperatorOnboarding = () => {
                           <MonroeInput
                             name="zipCode"
                             value={values.zipCode}
-                            onChange={handleChange}
+                            onChange={(event) => {
+                              if (validateNumber(event.target.value)) handleChange(event)
+                            }}
                             placeholder="Enter zip code"
                             style={{ height: '32px' }}
                             label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Zip Code *</OptionTitle>}

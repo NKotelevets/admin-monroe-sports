@@ -30,7 +30,7 @@ interface IPopulateRoleProps {
   errors: FormikErrors<ICreateUserFormValues>
   setFieldValue: (
     field: string,
-    value: string | { id: string; name: string }[],
+    value: string | { id: string; name: string }[] | { name: string; linkedEntities: { id: string; name: string }[] },
     shouldValidate?: boolean,
   ) => Promise<void | FormikErrors<ICreateUserFormValues>>
   removeFn: (index: number) => void
@@ -71,6 +71,7 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
   const operator = values.roles.find((role) => role.name === 'Operator')?.linkedEntities?.[0] || { id: '', name: '' }
   const isMissingName = !!(errors.roles?.[+index] as FormikErrors<IFERole>)?.name
   const isMissingEntities = !!(errors.roles?.[+index] as FormikErrors<IFERole>)?.linkedEntities
+  const isHightestRoleOperator = isOperator && !user?.isSuperuser
 
   const handleBlur = () => setFieldTouched(`roles.${index}.linkedEntities`, true)
 
@@ -102,7 +103,7 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
             )}
           </Flex>
 
-          {['Master Admin', 'Operator'].includes(role.name) && isAdmin && (
+          {!(['Operator', 'Master Admin'].includes(role.name) && !isAdmin) && (
             <div onClick={() => removeFn(index)}>
               <ReactSVG src={DeleteIcon} />
             </div>
@@ -120,7 +121,12 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
                 {isMissingName && <InputError>Role is required</InputError>}
               </Flex>
               <MonroeSelect
-                onChange={(value) => setFieldValue(`roles.${index}.name`, value)}
+                onChange={(value) =>
+                  setFieldValue(`roles.${index}`, {
+                    name: value,
+                    linkedEntities: [],
+                  })
+                }
                 options={options}
                 placeholder="Select role"
                 value={role.name || null}
@@ -130,6 +136,7 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
                 }}
                 is_error={`${isMissingName}`}
                 onBlur={() => setFieldTouched(`roles.${index}.name`, true)}
+                disabled={isHightestRoleOperator && role.name === 'Operator'}
               />
             </div>
 
@@ -171,6 +178,7 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
                   }}
                   selectedOperator={operator}
                   handleBlur={handleBlur}
+                  isDisabled={isHightestRoleOperator}
                 />
               </div>
             )}

@@ -239,6 +239,7 @@ export const useUsersTableParams = ({
                 {record.operator && !record.inviteAccepted && (
                   <MonroeTooltip width="auto" text="Resend email to Operator">
                     <ReactSVG
+                      className="c-p"
                       src={SearchEmailIcon}
                       onClick={() => {
                         sendInvitation({ emails: [record.email] })
@@ -256,7 +257,7 @@ export const useUsersTableParams = ({
                 )}
 
                 <div style={{ marginLeft: '4px' }}>
-                  <ReactSVG src={CopyEmailIcon} onClick={() => handleCopyContent(value)} />
+                  <ReactSVG className="c-p" src={CopyEmailIcon} onClick={() => handleCopyContent(value)} />
                 </div>
               </Flex>
             </Flex>

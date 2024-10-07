@@ -75,12 +75,15 @@ const GENDER_OPTIONS: DefaultOptionType[] = [
 
 const ROLES_WITH_TEAMS: TRole[] = ['Head Coach', 'Coach', 'Player', 'Team Admin']
 
-const MAX_ROLES_LENGTH = 6
+const MAX_CREATED_ROLES_BY_ADMIN = 6
+const MAX_CREATED_ROLES_BY_OPERATOR = 4
 
 const UserForm = () => {
   const navigation = useNavigate()
-  const { isCreateOperatorScreen } = useUserSlice()
+  const { isCreateOperatorScreen, user } = useUserSlice()
   const [createUserAsAdmin] = useCreateUserAsAdminMutation()
+  const isAdmin = user?.isSuperuser
+  const maximumRoles = isAdmin ? MAX_CREATED_ROLES_BY_ADMIN : MAX_CREATED_ROLES_BY_OPERATOR
 
   const goBack = () => navigation(PATH_TO_USERS)
 
@@ -143,7 +146,7 @@ const UserForm = () => {
       validateOnBlur
     >
       {({ values, handleChange, handleSubmit, errors, setFieldValue, handleBlur, touched, setFieldTouched }) => {
-        const isAddEntityButtonDisabled = !!errors.roles?.length || values.roles.length === MAX_ROLES_LENGTH
+        const isAddEntityButtonDisabled = !!errors.roles?.length || values.roles.length === maximumRoles
         const collapsedDivisionItems = (removeFn: (index: number) => void) =>
           values.roles.map((role, idx) => ({
             key: idx,
@@ -325,8 +328,8 @@ const UserForm = () => {
                               <MonroeTooltip
                                 text={
                                   isAddEntityButtonDisabled
-                                    ? values.roles.length === MAX_ROLES_LENGTH
-                                      ? 'Maximum roles is 6'
+                                    ? values.roles.length === maximumRoles
+                                      ? `Maximum roles is ${maximumRoles}`
                                       : "You can't create role when you have errors in other roles"
                                     : ''
                                 }

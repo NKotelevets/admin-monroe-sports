@@ -75,7 +75,7 @@ export const finishCreateOperatorValidationSchema = Yup.object<ICreateOperatorFo
       value ? /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) : true,
     )
     .required("Operator's email is required"),
-  zipCode: Yup.string().required('Zip Code is required'),
+  zipCode: Yup.string().length(5, 'Should be 5 digits').required('Zip Code is required'),
   city: Yup.string().required('City is required'),
   state: Yup.string().required('State is required'),
   street: Yup.string().required('Street is required'),

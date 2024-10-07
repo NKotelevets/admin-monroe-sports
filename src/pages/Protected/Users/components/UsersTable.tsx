@@ -51,7 +51,7 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
   const [getUsers, { isLoading, isFetching, data }] = useLazyGetUsersQuery()
   const [tableParams, setTableParams] = useState<ITableParams>({
     pagination: {
-      current: offset + 1,
+      current: offset / limit + 1,
       pageSize: limit,
       pageSizeOptions: [5, 10, 30, 50],
       showQuickJumper: true,

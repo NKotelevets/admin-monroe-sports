@@ -5,6 +5,7 @@ import Flex from 'antd/es/flex'
 import { DefaultOptionType } from 'antd/es/select'
 import dayjs from 'dayjs'
 import { FieldArray, Form, Formik, FormikHelpers } from 'formik'
+import { useEffect } from 'react'
 import { Helmet } from 'react-helmet'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
@@ -39,6 +40,8 @@ import MonroeTooltip from '@/components/MonroeTooltip'
 
 import BaseLayout from '@/layouts/BaseLayout'
 
+import { useAppSlice } from '@/redux/hooks/useAppSlice'
+import { useUserSlice } from '@/redux/hooks/useUserSlice'
 import { useBulkEditMutation, useGetUserDetailsQuery } from '@/redux/user/user.api'
 
 import { calculateUserRoles } from '@/utils/user'
@@ -46,6 +49,7 @@ import { calculateUserRoles } from '@/utils/user'
 import { PATH_TO_USERS } from '@/constants/paths'
 
 import { FULL_GENDER_NAMES } from '@/common/constants'
+import { IDetailedError } from '@/common/interfaces'
 import { IRole } from '@/common/interfaces/user'
 import { TGender, TRole } from '@/common/types'
 
@@ -67,13 +71,13 @@ const GENDER_OPTIONS: DefaultOptionType[] = [
 ]
 
 const ROLES_WITH_TEAMS: TRole[] = ['Head Coach', 'Coach', 'Player', 'Team Admin']
-
-const MAX_ROLES_LENGTH = 6
+const MAX_CREATED_ROLES_BY_ADMIN = 6
+const MAX_CREATED_ROLES_BY_OPERATOR = 4
 
 const EditUser = () => {
   const params = useParams<{ id: string }>()
   const navigation = useNavigate()
-  const { data, isLoading } = useGetUserDetailsQuery(
+  const { data, isLoading, error } = useGetUserDetailsQuery(
     {
       id: params?.id || '',
     },
@@ -82,6 +86,14 @@ const EditUser = () => {
     },
   )
   const [bulkEdit] = useBulkEditMutation()
+  const { setAppNotification } = useAppSlice()
+  const { user } = useUserSlice()
+  const userAdminRoles = user?.roles.filter((role) => ['Operator', 'Master Admin'].includes(role)).length
+  const maximumRoles = user?.isSuperuser
+    ? MAX_CREATED_ROLES_BY_ADMIN
+    : userAdminRoles
+      ? MAX_CREATED_ROLES_BY_OPERATOR + userAdminRoles
+      : MAX_CREATED_ROLES_BY_OPERATOR
 
   const goBack = () => navigation(PATH_TO_USERS)
 
@@ -123,9 +135,18 @@ const EditUser = () => {
       })
   }
 
-  if (isLoading) return <Loader />
+  useEffect(() => {
+    if (!isLoading && !data) {
+      setAppNotification({
+        message: (error as IDetailedError).details,
+        type: 'error',
+      })
 
-  if (!data) return <h1>Smth went wrong..</h1>
+      goBack()
+    }
+  }, [data, isLoading])
+
+  if (isLoading || !data) return <Loader />
 
   const initialValues: ICreateUserFormValues = {
     firstName: data.firstName,
@@ -163,7 +184,7 @@ const EditUser = () => {
           validateOnMount
         >
           {({ values, handleChange, handleSubmit, errors, setFieldValue, setFieldTouched }) => {
-            const isAddEntityButtonDisabled = !!errors.roles?.length || values.roles.length === MAX_ROLES_LENGTH
+            const isAddEntityButtonDisabled = !!errors.roles?.length || values.roles.length === maximumRoles
             const collapsedDivisionItems = (removeFn: (index: number) => void) =>
               values.roles.map((role, idx) => ({
                 key: idx,
@@ -329,8 +350,8 @@ const EditUser = () => {
                               <MonroeTooltip
                                 text={
                                   isAddEntityButtonDisabled
-                                    ? values.roles.length === MAX_ROLES_LENGTH
-                                      ? 'Maximum roles is 6'
+                                    ? values.roles.length === maximumRoles
+                                      ? `Maximum roles is ${maximumRoles}`
                                       : "You can't create role when you have errors in other roles"
                                     : ''
                                 }
