@@ -242,7 +242,7 @@ const UserDetails = () => {
               <Flex vertical>
                 {data.isSuperuser && <ViewText style={{ width: '250px', marginBottom: '8px' }}>Master Admin</ViewText>}
 
-                {data.operator && (
+                {!!data.operator && (
                   <Flex vertical style={{ marginBottom: '8px' }}>
                     <ViewText>Operator</ViewText>
 
@@ -280,7 +280,7 @@ const UserDetails = () => {
                   </Flex>
                 )}
 
-                {data.asCoach && (
+                {!!data.asCoach?.teams.length && (
                   <Flex vertical style={{ marginBottom: '8px' }}>
                     <ViewText>Coach</ViewText>
                     <Flex>
@@ -296,7 +296,7 @@ const UserDetails = () => {
                   </Flex>
                 )}
 
-                {data.asPlayer && (
+                {!!data.asPlayer?.teams.length && (
                   <Flex vertical style={{ marginBottom: '8px' }}>
                     <ViewText>Player</ViewText>
                     <Flex>
@@ -312,7 +312,7 @@ const UserDetails = () => {
                   </Flex>
                 )}
 
-                {data.asParent && (
+                {!!data.asParent && (
                   <Flex vertical style={{ marginBottom: '8px' }}>
                     <ViewText>Guardian</ViewText>
                     <Flex>

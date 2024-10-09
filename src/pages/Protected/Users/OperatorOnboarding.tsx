@@ -29,7 +29,12 @@ import Loader from '@/components/Loader'
 import MonroeButton from '@/components/MonroeButton'
 import MonroeTooltip from '@/components/MonroeTooltip'
 
-import { useCreateUserMutation, useGetPrefilledDataQuery, useUpdateOperatorMutation } from '@/redux/auth/auth.api'
+import {
+  useAcceptInviteMutation,
+  useCreateUserMutation,
+  useGetPrefilledDataQuery,
+  useUpdateOperatorMutation,
+} from '@/redux/auth/auth.api'
 import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useAuthSlice } from '@/redux/hooks/useAuthSlice'
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
@@ -119,6 +124,7 @@ const OperatorOnboarding = () => {
   const { setAppNotification } = useAppSlice()
   const [createUser] = useCreateUserMutation()
   const [updateOperator] = useUpdateOperatorMutation()
+  const [acceptInvite] = useAcceptInviteMutation()
 
   useEffect(() => {
     if (access && params.token) {
@@ -147,7 +153,7 @@ const OperatorOnboarding = () => {
       }
 
       await updateOperator({
-        id: data!.operator.id,
+        id: data!.user_data.operator.id,
         body: updateOperatorBody,
       }).unwrap()
 
@@ -159,7 +165,11 @@ const OperatorOnboarding = () => {
           password: values.password,
           phone_number: values.pointOfContactPhoneNumber,
         },
-        id: data!.id,
+        id: data!.user_data.id,
+      }).unwrap()
+
+      await acceptInvite({
+        invite_id: data!.invitation.id,
       }).unwrap()
 
       navigation(PATH_TO_SIGN_IN)
@@ -198,17 +208,17 @@ const OperatorOnboarding = () => {
   if (!data || isLoading || isFetching) return <Loader />
 
   const finishCreateOperatorFormData: IFinishCreatingOperator = {
-    email: data?.operator.email,
-    firstName: data?.first_name,
-    lastName: data?.last_name,
-    name: data?.operator.name,
-    pointOfContactEmail: data?.email,
-    phone: data?.operator.phone_number_contact,
-    pointOfContactPhoneNumber: data?.phone_number,
-    state: data?.operator.state,
-    street: data?.operator.street,
-    zipCode: data?.operator.zip_code || '',
-    city: data?.operator.city,
+    email: data?.user_data.operator.email,
+    firstName: data?.user_data.first_name,
+    lastName: data?.user_data.last_name,
+    name: data?.user_data.operator.name,
+    pointOfContactEmail: data?.user_data.email,
+    phone: data?.user_data.operator.phone_number_contact,
+    pointOfContactPhoneNumber: data?.user_data.phone_number,
+    state: data?.user_data.operator.state,
+    street: data?.user_data.operator.street,
+    zipCode: data?.user_data.operator.zip_code || '',
+    city: data?.user_data.operator.city,
     confirmPassword: '',
     password: '',
   }

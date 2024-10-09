@@ -109,6 +109,12 @@ const UserForm = () => {
             )
           }
 
+          if (role.name === 'Master Admin') {
+            return {
+              role: 'Swift Schedule Master Admin',
+            } as unknown as IRole
+          }
+
           if (role.name === 'Operator') {
             return {
               role: role.name,

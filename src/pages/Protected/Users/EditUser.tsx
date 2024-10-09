@@ -14,7 +14,7 @@ import PopulateRole from '@/pages/Protected/Users/components/PopulateRole'
 import {
   ICreateUserFormValues,
   INITIAL_ROLE_DATA,
-  userValidationSchema,
+  editUserValidationSchema,
 } from '@/pages/Protected/Users/constants/formik'
 
 import {
@@ -122,6 +122,12 @@ const EditUser = () => {
           } as IRole
         }
 
+        if (role.name === 'Master Admin') {
+          return {
+            role: 'Swift Schedule Master Admin',
+          } as unknown as IRole
+        }
+
         return {
           role: role.name,
         } as IRole
@@ -177,7 +183,7 @@ const EditUser = () => {
 
         <Formik
           initialValues={initialValues}
-          validationSchema={userValidationSchema}
+          validationSchema={editUserValidationSchema}
           onSubmit={handleSubmit}
           validateOnChange
           validateOnBlur

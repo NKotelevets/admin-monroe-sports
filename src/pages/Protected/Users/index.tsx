@@ -161,6 +161,11 @@ const Users = () => {
     link.click()
     document.body.removeChild(link)
     URL.revokeObjectURL(url)
+
+    setAppNotification({
+      message: 'Users successfully exported',
+      type: 'success',
+    })
   }
 
   return (

@@ -11,7 +11,7 @@ export interface ISignInRequestBody {
   isStaySignIn: boolean
 }
 
-export interface IPrefilledData {
+interface IUserData {
   id: string
   email: string
   phone_number: string
@@ -37,6 +37,13 @@ export interface IPrefilledData {
   emergency_contact_name: string
   emergency_contact_phone: string
   is_active: boolean
+}
+
+export interface IPrefilledData {
+  user_data: IUserData
+  invitation: {
+    id: string
+  }
 }
 
 interface IAdditionalEmail {

@@ -38,7 +38,7 @@ export const calculateUserRoles = (data: IExtendedFEUser) => {
       })),
     })
 
-  if (data.asCoach)
+  if (data.asCoach?.teams.length)
     roles.push({
       name: 'Coach',
       linkedEntities: data.asCoach.teams.map((e) => ({
@@ -47,7 +47,7 @@ export const calculateUserRoles = (data: IExtendedFEUser) => {
       })),
     })
 
-  if (data.asPlayer)
+  if (data.asPlayer?.teams.length)
     roles.push({
       name: 'Player',
       linkedEntities: data.asPlayer.teams.map((e) => ({

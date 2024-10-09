@@ -54,7 +54,23 @@ export const authApi = createApi({
         method: 'PUT',
       }),
     }),
+
+    acceptInvite: builder.mutation<void, { invite_id: string }>({
+      query: ({ invite_id }) => ({
+        url: 'users/accept-invite',
+        body: {
+          invite_id,
+        },
+        method: 'POST',
+      }),
+    }),
   }),
 })
 
-export const { useSignInMutation, useGetPrefilledDataQuery, useCreateUserMutation, useUpdateOperatorMutation } = authApi
+export const {
+  useSignInMutation,
+  useGetPrefilledDataQuery,
+  useCreateUserMutation,
+  useUpdateOperatorMutation,
+  useAcceptInviteMutation,
+} = authApi

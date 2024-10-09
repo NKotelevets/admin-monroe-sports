@@ -37,6 +37,10 @@ export const userValidationSchema = Yup.object<ICreateUserFormValues>().shape({
   roles: Yup.array().of(userRoleValidationSchema),
 })
 
+export const editUserValidationSchema = Yup.object<ICreateUserFormValues>().shape({
+  roles: Yup.array().of(userRoleValidationSchema),
+})
+
 export const INITIAL_ROLE_DATA = {
   name: '',
   linkedEntities: [],

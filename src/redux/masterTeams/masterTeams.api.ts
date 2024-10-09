@@ -82,6 +82,14 @@ export const masterTeamsApi = createApi({
       invalidatesTags: [MASTER_TEAMS_TAG],
     }),
 
+    // getMasterTeam: builder.query<{}, { id: string }>({
+    //   query: ({ id }) => ({
+    //     url: `teams/teams/${id}/details`,
+    //   }),
+    //   providesTags: [MASTER_TEAMS_TAG],
+    //   keepUnusedDataFor: 0.0001,
+    // }),
+
     createMasterTeam: builder.mutation<void, ICreateMTRequest>({
       query: (body) => ({
         url: 'teams/teams/create-team-as-admin',
