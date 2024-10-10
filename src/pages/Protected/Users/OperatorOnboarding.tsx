@@ -139,6 +139,7 @@ const OperatorOnboarding = () => {
   const onSubmit = async (values: IFinishCreatingOperator) => {
     try {
       const updateOperatorBody: IUpdateOperator = {
+        id: data?.user_data.id as string,
         city: values.city,
         email: values.email,
         email_contact: values.pointOfContactEmail,

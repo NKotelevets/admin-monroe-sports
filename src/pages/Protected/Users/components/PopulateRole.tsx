@@ -40,6 +40,7 @@ interface IPopulateRoleProps {
     isTouched?: boolean,
     shouldValidate?: boolean,
   ) => Promise<void | FormikErrors<ICreateUserFormValues>>
+  isSameUser?: boolean
 }
 
 const PopulateRole: FC<IPopulateRoleProps> = ({
@@ -50,6 +51,7 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
   removeFn,
   values,
   setFieldTouched,
+  isSameUser,
 }) => {
   const [isOpenedDetails, setIsOpenedDetails] = useState(index === 0 ? true : false)
   const { ref, isComponentVisible } = useIsActiveComponent(index === 0 ? true : false)
@@ -103,11 +105,12 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
             )}
           </Flex>
 
-          {!(['Operator', 'Master Admin'].includes(role.name) && !isAdmin) && (
-            <div onClick={() => removeFn(index)}>
-              <ReactSVG src={DeleteIcon} />
-            </div>
-          )}
+          {!(['Operator', 'Master Admin'].includes(role.name) && !isAdmin) &&
+            !(isSameUser && role.name === 'Master Admin') && (
+              <div onClick={() => removeFn(index)}>
+                <ReactSVG src={DeleteIcon} />
+              </div>
+            )}
         </Flex>
       )}
 

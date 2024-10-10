@@ -1,6 +1,14 @@
 import { IFERole } from '@/common/interfaces/role'
 import { TGender, TRole } from '@/common/types'
 
+interface IInvite {
+  created_at: string
+  id: string
+  invite_type: number
+  is_admin_invite: boolean
+  visible: boolean
+}
+
 export interface IBEUser {
   id: string
   email: string
@@ -25,6 +33,7 @@ export interface IBEUser {
   is_superuser: boolean
   roles: string[]
   teams: string[]
+  invitations: IInvite[]
 }
 
 export interface IFEUser {
@@ -51,6 +60,7 @@ export interface IFEUser {
   isSuperuser: boolean
   roles: string[]
   teams: string[]
+  invitations: IInvite[]
 }
 
 export interface IGetUsersRequestParams {

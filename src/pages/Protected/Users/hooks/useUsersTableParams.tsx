@@ -37,6 +37,8 @@ import UnLockIcon from '@/assets/icons/unlock.svg'
 type TColumns<T> = TableProps<T>['columns']
 type TDataIndex = keyof IExtendedFEUser
 
+const OPERATOR_INVITE_TYPE = 5
+
 interface IParams {
   setSelectedRecordId: (value: string) => void
   setShowBlockSingleUserModal: (value: boolean) => void
@@ -220,52 +222,60 @@ export const useUsersTableParams = ({
       title: 'Email',
       dataIndex: 'email',
       width: '192px',
-      render: (value, record) => (
-        <>
-          {value ? (
-            <Flex
-              style={{
-                zIndex: 4,
-              }}
-              justify="space-between"
-            >
-              <TextWithTooltip maxLength={14} text={value} />
+      render: (value, record) => {
+        const inviteId = record.invitations.find(
+          (invite) => invite.visible && invite.invite_type === OPERATOR_INVITE_TYPE,
+        )?.id
+
+        return (
+          <>
+            {value ? (
               <Flex
                 style={{
-                  marginLeft: '8px',
+                  zIndex: 4,
                 }}
-                align="center"
+                justify="space-between"
               >
-                {record.operator && !record.inviteAccepted && (
-                  <MonroeTooltip width="auto" text="Resend email to Operator">
-                    <ReactSVG
-                      className="c-p"
-                      src={SearchEmailIcon}
-                      onClick={() => {
-                        sendInvitation({ emails: [record.email] })
-                          .unwrap()
-                          .then(() => {
-                            setAppNotification({
-                              message: `Invitation successfully sended to ${record.email}`,
-                              timestamp: new Date().getTime(),
-                              type: 'success',
-                            })
-                          })
-                      }}
-                    />
-                  </MonroeTooltip>
-                )}
+                <TextWithTooltip maxLength={14} text={value} />
+                <Flex
+                  style={{
+                    marginLeft: '8px',
+                  }}
+                  align="center"
+                >
+                  {record.operator && inviteId && (
+                    <MonroeTooltip width="auto" text="Resend email to Operator">
+                      <ReactSVG
+                        className="c-p"
+                        src={SearchEmailIcon}
+                        onClick={() => {
+                          if (inviteId) {
+                            sendInvitation({ id: inviteId })
+                              .unwrap()
+                              .then(() => {
+                                setAppNotification({
+                                  message: `Invitation successfully sended to ${record.email}`,
+                                  timestamp: new Date().getTime(),
+                                  type: 'success',
+                                })
+                              })
+                          }
+                        }}
+                      />
+                    </MonroeTooltip>
+                  )}
 
-                <div style={{ marginLeft: '4px' }}>
-                  <ReactSVG className="c-p" src={CopyEmailIcon} onClick={() => handleCopyContent(value)} />
-                </div>
+                  <div style={{ marginLeft: '4px' }}>
+                    <ReactSVG className="c-p" src={CopyEmailIcon} onClick={() => handleCopyContent(value)} />
+                  </div>
+                </Flex>
               </Flex>
-            </Flex>
-          ) : (
-            '-'
-          )}
-        </>
-      ),
+            ) : (
+              '-'
+            )}
+          </>
+        )
+      },
     },
     {
       title: 'Phone',

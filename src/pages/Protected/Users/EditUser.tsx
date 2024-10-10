@@ -94,6 +94,7 @@ const EditUser = () => {
     : userAdminRoles
       ? MAX_CREATED_ROLES_BY_OPERATOR + userAdminRoles
       : MAX_CREATED_ROLES_BY_OPERATOR
+  const isSameUser = !!(user && data && user?.id === data?.id)
 
   const goBack = () => navigation(PATH_TO_USERS)
 
@@ -204,6 +205,7 @@ const EditUser = () => {
                     removeFn={removeFn}
                     values={values}
                     setFieldTouched={setFieldTouched}
+                    isSameUser={isSameUser}
                   />
                 ),
                 label: <AccordionHeader>#{idx + 1} Role</AccordionHeader>,

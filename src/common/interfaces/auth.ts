@@ -65,6 +65,7 @@ export interface ICreateUserBody {
 }
 
 export interface IUpdateOperator {
+  id: string
   name: string
   email: string
   phone_number: string

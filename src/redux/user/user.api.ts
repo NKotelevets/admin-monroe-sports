@@ -18,8 +18,6 @@ const USER_TAG = 'USER'
 
 const OPERATOR_TAG = 'OPERATOR'
 
-const OPERATOR_INVITE_TYPE = 5
-
 export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: baseQueryWithReAuth,
@@ -65,6 +63,7 @@ export const userApi = createApi({
             firstName: s.first_name,
             lastName: s.last_name,
           })) || null,
+        invitations: user.invitations,
       }),
     }),
 
@@ -109,6 +108,7 @@ export const userApi = createApi({
             firstName: s.first_name,
             lastName: s.last_name,
           })) || null,
+        invitations: user.invitations,
       }),
       providesTags: [USER_TAG],
     }),
@@ -156,6 +156,7 @@ export const userApi = createApi({
               firstName: s.first_name,
               lastName: s.last_name,
             })) || null,
+          invitations: user.invitations,
         })),
       }),
       providesTags: [USER_TAG],
@@ -253,17 +254,12 @@ export const userApi = createApi({
     sendInvitation: builder.mutation<
       void,
       {
-        emails: string[]
+        id: string
       }
     >({
-      query: ({ emails }) => ({
-        url: 'users/invitation/send-invitation',
+      query: ({ id }) => ({
+        url: `users/invitation/${id}/resend-invitation-as-admin`,
         method: 'POST',
-        body: {
-          invite_type: OPERATOR_INVITE_TYPE,
-          is_admin_invite: true,
-          emails,
-        },
       }),
     }),
   }),
