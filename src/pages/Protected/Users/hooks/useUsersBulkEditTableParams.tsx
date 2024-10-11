@@ -63,19 +63,28 @@ export const useUsersBulkEditTableParams = () => {
             value: role,
           }),
         )
+        const isSameUser = user?.id === record.id
+        const MAX_CREATED_ROLES_BY_ADMIN = 6
+        const MAX_CREATED_ROLES_BY_OPERATOR = 4
+        const userAdminRoles = user?.roles.filter((role) => ['Operator', 'Master Admin'].includes(role)).length
+        const maximumRoles = user?.isSuperuser
+          ? MAX_CREATED_ROLES_BY_ADMIN
+          : userAdminRoles
+            ? MAX_CREATED_ROLES_BY_OPERATOR + userAdminRoles
+            : MAX_CREATED_ROLES_BY_OPERATOR
+        const isDisabledAddRoleButton =
+          !!record.userRoles
+            .filter((role) => {
+              if (
+                (ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(role.name as TRole) &&
+                  !role?.linkedEntities?.length) ||
+                !role.name
+              )
+                return true
 
-        const isDisabledAddRoleButton = !!record.userRoles
-          .filter((role) => {
-            if (
-              (ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(role.name as TRole) &&
-                !role?.linkedEntities?.length) ||
-              !role.name
-            )
-              return true
-
-            return false
-          })
-          .filter((i) => !!i)?.length
+              return false
+            })
+            .filter((i) => !!i)?.length || maximumRoles === record.userRoles.length
 
         const handleChangeRole = (oldRole: string, newRole: string) => {
           const updatedRecord: IBulkEditFEUser = {
@@ -182,6 +191,10 @@ export const useUsersBulkEditTableParams = () => {
                 name: role.linkedEntities?.[0]?.name || '',
               }
               const isRoleWithTeams = ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(role.name as TRole)
+              const isHideDeleteBtn =
+                ['Parent', 'Child'].includes(role.name) ||
+                !!(isOperatorWithoutAdmin && role.name === 'Operator') ||
+                (role.name === 'Head Coach' && record.asHeadCoach?.length)
 
               return (
                 <Flex
@@ -193,30 +206,37 @@ export const useUsersBulkEditTableParams = () => {
                 >
                   <Flex
                     style={{
-                      marginRight: '20px',
-                      width: '250px',
+                      marginRight: '16px',
                     }}
                     align="center"
                   >
                     <MonroeSelect
                       options={options}
                       onChange={(newRole) => handleChangeRole(role.name, newRole)}
-                      styles={{ width: '100%' }}
+                      styles={{ width: '170px' }}
                       value={role.name}
                       disabled={
-                        ['Master Admin', 'Parent', 'Child'].includes(role.name) ||
-                        !!(isOperatorWithoutAdmin && role.name === 'Operator')
+                        ['Parent', 'Child'].includes(role.name) ||
+                        !!(isOperatorWithoutAdmin && role.name === 'Operator') ||
+                        (isSameUser && role.name === 'Master Admin')
                       }
                     />
 
-                    {!(
-                      ['Master Admin', 'Parent', 'Child'].includes(role.name) ||
-                      !!(isOperatorWithoutAdmin && role.name === 'Operator')
-                    ) && (
-                      <div style={{ marginLeft: '8px' }} onClick={() => handleDeleteRole(role.name)}>
-                        <ReactSVG src={DeleteIcon} />
-                      </div>
-                    )}
+                    <div
+                      style={{
+                        marginLeft: '8px',
+                        overflow: isHideDeleteBtn ? 'hidden' : 'visible',
+                        opacity: isHideDeleteBtn ? 0 : 1,
+                        cursor: isHideDeleteBtn ? 'default' : 'pointer',
+                      }}
+                      onClick={() => {
+                        if (!isHideDeleteBtn) {
+                          handleDeleteRole(role.name)
+                        }
+                      }}
+                    >
+                      <ReactSVG src={DeleteIcon} />
+                    </div>
                   </Flex>
 
                   {isRoleWithTeams && (
@@ -228,8 +248,8 @@ export const useUsersBulkEditTableParams = () => {
                       <MasterTeamsMultipleSelectWithSearch
                         onChange={(newRole) => handleChangeData(role.name, newRole)}
                         isError={!role?.linkedEntities?.length}
-                        onBlur={() => {}}
                         selectedTeams={role?.linkedEntities || []}
+                        canRemoveTeam={role.name === 'Head Coach'}
                       />
                     </div>
                   )}
@@ -261,7 +281,13 @@ export const useUsersBulkEditTableParams = () => {
             })}
 
             <MonroeTooltip
-              text={isDisabledAddRoleButton ? "You can't create role when you have errors in other roles" : ''}
+              text={
+                isDisabledAddRoleButton
+                  ? record.userRoles.length === maximumRoles
+                    ? `Maximum roles is ${maximumRoles}`
+                    : "You can't create role when you have errors in other roles"
+                  : ''
+              }
               width="220px"
               containerWidth="113px"
             >

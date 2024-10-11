@@ -265,8 +265,8 @@ export const useUsersTableParams = ({
                     </MonroeTooltip>
                   )}
 
-                  <div style={{ marginLeft: '4px' }}>
-                    <ReactSVG className="c-p" src={CopyEmailIcon} onClick={() => handleCopyContent(value)} />
+                  <div className="c-p" style={{ marginLeft: '4px' }}>
+                    <ReactSVG src={CopyEmailIcon} onClick={() => handleCopyContent(value)} />
                   </div>
                 </Flex>
               </Flex>

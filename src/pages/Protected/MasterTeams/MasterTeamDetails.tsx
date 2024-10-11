@@ -3,9 +3,9 @@ import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined'
 import EditOutlined from '@ant-design/icons/lib/icons/EditOutlined'
 import { Flex } from 'antd'
 import Breadcrumb from 'antd/es/breadcrumb'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
 import {
@@ -18,14 +18,18 @@ import {
   ProtectedPageTitle,
   ViewText,
 } from '@/components/Elements'
+import Loader from '@/components/Loader'
 import MonroeButton from '@/components/MonroeButton'
 import MonroeModal from '@/components/MonroeModal'
 
 import BaseLayout from '@/layouts/BaseLayout'
 
 import { useAppSlice } from '@/redux/hooks/useAppSlice'
+import { useDeleteMasterTeamMutation, useGetMasterTeamQuery } from '@/redux/masterTeams/masterTeams.api'
 
-import { PATH_TO_EDIT_MASTER_TEAM, PATH_TO_MASTER_TEAMS } from '@/constants/paths'
+import { PATH_TO_EDIT_MASTER_TEAM, PATH_TO_MASTER_TEAMS, PATH_TO_USERS } from '@/constants/paths'
+
+import { IDetailedError } from '@/common/interfaces'
 
 import CopyIcon from '@/assets/icons/copy.svg'
 
@@ -33,44 +37,51 @@ const MasterTeamDetails = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const navigate = useNavigate()
   const { setAppNotification } = useAppSlice()
+  const params = useParams<{ id: string }>()
+  const { data, isLoading, isError, error } = useGetMasterTeamQuery({ id: params.id || '' }, { skip: !params.id })
+  const [deleteMT] = useDeleteMasterTeamMutation()
+
+  const handleDelete = (id: string) =>
+    deleteMT(id)
+      .unwrap()
+      .then(() => navigate(PATH_TO_MASTER_TEAMS))
+      .catch((error) => {
+        setAppNotification({
+          message: (error as IDetailedError).details,
+          type: 'error',
+        })
+      })
+
+  const handleCopyContent = async (text: string, type: 'email' | 'phone') => {
+    await navigator.clipboard.writeText(text)
+
+    setAppNotification({
+      message: `${type === 'phone' ? 'Phone' : 'Email'} successfully copied`,
+      timestamp: new Date().getTime(),
+      type: 'success',
+    })
+  }
+
+  const handleUserFullNameClick = (id: string) => navigate(`${PATH_TO_USERS}/${id}`)
+
+  useEffect(() => {
+    if (isError) {
+      navigate(PATH_TO_MASTER_TEAMS)
+      setAppNotification({
+        message: (error as IDetailedError).details,
+        type: 'error',
+      })
+    }
+  }, [isError])
+
+  if (isLoading || !data) return <Loader />
 
   const BREAD_CRUMB_ITEMS = [
     {
       title: <a href={PATH_TO_MASTER_TEAMS}>Master Teams</a>,
     },
     {
-      title: <MonroeBlueText>New Orleans Saints</MonroeBlueText>,
-    },
-  ]
-
-  const handleDelete = () => {}
-
-  const handleCopyContent = async (text: string, type: 'email' | 'phone') => {
-    try {
-      await navigator.clipboard.writeText(text)
-
-      setAppNotification({
-        message: `${type === 'phone' ? 'Phone' : 'Email'} successfully copied`,
-        timestamp: new Date().getTime(),
-        type: 'success',
-      })
-    } catch {
-      // TODO: think about this issue
-    }
-  }
-
-  const mockedTeamAdministrators = [
-    {
-      id: '123',
-      name: 'Floyd Miles',
-      email: 'jackson.graham@example.com',
-      phoneNumber: '123456789',
-    },
-    {
-      id: '1234',
-      name: 'Floyd Miles',
-      email: 'jackson.graham@example.com',
-      phoneNumber: '123456789',
+      title: <MonroeBlueText>{data.name}</MonroeBlueText>,
     },
   ]
 
@@ -84,14 +95,10 @@ const MasterTeamDetails = () => {
         <MonroeModal
           okText="Delete"
           onCancel={() => setShowDeleteModal(false)}
-          onOk={handleDelete}
-          title={`Delete New Orleans Saints ?`}
+          onOk={() => handleDelete(params.id as string)}
+          title={`Delete ${data.name}?`}
           type="warn"
-          content={
-            <>
-              <p>Are you sure you want to delete this master team?</p>
-            </>
-          }
+          content={<p>Are you sure you want to delete {data.name}?</p>}
         />
       )}
 
@@ -100,7 +107,7 @@ const MasterTeamDetails = () => {
           <Breadcrumb items={BREAD_CRUMB_ITEMS} />
 
           <Flex justify="space-between">
-            <ProtectedPageTitle>New Orleans Saints</ProtectedPageTitle>
+            <ProtectedPageTitle>{data.name}</ProtectedPageTitle>
 
             <Flex>
               <MonroeDeleteButton
@@ -121,7 +128,7 @@ const MasterTeamDetails = () => {
               </MonroeSecondaryButton>
 
               <MonroeButton
-                isDisabled={false}
+                isDisabled
                 label="Connect to league/tourn"
                 type="primary"
                 icon={<PlusOutlined />}
@@ -137,9 +144,12 @@ const MasterTeamDetails = () => {
               <ViewText>Team Administrator:</ViewText>
 
               <Flex vertical>
-                {mockedTeamAdministrators.map((teamAdministrator) => (
+                {data.teamsAdmins.map((teamAdministrator) => (
                   <Flex align="center">
-                    <MonroeLightBlueText>{teamAdministrator.name}</MonroeLightBlueText>•
+                    <MonroeLightBlueText className="c-p" onClick={() => handleUserFullNameClick(teamAdministrator.id)}>
+                      {teamAdministrator.fullName}
+                    </MonroeLightBlueText>
+                    •
                     <Flex align="center">
                       <DetailValue>{teamAdministrator.email}</DetailValue>
                       <div
@@ -149,16 +159,22 @@ const MasterTeamDetails = () => {
                         <ReactSVG src={CopyIcon} />
                       </div>
                     </Flex>
-                    •
-                    <Flex align="center">
-                      <DetailValue>{teamAdministrator.phoneNumber}</DetailValue>
-                      <div
-                        onClick={() => handleCopyContent(teamAdministrator.phoneNumber, 'email')}
-                        style={{ marginLeft: '8px', cursor: 'pointer' }}
-                      >
-                        <ReactSVG src={CopyIcon} />
-                      </div>
-                    </Flex>
+                    {teamAdministrator.phone ? (
+                      <>
+                        •
+                        <Flex align="center">
+                          <DetailValue>{teamAdministrator.phone}</DetailValue>
+                          <div
+                            onClick={() => handleCopyContent(teamAdministrator.phone as string, 'email')}
+                            style={{ marginLeft: '8px', cursor: 'pointer' }}
+                          >
+                            <ReactSVG src={CopyIcon} />
+                          </div>
+                        </Flex>
+                      </>
+                    ) : (
+                      ''
+                    )}
                   </Flex>
                 ))}
               </Flex>
@@ -168,26 +184,35 @@ const MasterTeamDetails = () => {
               <ViewText>Head Coach:</ViewText>
 
               <Flex align="center">
-                <MonroeLightBlueText>{mockedTeamAdministrators[0].name}</MonroeLightBlueText>•
-                <Flex align="center">
-                  <DetailValue>{mockedTeamAdministrators[0].email}</DetailValue>
-                  <div
-                    onClick={() => handleCopyContent(mockedTeamAdministrators[0].email, 'email')}
-                    style={{ marginLeft: '8px', cursor: 'pointer' }}
-                  >
-                    <ReactSVG src={CopyIcon} />
-                  </div>
-                </Flex>
+                <MonroeLightBlueText className="c-p" onClick={() => handleUserFullNameClick(data.headCoach.id)}>
+                  {data.headCoach.fullName}
+                </MonroeLightBlueText>
                 •
                 <Flex align="center">
-                  <DetailValue>{mockedTeamAdministrators[0].phoneNumber}</DetailValue>
+                  <DetailValue>{data.headCoach.email}</DetailValue>
                   <div
-                    onClick={() => handleCopyContent(mockedTeamAdministrators[0].phoneNumber, 'email')}
+                    onClick={() => handleCopyContent(data.headCoach.email as string, 'email')}
                     style={{ marginLeft: '8px', cursor: 'pointer' }}
                   >
                     <ReactSVG src={CopyIcon} />
                   </div>
                 </Flex>
+                {data.headCoach.phone ? (
+                  <>
+                    •
+                    <Flex align="center">
+                      <DetailValue>{data.headCoach.phone}</DetailValue>
+                      <div
+                        onClick={() => handleCopyContent(data.headCoach.phone as string, 'email')}
+                        style={{ marginLeft: '8px', cursor: 'pointer' }}
+                      >
+                        <ReactSVG src={CopyIcon} />
+                      </div>
+                    </Flex>
+                  </>
+                ) : (
+                  ''
+                )}
               </Flex>
             </Flex>
 
@@ -195,28 +220,37 @@ const MasterTeamDetails = () => {
               <ViewText>Coach(es):</ViewText>
 
               <Flex vertical>
-                {mockedTeamAdministrators.map((teamAdministrator) => (
+                {data.coaches.map((coach) => (
                   <Flex align="center">
-                    <MonroeLightBlueText>{teamAdministrator.name}</MonroeLightBlueText>•
-                    <Flex align="center">
-                      <DetailValue>{teamAdministrator.email}</DetailValue>
-                      <div
-                        onClick={() => handleCopyContent(teamAdministrator.email, 'email')}
-                        style={{ marginLeft: '8px', cursor: 'pointer' }}
-                      >
-                        <ReactSVG src={CopyIcon} />
-                      </div>
-                    </Flex>
+                    <MonroeLightBlueText className="c-p" onClick={() => handleUserFullNameClick(coach.id)}>
+                      {coach.fullName}
+                    </MonroeLightBlueText>
                     •
                     <Flex align="center">
-                      <DetailValue>{teamAdministrator.phoneNumber}</DetailValue>
+                      <DetailValue>{coach.email}</DetailValue>
                       <div
-                        onClick={() => handleCopyContent(teamAdministrator.phoneNumber, 'email')}
+                        onClick={() => handleCopyContent(coach.email, 'email')}
                         style={{ marginLeft: '8px', cursor: 'pointer' }}
                       >
                         <ReactSVG src={CopyIcon} />
                       </div>
                     </Flex>
+                    {coach.phone ? (
+                      <>
+                        •
+                        <Flex align="center">
+                          <DetailValue>{coach.phone}</DetailValue>
+                          <div
+                            onClick={() => handleCopyContent(coach.phone as string, 'phone')}
+                            style={{ marginLeft: '8px', cursor: 'pointer' }}
+                          >
+                            <ReactSVG src={CopyIcon} />
+                          </div>
+                        </Flex>
+                      </>
+                    ) : (
+                      ''
+                    )}
                   </Flex>
                 ))}
               </Flex>
@@ -226,48 +260,46 @@ const MasterTeamDetails = () => {
               <ViewText>Players:</ViewText>
 
               <Flex vertical>
-                {mockedTeamAdministrators.map((teamAdministrator) => (
+                {data.players.map((player) => (
                   <Flex align="center">
-                    <MonroeLightBlueText>{teamAdministrator.name}</MonroeLightBlueText>•
-                    <Flex align="center">
-                      <DetailValue>{teamAdministrator.email}</DetailValue>
-                      <div
-                        onClick={() => handleCopyContent(teamAdministrator.email, 'email')}
-                        style={{ marginLeft: '8px', cursor: 'pointer' }}
-                      >
-                        <ReactSVG src={CopyIcon} />
-                      </div>
-                    </Flex>
+                    <MonroeLightBlueText className="c-p" onClick={() => handleUserFullNameClick(player.id)}>
+                      {player.fullName}
+                    </MonroeLightBlueText>
                     •
                     <Flex align="center">
-                      <DetailValue>{teamAdministrator.phoneNumber}</DetailValue>
+                      <DetailValue>{player.email}</DetailValue>
                       <div
-                        onClick={() => handleCopyContent(teamAdministrator.phoneNumber, 'email')}
+                        onClick={() => handleCopyContent(player.email, 'email')}
                         style={{ marginLeft: '8px', cursor: 'pointer' }}
                       >
                         <ReactSVG src={CopyIcon} />
                       </div>
                     </Flex>
+                    {player.phone ? (
+                      <>
+                        •
+                        <Flex align="center">
+                          <DetailValue>{player.phone}</DetailValue>
+                          <div
+                            onClick={() => handleCopyContent(player.phone as string, 'email')}
+                            style={{ marginLeft: '8px', cursor: 'pointer' }}
+                          >
+                            <ReactSVG src={CopyIcon} />
+                          </div>
+                        </Flex>
+                      </>
+                    ) : (
+                      ''
+                    )}
                   </Flex>
                 ))}
               </Flex>
             </Flex>
 
-            <Flex className="mb-16">
-              <ViewText>Linked league/tourn:</ViewText>
+            <Flex className="mb-16" align="center">
+              <ViewText style={{ width: 'auto' }}>Linked league/tourn:</ViewText>
 
-              <Flex vertical>
-                {mockedTeamAdministrators.map(() => (
-                  <Flex vertical>
-                    <Flex align="center">
-                      <MonroeLightBlueText>League team name</MonroeLightBlueText>•
-                      <MonroeLightBlueText>League name</MonroeLightBlueText>
-                    </Flex>
-
-                    <DetailValue>Division, Subdivision</DetailValue>
-                  </Flex>
-                ))}
-              </Flex>
+              <Flex vertical>-</Flex>
             </Flex>
           </Flex>
         </PageContainer>

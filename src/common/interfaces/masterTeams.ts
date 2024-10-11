@@ -2,12 +2,6 @@ import { IBEOperator } from './operator'
 
 import { IBEDivision } from '@/common/interfaces/division'
 
-interface IHeadCoachTeamAdminTableData {
-  id: string
-  fullName: string
-  email: string
-}
-
 interface IAdditionalEmail {
   email: string
   is_verified: boolean
@@ -60,14 +54,18 @@ export interface IBEMasterTeam {
   head_coach_email: string
   team_administrator: string
   head_coach: IHeadCoachTeamAdmin | null
-  team_admin: IHeadCoachTeamAdmin | null
+  team_admins: IHeadCoachTeamAdmin[] | null
 }
 
 export interface IFEMasterTeam {
   id: string
   name: string
-  headCoach: IHeadCoachTeamAdminTableData | null
-  teamAdmin: IHeadCoachTeamAdminTableData | null
+  headCoachId: string | null
+  headCoachFullName: string | null
+  headCoachEmail: string | null
+  teamAdminId: string | null
+  teamAdminFullName: string | null
+  teamAdminEmail: string | null
 }
 
 export interface IGetMasterTeamsRequest {
@@ -91,5 +89,36 @@ export interface ICreateMTRequest {
   coaches: string[]
   players: string[]
   team_admins: string[]
+}
+
+interface IBESimpleEntity {
+  id: string
+  first_name: string
+  last_name: string
+  phone_number: string | null
+  email: string
+}
+
+export interface IBEMasterTeamDetails {
+  name: string
+  head_coach: IBESimpleEntity
+  team_admins: IBESimpleEntity[]
+  players: IBESimpleEntity[]
+  coaches: IBESimpleEntity[]
+}
+
+interface IFESimpleEntity {
+  id: string
+  fullName: string
+  phone: string | null
+  email: string
+}
+
+export interface IFEMasterTeamDetails {
+  name: string
+  headCoach: IFESimpleEntity
+  teamsAdmins: IFESimpleEntity[]
+  players: IFESimpleEntity[]
+  coaches: IFESimpleEntity[]
 }
 

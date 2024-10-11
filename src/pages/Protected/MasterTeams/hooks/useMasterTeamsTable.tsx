@@ -128,7 +128,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
       ...getColumnSearchProps('name'),
       render: (_, record) => (
         <TextWithTooltip
-          maxLength={25}
+          maxLength={22}
           text={record.name}
           onClick={() => navigate(PATH_TO_MASTER_TEAMS + '/' + record.id)}
         />
@@ -136,18 +136,18 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
     },
     {
       title: 'Team Administrator',
-      dataIndex: 'teamAdmin',
-      sorter: true,
+      dataIndex: 'teamAdminFullName',
       width: '240px',
-      sortOrder: ordering?.includes('teamAdmin') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
-      ...getColumnSearchProps('teamAdmin'),
+      ...getColumnSearchProps('teamAdminFullName'),
+      sortOrder: ordering?.includes('team_admin') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
+      sorter: true,
       render: (_, record) => (
         <>
-          {record.teamAdmin ? (
+          {record.teamAdminFullName ? (
             <TextWithTooltip
-              maxLength={25}
-              text={record.teamAdmin?.fullName}
-              onClick={() => navigate(PATH_TO_USERS + '/' + record.teamAdmin?.id)}
+              maxLength={22}
+              text={record.teamAdminFullName}
+              onClick={() => navigate(PATH_TO_USERS + '/' + record.teamAdminId)}
             />
           ) : (
             '-'
@@ -157,14 +157,18 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
     },
     {
       title: 'Team Admin Email',
-      dataIndex: 'teamAdmin',
+      dataIndex: 'teamAdminEmail',
       width: '240px',
       render: (_, record) => (
         <>
-          {record.teamAdmin ? (
-            <Flex align="center" justify="space-between" onClick={() => handleCopyContent(record.teamAdmin!.email)}>
-              <TextWithTooltip maxLength={25} text={record.teamAdmin!.email} isRegularText />
-              <ReactSVG src={CopyIcon} style={{ marginLeft: '4px' }} />
+          {record.teamAdminEmail ? (
+            <Flex
+              align="center"
+              justify="space-between"
+              onClick={() => handleCopyContent(record.teamAdminEmail as string)}
+            >
+              <TextWithTooltip maxLength={22} text={record.teamAdminEmail} isRegularText />
+              <ReactSVG className="c-p" src={CopyIcon} style={{ marginLeft: '4px' }} />
             </Flex>
           ) : (
             '-'
@@ -172,21 +176,20 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
         </>
       ),
     },
-
     {
       title: 'Head Coach',
-      dataIndex: 'headCoach',
-      ...getColumnSearchProps('name'),
-      sorter: true,
+      dataIndex: 'headCoachFullName',
       width: '240px',
-      sortOrder: ordering?.includes('headCoach') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
+      ...getColumnSearchProps('headCoachFullName'),
+      sortOrder: ordering?.includes('head_coach') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
+      sorter: true,
       render: (_, record) => (
         <>
-          {record.headCoach ? (
+          {record.headCoachFullName ? (
             <TextWithTooltip
-              maxLength={25}
-              text={record.headCoach?.fullName}
-              onClick={() => navigate(PATH_TO_USERS + '/' + record.headCoach?.id)}
+              maxLength={22}
+              text={record.headCoachFullName}
+              onClick={() => navigate(PATH_TO_USERS + '/' + record.headCoachFullName)}
             />
           ) : (
             '-'
@@ -196,14 +199,18 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
     },
     {
       title: 'Coach email',
-      dataIndex: '',
+      dataIndex: 'headCoachEmail',
       width: '240px',
       render: (_, record) => (
         <>
-          {record.headCoach ? (
-            <Flex align="center" justify="space-between" onClick={() => handleCopyContent(record.headCoach!.email)}>
-              <TextWithTooltip maxLength={25} text={record.headCoach!.email} isRegularText />
-              <ReactSVG src={CopyIcon} style={{ marginLeft: '4px' }} />
+          {record.headCoachEmail ? (
+            <Flex
+              align="center"
+              justify="space-between"
+              onClick={() => handleCopyContent(record.headCoachEmail as string)}
+            >
+              <TextWithTooltip maxLength={22} text={record.headCoachEmail} isRegularText />
+              <ReactSVG className="c-p" src={CopyIcon} style={{ marginLeft: '4px' }} />
             </Flex>
           ) : (
             '-'

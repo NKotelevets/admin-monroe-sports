@@ -7,6 +7,7 @@ import { IPaginationResponse } from '@/common/interfaces/api'
 import { IBEOperator, IFEOperator, IGetOperatorRequestParams } from '@/common/interfaces/operator'
 import {
   IBlockedUserError,
+  IBulkEditError,
   ICreateUserAsAdminRequestBody,
   IExtendedBEUser,
   IExtendedFEUser,
@@ -224,8 +225,8 @@ export const userApi = createApi({
       {
         total: number
         success: number
-        status: 'red' | 'green' | 'yellow'
-        failed: []
+        status: 'red' | 'green'
+        failed: IBulkEditError[]
       },
       {
         id: string

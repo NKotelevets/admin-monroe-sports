@@ -104,7 +104,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
   const notUniqueNameErrorText = listOfDuplicatedNames.find((dN) => dN === subdivision.name)
     ? 'Name already exists'
     : ''
-  const isBracketError = subdivision.playoffFormat === 'Single Elimination Bracket' && !subdivision.brackets.length
+  const isBracketError = subdivision.playoffFormat === 'Single Elimination Bracket' && !subdivision.brackets?.length
   const isError = !!subdivisionError || !!notUniqueNameErrorText || isBracketError
   const lastBracketIdx = subdivision.brackets?.length ? subdivision.brackets.length : 0
   const [isShowModal, setIsShowModal] = useState(false)

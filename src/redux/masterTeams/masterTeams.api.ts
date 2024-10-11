@@ -5,7 +5,9 @@ import baseQueryWithReAuth from '@/redux/reauthBaseQuery'
 import { IPaginationResponse } from '@/common/interfaces/api'
 import {
   IBEMasterTeam,
+  IBEMasterTeamDetails,
   ICreateMTRequest,
+  IFEMasterTeamDetails,
   IGetMasterTeamsRequest,
   IGetMasterTeamsResponse,
 } from '@/common/interfaces/masterTeams'
@@ -27,19 +29,15 @@ export const masterTeamsApi = createApi({
         results: response.results.map((result) => ({
           id: result.id,
           name: result.name,
-          headCoach: result.head_coach
-            ? {
-                id: result.head_coach.id,
-                fullName: result.head_coach.first_name + ' ' + result.head_coach.last_name,
-                email: result.head_coach.email,
-              }
+          headCoachId: result.head_coach?.id || null,
+          headCoachEmail: result.head_coach?.email || null,
+          headCoachFullName: result.head_coach
+            ? result.head_coach?.first_name + ' ' + result.head_coach?.last_name
             : null,
-          teamAdmin: result.team_admin
-            ? {
-                id: result.team_admin.id,
-                fullName: result.team_admin.first_name + ' ' + result.team_admin.last_name,
-                email: result.team_admin.email,
-              }
+          teamAdminEmail: result.team_admins?.[0].email || '',
+          teamAdminId: result.team_admins?.[0].id || '',
+          teamAdminFullName: result.team_admins?.[0]
+            ? result.team_admins[0].first_name + ' ' + result.team_admins[0].last_name
             : null,
         })),
       }),
@@ -82,19 +80,54 @@ export const masterTeamsApi = createApi({
       invalidatesTags: [MASTER_TEAMS_TAG],
     }),
 
-    // getMasterTeam: builder.query<{}, { id: string }>({
-    //   query: ({ id }) => ({
-    //     url: `teams/teams/${id}/details`,
-    //   }),
-    //   providesTags: [MASTER_TEAMS_TAG],
-    //   keepUnusedDataFor: 0.0001,
-    // }),
+    getMasterTeam: builder.query<IFEMasterTeamDetails, { id: string }>({
+      query: ({ id }) => ({
+        url: `teams/teams/${id}/details`,
+      }),
+      providesTags: [MASTER_TEAMS_TAG],
+      keepUnusedDataFor: 0.0001,
+      transformResponse: (response: IBEMasterTeamDetails) => ({
+        name: response.name,
+        coaches: response.coaches.map((coach) => ({
+          id: coach.id,
+          email: coach.email,
+          fullName: coach.first_name + ' ' + coach.last_name,
+          phone: coach.phone_number,
+        })),
+        players: response.players.map((player) => ({
+          id: player.id,
+          email: player.email,
+          fullName: player.first_name + ' ' + player.last_name,
+          phone: player.phone_number,
+        })),
+        teamsAdmins: response.team_admins.map((teamAdmin) => ({
+          id: teamAdmin.id,
+          email: teamAdmin.email,
+          fullName: teamAdmin.first_name + ' ' + teamAdmin.last_name,
+          phone: teamAdmin.phone_number,
+        })),
+        headCoach: {
+          id: response.head_coach.id,
+          email: response.head_coach.email,
+          fullName: response.head_coach.first_name + ' ' + response.head_coach.last_name,
+          phone: response.head_coach.phone_number,
+        },
+      }),
+    }),
 
     createMasterTeam: builder.mutation<void, ICreateMTRequest>({
       query: (body) => ({
         url: 'teams/teams/create-team-as-admin',
         method: 'POST',
         body,
+      }),
+      invalidatesTags: [MASTER_TEAMS_TAG],
+    }),
+
+    deleteMasterTeam: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `teams/teams/${id}`,
+        method: 'DELETE',
       }),
       invalidatesTags: [MASTER_TEAMS_TAG],
     }),
@@ -109,5 +142,7 @@ export const {
   useGetMasterTeamsQuery,
   useLazyGetMasterTeamsQuery,
   useCreateMasterTeamMutation,
+  useGetMasterTeamQuery,
+  useDeleteMasterTeamMutation,
 } = masterTeamsApi
 

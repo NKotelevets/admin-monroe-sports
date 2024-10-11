@@ -1,3 +1,4 @@
+import BulkEditErrors from './pages/Protected/Users/BulkUpdateErrors'
 import { Route, Routes } from 'react-router-dom'
 
 import SignIn from '@/pages/Auth/SingIn'
@@ -33,6 +34,7 @@ import Notification from '@/components/Notification'
 import AuthProvider from '@/utils/AuthProvider'
 
 import {
+  PATH_TO_BULK_EDIT_USER_ERRORS,
   PATH_TO_CREATE_LEAGUE,
   PATH_TO_CREATE_MASTER_TEAM,
   PATH_TO_CREATE_SEASON,
@@ -92,6 +94,7 @@ const Root = () => (
       <Route path={PATH_TO_USERS_BLOCKING_INFO} element={<BlockingInfo />} />
       <Route path={PATH_TO_USERS_IMPORT_INFO} element={<UsersImportInfo />} />
       <Route path={`${PATH_TO_OPERATOR_ONBOARDING}/:token`} element={<OperatorOnboarding />} />
+      <Route path={PATH_TO_BULK_EDIT_USER_ERRORS} element={<BulkEditErrors />} />
 
       {/* Master Teams */}
       <Route path={PATH_TO_MASTER_TEAMS} element={<MasterTeams />} />

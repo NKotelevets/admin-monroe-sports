@@ -94,11 +94,12 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
             <TitleStyle isError={isError}>{isError ? 'Missing mandatory data' : role.name || 'Role'}</TitleStyle>
 
             {isRoleWithTeams && (
-              <Flex>
+              <Flex wrap="wrap">
                 {!!role.linkedEntities?.length &&
                   role.linkedEntities.map((linkedEntity, idx, arr) => (
                     <Subtext key={linkedEntity.id}>
-                      {linkedEntity.name} {idx === arr.length - 1 ? '' : ', '}
+                      {linkedEntity.name}
+                      {idx === arr.length - 1 ? '' : ','}
                     </Subtext>
                   ))}
               </Flex>

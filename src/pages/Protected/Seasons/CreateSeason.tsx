@@ -109,6 +109,7 @@ const CreateSeason = () => {
               is_not_first_round: match.isNotFirstRound,
               game_number: match.gameNumber || null,
               match_integer_id: match.id,
+              stage: match.stage,
               match_participants: match.participants
                 .map((participant) => ({
                   sub_division: participant.subpoolName,

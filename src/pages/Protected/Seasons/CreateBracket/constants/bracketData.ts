@@ -1,6 +1,11 @@
 import { IMatch, IParticipant } from '@/common/interfaces/bracket'
 import { TBracketKeys } from '@/common/types/bracket'
 
+const FINAL_STAGE = 'final'
+const SEMI_FINAL_STAGE = 'semi-final'
+const QUARTER_FINALS_STAGE = 'quarter-finals'
+const ROUND_OF_16_STAGE = 'round of 16'
+
 const TWO_TEAMS: IParticipant[] = [
   {
     id: '1',
@@ -40,6 +45,7 @@ const twoTeamsBracket: IMatch[] = [
     gameNumber: 1,
     startTime: '-',
     state: 'SCHEDULED',
+    stage: FINAL_STAGE,
   },
 ]
 
@@ -54,6 +60,7 @@ const threeTeamsBracket: IMatch[] = [
     state: 'SCHEDULED',
     topTeam: '-',
     bottomTeam: 'Game 1 Winner',
+    stage: FINAL_STAGE,
   },
   {
     id: 2,
@@ -72,6 +79,7 @@ const threeTeamsBracket: IMatch[] = [
     participants: TWO_TEAMS,
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
 ]
 
@@ -86,6 +94,7 @@ const fourTeamsBracket: IMatch[] = [
     state: 'SCHEDULED',
     topTeam: 'Game 1 Winner',
     bottomTeam: 'Game 2 Winner',
+    stage: FINAL_STAGE,
   },
   {
     id: 2,
@@ -95,6 +104,7 @@ const fourTeamsBracket: IMatch[] = [
     participants: TWO_TEAMS,
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 1,
@@ -104,6 +114,7 @@ const fourTeamsBracket: IMatch[] = [
     participants: TWO_TEAMS,
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
 ]
 
@@ -118,6 +129,7 @@ const fiveTeamsBracket: IMatch[] = [
     gameNumber: 4,
     startTime: '-',
     state: 'SCHEDULED',
+    stage: FINAL_STAGE,
   },
   {
     id: 6,
@@ -129,6 +141,7 @@ const fiveTeamsBracket: IMatch[] = [
     bottomTeam: 'Game 1 Winner',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 5,
@@ -140,8 +153,8 @@ const fiveTeamsBracket: IMatch[] = [
     bottomTeam: '-',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
-
   {
     id: 4,
     nextMatchId: 6,
@@ -161,6 +174,7 @@ const fiveTeamsBracket: IMatch[] = [
     gameNumber: 1,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 2,
@@ -195,6 +209,7 @@ const sixTeamsBracket: IMatch[] = [
     gameNumber: 5,
     startTime: '-',
     state: 'SCHEDULED',
+    stage: FINAL_STAGE,
   },
   {
     id: 5,
@@ -206,6 +221,7 @@ const sixTeamsBracket: IMatch[] = [
     bottomTeam: 'Game 1 Winner',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 6,
@@ -217,6 +233,7 @@ const sixTeamsBracket: IMatch[] = [
     bottomTeam: '-',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 3,
@@ -227,6 +244,7 @@ const sixTeamsBracket: IMatch[] = [
     gameNumber: 2,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 4,
@@ -257,6 +275,7 @@ const sixTeamsBracket: IMatch[] = [
     gameNumber: 1,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: QUARTER_FINALS_STAGE,
   },
 ]
 
@@ -271,6 +290,7 @@ const sevenTeamsBracket: IMatch[] = [
     gameNumber: 6,
     startTime: '-',
     state: 'SCHEDULED',
+    stage: FINAL_STAGE,
   },
   {
     id: 5,
@@ -282,6 +302,7 @@ const sevenTeamsBracket: IMatch[] = [
     bottomTeam: 'Game 1 Winner',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 6,
@@ -293,6 +314,7 @@ const sevenTeamsBracket: IMatch[] = [
     bottomTeam: 'Game 3 Winner',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 1,
@@ -313,6 +335,7 @@ const sevenTeamsBracket: IMatch[] = [
     gameNumber: 1,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 3,
@@ -323,6 +346,7 @@ const sevenTeamsBracket: IMatch[] = [
     gameNumber: 2,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 4,
@@ -333,6 +357,7 @@ const sevenTeamsBracket: IMatch[] = [
     gameNumber: 3,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: QUARTER_FINALS_STAGE,
   },
 ]
 
@@ -347,6 +372,7 @@ const eightTeamsBracket: IMatch[] = [
     gameNumber: 7,
     startTime: '-',
     state: 'SCHEDULED',
+    stage: FINAL_STAGE,
   },
   {
     id: 5,
@@ -358,6 +384,7 @@ const eightTeamsBracket: IMatch[] = [
     bottomTeam: 'Game 2 Winner',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 6,
@@ -369,6 +396,7 @@ const eightTeamsBracket: IMatch[] = [
     bottomTeam: 'Game 4 Winner',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 3,
@@ -379,6 +407,7 @@ const eightTeamsBracket: IMatch[] = [
     gameNumber: 3,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 4,
@@ -389,8 +418,8 @@ const eightTeamsBracket: IMatch[] = [
     gameNumber: 4,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: QUARTER_FINALS_STAGE,
   },
-
   {
     id: 2,
     nextMatchId: 5,
@@ -400,6 +429,7 @@ const eightTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     participants: TWO_TEAMS,
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 1,
@@ -410,6 +440,7 @@ const eightTeamsBracket: IMatch[] = [
     gameNumber: 2,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: QUARTER_FINALS_STAGE,
   },
 ]
 
@@ -424,6 +455,7 @@ const nineTeamsBracket: IMatch[] = [
     gameNumber: 8,
     startTime: '-',
     state: 'SCHEDULED',
+    stage: FINAL_STAGE,
   },
   {
     id: 13,
@@ -435,6 +467,7 @@ const nineTeamsBracket: IMatch[] = [
     bottomTeam: 'Game 3 Winner',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 14,
@@ -446,6 +479,7 @@ const nineTeamsBracket: IMatch[] = [
     bottomTeam: 'Game 5 Winner',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 9,
@@ -458,6 +492,7 @@ const nineTeamsBracket: IMatch[] = [
     bottomTeam: 'Game 1 Winner',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 10,
@@ -470,6 +505,7 @@ const nineTeamsBracket: IMatch[] = [
     bottomTeam: '-',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 11,
@@ -482,6 +518,7 @@ const nineTeamsBracket: IMatch[] = [
     bottomTeam: '-',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 12,
@@ -494,6 +531,7 @@ const nineTeamsBracket: IMatch[] = [
     bottomTeam: '-',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 1,
@@ -514,6 +552,7 @@ const nineTeamsBracket: IMatch[] = [
     gameNumber: 1,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 3,
@@ -588,6 +627,7 @@ const tenTeamsBracket: IMatch[] = [
     gameNumber: 9,
     startTime: '-',
     state: 'SCHEDULED',
+    stage: FINAL_STAGE,
   },
   {
     id: 13,
@@ -599,6 +639,7 @@ const tenTeamsBracket: IMatch[] = [
     bottomTeam: 'Game 4 Winner',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 14,
@@ -610,6 +651,7 @@ const tenTeamsBracket: IMatch[] = [
     bottomTeam: 'Game 6 Winner',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 9,
@@ -622,6 +664,7 @@ const tenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 10,
@@ -634,6 +677,7 @@ const tenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 11,
@@ -646,6 +690,7 @@ const tenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 12,
@@ -658,6 +703,7 @@ const tenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 1,
@@ -678,6 +724,7 @@ const tenTeamsBracket: IMatch[] = [
     gameNumber: 1,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 3,
@@ -728,6 +775,7 @@ const tenTeamsBracket: IMatch[] = [
     gameNumber: 2,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 8,
@@ -752,6 +800,7 @@ const elevenTeamsBracket: IMatch[] = [
     gameNumber: 10,
     startTime: '-',
     state: 'SCHEDULED',
+    stage: FINAL_STAGE,
   },
   {
     id: 13,
@@ -763,6 +812,7 @@ const elevenTeamsBracket: IMatch[] = [
     bottomTeam: 'Game 5 Winner',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 14,
@@ -774,6 +824,7 @@ const elevenTeamsBracket: IMatch[] = [
     bottomTeam: 'Game 7 Winner',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 9,
@@ -786,6 +837,7 @@ const elevenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 10,
@@ -798,6 +850,7 @@ const elevenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 11,
@@ -810,6 +863,7 @@ const elevenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 12,
@@ -822,6 +876,7 @@ const elevenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 1,
@@ -842,6 +897,7 @@ const elevenTeamsBracket: IMatch[] = [
     gameNumber: 1,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 3,
@@ -852,6 +908,7 @@ const elevenTeamsBracket: IMatch[] = [
     gameNumber: 2,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 4,
@@ -892,6 +949,7 @@ const elevenTeamsBracket: IMatch[] = [
     gameNumber: 3,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 8,
@@ -916,6 +974,7 @@ const twelveTeamsBracket: IMatch[] = [
     gameNumber: 11,
     startTime: '-',
     state: 'SCHEDULED',
+    stage: FINAL_STAGE,
   },
   {
     id: 13,
@@ -927,6 +986,7 @@ const twelveTeamsBracket: IMatch[] = [
     bottomTeam: 'Game 6 Winner',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 14,
@@ -938,7 +998,7 @@ const twelveTeamsBracket: IMatch[] = [
     bottomTeam: 'Game 8 Winner',
     startTime: '-',
     state: 'SCHEDULED',
-    tournamentRoundText: 'Quarter-finals',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 9,
@@ -951,6 +1011,7 @@ const twelveTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 10,
@@ -963,6 +1024,7 @@ const twelveTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 11,
@@ -975,6 +1037,7 @@ const twelveTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 12,
@@ -987,6 +1050,7 @@ const twelveTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 1,
@@ -1007,6 +1071,7 @@ const twelveTeamsBracket: IMatch[] = [
     gameNumber: 1,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 3,
@@ -1017,6 +1082,7 @@ const twelveTeamsBracket: IMatch[] = [
     gameNumber: 2,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 4,
@@ -1047,6 +1113,7 @@ const twelveTeamsBracket: IMatch[] = [
     gameNumber: 3,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 7,
@@ -1057,6 +1124,7 @@ const twelveTeamsBracket: IMatch[] = [
     gameNumber: 4,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 8,
@@ -1081,6 +1149,7 @@ const thirteenTeamsBracket: IMatch[] = [
     gameNumber: 12,
     startTime: '-',
     state: 'SCHEDULED',
+    stage: FINAL_STAGE,
   },
   {
     id: 13,
@@ -1092,6 +1161,7 @@ const thirteenTeamsBracket: IMatch[] = [
     bottomTeam: 'Game 7 Winner',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 14,
@@ -1103,6 +1173,7 @@ const thirteenTeamsBracket: IMatch[] = [
     bottomTeam: 'Game 9 Winner',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 9,
@@ -1115,6 +1186,7 @@ const thirteenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 10,
@@ -1127,6 +1199,7 @@ const thirteenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 11,
@@ -1139,6 +1212,7 @@ const thirteenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 12,
@@ -1151,6 +1225,7 @@ const thirteenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 1,
@@ -1171,6 +1246,7 @@ const thirteenTeamsBracket: IMatch[] = [
     gameNumber: 1,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 3,
@@ -1181,6 +1257,7 @@ const thirteenTeamsBracket: IMatch[] = [
     gameNumber: 2,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 4,
@@ -1191,6 +1268,7 @@ const thirteenTeamsBracket: IMatch[] = [
     gameNumber: 3,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 5,
@@ -1211,6 +1289,7 @@ const thirteenTeamsBracket: IMatch[] = [
     gameNumber: 4,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 7,
@@ -1245,6 +1324,7 @@ const fourteenTeamsBracket: IMatch[] = [
     gameNumber: 13,
     startTime: '-',
     state: 'SCHEDULED',
+    stage: FINAL_STAGE,
   },
   {
     id: 13,
@@ -1256,6 +1336,7 @@ const fourteenTeamsBracket: IMatch[] = [
     bottomTeam: 'Game 8 Winner',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 14,
@@ -1267,6 +1348,7 @@ const fourteenTeamsBracket: IMatch[] = [
     bottomTeam: 'Game 10 Winner',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 9,
@@ -1279,6 +1361,7 @@ const fourteenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 10,
@@ -1291,6 +1374,7 @@ const fourteenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 11,
@@ -1303,6 +1387,7 @@ const fourteenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 12,
@@ -1315,6 +1400,7 @@ const fourteenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 1,
@@ -1335,6 +1421,7 @@ const fourteenTeamsBracket: IMatch[] = [
     gameNumber: 1,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 3,
@@ -1345,6 +1432,7 @@ const fourteenTeamsBracket: IMatch[] = [
     gameNumber: 2,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 4,
@@ -1355,6 +1443,7 @@ const fourteenTeamsBracket: IMatch[] = [
     gameNumber: 3,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 5,
@@ -1365,6 +1454,7 @@ const fourteenTeamsBracket: IMatch[] = [
     gameNumber: 4,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 6,
@@ -1375,6 +1465,7 @@ const fourteenTeamsBracket: IMatch[] = [
     gameNumber: 5,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 7,
@@ -1385,6 +1476,7 @@ const fourteenTeamsBracket: IMatch[] = [
     gameNumber: 6,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 8,
@@ -1409,6 +1501,7 @@ const fifteenTeamsBracket: IMatch[] = [
     gameNumber: 14,
     startTime: '-',
     state: 'SCHEDULED',
+    stage: FINAL_STAGE,
   },
   {
     id: 13,
@@ -1420,6 +1513,7 @@ const fifteenTeamsBracket: IMatch[] = [
     bottomTeam: 'Game 9 Winner',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 14,
@@ -1431,6 +1525,7 @@ const fifteenTeamsBracket: IMatch[] = [
     bottomTeam: 'Game 11 Winner',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 9,
@@ -1443,6 +1538,7 @@ const fifteenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 10,
@@ -1455,6 +1551,7 @@ const fifteenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 11,
@@ -1467,6 +1564,7 @@ const fifteenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 12,
@@ -1479,6 +1577,7 @@ const fifteenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
 
   {
@@ -1500,6 +1599,7 @@ const fifteenTeamsBracket: IMatch[] = [
     gameNumber: 1,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 3,
@@ -1510,6 +1610,7 @@ const fifteenTeamsBracket: IMatch[] = [
     gameNumber: 2,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 4,
@@ -1520,6 +1621,7 @@ const fifteenTeamsBracket: IMatch[] = [
     gameNumber: 3,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 5,
@@ -1530,6 +1632,7 @@ const fifteenTeamsBracket: IMatch[] = [
     gameNumber: 4,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 6,
@@ -1540,6 +1643,7 @@ const fifteenTeamsBracket: IMatch[] = [
     gameNumber: 5,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 7,
@@ -1550,6 +1654,7 @@ const fifteenTeamsBracket: IMatch[] = [
     gameNumber: 6,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 8,
@@ -1560,6 +1665,7 @@ const fifteenTeamsBracket: IMatch[] = [
     gameNumber: 7,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
 ]
 
@@ -1574,6 +1680,7 @@ const sixteenTeamsBracket: IMatch[] = [
     gameNumber: 15,
     startTime: '-',
     state: 'SCHEDULED',
+    stage: FINAL_STAGE,
   },
   {
     id: 13,
@@ -1585,6 +1692,7 @@ const sixteenTeamsBracket: IMatch[] = [
     bottomTeam: 'Game 10 Winner',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 14,
@@ -1596,6 +1704,7 @@ const sixteenTeamsBracket: IMatch[] = [
     bottomTeam: 'Game 12 Winner',
     startTime: '-',
     state: 'SCHEDULED',
+    stage: SEMI_FINAL_STAGE,
   },
   {
     id: 9,
@@ -1608,6 +1717,7 @@ const sixteenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 10,
@@ -1620,6 +1730,7 @@ const sixteenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 11,
@@ -1632,6 +1743,7 @@ const sixteenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 12,
@@ -1644,6 +1756,7 @@ const sixteenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     tournamentRoundText: 'Quarter-finals',
+    stage: QUARTER_FINALS_STAGE,
   },
   {
     id: 1,
@@ -1654,6 +1767,7 @@ const sixteenTeamsBracket: IMatch[] = [
     startTime: '-',
     state: 'SCHEDULED',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 2,
@@ -1664,6 +1778,7 @@ const sixteenTeamsBracket: IMatch[] = [
     gameNumber: 2,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 3,
@@ -1674,6 +1789,7 @@ const sixteenTeamsBracket: IMatch[] = [
     gameNumber: 3,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 4,
@@ -1684,6 +1800,7 @@ const sixteenTeamsBracket: IMatch[] = [
     gameNumber: 4,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 5,
@@ -1694,6 +1811,7 @@ const sixteenTeamsBracket: IMatch[] = [
     gameNumber: 5,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 6,
@@ -1704,6 +1822,7 @@ const sixteenTeamsBracket: IMatch[] = [
     gameNumber: 6,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 7,
@@ -1714,6 +1833,7 @@ const sixteenTeamsBracket: IMatch[] = [
     gameNumber: 7,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
   {
     id: 8,
@@ -1724,6 +1844,7 @@ const sixteenTeamsBracket: IMatch[] = [
     gameNumber: 8,
     startTime: '-',
     participants: TWO_TEAMS,
+    stage: ROUND_OF_16_STAGE,
   },
 ]
 

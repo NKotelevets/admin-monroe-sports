@@ -2,7 +2,7 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 import { userApi } from '@/redux/user/user.api'
 
-import { IBlockedUserError, IBulkEditFEUser, IExtendedFEUser } from '@/common/interfaces/user'
+import { IBlockedUserError, IBulkEditError, IBulkEditFEUser, IExtendedFEUser } from '@/common/interfaces/user'
 
 interface IUserSliceState {
   user: IExtendedFEUser | null
@@ -15,6 +15,7 @@ interface IUserSliceState {
   selectedRecords: IBulkEditFEUser[]
   isCreateOperatorScreen: boolean
   blockedUserErrors: IBlockedUserError[]
+  editUsersErrors: IBulkEditError[]
 }
 
 const userSliceState: IUserSliceState = {
@@ -28,6 +29,7 @@ const userSliceState: IUserSliceState = {
   selectedRecords: [],
   isCreateOperatorScreen: false,
   blockedUserErrors: [],
+  editUsersErrors: [],
 }
 
 export const userSlice = createSlice({
@@ -54,6 +56,10 @@ export const userSlice = createSlice({
     },
     setIsCreateOperatorScreen: (state, action: PayloadAction<boolean>) => {
       state.isCreateOperatorScreen = action.payload
+    },
+
+    setEditUsersErrors: (state, action: PayloadAction<IBulkEditError[]>) => {
+      state.editUsersErrors = action.payload
     },
   },
   extraReducers: (builder) =>

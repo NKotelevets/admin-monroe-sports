@@ -116,9 +116,10 @@ const DEFAULT_LIMIT_RECORDS = 20
 
 interface IMasterTeamsMultipleSelectWithSearchProps {
   onChange: (value: { id: string; name: string }[]) => void
-  onBlur: () => void
+  onBlur?: () => void
   isError: boolean
   selectedTeams: { id: string; name: string }[]
+  canRemoveTeam?: boolean
 }
 
 const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSearchProps> = ({
@@ -126,6 +127,7 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
   isError,
   onBlur,
   selectedTeams,
+  canRemoveTeam = false,
 }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const { isComponentVisible, ref } = useIsActiveComponent(false)
@@ -211,13 +213,15 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
               <TeamNameWrapper key={option.id}>
                 {option.name}
 
-                <ReactSVG
-                  onClick={() => {
-                    handleOptionToggle(option)
-                  }}
-                  src={SilverCloseIcon}
-                  className="mg-l4 c-p"
-                />
+                {!canRemoveTeam && (
+                  <ReactSVG
+                    onClick={() => {
+                      handleOptionToggle(option)
+                    }}
+                    src={SilverCloseIcon}
+                    className="mg-l4 c-p"
+                  />
+                )}
               </TeamNameWrapper>
             ))}
           </Flex>

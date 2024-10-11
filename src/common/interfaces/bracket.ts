@@ -17,6 +17,7 @@ export interface IMatch {
   bottomTeam?: string
   participants: IParticipant[]
   primaryId?: string
+  stage?: string
 }
 
 export interface IBracket {

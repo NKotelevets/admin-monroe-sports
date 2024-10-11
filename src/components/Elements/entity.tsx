@@ -18,5 +18,6 @@ export const TitleStyle = styled.div<{ isError: boolean }>`
 export const Subtext = styled.div`
   color: #888791;
   font-size: 12px;
+  margin-right: 4px;
 `
 

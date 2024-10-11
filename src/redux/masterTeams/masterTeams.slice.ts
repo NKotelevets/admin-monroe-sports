@@ -13,7 +13,6 @@ interface IMasterTeamsSliceState {
   deletedRecordsErrors: []
   tableRecords: []
   duplicates: []
-  orderBy: string | null
 }
 
 const masterTeamsSliceState: IMasterTeamsSliceState = {
@@ -26,7 +25,6 @@ const masterTeamsSliceState: IMasterTeamsSliceState = {
   tableRecords: [],
   createdRecordsNames: [],
   duplicates: [],
-  orderBy: null,
 }
 
 export const masterTeamsSlice = createSlice({

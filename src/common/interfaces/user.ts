@@ -139,7 +139,7 @@ export interface IExtendedBEUser extends IBEUser {
       id: string
       first_name: string
       last_name: string
-      // TODO: add rest fields
+      // Contain other fields
     }[]
   } | null
 }
@@ -162,4 +162,12 @@ export interface IExtendedFEUser extends IFEUser {
 
 export interface IBulkEditFEUser extends IExtendedFEUser {
   userRoles: IFERole[]
+}
+
+export interface IBulkEditError {
+  error: string
+  first_name: string
+  gender: number
+  id: string
+  last_name: string
 }

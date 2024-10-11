@@ -32,6 +32,8 @@ interface IMasterTeamsTableProps {
   showCreatedRecords: boolean
 }
 
+type TFilterValueKey = 'name' | 'headCoachFullName' | 'teamAdminFullName'
+
 const showTotal = (total: number) => <MonroeBlueText>Total {total} items</MonroeBlueText>
 
 const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
@@ -117,12 +119,11 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
       const recordIds = data?.results.map((mT) => mT.id)
       setSelectedRecordsIds((prev) => [...prev, ...recordIds])
     }
-  }, [data?.count, isDeleteAllRecords])
+  }, [data, isDeleteAllRecords])
 
-  type TFilterValueKey = 'name'
-  type TFilters = Record<TFilterValueKey, FilterValue | null>
+  type TFilter = Record<TFilterValueKey, FilterValue | null>
 
-  const handleTableChange: TableProps<IFEMasterTeam>['onChange'] = (pagination, filters: TFilters, sorter) => {
+  const handleTableChange: TableProps<IFEMasterTeam>['onChange'] = (pagination, filters: TFilter, sorter) => {
     const newOffset = (pagination?.current && (pagination?.current - 1) * (pagination?.pageSize || 10)) || 0
     const newLimit = pagination?.pageSize || 10
     setTableParams({
@@ -137,19 +138,34 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
       setShowAdditionalHeader(false)
     }
 
+    const getBESortingField = (name: string) => {
+      if (name === 'headCoachFullName') return 'head_coach'
+
+      if (name === 'teamAdminFullName') return 'team_admin'
+
+      return name
+    }
+
     const getMasterTeamsParams: IGetMasterTeamsRequest = {
       offset: newOffset,
       limit: newLimit,
-      order_by: !Array.isArray(sorter) && sorter.order ? (sorter.order === 'descend' ? 'desc' : 'asc') : undefined,
+      order_by:
+        !Array.isArray(sorter) && sorter.order
+          ? sorter.order === 'descend'
+            ? `-${getBESortingField(sorter.field as string)}`
+            : getBESortingField(sorter.field as string)
+          : undefined,
       team_name: (filters?.['name']?.[0] as string) ?? undefined,
+      head_coach: (filters?.['headCoachFullName']?.[0] as string) ?? undefined,
+      team_admin: (filters?.['teamAdminFullName']?.[0] as string) ?? undefined,
     }
 
     getMasterTeams(getMasterTeamsParams)
 
     setPaginationParams({
-      offset: newOffset,
-      limit: newLimit,
-      ordering: !Array.isArray(sorter) && sorter.order ? (sorter.order === 'descend' ? 'desc' : 'asc') : null,
+      offset: getMasterTeamsParams.offset,
+      limit: getMasterTeamsParams.limit,
+      ordering: getMasterTeamsParams.order_by || null,
     })
   }
 
