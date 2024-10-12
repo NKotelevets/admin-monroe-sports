@@ -20,16 +20,15 @@ import MonroeModal from '@/components/MonroeModal'
 
 import BaseLayout from '@/layouts/BaseLayout'
 
-// import { useAppSlice } from '@/redux/hooks/useAppSlice'
+import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice'
+import { useBulkDeleteMasterTeamsMutation, useMasterTeamsImportCSVMutation } from '@/redux/masterTeams/masterTeams.api'
+
 import {
-  useMasterTeamsBulkDeleteMutation,
-  useMasterTeamsDeleteAllMutation,
-  useMasterTeamsImportCSVMutation,
-} from '@/redux/masterTeams/masterTeams.api'
-
-import { PATH_TO_CREATE_MASTER_TEAM, PATH_TO_MASTER_TEAMS_IMPORT_INFO } from '@/constants/paths'
-
+  PATH_TO_CREATE_MASTER_TEAM,
+  PATH_TO_DELETING_INFO_MASTER_TEAMS,
+  PATH_TO_MASTER_TEAMS_IMPORT_INFO,
+} from '@/common/constants/paths'
 import { IImportModalOptions } from '@/common/interfaces'
 
 const DEFAULT_IMPORT_MODAL_OPTIONS: IImportModalOptions = {
@@ -41,9 +40,7 @@ const DEFAULT_IMPORT_MODAL_OPTIONS: IImportModalOptions = {
 
 const MasterTeams = () => {
   const { total } = useMasterTeamsSlice()
-  // const { setInfoNotification, setAppNotification } = useAppSlice()
-  const [bulkDeleteSeasons, bulkDeleteSeasonsData] = useMasterTeamsBulkDeleteMutation()
-  const [deleteAllSeasons, deleteAllSeasonsData] = useMasterTeamsDeleteAllMutation()
+  const { setInfoNotification, setAppNotification } = useAppSlice()
   const [importSeasons] = useMasterTeamsImportCSVMutation()
   const [isOpenModal, setIsOpenModal] = useState(false)
   const [selectedRecordsIds, setSelectedRecordsIds] = useState<string[]>([])
@@ -56,6 +53,7 @@ const MasterTeams = () => {
   const deleteRecordsModalCount = isDeleteAllRecords ? total : selectedRecordsIds.length
   const deleteSeasonsText = deleteRecordsModalCount > 1 ? 'seasons' : 'season'
   const [fileKey, setFileKey] = useState('')
+  const [bulkDeleteMT, { isLoading }] = useBulkDeleteMasterTeamsMutation()
 
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
     setImportModalOptions(DEFAULT_IMPORT_MODAL_OPTIONS)
@@ -99,29 +97,30 @@ const MasterTeams = () => {
 
   const handleDelete = () => {
     handleCloseModal()
-    const deleteHandler = isDeleteAllRecords ? deleteAllSeasons() : bulkDeleteSeasons({ ids: selectedRecordsIds })
-    deleteHandler.unwrap().then(() => {
+    const deleteHandler = isDeleteAllRecords ? bulkDeleteMT([]) : bulkDeleteMT(selectedRecordsIds)
+    deleteHandler.unwrap().then((response) => {
       setSelectedRecordsIds([])
       setShowAdditionalHeader(false)
       setIsDeleteAllRecords(false)
 
-      // if (response.status !== 'green') {
-      //   setInfoNotification({
-      //     actionLabel: 'More info..',
-      //     message: `${response.success}/${response.total} seasons have been successfully removed.`,
-      //     redirectedPageUrl: PATH_TO_SEASONS_DELETING_INFO,
-      //   })
+      const message = `${response.success}/${response.total}  master teams have been successfully removed.`
 
-      //   return
-      // }
+      if (response.status !== 'green') {
+        setInfoNotification({
+          actionLabel: 'More info..',
+          message,
+          redirectedPageUrl: PATH_TO_DELETING_INFO_MASTER_TEAMS,
+        })
 
-      // if (response.status === 'green') {
-      //   setAppNotification({
-      //     message: `${response.success}/${response.total} seasons have been successfully removed.`,
-      //     timestamp: new Date().getTime(),
-      //     type: 'success',
-      //   })
-      // }
+        return
+      }
+
+      if (response.status === 'green') {
+        setAppNotification({
+          message,
+          type: 'success',
+        })
+      }
     })
   }
 
@@ -132,9 +131,7 @@ const MasterTeams = () => {
           <title>Admin Panel | Master Teams </title>
         </Helmet>
 
-        {(bulkDeleteSeasonsData.isLoading || deleteAllSeasonsData.isLoading) && (
-          <Loader text={`Deleting ${deleteRecordsModalCount} records`} />
-        )}
+        {isLoading && <Loader text={`Deleting ${deleteRecordsModalCount} records`} />}
 
         {isOpenModal && (
           <MonroeModal
@@ -144,12 +141,10 @@ const MasterTeams = () => {
             title={`Delete ${deleteRecordsModalCount > 1 ? deleteRecordsModalCount : ''} ${deleteSeasonsText}?`}
             type="warn"
             content={
-              <>
-                <p>
-                  Are you sure you want to delete {deleteRecordsModalCount > 1 ? deleteRecordsModalCount : 'this'}{' '}
-                  {deleteSeasonsText}?
-                </p>
-              </>
+              <p>
+                Are you sure you want to delete {deleteRecordsModalCount > 1 ? deleteRecordsModalCount : 'this'}{' '}
+                {deleteSeasonsText}?
+              </p>
             }
           />
         )}

@@ -1,3 +1,4 @@
+import { IIdName } from '@/common/interfaces'
 import { IFERole } from '@/common/interfaces/role'
 import { TGender, TRole } from '@/common/types'
 
@@ -100,13 +101,8 @@ export interface IBlockedUserError {
   gender: number
 }
 
-interface ITeam {
-  id: string
-  name: string
-}
-
 interface IAsEntity {
-  teams: ITeam[]
+  teams: IIdName[]
 }
 
 interface IOperator {
@@ -126,21 +122,22 @@ interface IOperator {
   email_contact: string
 }
 
+interface IBESupervised {
+  id: string
+  first_name: string
+  last_name: string
+  // Contain other fields
+}
+
 export interface IExtendedBEUser extends IBEUser {
   as_coach: IAsEntity | null
   as_player: IAsEntity | null
   operator: IOperator | null
-  as_head_coach: { id: string; name: string }[] | null
-  as_team_admin: { id: string; name: string }[] | null
+  as_head_coach: IIdName[] | null
+  as_team_admin: IIdName[] | null
   is_child: boolean
   as_supervisor: {
-    relation_type: number
-    supervised: {
-      id: string
-      first_name: string
-      last_name: string
-      // Contain other fields
-    }[]
+    supervised: IBESupervised[]
   } | null
 }
 
@@ -154,8 +151,8 @@ export interface IExtendedFEUser extends IFEUser {
   asCoach: IAsEntity | null
   asPlayer: IAsEntity | null
   operator: IOperator | null
-  asHeadCoach: { id: string; name: string }[] | null
-  asTeamAdmin: { id: string; name: string }[] | null
+  asHeadCoach: IIdName[] | null
+  asTeamAdmin: IIdName[] | null
   isChild: boolean
   asParent: null | IChildren[]
 }

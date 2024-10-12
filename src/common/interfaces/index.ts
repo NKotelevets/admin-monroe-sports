@@ -1,3 +1,5 @@
+import { TImportStatus } from '@/common/types'
+
 export interface IDetailedError {
   code: string
   details: string
@@ -18,11 +20,21 @@ export interface IIdName {
 export interface IImportModalOptions {
   filename: string
   errorMessage?: string
-  status: 'loading' | 'red' | 'green' | 'yellow'
+  status: TImportStatus
   isOpen: boolean
 }
 
 export interface IGetEntityResponse<T> {
   count: number
   data: T[]
+}
+
+export interface IAdditionalEmail {
+  email: string
+  is_verified: boolean
+}
+
+export interface IAdditionalPhone {
+  phone_number: string
+  is_verified: boolean
 }

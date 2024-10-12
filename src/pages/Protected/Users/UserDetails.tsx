@@ -26,9 +26,8 @@ import BaseLayout from '@/layouts/BaseLayout'
 import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useBulkBlockUsersMutation, useBulkEditMutation, useGetUserDetailsQuery } from '@/redux/user/user.api'
 
-import { PATH_TO_EDIT_USER, PATH_TO_USERS } from '@/constants/paths'
-
 import { FULL_GENDER_NAMES } from '@/common/constants'
+import { PATH_TO_EDIT_USER, PATH_TO_USERS } from '@/common/constants/paths'
 import { TGender } from '@/common/types'
 
 import CopyIcon from '@/assets/icons/copy.svg'

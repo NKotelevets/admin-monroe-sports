@@ -1,3 +1,4 @@
+import styled from '@emotion/styled'
 import Typography from 'antd/es/typography'
 import { FC, ReactNode } from 'react'
 
@@ -7,17 +8,20 @@ interface PropsWithChildren {
   onClick?: () => void
 }
 
+const StyledTypography = styled(Typography)<{ is_link: string }>`
+  font-size: 14px;
+  color: ${(props) => (props.is_link === 'true' ? 'rgba(62, 52, 202, 1)' : 'rgba(26, 22, 87, 0.85)')};
+  cursor: ${(props) => (props.is_link === 'true' ? 'pointer' : 'default')};
+
+  @media (width > 1660px) {
+    font-size: 16px;
+  }
+`
+
 const CellText: FC<PropsWithChildren> = ({ children, isLink = false, onClick }) => (
-  <Typography.Text
-    style={{
-      color: isLink ? 'rgba(62, 52, 202, 1)' : 'rgba(26, 22, 87, 0.85)',
-      fontSize: '14px',
-      cursor: isLink ? 'pointer' : 'default',
-    }}
-    onClick={onClick}
-  >
+  <StyledTypography is_link={`${isLink}`} onClick={onClick}>
     {children}
-  </Typography.Text>
+  </StyledTypography>
 )
 
 export default CellText

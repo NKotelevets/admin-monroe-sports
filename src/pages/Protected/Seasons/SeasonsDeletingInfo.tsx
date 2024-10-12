@@ -15,8 +15,7 @@ import BaseLayout from '@/layouts/BaseLayout'
 
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
 
-import { PATH_TO_LEAGUE_PAGE, PATH_TO_SEASONS, PATH_TO_SEASON_DETAILS } from '@/constants/paths'
-
+import { PATH_TO_LEAGUE_PAGE, PATH_TO_SEASONS, PATH_TO_SEASON_DETAILS } from '@/common/constants/paths'
 import { IDeletionSeasonItemError } from '@/common/interfaces/season'
 
 const BREADCRUMB_ITEMS = [

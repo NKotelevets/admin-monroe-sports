@@ -1,16 +1,7 @@
-import { IBEOperator } from './operator'
-
+import { IAdditionalEmail, IAdditionalPhone } from '@/common/interfaces'
 import { IBEDivision } from '@/common/interfaces/division'
-
-interface IAdditionalEmail {
-  email: string
-  is_verified: boolean
-}
-
-interface IAdditionalPhone {
-  phone_number: string
-  is_verified: boolean
-}
+import { IBELeague } from '@/common/interfaces/league'
+import { IBEOperator } from '@/common/interfaces/operator'
 
 interface IHeadCoachTeamAdmin {
   additional_emails: IAdditionalEmail[]
@@ -55,6 +46,7 @@ export interface IBEMasterTeam {
   team_administrator: string
   head_coach: IHeadCoachTeamAdmin | null
   team_admins: IHeadCoachTeamAdmin[] | null
+  leagues: IBELeague[]
 }
 
 export interface IFEMasterTeam {
@@ -66,12 +58,13 @@ export interface IFEMasterTeam {
   teamAdminId: string | null
   teamAdminFullName: string | null
   teamAdminEmail: string | null
+  leagues: IBELeague[]
 }
 
 export interface IGetMasterTeamsRequest {
   limit: number
   offset: number
-  order_by?: string | null
+  ordering?: string | null
   team_name?: string | null
   head_coach?: string | null
   league_name?: string | null

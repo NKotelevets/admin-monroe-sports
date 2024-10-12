@@ -1,10 +1,10 @@
 import styled from '@emotion/styled'
-import { Flex } from 'antd'
 import { FC, ReactNode, RefObject, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
-const MonroeTooltipContainer = styled.div`
+const MonroeTooltipContainer = styled.div<{ width: string }>`
   position: relative;
+  width: ${({ width }) => width};
 `
 
 const MonroeTooltipContent = styled.div`
@@ -33,6 +33,12 @@ const MonroeTooltipContent = styled.div`
   }
 `
 
+const TextWrapper = styled.div<{ height: string }>`
+  height: ${({ height }) => height};
+  padding-right: 4px;
+  overflow: auto;
+`
+
 interface IMonroeTooltipProps {
   text: ReactNode
   children: ReactNode
@@ -47,7 +53,7 @@ const MonroeTooltip: FC<IMonroeTooltipProps> = ({
   text,
   width,
   height = 'auto',
-  containerWidth,
+  containerWidth = 'auto',
   isHideModalOnIconClick = false,
 }) => {
   const [showTooltip, setShowTooltip] = useState(false)
@@ -61,9 +67,7 @@ const MonroeTooltip: FC<IMonroeTooltipProps> = ({
       ref={ref as RefObject<HTMLDivElement>}
       onMouseEnter={() => setShowTooltip(true)}
       onMouseLeave={() => setShowTooltip(false)}
-      style={{
-        width: containerWidth,
-      }}
+      width={containerWidth}
     >
       {showTooltip &&
         text &&
@@ -75,15 +79,7 @@ const MonroeTooltip: FC<IMonroeTooltipProps> = ({
               left,
             }}
           >
-            <Flex
-              style={{
-                maxHeight: height,
-                overflow: 'auto',
-                paddingRight: '4px',
-              }}
-            >
-              {text}
-            </Flex>
+            <TextWrapper height={height}>{text}</TextWrapper>
           </MonroeTooltipContent>,
           document.body,
         )}

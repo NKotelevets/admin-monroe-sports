@@ -13,8 +13,7 @@ import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
 import { useBulkEditMutation } from '@/redux/user/user.api'
 
-import { PATH_TO_BULK_EDIT_USER_ERRORS, PATH_TO_USERS } from '@/constants/paths'
-
+import { PATH_TO_BULK_EDIT_USER_ERRORS, PATH_TO_USERS } from '@/common/constants/paths'
 import { IRole } from '@/common/interfaces/user'
 import { TRole } from '@/common/types'
 
@@ -128,6 +127,10 @@ const UsersBulkEdit = () => {
             dataSource={selectedRecords}
             scroll={{
               x: 1000,
+            }}
+            style={{
+              overflow: 'clip !important',
+              overflowClipMargin: '40px',
             }}
           />
         </PageContainer>

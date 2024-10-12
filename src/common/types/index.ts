@@ -1,4 +1,6 @@
-export type TImportDeleteStatus = 'red' | 'green' | 'yellow'
+export type TDeleteStatus = 'red' | 'green' | 'yellow'
+
+export type TImportStatus = 'loading' | TDeleteStatus
 
 export type TErrorDuplicate = 'Duplicate' | 'Error'
 

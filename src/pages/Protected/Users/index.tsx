@@ -27,14 +27,13 @@ import { useAuthSlice } from '@/redux/hooks/useAuthSlice'
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
 import { useBulkBlockUsersMutation, useImportUsersCSVMutation } from '@/redux/user/user.api'
 
-import { DEFAULT_IMPORT_MODAL_OPTIONS } from '@/constants/import'
+import { DEFAULT_IMPORT_MODAL_OPTIONS } from '@/common/constants/import'
 import {
   PATH_TO_CREATE_USER,
   PATH_TO_USERS_BLOCKING_INFO,
   PATH_TO_USERS_BULK_EDIT,
   PATH_TO_USERS_IMPORT_INFO,
-} from '@/constants/paths'
-
+} from '@/common/constants/paths'
 import { IImportModalOptions } from '@/common/interfaces'
 
 import EditIcon from '@/assets/icons/black-edit.svg'

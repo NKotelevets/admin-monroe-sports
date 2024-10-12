@@ -5,34 +5,22 @@ import { FC } from 'react'
 
 import { TErrorDuplicate } from '@/common/types'
 
-const ErrorTagType = styled(Space)`
-  border: 1px solid #ff594d;
-  background-color: #fff1f0;
+const Tag = styled(Space)<{ text: TErrorDuplicate }>`
+  border: ${(props) => (props.text === 'Error' ? '1px solid #ff594d' : '1px solid #ffd770')};
+  background-color: ${(props) => (props.text === 'Error' ? '#fff1f0' : '#fff9eb')};
   padding: 0 8px;
   border-radius: 2px;
   font-size: 12px;
 `
 
-const DuplicateTagType = styled(Space)`
-  border: 1px solid #ffd770;
-  background-color: #fff9eb;
-  padding: 0 8px;
-  border-radius: 2px;
-  font-size: 12px;
+const TextWrapper = styled(Typography)<{ text: TErrorDuplicate }>`
+  color: ${(props) => (props.text === 'Error' ? '#BC261B' : 'rgb(243, 178, 9)')};
 `
 
 const TagType: FC<{ text?: TErrorDuplicate }> = ({ text = 'Error' }) => (
-  <>
-    {text === 'Error' ? (
-      <ErrorTagType>
-        <Typography style={{ color: '#BC261B' }}>{text}</Typography>
-      </ErrorTagType>
-    ) : (
-      <DuplicateTagType>
-        <Typography style={{ color: 'rgba(243, 178, 9, 1)' }}>{text}</Typography>
-      </DuplicateTagType>
-    )}
-  </>
+  <Tag text={text}>
+    <TextWrapper text={text}>{text}</TextWrapper>
+  </Tag>
 )
 
 export default TagType

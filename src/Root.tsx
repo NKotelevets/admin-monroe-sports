@@ -1,4 +1,3 @@
-import BulkEditErrors from './pages/Protected/Users/BulkUpdateErrors'
 import { Route, Routes } from 'react-router-dom'
 
 import SignIn from '@/pages/Auth/SingIn'
@@ -21,6 +20,7 @@ import SeasonsDeletingInfo from '@/pages/Protected/Seasons/SeasonsDeletingInfo'
 import SeasonsImportInfo from '@/pages/Protected/Seasons/SeasonsImportInfo'
 import Users from '@/pages/Protected/Users'
 import BlockingInfo from '@/pages/Protected/Users/BlockingInfo'
+import BulkEditErrors from '@/pages/Protected/Users/BulkUpdateErrors'
 import CreateUser from '@/pages/Protected/Users/CreateUser'
 import EditUser from '@/pages/Protected/Users/EditUser'
 import OperatorOnboarding from '@/pages/Protected/Users/OperatorOnboarding'
@@ -59,7 +59,7 @@ import {
   PATH_TO_USERS_BLOCKING_INFO,
   PATH_TO_USERS_BULK_EDIT,
   PATH_TO_USERS_IMPORT_INFO,
-} from '@/constants/paths'
+} from '@/common/constants/paths'
 
 const Root = () => (
   <AuthProvider>

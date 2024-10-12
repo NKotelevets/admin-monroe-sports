@@ -13,8 +13,7 @@ import BaseLayout from '@/layouts/BaseLayout'
 
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
 
-import { PATH_TO_SEASONS } from '@/constants/paths'
-
+import { PATH_TO_SEASONS } from '@/common/constants/paths'
 import { IImportSeasonTableRecord } from '@/common/interfaces/season'
 import { TSortOption } from '@/common/types'
 

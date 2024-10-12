@@ -23,7 +23,7 @@ import BaseLayout from '@/layouts/BaseLayout'
 
 import { useDeleteSeasonMutation, useGetSeasonDetailsQuery } from '@/redux/seasons/seasons.api'
 
-import { PATH_TO_EDIT_SEASON, PATH_TO_LEAGUE_PAGE, PATH_TO_SEASONS } from '@/constants/paths'
+import { PATH_TO_EDIT_SEASON, PATH_TO_LEAGUE_PAGE, PATH_TO_SEASONS } from '@/common/constants/paths'
 
 export const SeasonDetails = () => {
   const params = useParams<{ id: string }>()

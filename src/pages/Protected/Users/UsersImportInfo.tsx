@@ -17,9 +17,8 @@ import TextWithTooltip from '@/components/TextWithTooltip'
 
 import BaseLayout from '@/layouts/BaseLayout'
 
-import { PATH_TO_SEASONS } from '@/constants/paths'
-
 import { SHORT_GENDER_NAMES } from '@/common/constants'
+import { PATH_TO_SEASONS } from '@/common/constants/paths'
 import { TErrorDuplicate, TGender, TSortOption } from '@/common/types'
 
 import SyncIcon from '@/assets/icons/sync.svg'

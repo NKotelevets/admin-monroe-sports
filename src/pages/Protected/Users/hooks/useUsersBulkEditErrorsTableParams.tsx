@@ -6,9 +6,8 @@ import CellText from '@/components/Table/CellText'
 import MonroeFilterRadio from '@/components/Table/MonroeFilterRadio'
 import TextWithTooltip from '@/components/TextWithTooltip'
 
-import { PATH_TO_USERS } from '@/constants/paths'
-
 import { SHORT_GENDER_NAMES } from '@/common/constants'
+import { PATH_TO_USERS } from '@/common/constants/paths'
 import { IBulkEditError } from '@/common/interfaces/user'
 import { TGender } from '@/common/types'
 

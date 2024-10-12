@@ -190,9 +190,6 @@ export const MonroeDatePicker = styled(DatePicker)<{ is_error?: string }>`
   @media (width > 1660px) {
     min-height: 40px !important;
     font-size: 18px !important;
-
-    &.ant-picker input {
-    }
   }
 `
 
@@ -245,6 +242,14 @@ export const ViewTextInfo = styled(ViewText)`
 
 export const MonroeLightBlueText = styled(Typography)`
   color: #3e34ca;
+`
+
+export const MonroeErrorText = styled(Typography)`
+  color: #bc261b;
+`
+
+export const MonroeDarkBlueText = styled(Typography)`
+  color: rgba(26, 22, 87, 0.85);
 `
 
 export const ExpandedHeaderLeftText = styled(Typography)`

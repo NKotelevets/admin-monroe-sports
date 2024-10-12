@@ -30,7 +30,7 @@ import {
   PATH_TO_STANDINGS_FORMAT,
   PATH_TO_TIEBREAKERS,
   PATH_TO_USERS,
-} from '@/constants/paths'
+} from '@/common/constants/paths'
 
 import UserIcon from '@/assets/icons/header/user.svg'
 import MonroeIcon from '@/assets/icons/monroe.svg'

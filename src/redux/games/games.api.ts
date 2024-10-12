@@ -2,10 +2,10 @@ import { createApi } from '@reduxjs/toolkit/query/react'
 
 import baseQueryWithReAuth from '@/redux/reauthBaseQuery'
 
-import { TImportDeleteStatus } from '@/common/types'
+import { TDeleteStatus } from '@/common/types'
 
 interface IImportEventsCSVResponse {
-  status: TImportDeleteStatus
+  status: TDeleteStatus
 }
 
 export const gamesApi = createApi({

@@ -1,25 +1,8 @@
-import { Button, Checkbox, Flex, List, Typography } from 'antd'
+import { Checkbox, Flex, List } from 'antd'
 import { FilterDropdownProps } from 'antd/es/table/interface'
-import { CSSProperties, FC } from 'react'
+import { FC } from 'react'
 
-const getListItemStyles = (isSelected: boolean): CSSProperties => ({
-  padding: '5px 12px',
-  justifyContent: 'normal',
-  backgroundColor: isSelected ? '#F1F0FF' : 'transparent',
-  borderBlockEnd: 0,
-})
-
-const resetButtonStyles: CSSProperties = {
-  padding: '0 7px',
-  border: 0,
-  height: 'auto',
-}
-
-const okButtonStyles: CSSProperties = {
-  color: 'rgba(255, 255, 255, 1)',
-  padding: '0 7px',
-  height: 'auto',
-}
+import { ConfirmButton, ResetButton, StyledListItem, TextWrapper } from '@/components/Table/Elements'
 
 const MonroeFilter: FC<FilterDropdownProps> = ({ confirm, selectedKeys, setSelectedKeys, clearFilters, filters }) => (
   <Flex vertical>
@@ -39,48 +22,28 @@ const MonroeFilter: FC<FilterDropdownProps> = ({ confirm, selectedKeys, setSelec
         }
 
         return (
-          <List.Item style={getListItemStyles(isSelected)}>
-            <Checkbox
-              checked={selectedKeys.includes(item.value as string)}
-              onChange={handleChange}
-              style={{ marginRight: '8px' }}
-            />
-
-            <Typography
-              style={{
-                color: isSelected ? '#3E34CA' : 'rgba(26, 22, 87, 0.85)',
-              }}
-            >
-              {item.text}
-            </Typography>
-          </List.Item>
+          <StyledListItem is_selected={`${isSelected}`}>
+            <Checkbox checked={selectedKeys.includes(item.value as string)} onChange={handleChange} className="mg-r8" />
+            <TextWrapper is_selected={`${isSelected}`}>{item.text}</TextWrapper>
+          </StyledListItem>
         )
       }}
     />
 
-    <Flex
-      style={{
-        padding: '8px',
-      }}
-      justify="space-around"
-    >
-      <Button
-        type="default"
+    <Flex className="p8" justify="space-around">
+      <ResetButton
         onClick={() => {
           clearFilters && clearFilters()
           confirm()
         }}
-        style={{
-          ...resetButtonStyles,
-          color: selectedKeys.length ? 'rgba(188, 38, 27, 1)' : 'rgba(189, 188, 194, 1)',
-        }}
+        has_length={`${!!selectedKeys.length}`}
       >
         Reset
-      </Button>
+      </ResetButton>
 
-      <Button type="primary" onClick={() => confirm()} style={okButtonStyles}>
+      <ConfirmButton type="primary" onClick={() => confirm()}>
         OK
-      </Button>
+      </ConfirmButton>
     </Flex>
   </Flex>
 )

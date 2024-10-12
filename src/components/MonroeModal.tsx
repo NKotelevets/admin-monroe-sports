@@ -8,6 +8,17 @@ import WarningIcon from '@/assets/icons/warn.svg'
 
 type TMonroeModalType = 'warn'
 
+const Title = styled.h3`
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(26, 22, 87, 0.85);
+`
+
+const Subtitle = styled(Typography)`
+  font-size: 14px;
+  color: rgba(26, 22, 87, 0.85);
+`
+
 const MonroeModalOverlay = styled.div`
   position: fixed;
   background-color: rgba(41, 41, 48, 0.7);
@@ -42,31 +53,14 @@ const MonroeModal: FC<IMonroeModalProps> = ({ onCancel, onOk, title, content, ok
           },
         }}
       >
-        <Flex style={{ width: '416px' }}>
-          <div style={{ marginRight: '16px' }}>
+        <Flex className="w-416">
+          <div className="mg-r16">
             <ReactSVG src={WarningIcon} />
           </div>
 
           <div>
-            <Typography.Title
-              level={3}
-              style={{
-                fontSize: '16px',
-                fontWeight: 500,
-                color: 'rgba(26, 22, 87, 0.85)',
-              }}
-            >
-              {title}
-            </Typography.Title>
-
-            <Typography.Text
-              style={{
-                fontSize: '14px',
-                color: 'rgba(26, 22, 87, 0.85)',
-              }}
-            >
-              {content}
-            </Typography.Text>
+            <Title>{title}</Title>
+            <Subtitle>{content}</Subtitle>
           </div>
         </Flex>
       </Modal>

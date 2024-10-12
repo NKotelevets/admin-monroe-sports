@@ -29,8 +29,11 @@ import {
   useImportSeasonsCSVMutation,
 } from '@/redux/seasons/seasons.api'
 
-import { PATH_TO_CREATE_SEASON, PATH_TO_SEASONS_DELETING_INFO, PATH_TO_SEASONS_IMPORT_INFO } from '@/constants/paths'
-
+import {
+  PATH_TO_CREATE_SEASON,
+  PATH_TO_SEASONS_DELETING_INFO,
+  PATH_TO_SEASONS_IMPORT_INFO,
+} from '@/common/constants/paths'
 import { IImportModalOptions } from '@/common/interfaces'
 
 const DEFAULT_IMPORT_MODAL_OPTIONS: IImportModalOptions = {

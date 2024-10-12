@@ -16,8 +16,7 @@ import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice'
 import { useLazyGetMasterTeamsQuery } from '@/redux/masterTeams/masterTeams.api'
 
-import { PATH_TO_EDIT_MASTER_TEAM, PATH_TO_MASTER_TEAMS, PATH_TO_USERS } from '@/constants/paths'
-
+import { PATH_TO_EDIT_MASTER_TEAM, PATH_TO_MASTER_TEAMS, PATH_TO_USERS } from '@/common/constants/paths'
 import { IFEMasterTeam } from '@/common/interfaces/masterTeams'
 
 import CopyIcon from '@/assets/icons/copy.svg'
@@ -102,7 +101,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
     getMasterTeams({
       limit,
       offset,
-      order_by: ordering || undefined,
+      ordering: ordering || undefined,
     })
     clearFilters()
   }
@@ -139,7 +138,11 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
       dataIndex: 'teamAdminFullName',
       width: '240px',
       ...getColumnSearchProps('teamAdminFullName'),
-      sortOrder: ordering?.includes('team_admin') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
+      sortOrder: ordering?.includes('first_team_admin_first_name')
+        ? !ordering.startsWith('-')
+          ? 'ascend'
+          : 'descend'
+        : null,
       sorter: true,
       render: (_, record) => (
         <>
@@ -181,7 +184,11 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
       dataIndex: 'headCoachFullName',
       width: '240px',
       ...getColumnSearchProps('headCoachFullName'),
-      sortOrder: ordering?.includes('head_coach') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
+      sortOrder: ordering?.includes('head_coach_first_name')
+        ? !ordering.startsWith('-')
+          ? 'ascend'
+          : 'descend'
+        : null,
       sorter: true,
       render: (_, record) => (
         <>
@@ -218,12 +225,17 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
         </>
       ),
     },
-
     {
       title: 'Linked Leagues/Tourns',
       dataIndex: 'leagues',
       width: '200px',
-      render: () => '-',
+      render: (_, record) => (
+        <TextWithTooltip
+          maxLength={22}
+          text={record.leagues.map((l) => l.name).join(', ')}
+          onClick={() => navigate(PATH_TO_MASTER_TEAMS + '/' + record.id)}
+        />
+      ),
     },
 
     {

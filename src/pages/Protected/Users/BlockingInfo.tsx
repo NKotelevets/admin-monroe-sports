@@ -20,9 +20,8 @@ import BaseLayout from '@/layouts/BaseLayout'
 
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
 
-import { PATH_TO_USERS } from '@/constants/paths'
-
 import { SHORT_GENDER_NAMES } from '@/common/constants'
+import { PATH_TO_USERS } from '@/common/constants/paths'
 import { IBlockedUserError } from '@/common/interfaces/user'
 import { TGender } from '@/common/types'
 

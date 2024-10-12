@@ -42,8 +42,7 @@ import BaseLayout from '@/layouts/BaseLayout'
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
 import { useCreateSeasonMutation } from '@/redux/seasons/seasons.api'
 
-import { PATH_TO_SEASONS } from '@/constants/paths'
-
+import { PATH_TO_SEASONS } from '@/common/constants/paths'
 import { IBECreateSeasonBody } from '@/common/interfaces/season'
 
 import ShowAllIcon from '@/assets/icons/show-all.svg'

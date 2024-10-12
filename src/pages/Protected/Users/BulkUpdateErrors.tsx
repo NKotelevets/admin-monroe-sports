@@ -12,7 +12,7 @@ import BaseLayout from '@/layouts/BaseLayout'
 
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
 
-import { PATH_TO_USERS, PATH_TO_USERS_BULK_EDIT } from '@/constants/paths'
+import { PATH_TO_USERS, PATH_TO_USERS_BULK_EDIT } from '@/common/constants/paths'
 
 const BREAD_CRUMB_ITEMS = [
   {

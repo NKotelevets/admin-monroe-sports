@@ -26,8 +26,12 @@ import BaseLayout from '@/layouts/BaseLayout'
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
 import { useDeleteLeagueMutation, useGetLeagueQuery } from '@/redux/leagues/leagues.api'
 
-import { PATH_TO_CREATE_SEASON, PATH_TO_EDIT_LEAGUE, PATH_TO_LEAGUES, PATH_TO_SEASON_DETAILS } from '@/constants/paths'
-
+import {
+  PATH_TO_CREATE_SEASON,
+  PATH_TO_EDIT_LEAGUE,
+  PATH_TO_LEAGUES,
+  PATH_TO_SEASON_DETAILS,
+} from '@/common/constants/paths'
 import { IIdName } from '@/common/interfaces'
 
 import WhiteTShirtIcon from '@/assets/icons/white-team.svg'

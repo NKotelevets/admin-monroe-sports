@@ -12,8 +12,7 @@ import BaseLayout from '@/layouts/BaseLayout'
 
 import { useLeagueSlice } from '@/redux/hooks/useLeagueSlice'
 
-import { PATH_TO_LEAGUES } from '@/constants/paths'
-
+import { PATH_TO_LEAGUES } from '@/common/constants/paths'
 import { ILeagueDeletionItemError } from '@/common/interfaces/league'
 
 const BREADCRUMB_ITEMS = [

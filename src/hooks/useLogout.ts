@@ -5,7 +5,7 @@ import { useUserSlice } from '@/redux/hooks/useUserSlice'
 
 import { useCookies } from '@/hooks/useCookies'
 
-import { PATH_TO_SIGN_IN } from '@/constants/paths'
+import { PATH_TO_SIGN_IN } from '@/common/constants/paths'
 
 export const useLogout = () => {
   const { setRedirectToLogin, removeTokens } = useAuthSlice()

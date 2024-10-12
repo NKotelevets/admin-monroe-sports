@@ -8,9 +8,9 @@ import { FilterDropdownProps } from 'antd/es/table/interface'
 import { useRef } from 'react'
 import { ReactSVG } from 'react-svg'
 
-import ErrorDuplicateTag from '@/components/ErrorDuplicateTag'
 import CellText from '@/components/Table/CellText'
 import MonroeFilter from '@/components/Table/MonroeFilter'
+import TagType from '@/components/Table/TagType'
 import TextWithTooltip from '@/components/TextWithTooltip'
 
 import { ILeagueImportInfoTableRecord } from '@/common/interfaces/league'
@@ -115,7 +115,7 @@ export const useLeaguesImportInfoTableParams = (
       ],
       width: '112px',
       onFilter: (value, record) => value === record.type,
-      render: (value) => <ErrorDuplicateTag text={value} />,
+      render: (value) => <TagType text={value} />,
       filterDropdown: MonroeFilter,
       filterIcon: (filtered) => (
         <FilterFilled

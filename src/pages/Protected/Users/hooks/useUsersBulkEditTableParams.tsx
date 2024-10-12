@@ -16,8 +16,7 @@ import TextWithTooltip from '@/components/TextWithTooltip'
 
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
 
-import { PATH_TO_USERS } from '@/constants/paths'
-
+import { PATH_TO_USERS } from '@/common/constants/paths'
 import { IFERole } from '@/common/interfaces/role'
 import { IBulkEditFEUser } from '@/common/interfaces/user'
 import { TRole } from '@/common/types'
@@ -166,10 +165,7 @@ export const useUsersBulkEditTableParams = () => {
           }
 
           const updatedRecords = selectedRecords.map((selectedRecord) => {
-            if (selectedRecord.id === record.id) {
-              return updatedRecord
-            }
-
+            if (selectedRecord.id === record.id) return updatedRecord
             return selectedRecord
           })
 

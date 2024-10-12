@@ -22,9 +22,8 @@ import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
 import { useLazyGetUsersQuery, useSendInvitationMutation } from '@/redux/user/user.api'
 
-import { PATH_TO_EDIT_USER, PATH_TO_USERS } from '@/constants/paths'
-
 import { SHORT_GENDER_NAMES } from '@/common/constants'
+import { PATH_TO_EDIT_USER, PATH_TO_USERS } from '@/common/constants/paths'
 import { IExtendedFEUser } from '@/common/interfaces/user'
 import { TGender } from '@/common/types'
 

@@ -39,17 +39,10 @@ export const masterTeamsApi = createApi({
           teamAdminFullName: result.team_admins?.[0]
             ? result.team_admins[0].first_name + ' ' + result.team_admins[0].last_name
             : null,
+          leagues: result.leagues,
         })),
       }),
       providesTags: [MASTER_TEAMS_TAG],
-    }),
-
-    masterTeamsDeleteRecord: builder.mutation<void, string>({
-      query: (masterTeamId) => ({
-        url: `${masterTeamId}`,
-        method: 'DELETE',
-      }),
-      invalidatesTags: [MASTER_TEAMS_TAG],
     }),
 
     masterTeamsBulkDelete: builder.mutation<void, { ids: string[] }>({
@@ -84,7 +77,6 @@ export const masterTeamsApi = createApi({
       query: ({ id }) => ({
         url: `teams/teams/${id}/details`,
       }),
-      providesTags: [MASTER_TEAMS_TAG],
       keepUnusedDataFor: 0.0001,
       transformResponse: (response: IBEMasterTeamDetails) => ({
         name: response.name,
@@ -126,8 +118,31 @@ export const masterTeamsApi = createApi({
 
     deleteMasterTeam: builder.mutation<void, string>({
       query: (id) => ({
-        url: `teams/teams/${id}`,
+        url: `teams/teams/${id}/delete-as-admin`,
         method: 'DELETE',
+      }),
+      invalidatesTags: [MASTER_TEAMS_TAG],
+    }),
+
+    bulkDeleteMasterTeams: builder.mutation<
+      {
+        items: {
+          id: string
+          name: string
+          error: string
+        }[]
+        status: 'green' | 'red' | 'yellow'
+        total: number
+        success: number
+      },
+      string[]
+    >({
+      query: (ids) => ({
+        url: 'teams/teams/bulk-teams-delete',
+        body: {
+          ids,
+        },
+        method: 'POST',
       }),
       invalidatesTags: [MASTER_TEAMS_TAG],
     }),
@@ -135,7 +150,6 @@ export const masterTeamsApi = createApi({
 })
 
 export const {
-  useMasterTeamsDeleteRecordMutation,
   useMasterTeamsBulkDeleteMutation,
   useMasterTeamsDeleteAllMutation,
   useMasterTeamsImportCSVMutation,
@@ -144,5 +158,6 @@ export const {
   useCreateMasterTeamMutation,
   useGetMasterTeamQuery,
   useDeleteMasterTeamMutation,
+  useBulkDeleteMasterTeamsMutation,
 } = masterTeamsApi
 

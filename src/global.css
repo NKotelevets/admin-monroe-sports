@@ -383,8 +383,6 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
   border-color: #3E34CA !important;
 }
 
-
-
 .ant-checkbox-wrapper:hover .ant-checkbox-inner {
   border-color: rgba(136, 135, 145, 1) !important;
 }
@@ -428,10 +426,35 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
   margin-left: 4px;
 }
 
+.mg-l12 {
+  margin-left: 12px;
+}
+
 .mg-l8 {
   margin-left: 8px;
 }
 
+.mg-r8 {
+  margin-right: 8px;
+}
+
+.mg-r16 {
+  margin-right: 16px;
+}
+
+/* Paddings */
+.p8 {
+  padding: 8px;
+}
+
+.ph-5-v-12 {
+  padding: 5px 12px;
+}
+
+/* Color */
+.color-blue {
+  color: rgb(62, 52, 202)
+}
 
 /* Else */
 .hide-right-border::before {
@@ -440,4 +463,14 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
 
 .c-p {
   cursor: pointer;
+}
+
+/* Width */
+
+.w-416 {
+  width: 416px;
+}
+
+.w-256 {
+  width: 256px;
 }

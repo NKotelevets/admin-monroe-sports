@@ -13,8 +13,7 @@ import CellText from '@/components/Table/CellText'
 import MonroeFilter from '@/components/Table/MonroeFilter'
 import TagType from '@/components/Table/TagType'
 
-import { PATH_TO_LEAGUE_PAGE } from '@/constants/paths'
-
+import { PATH_TO_LEAGUE_PAGE } from '@/common/constants/paths'
 import { IImportSeasonTableRecord } from '@/common/interfaces/season'
 import { TSortOption } from '@/common/types'
 

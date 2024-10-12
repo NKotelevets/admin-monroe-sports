@@ -28,9 +28,8 @@ import MonroeTooltip from '@/components/MonroeTooltip'
 
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
 
-import { PATH_TO_EDIT_SEASON } from '@/constants/paths'
-import { PLAYOFFS_TEAMS_OPTIONS } from '@/constants/playoffsTeamsOptions'
-
+import { PATH_TO_EDIT_SEASON } from '@/common/constants/paths'
+import { PLAYOFFS_TEAMS_OPTIONS } from '@/common/constants/playoffsTeamsOptions'
 import { IBracket } from '@/common/interfaces/bracket'
 import { TBracketKeys } from '@/common/types/bracket'
 

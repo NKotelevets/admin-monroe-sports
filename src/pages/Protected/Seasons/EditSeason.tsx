@@ -50,8 +50,7 @@ import {
   useUpdateSeasonMutation,
 } from '@/redux/seasons/seasons.api'
 
-import { PATH_TO_EDIT_SEASON, PATH_TO_SEASONS } from '@/constants/paths'
-
+import { PATH_TO_EDIT_SEASON, PATH_TO_SEASONS } from '@/common/constants/paths'
 import { ICreateBESeason } from '@/common/interfaces/season'
 
 import FileExcel from '@/assets/icons/file-exel.svg'

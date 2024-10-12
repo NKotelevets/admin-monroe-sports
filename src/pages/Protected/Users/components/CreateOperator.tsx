@@ -28,8 +28,7 @@ import { useCreateOperatorMutation } from '@/redux/user/user.api'
 
 import { validateNumber } from '@/utils'
 
-import { PATH_TO_USERS } from '@/constants/paths'
-
+import { PATH_TO_USERS } from '@/common/constants/paths'
 import { IBEOperator } from '@/common/interfaces/operator'
 
 interface ICreateOperatorProps {

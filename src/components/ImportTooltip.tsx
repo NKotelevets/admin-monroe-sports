@@ -1,9 +1,12 @@
-import MonroeTooltip from './MonroeTooltip'
 import styled from '@emotion/styled'
 import { Flex, Tooltip } from 'antd'
 import Typography from 'antd/es/typography'
 import { FC, useState } from 'react'
 import { ReactSVG } from 'react-svg'
+
+import MonroeTooltip from '@/components/MonroeTooltip'
+
+import { TImportStatus } from '@/common/types'
 
 import CloseIcon from '@/assets/icons/close.svg'
 import ErrorIcon from '@/assets/icons/import-modal/error.svg'
@@ -11,8 +14,6 @@ import SuccessIcon from '@/assets/icons/import-modal/success.svg'
 import WarningIcon from '@/assets/icons/import-modal/warning.svg'
 import PaperClipIcon from '@/assets/icons/paper-clip.svg'
 import SpinIcon from '@/assets/icons/spin.svg'
-
-type TImportModalStatus = 'loading' | 'red' | 'green' | 'yellow'
 
 const ImportModalWrapper = styled(Flex)`
   position: fixed;
@@ -84,7 +85,7 @@ const MAX_FILE_NAME_CHARACTERS = 35
 interface IImportModalProps {
   title: string
   filename: string
-  status: TImportModalStatus
+  status: TImportStatus
   errorMessage?: string
   showInList: () => void
   redirectToImportInfo: () => void
@@ -111,7 +112,7 @@ const ImportModal: FC<IImportModalProps> = ({
       <Flex justify="space-between">
         <ImportModalTitle>{title}</ImportModalTitle>
 
-        <ReactSVG src={CloseIcon} onClick={onClose} style={{ cursor: 'pointer' }} />
+        <ReactSVG src={CloseIcon} onClick={onClose} className="c-p" />
       </Flex>
 
       <Tooltip title={errorMessage} color="rgba(62, 62, 72, 0.75)">
@@ -139,7 +140,7 @@ const ImportModal: FC<IImportModalProps> = ({
 
           {status === 'green' &&
             (!isHideRedirects && isHoveredContent ? (
-              <Typography style={{ color: 'rgba(62, 52, 202, 1)', cursor: 'pointer' }} onClick={showInList}>
+              <Typography className="c-p color-blue" onClick={showInList}>
                 Show in list
               </Typography>
             ) : (
@@ -150,7 +151,7 @@ const ImportModal: FC<IImportModalProps> = ({
 
           {status === 'yellow' &&
             (!isHideRedirects && isHoveredContent ? (
-              <Typography style={{ color: 'rgba(62, 52, 202, 1)', cursor: 'pointer' }} onClick={redirectToImportInfo}>
+              <Typography className="c-p color-blue" onClick={redirectToImportInfo}>
                 Import info
               </Typography>
             ) : (

@@ -44,8 +44,7 @@ import useIsActiveComponent from '@/hooks/useIsActiveComponent'
 
 import { validateNumber } from '@/utils'
 
-import { PATH_TO_SIGN_IN } from '@/constants/paths'
-
+import { PATH_TO_SIGN_IN } from '@/common/constants/paths'
 import { IUpdateOperator } from '@/common/interfaces/auth'
 
 import InfoCircleIcon from '@/assets/icons/info-circle.svg'

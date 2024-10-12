@@ -192,19 +192,6 @@ const UsersMultipleSelectWithSearch: FC<IUsersMultipleSelectWithSearchProps> = (
     }
   }
 
-  // useEffect(() => {
-  //   const getData = async () => {
-  //     const response = await getUsers({
-  //       limit: DEFAULT_LIMIT_RECORDS,
-  //       offset,
-  //     }).unwrap()
-
-  //     setUsers(response.data)
-  //   }
-
-  //   getData()
-  // }, [])
-
   return (
     <PageContainer ref={ref}>
       <Wrapper

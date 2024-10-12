@@ -1,7 +1,22 @@
+import styled from '@emotion/styled'
 import { Alert, Flex } from 'antd'
 import { useEffect, useRef, useState } from 'react'
 
 import { useAppSlice } from '@/redux/hooks/useAppSlice'
+
+const NotificationWrapper = styled(Flex)<{ is_message: string }>`
+  position: absolute;
+  right: 24px;
+  bottom: ${({ is_message }) => (is_message === 'true' ? '20px' : '5px')};
+  opacity: ${({ is_message }) => (is_message === 'true' ? 1 : 0)};
+  transition: all 0.3s linear;
+  z-index: 999;
+`
+
+const StyledAlert = styled(Alert)`
+  width: calc(40vw - 48px);
+  padding: 9px 16px;
+`
 
 interface IResetSeconds {
   resetSeconds: () => void
@@ -50,22 +65,9 @@ const Notification = () => {
   }, [notification.timestamp])
 
   return (
-    <Flex
-      style={{
-        position: 'absolute',
-        right: '24px',
-        bottom: notification.message ? '20px' : '5px',
-        opacity: notification.message ? 1 : 0,
-        transition: 'all 0.3s linear 0s',
-        zIndex: 999,
-      }}
-    >
+    <NotificationWrapper is_message={`${!!notification.message}`}>
       {notification.message && (
-        <Alert
-          style={{
-            width: 'calc(40vw - 48px)',
-            padding: '9px 16px',
-          }}
+        <StyledAlert
           message={notification.message}
           showIcon
           type={notification.type}
@@ -76,7 +78,7 @@ const Notification = () => {
           }}
         />
       )}
-    </Flex>
+    </NotificationWrapper>
   )
 }
 

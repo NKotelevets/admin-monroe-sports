@@ -1,8 +1,11 @@
 import { UserOutlined } from '@ant-design/icons'
-import { Avatar, Dropdown, Flex, MenuProps, Space, Typography } from 'antd'
+import styled from '@emotion/styled'
+import { Avatar, Dropdown, Flex, MenuProps, Space } from 'antd'
 import { Header } from 'antd/es/layout/layout'
-import { CSSProperties, useState } from 'react'
+import { useState } from 'react'
 import { ReactSVG } from 'react-svg'
+
+import { MonroeDarkBlueText, MonroeErrorText } from '@/components/Elements'
 
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
 
@@ -16,16 +19,21 @@ import SubMenuIcon from '@/assets/icons/header/sub-menu.svg'
 import UserIcon from '@/assets/icons/header/user.svg'
 import LogotypeIcon from '@/assets/icons/logotype.svg'
 
-const headerStyle: CSSProperties = {
-  height: 55,
-  backgroundColor: '#ffffff',
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  borderBottom: '1px solid  #F1F0FF',
-  padding: '0 16px',
-  width: '100vw',
-}
+const StyledHeader = styled(Header)`
+  height: 55px;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f1f0ff;
+  padding: 0 16px;
+  width: 100vw;
+`
+
+const StyledSpace = styled(Space)<{ is_rotated: string }>`
+  transform: ${(props) => (props.is_rotated === 'true' ? 'rotate(180deg)' : 'none')};
+  transition: all 0.3s lineal 0.5s;
+`
 
 const MonroeHeader = () => {
   const { user } = useUserSlice()
@@ -38,13 +46,7 @@ const MonroeHeader = () => {
       label: (
         <Space>
           <ReactSVG src={UserIcon} />
-          <Typography.Text
-            style={{
-              color: 'rgba(26, 22, 87, 0.85)',
-            }}
-          >
-            Profile
-          </Typography.Text>
+          <MonroeDarkBlueText>Profile</MonroeDarkBlueText>
         </Space>
       ),
     },
@@ -53,55 +55,46 @@ const MonroeHeader = () => {
       label: (
         <Space onClick={onLogOut}>
           <ReactSVG src={LogOutIcon} />
-          <Typography.Text
-            style={{
-              color: '#BC261B',
-            }}
-          >
-            Log out
-          </Typography.Text>
+          <MonroeErrorText>Log out</MonroeErrorText>
         </Space>
       ),
     },
   ]
 
   return (
-    <Header style={headerStyle}>
-      <Flex vertical={false} style={{ width: '256px' }} justify="center">
+    <StyledHeader>
+      <Flex className="w-256" justify="center">
         <ReactSVG src={LogotypeIcon} />
       </Flex>
 
-      <Flex vertical={false} align="center">
-        <Flex vertical={false}>
+      <Flex align="center">
+        <Flex>
           <ReactSVG className="header-icon" src={SearchIcon} />
         </Flex>
 
-        <Flex vertical={false}>
+        <Flex>
           <ReactSVG className="header-icon" src={QuestionCircleIcon} />
         </Flex>
 
-        <Flex vertical={false}>
+        <Flex>
           <ReactSVG className="header-icon" src={NotificationIcon} />
         </Flex>
 
-        <Flex vertical={false} align="center" style={{ marginLeft: '12px' }}>
+        <Flex className="mg-l12" align="center">
           <Avatar src={user?.photoS3Url} alt="avatar" size={32} icon={<UserOutlined />} />
 
           <Dropdown menu={{ items: DROPDOWN_MENU_ITEMS }} placement="bottomRight">
-            <Space
+            <StyledSpace
               onMouseMove={() => setIsRotateIcon(true)}
               onMouseLeave={() => setIsRotateIcon(false)}
-              style={{
-                transform: isRotateIcon ? 'rotate(180deg)' : 'none',
-                transition: 'all 0.3s lineal 0.5s',
-              }}
+              is_rotated={`${isRotateIcon}`}
             >
               <ReactSVG className="svg-wrapper" src={SubMenuIcon} />
-            </Space>
+            </StyledSpace>
           </Dropdown>
         </Flex>
       </Flex>
-    </Header>
+    </StyledHeader>
   )
 }
 

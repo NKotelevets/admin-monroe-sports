@@ -9,8 +9,7 @@ import { useNavigate } from 'react-router-dom'
 
 import TextWithTooltip from '@/components/TextWithTooltip'
 
-import { PATH_TO_LEAGUE_PAGE } from '@/constants/paths'
-
+import { PATH_TO_LEAGUE_PAGE } from '@/common/constants/paths'
 import { ILeagueDeletionItemError } from '@/common/interfaces/league'
 
 type TTablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>

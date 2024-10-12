@@ -1,3 +1,4 @@
+import { IAdditionalEmail, IAdditionalPhone } from '@/common/interfaces'
 import { IBEOperator } from '@/common/interfaces/operator'
 
 export interface ISignInResponse {
@@ -44,16 +45,6 @@ export interface IPrefilledData {
   invitation: {
     id: string
   }
-}
-
-interface IAdditionalEmail {
-  email: string
-  is_verified: boolean
-}
-
-interface IAdditionalPhone {
-  phone_number: string
-  is_verified: boolean
 }
 
 export interface ICreateUserBody {

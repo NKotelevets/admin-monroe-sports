@@ -18,7 +18,7 @@ import { useLazyGetUserQuery } from '@/redux/user/user.api'
 
 import { useCookies } from '@/hooks/useCookies'
 
-import { AUTH_PAGES, PATH_TO_LEAGUES } from '@/constants/paths'
+import { AUTH_PAGES, PATH_TO_LEAGUES } from '@/common/constants/paths'
 
 import classnames from './sign-in.module.css'
 

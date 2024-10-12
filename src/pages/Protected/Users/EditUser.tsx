@@ -46,9 +46,8 @@ import { useBulkEditMutation, useGetUserDetailsQuery } from '@/redux/user/user.a
 
 import { calculateUserRoles } from '@/utils/user'
 
-import { PATH_TO_USERS } from '@/constants/paths'
-
 import { FULL_GENDER_NAMES } from '@/common/constants'
+import { PATH_TO_USERS } from '@/common/constants/paths'
 import { IDetailedError } from '@/common/interfaces'
 import { IRole } from '@/common/interfaces/user'
 import { TGender, TRole } from '@/common/types'

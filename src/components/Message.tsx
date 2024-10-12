@@ -29,9 +29,7 @@ interface IMessageProps {
 
 const Message: FC<IMessageProps> = ({ text, type }) => (
   <MessageContainer is_error={`${type === 'error'}`}>
-    <div>
-      <ReactSVG src={type === 'error' ? ErrorIcon : SuccessIcon} />
-    </div>
+    <ReactSVG src={type === 'error' ? ErrorIcon : SuccessIcon} />
 
     <Text>{text}</Text>
   </MessageContainer>

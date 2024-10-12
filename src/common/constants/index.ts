@@ -12,3 +12,9 @@ export const FULL_GENDER_NAMES: Record<TGender, string> = {
   '2': 'Other',
 }
 
+export const OPERATOR_ROLE = 'Operator'
+export const MASTER_ADMIN_ROLE = 'Master Admin'
+export const PARENT_ROLE = 'Parent'
+export const CHILD_ROLE = 'Child'
+export const HEAD_COACH_ROLE = 'Head Coach'
+

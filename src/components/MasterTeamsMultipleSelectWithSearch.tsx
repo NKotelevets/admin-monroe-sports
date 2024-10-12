@@ -3,7 +3,7 @@ import { Subtext } from './Elements/entity'
 import styled from '@emotion/styled'
 import { Flex, Typography } from 'antd'
 import Checkbox from 'antd/es/checkbox/Checkbox'
-import { CSSProperties, ChangeEventHandler, FC, RefObject, useRef, useState } from 'react'
+import { ChangeEventHandler, FC, RefObject, useRef, useState } from 'react'
 import { ReactSVG } from 'react-svg'
 
 import { useLazyGetMasterTeamsQuery } from '@/redux/masterTeams/masterTeams.api'
@@ -65,10 +65,6 @@ const Container = styled.div`
   margin-top: 4px;
 `
 
-const defaultPadding: CSSProperties = {
-  padding: '5px 12px',
-}
-
 const SearchInput = styled.input<{ width: string }>`
   border: 0;
   background-color: transparent;
@@ -76,6 +72,8 @@ const SearchInput = styled.input<{ width: string }>`
   padding: 0;
   margin: 0;
   outline: none;
+
+  z-index: 999;
 
   &:focus,
   &:hover,
@@ -110,6 +108,11 @@ const SelectTeamText = styled(Typography)`
   @media (width > 1660px) {
     font-size: 16px;
   }
+`
+
+const TagList = styled(Flex)`
+  list-style: none;
+  flex-wrap: wrap;
 `
 
 const DEFAULT_LIMIT_RECORDS = 20
@@ -203,12 +206,7 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
             />
           )}
 
-          <Flex
-            style={{
-              listStyle: 'none',
-              flexWrap: 'wrap',
-            }}
-          >
+          <TagList>
             {selectedTeams.map((option) => (
               <TeamNameWrapper key={option.id}>
                 {option.name}
@@ -224,7 +222,7 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
                 )}
               </TeamNameWrapper>
             ))}
-          </Flex>
+          </TagList>
         </Flex>
 
         <SearchSelectIconWrapper isComponentVisible={isComponentVisible}>
@@ -249,7 +247,7 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
               ))}
             </List>
           ) : (
-            <List as="div" style={defaultPadding}>
+            <List as="div" className="ph-5-v-12">
               <Subtext>There's no match. Try a different name.</Subtext>
             </List>
           )}

@@ -18,7 +18,11 @@ import { useLeagueSlice } from '@/redux/hooks/useLeagueSlice'
 import { useImportLeaguesCSVMutation } from '@/redux/leagues/leagues.api'
 import { useBulkDeleteLeaguesMutation, useDeleteAllLeaguesMutation } from '@/redux/leagues/leagues.api'
 
-import { PATH_TO_CREATE_LEAGUE, PATH_TO_LEAGUES_DELETING_INFO, PATH_TO_LEAGUES_IMPORT_INFO } from '@/constants/paths'
+import {
+  PATH_TO_CREATE_LEAGUE,
+  PATH_TO_LEAGUES_DELETING_INFO,
+  PATH_TO_LEAGUES_IMPORT_INFO,
+} from '@/common/constants/paths'
 
 interface IImportModalOptions {
   filename: string

@@ -9,7 +9,7 @@ import { ExpandedHeaderLeftText, ExpandedTableHeader, MonroeBlueText, MonroeLigh
 import MonroeModal from '@/components/MonroeModal'
 
 import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice'
-import { useLazyGetMasterTeamsQuery, useMasterTeamsDeleteRecordMutation } from '@/redux/masterTeams/masterTeams.api'
+import { useDeleteMasterTeamMutation, useLazyGetMasterTeamsQuery } from '@/redux/masterTeams/masterTeams.api'
 
 import { IFEMasterTeam, IGetMasterTeamsRequest } from '@/common/interfaces/masterTeams'
 
@@ -69,14 +69,14 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
   })
   const [showDeleteSingleRecordModal, setShowDeleteSingleRecordModal] = useState(false)
   const [selectedRecordId, setSelectedRecordId] = useState('')
-  const [deleteRecord] = useMasterTeamsDeleteRecordMutation()
+  const [deleteMT] = useDeleteMasterTeamMutation()
   const { columns } = useMasterTeamsTable({
     setSelectedRecordId,
     setShowDeleteSingleRecordModal,
   })
 
   const handleDelete = () =>
-    deleteRecord(selectedRecordId)
+    deleteMT(selectedRecordId)
       .unwrap()
       .then(() => {
         setShowDeleteSingleRecordModal(false)
@@ -94,7 +94,7 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
     getMasterTeams({
       limit,
       offset,
-      order_by: ordering || undefined,
+      ordering: ordering || undefined,
     })
 
     return () => {
@@ -139,17 +139,15 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
     }
 
     const getBESortingField = (name: string) => {
-      if (name === 'headCoachFullName') return 'head_coach'
-
-      if (name === 'teamAdminFullName') return 'team_admin'
-
+      if (name === 'headCoachFullName') return 'head_coach_first_name'
+      if (name === 'teamAdminFullName') return 'first_team_admin_first_name'
       return name
     }
 
     const getMasterTeamsParams: IGetMasterTeamsRequest = {
       offset: newOffset,
       limit: newLimit,
-      order_by:
+      ordering:
         !Array.isArray(sorter) && sorter.order
           ? sorter.order === 'descend'
             ? `-${getBESortingField(sorter.field as string)}`
@@ -165,7 +163,7 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
     setPaginationParams({
       offset: getMasterTeamsParams.offset,
       limit: getMasterTeamsParams.limit,
-      ordering: getMasterTeamsParams.order_by || null,
+      ordering: getMasterTeamsParams.ordering || null,
     })
   }
 

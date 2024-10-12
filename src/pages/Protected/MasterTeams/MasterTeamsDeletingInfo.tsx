@@ -13,11 +13,9 @@ import TextWithTooltip from '@/components/TextWithTooltip'
 
 import BaseLayout from '@/layouts/BaseLayout'
 
-import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
+import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice'
 
-import { PATH_TO_MASTER_TEAMS, PATH_TO_SEASONS } from '@/constants/paths'
-
-import { IDeletionSeasonItemError } from '@/common/interfaces/season'
+import { PATH_TO_MASTER_TEAMS, PATH_TO_SEASONS } from '@/common/constants/paths'
 
 const BREADCRUMB_ITEMS = [
   {
@@ -31,17 +29,29 @@ const BREADCRUMB_ITEMS = [
 type TColumns<T> = TableProps<T>['columns']
 type TTablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>
 
-type TDataIndex = keyof IDeletionSeasonItemError
+type TDataIndex = keyof {
+  id: string
+  name: string
+  error: string
+}
 
 interface ITableParams {
   pagination?: TTablePaginationConfig
-  sortField?: SorterResult<IDeletionSeasonItemError>['field']
-  sortOrder?: SorterResult<IDeletionSeasonItemError>['order']
+  sortField?: SorterResult<{
+    id: string
+    name: string
+    error: string
+  }>['field']
+  sortOrder?: SorterResult<{
+    id: string
+    name: string
+    error: string
+  }>['order']
   filters?: Parameters<GetProp<TableProps, 'onChange'>>[1]
 }
 
 const MasterTeamsDeletingInfo = () => {
-  const { deletedRecordsErrors } = useSeasonSlice()
+  const { deletedRecordsErrors } = useMasterTeamsSlice()
   const [tableParams, setTableParams] = useState<ITableParams>({
     pagination: {
       current: 1,
@@ -58,7 +68,13 @@ const MasterTeamsDeletingInfo = () => {
 
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
 
-  const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IDeletionSeasonItemError> => ({
+  const getColumnSearchProps = (
+    dataIndex: TDataIndex,
+  ): TableColumnType<{
+    id: string
+    name: string
+    error: string
+  }> => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
         <Input
@@ -113,7 +129,11 @@ const MasterTeamsDeletingInfo = () => {
     },
   })
 
-  const columns: TColumns<IDeletionSeasonItemError> = [
+  const columns: TColumns<{
+    id: string
+    name: string
+    error: string
+  }> = [
     {
       title: 'Team Name',
       dataIndex: 'name',
@@ -138,7 +158,11 @@ const MasterTeamsDeletingInfo = () => {
     },
   ]
 
-  const handleTableChange: TableProps<IDeletionSeasonItemError>['onChange'] = (pagination, filters, sorter) => {
+  const handleTableChange: TableProps<{
+    id: string
+    name: string
+    error: string
+  }>['onChange'] = (pagination, filters, sorter) => {
     setTableParams({
       pagination,
       filters,

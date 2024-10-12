@@ -27,8 +27,7 @@ import BaseLayout from '@/layouts/BaseLayout'
 import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useDeleteMasterTeamMutation, useGetMasterTeamQuery } from '@/redux/masterTeams/masterTeams.api'
 
-import { PATH_TO_EDIT_MASTER_TEAM, PATH_TO_MASTER_TEAMS, PATH_TO_USERS } from '@/constants/paths'
-
+import { PATH_TO_EDIT_MASTER_TEAM, PATH_TO_MASTER_TEAMS, PATH_TO_USERS } from '@/common/constants/paths'
 import { IDetailedError } from '@/common/interfaces'
 
 import CopyIcon from '@/assets/icons/copy.svg'
@@ -165,7 +164,7 @@ const MasterTeamDetails = () => {
                         <Flex align="center">
                           <DetailValue>{teamAdministrator.phone}</DetailValue>
                           <div
-                            onClick={() => handleCopyContent(teamAdministrator.phone as string, 'email')}
+                            onClick={() => handleCopyContent(teamAdministrator.phone as string, 'phone')}
                             style={{ marginLeft: '8px', cursor: 'pointer' }}
                           >
                             <ReactSVG src={CopyIcon} />
@@ -203,7 +202,7 @@ const MasterTeamDetails = () => {
                     <Flex align="center">
                       <DetailValue>{data.headCoach.phone}</DetailValue>
                       <div
-                        onClick={() => handleCopyContent(data.headCoach.phone as string, 'email')}
+                        onClick={() => handleCopyContent(data.headCoach.phone as string, 'phone')}
                         style={{ marginLeft: '8px', cursor: 'pointer' }}
                       >
                         <ReactSVG src={CopyIcon} />
@@ -281,7 +280,7 @@ const MasterTeamDetails = () => {
                         <Flex align="center">
                           <DetailValue>{player.phone}</DetailValue>
                           <div
-                            onClick={() => handleCopyContent(player.phone as string, 'email')}
+                            onClick={() => handleCopyContent(player.phone as string, 'phone')}
                             style={{ marginLeft: '8px', cursor: 'pointer' }}
                           >
                             <ReactSVG src={CopyIcon} />

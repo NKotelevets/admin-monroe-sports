@@ -1,4 +1,4 @@
-import { IMatch } from './bracket'
+import { IMatch } from '@/common/interfaces/bracket'
 
 interface IBEMatchParticipant {
   created_at?: string
@@ -39,7 +39,7 @@ interface IBEBracket {
   id: number
 }
 
-interface IBESubdivision {
+export interface IBESubdivision {
   id?: string
   name: string
   description: string

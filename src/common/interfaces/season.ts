@@ -1,6 +1,8 @@
-import { IBEDivision, IFEDivision } from '@/common/interfaces/division'
+import { IIdName } from '.'
+
+import { IBEDivision, IBESubdivision, IFEDivision } from '@/common/interfaces/division'
 import { IBELeague } from '@/common/interfaces/league'
-import { TErrorDuplicate, TImportDeleteStatus } from '@/common/types'
+import { TDeleteStatus, TErrorDuplicate } from '@/common/types'
 
 interface ISeasonCommonFields {
   id: string
@@ -65,20 +67,7 @@ interface IImportSeasonSuccess {
   id: string
   name: string
   description: string
-  divisions: {
-    id: string
-    name: string
-    description: string
-    sub_division: {
-      name: string
-      description: string
-      playoff_format: number
-      standings_format: number
-      tiebreakers_format: number
-      brackets: []
-      changed: boolean
-    }[]
-  }[]
+  divisions: IBEDivision[]
 }
 
 interface IImportSeasonError {
@@ -95,7 +84,7 @@ interface IImportSeasonDuplicate {
 }
 
 export interface IImportSeasonsResponse {
-  status: TImportDeleteStatus
+  status: TDeleteStatus
   success?: IImportSeasonSuccess[]
   errors?: IImportSeasonError[]
   duplicates?: IImportSeasonDuplicate[]
@@ -109,7 +98,7 @@ export interface IDeletionSeasonItemError {
 }
 
 export interface IDeleteSeasonsResponse {
-  status: TImportDeleteStatus
+  status: TDeleteStatus
   total: number
   success: number
   items: IDeletionSeasonItemError[]
@@ -173,13 +162,7 @@ export interface ISeasonReviewUpdateData {
 interface ICreateSeasonDivision {
   name: string
   description: string | null
-  sub_division: {
-    name: string
-    description: string | null
-    playoff_format: number
-    standings_format: number
-    tiebreakers_format: number
-  }[]
+  sub_division: Omit<IBESubdivision, 'brackets' | 'changed'>[]
 }
 
 export interface IBECreateSeasonBody {
@@ -190,15 +173,17 @@ export interface IBECreateSeasonBody {
   divisions: ICreateSeasonDivision[]
 }
 
+interface ICreateSeasonErrorDetailsDivisions {
+  name?: string
+  sub_division?: Pick<IIdName, 'name'>[]
+}
+
+interface ICreateSeasonErrorDetails {
+  name?: string
+  divisions?: ICreateSeasonErrorDetailsDivisions[]
+}
+
 export interface ICreateSeasonError {
   code: string
-  details: {
-    name?: string
-    divisions?: {
-      name?: string
-      sub_division?: {
-        name: string
-      }[]
-    }[]
-  }
+  details: ICreateSeasonErrorDetails
 }

@@ -20,8 +20,7 @@ import TextWithTooltip from '@/components/TextWithTooltip'
 import { useLeagueSlice } from '@/redux/hooks/useLeagueSlice'
 import { useLazyGetLeaguesQuery } from '@/redux/leagues/leagues.api'
 
-import { PATH_TO_EDIT_LEAGUE, PATH_TO_LEAGUE_PAGE } from '@/constants/paths'
-
+import { PATH_TO_EDIT_LEAGUE, PATH_TO_LEAGUE_PAGE } from '@/common/constants/paths'
 import { IFELeague } from '@/common/interfaces/league'
 
 import DeleteIcon from '@/assets/icons/delete.svg'

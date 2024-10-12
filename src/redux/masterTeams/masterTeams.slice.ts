@@ -10,7 +10,11 @@ interface IMasterTeamsSliceState {
   total: number
   ordering: string | null
   createdRecordsNames: string[]
-  deletedRecordsErrors: []
+  deletedRecordsErrors: {
+    id: string
+    name: string
+    error: string
+  }[]
   tableRecords: []
   duplicates: []
 }
@@ -48,9 +52,13 @@ export const masterTeamsSlice = createSlice({
     },
   },
   extraReducers: (builder) =>
-    builder.addMatcher(masterTeamsApi.endpoints.getMasterTeams.matchFulfilled, (state, action) => {
-      state.total = action.payload.count
-      state.masterTeams = action.payload.results
-    }),
+    builder
+      .addMatcher(masterTeamsApi.endpoints.getMasterTeams.matchFulfilled, (state, action) => {
+        state.total = action.payload.count
+        state.masterTeams = action.payload.results
+      })
+      .addMatcher(masterTeamsApi.endpoints.bulkDeleteMasterTeams.matchFulfilled, (state, action) => {
+        state.deletedRecordsErrors = action.payload.items
+      }),
 })
 

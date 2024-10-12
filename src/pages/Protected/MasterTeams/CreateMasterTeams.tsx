@@ -39,8 +39,7 @@ import BaseLayout from '@/layouts/BaseLayout'
 import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useCreateMasterTeamMutation } from '@/redux/masterTeams/masterTeams.api'
 
-import { PATH_TO_MASTER_TEAMS } from '@/constants/paths'
-
+import { PATH_TO_MASTER_TEAMS } from '@/common/constants/paths'
 import { IDetailedError } from '@/common/interfaces'
 
 import ShowAllIcon from '@/assets/icons/show-all.svg'

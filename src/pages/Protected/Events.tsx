@@ -10,7 +10,7 @@ import BaseLayout from '@/layouts/BaseLayout'
 
 import { useImportEventsCSVMutation } from '@/redux/games/games.api'
 
-import { DEFAULT_IMPORT_MODAL_OPTIONS } from '@/constants/import'
+import { DEFAULT_IMPORT_MODAL_OPTIONS } from '@/common/constants/import'
 
 const Events = () => {
   const [fileKey, setFileKey] = useState('')

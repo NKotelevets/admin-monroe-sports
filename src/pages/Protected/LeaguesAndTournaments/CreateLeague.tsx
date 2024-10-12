@@ -37,9 +37,8 @@ import BaseLayout from '@/layouts/BaseLayout'
 
 import { useCreateLeagueMutation } from '@/redux/leagues/leagues.api'
 
-import { PATH_TO_LEAGUES } from '@/constants/paths'
-import { PLAYOFFS_TEAMS_OPTIONS } from '@/constants/playoffsTeamsOptions'
-
+import { PATH_TO_LEAGUES } from '@/common/constants/paths'
+import { PLAYOFFS_TEAMS_OPTIONS } from '@/common/constants/playoffsTeamsOptions'
 import { IFECreateLeagueBody } from '@/common/interfaces/league'
 
 import InfoCircleIcon from '@/assets/icons/info-circle.svg'

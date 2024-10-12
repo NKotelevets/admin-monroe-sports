@@ -12,8 +12,7 @@ import MonroeTooltip from '@/components/MonroeTooltip'
 import CellText from '@/components/Table/CellText'
 import TextWithTooltip from '@/components/TextWithTooltip'
 
-import { PATH_TO_EDIT_SEASON, PATH_TO_LEAGUE_PAGE, PATH_TO_SEASON_DETAILS } from '@/constants/paths'
-
+import { PATH_TO_EDIT_SEASON, PATH_TO_LEAGUE_PAGE, PATH_TO_SEASON_DETAILS } from '@/common/constants/paths'
 import { IBEDivision } from '@/common/interfaces/division'
 import { IFESeason } from '@/common/interfaces/season'
 
