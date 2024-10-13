@@ -5,7 +5,6 @@ import Flex from 'antd/es/flex'
 import { DefaultOptionType } from 'antd/es/select'
 import dayjs from 'dayjs'
 import { FieldArray, Form, Formik, FormikHelpers } from 'formik'
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
@@ -91,7 +90,6 @@ const UserForm = () => {
   const [createUserAsAdmin] = useCreateUserAsAdminMutation()
   const isAdmin = user?.isSuperuser
   const maximumRoles = isAdmin ? MAX_CREATED_ROLES_BY_ADMIN : MAX_CREATED_ROLES_BY_OPERATOR
-  const [activeKey, setActiveKey] = useState(0)
 
   const goBack = () => navigation(PATH_TO_USERS)
 
@@ -328,7 +326,6 @@ const UserForm = () => {
                                 expandIconPosition="end"
                                 expandIcon={() => <ReactSVG src={ShowAllIcon} />}
                                 accordion
-                                activeKey={activeKey}
                               />
 
                               <MonroeTooltip
@@ -349,7 +346,6 @@ const UserForm = () => {
                                   iconPosition="start"
                                   onClick={() => {
                                     push(INITIAL_ROLE_DATA)
-                                    setActiveKey(values.roles.length - 1)
                                   }}
                                   className="w-auto"
                                 >

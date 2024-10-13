@@ -223,6 +223,7 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
 /* Collapse styles - start */
 .ant-collapse-item {
   border-bottom: 0 !important;
+  width: auto !important;
 }
 
 .ant-collapse-header {

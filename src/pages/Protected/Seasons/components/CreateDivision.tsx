@@ -34,6 +34,14 @@ const TextButton = styled(Button)`
   box-shadow: none;
 `
 
+const StyledAccordion = styled(Accordion)`
+  width: 320px;
+
+  @media (width > 1660px) {
+    width: 568px;
+  }
+`
+
 interface ICreateDivisionProps {
   index: number
   division: ICreateSeasonDivision
@@ -175,13 +183,13 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
                 <div>
                   {!!division.subdivisions.length && (
                     <>
-                      <Accordion
+                      <StyledAccordion
                         items={collapsedDivisionItems}
                         expandIconPosition="end"
                         defaultActiveKey={[0]}
                         expandIcon={() => <ReactSVG src={ShowAllIcon} />}
                         accordion
-                        className="subdivision-collapse w-full"
+                        className="subdivision-collapse"
                       />
 
                       <MonroeDivider />

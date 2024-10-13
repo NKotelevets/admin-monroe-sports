@@ -4,6 +4,7 @@ import { Flex, Typography } from 'antd'
 import MonroeButton from '@/components/MonroeButton'
 
 export const Wrapper = styled(Flex)`
+  flex-direction: column;
   justify-content: flex-start;
   width: 400px;
 
@@ -55,11 +56,10 @@ export const SignInButton = styled(MonroeButton)`
 
 export const ForgotPasswordWrapper = styled(Typography)`
   color: #3e34ca;
+  margin-top: 5px;
 
   @media (width > 1660px) {
-    .forgot-password {
-      font-size: 22px;
-    }
+    font-size: 18px;
   }
 `
 

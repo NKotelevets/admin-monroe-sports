@@ -195,7 +195,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
   }
 
   return (
-    <CreateEntityContainer ref={ref} isError={isError}>
+    <CreateEntityContainer className="w-auto" ref={ref} isError={isError}>
       {isShowModal && (
         <MonroeModal
           okText="Confirm"
