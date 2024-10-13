@@ -4,3 +4,8 @@ export interface IPaginationResponse<T> {
   next: string
   results: T
 }
+
+export interface IError {
+  code: string
+  details: string
+}

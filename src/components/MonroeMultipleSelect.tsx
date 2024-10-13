@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 import { Checkbox, Select } from 'antd'
 import { DefaultOptionType } from 'antd/es/select'
-import { CSSProperties, FC } from 'react'
+import { FC } from 'react'
 import { ReactSVG } from 'react-svg'
 
 import ArrowDownIcon from '@/assets/icons/arrow-down.svg'
@@ -11,25 +11,17 @@ interface IMonroeMultipleSelectProps {
   options: DefaultOptionType[]
   onChange: (value: string) => void
   name?: string
-  styles?: CSSProperties
   placeholder?: string
   value: string[]
   renderInside?: boolean
   onBlur?: () => void
+  className?: string
 }
 
-const CustomSelect: FC<IMonroeMultipleSelectProps> = ({
-  styles,
-  options,
-  value,
-  renderInside = false,
-  onBlur,
-  ...props
-}) => (
+const CustomSelect: FC<IMonroeMultipleSelectProps> = ({ options, value, renderInside = false, onBlur, ...props }) => (
   <Select
     suffixIcon={<ReactSVG src={ArrowDownIcon} />}
     mode="multiple"
-    style={styles}
     value={value as unknown as string}
     getPopupContainer={(trigger) => (renderInside ? trigger.parentNode : undefined)}
     onDropdownVisibleChange={(isOpen) => {

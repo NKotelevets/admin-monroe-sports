@@ -277,8 +277,9 @@ export const MainContainer = styled(Flex)`
   }
 `
 
-export const AccordionHeader = styled(Typography)`
+export const AccordionHeader = styled(Typography)<{ is_add_margin?: string }>`
   color: #1a1657;
   font-size: 16px;
   font-weight: 500;
+  margin-top: ${(props) => (props.is_add_margin === 'true' ? '12px' : '0px')};
 `

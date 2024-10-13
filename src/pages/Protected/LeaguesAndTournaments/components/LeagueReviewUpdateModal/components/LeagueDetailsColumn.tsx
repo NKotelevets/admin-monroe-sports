@@ -1,39 +1,35 @@
+import styled from '@emotion/styled'
 import { Flex, Typography } from 'antd'
-import { CSSProperties, FC } from 'react'
+import { FC } from 'react'
 
 import LeagueTagType from '@/pages/Protected/LeaguesAndTournaments/components/LeagueTagType'
 
 import { IFELeague } from '@/common/interfaces/league'
 
-const currentContainerStyle: CSSProperties = {
-  borderRight: '2px solid #F4F4F5',
-  paddingRight: '16px',
-}
+const Container = styled(Flex)<{ is_new: string }>`
+  flex: 1 1 50%;
+  flex-direction: column;
+  border-right: ${(props) => (props.is_new === 'true' ? '0' : '2px solid #F4F4F5')};
+  padding-left: ${(props) => (props.is_new === 'true' ? '0' : '16px')};
+  padding-right: ${(props) => (props.is_new === 'true' ? '16px' : '0')};
+`
 
-const newContainerStyle: CSSProperties = {
-  paddingLeft: '16px',
-}
+const Title = styled(Typography)`
+  color: #888791;
+  font-size: 12px;
+  margin-bottom: 8px;
+`
 
-const titleStyle: CSSProperties = {
-  color: '#888791',
-  fontSize: '12px',
-  marginBottom: '8px',
-}
+const ItemTitle = styled(Typography)<{ is_changed: string }>`
+  margin-bottom: 4px;
+  margin-right: 20px;
+  color: ${({ is_changed }) => (is_changed === 'true' ? 'rgba(26, 22, 87, 0.85)' : '#888791')};
+  font-weight: 500;
+`
 
-const getItemTitleStyle = (isChanged: boolean | undefined): CSSProperties => ({
-  marginBottom: '4px',
-  marginRight: '20px',
-  color: isChanged ? 'rgba(26, 22, 87, 0.85)' : '#888791',
-  fontWeight: 500,
-})
-
-const getItemValueStyle = (isChanged: boolean | undefined): CSSProperties => ({
-  color: isChanged ? '#333' : '#888791',
-})
-
-const itemContainerStyle: CSSProperties = {
-  marginBottom: '16px',
-}
+const ItemValueStyle = styled(Typography)<{ is_changed: string }>`
+  color: ${({ is_changed }) => (is_changed === 'true' ? '#333' : '#888791')};
+`
 
 interface ILeagueDetailsColumnProps {
   title: string
@@ -62,54 +58,48 @@ const LeagueDetailsColumn: FC<ILeagueDetailsColumnProps> = ({
   difference,
   playoffsTeams,
 }) => (
-  <Flex flex="1 1 50%" vertical style={isNew ? newContainerStyle : currentContainerStyle}>
-    <Typography.Text style={titleStyle}>{title}</Typography.Text>
+  <Container is_new={`${isNew}`}>
+    <Title>{title}</Title>
 
-    <Flex vertical style={itemContainerStyle}>
-      <Typography.Text style={getItemTitleStyle(difference['name'])}>Name:</Typography.Text>
-      <Typography.Text style={getItemValueStyle(difference['name'])}>{name}</Typography.Text>
+    <Flex vertical className="mg-b16">
+      <ItemTitle is_changed={`${!!difference['name']}`}>Name:</ItemTitle>
+      <ItemValueStyle is_changed={`${!!difference['name']}`}>{name}</ItemValueStyle>
     </Flex>
 
-    <Flex style={itemContainerStyle} align="center">
-      <Typography.Text style={getItemTitleStyle(difference['type'])}>Type:</Typography.Text>
+    <Flex className="mg-b16" align="center">
+      <ItemTitle is_changed={`${!!difference['type']}`}>Type:</ItemTitle>
       <LeagueTagType text={type} />
     </Flex>
 
-    <Flex vertical style={itemContainerStyle}>
-      <Typography.Text
-        style={getItemTitleStyle(difference['playoffFormat']) || getItemTitleStyle(difference['playoffsTeams'])}
-      >
+    <Flex vertical className="mg-b16">
+      <ItemTitle is_changed={`${!!difference['playoffFormat'] || !!difference['playoffsTeams']}`}>
         Default playoff format:
-      </Typography.Text>
-      <Typography.Text
-        style={getItemValueStyle(difference['playoffFormat']) || getItemValueStyle(difference['playoffsTeams'])}
-      >
+      </ItemTitle>
+      <ItemValueStyle is_changed={`${!!difference['playoffFormat'] || !!difference['playoffsTeams']}`}>
         {playoffFormat === 'Best Record Wins' ? playoffFormat : `${playoffFormat} (${playoffsTeams} playoffs’ teams)`}
-      </Typography.Text>
+      </ItemValueStyle>
     </Flex>
 
-    <Flex vertical style={itemContainerStyle}>
-      <Typography.Text style={getItemTitleStyle(difference['standingsFormat'])}>
-        Default standings format:
-      </Typography.Text>
-      <Typography.Text style={getItemValueStyle(difference['standingsFormat'])}>{standingsFormat}</Typography.Text>
+    <Flex vertical className="mg-b16">
+      <ItemTitle is_changed={`${!!difference['standingsFormat']}`}>Default standings format:</ItemTitle>
+      <ItemValueStyle is_changed={`${!!difference['standingsFormat']}`}>{standingsFormat}</ItemValueStyle>
     </Flex>
 
-    <Flex vertical style={itemContainerStyle}>
-      <Typography.Text style={getItemTitleStyle(difference['tiebreakersFormat'])}>Tiebreakers format:</Typography.Text>
-      <Typography.Text style={getItemValueStyle(difference['tiebreakersFormat'])}>{tiebreakersFormat}</Typography.Text>
+    <Flex vertical className="mg-b16">
+      <ItemTitle is_changed={`${!!difference['tiebreakersFormat']}`}>Tiebreakers format:</ItemTitle>
+      <ItemValueStyle is_changed={`${!!difference['tiebreakersFormat']}`}>{tiebreakersFormat}</ItemValueStyle>
     </Flex>
 
-    <Flex vertical style={itemContainerStyle}>
-      <Typography.Text style={getItemTitleStyle(difference['description'])}>Description:</Typography.Text>
-      <Typography.Text style={getItemValueStyle(difference['description'])}>{description}</Typography.Text>
+    <Flex vertical className="mg-b16">
+      <ItemTitle is_changed={`${!!difference['description']}`}>Description:</ItemTitle>
+      <ItemValueStyle is_changed={`${!!difference['description']}`}>{description}</ItemValueStyle>
     </Flex>
 
-    <Flex vertical style={itemContainerStyle}>
-      <Typography.Text style={getItemTitleStyle(difference['welcomeNote'])}>Welcome Note:</Typography.Text>
-      <Typography.Text style={getItemValueStyle(difference['welcomeNote'])}>{welcomeNote}</Typography.Text>
+    <Flex vertical className="mg-b16">
+      <ItemTitle is_changed={`${!!difference['welcomeNote']}`}>Welcome Note:</ItemTitle>
+      <ItemValueStyle is_changed={`${!!difference['welcomeNote']}`}>{welcomeNote}</ItemValueStyle>
     </Flex>
-  </Flex>
+  </Container>
 )
 
 export default LeagueDetailsColumn

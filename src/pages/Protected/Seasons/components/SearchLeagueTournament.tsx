@@ -1,6 +1,6 @@
 import styled from '@emotion/styled'
 import { Flex } from 'antd'
-import { CSSProperties, ChangeEvent, FC, RefObject, useEffect, useState } from 'react'
+import { ChangeEvent, FC, RefObject, useEffect, useState } from 'react'
 import { ReactSVG } from 'react-svg'
 
 import { SearchLeagueInput, SearchSelectIconWrapper } from '@/components/Elements'
@@ -45,10 +45,6 @@ const Container = styled.div`
   position: relative;
 `
 
-const defaultPadding: CSSProperties = {
-  padding: '5px 12px',
-}
-
 interface ISearchLeagueTournamentProps {
   setSelectedLeague: (data: IFELeague) => void
   selectedLeague: undefined | string
@@ -87,15 +83,16 @@ const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({
   const { handleScroll, ref: scrollRef } = useScroll(getData)
 
   useEffect(() => {
-    // eslint-disable-next-line no-extra-semi
-    ;(async () => {
+    const makeRequest = async () => {
       const response = await getLeagues({
         limit: DEFAULT_LIMIT_RECORDS,
         offset,
       }).unwrap()
 
       setLeaguesList(response.leagues || [])
-    })()
+    }
+
+    makeRequest()
   }, [])
 
   useEffect(() => {
@@ -121,8 +118,8 @@ const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({
   }, [isComponentVisible])
 
   return (
-    <Flex vertical style={{ width: '100%' }}>
-      <div ref={ref} style={{ width: '100%' }}>
+    <Flex vertical className="w-full">
+      <div ref={ref} className="w-full">
         <Container>
           <SearchLeagueInput
             name="league"
@@ -132,7 +129,7 @@ const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({
             }}
             value={value}
             placeholder="Find league or tournament"
-            style={{ height: '32px' }}
+            className="h-32"
             is_error={`${isError}`}
             onBlur={onBlur}
           />
@@ -143,7 +140,7 @@ const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({
         </Container>
 
         {isComponentVisible && (
-          <Container style={defaultPadding}>
+          <Container className="ph-5-v-12">
             {leaguesList.length ? (
               <List ref={scrollRef as unknown as RefObject<HTMLUListElement>} onScroll={handleScroll}>
                 {leaguesList.map((league) => (
@@ -159,7 +156,7 @@ const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({
                 ))}
               </List>
             ) : (
-              <List as="div" style={defaultPadding}>
+              <List as="div" className="ph-5-v-12">
                 <Subtext>There's no match. Try a different name or create a league/tourn first.</Subtext>
               </List>
             )}

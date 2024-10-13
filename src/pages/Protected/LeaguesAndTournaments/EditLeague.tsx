@@ -1,3 +1,4 @@
+import styled from '@emotion/styled'
 import { Breadcrumb, Flex, Typography } from 'antd'
 import Radio from 'antd/es/radio'
 import { Form, Formik, FormikHelpers } from 'formik'
@@ -39,6 +40,7 @@ import BaseLayout from '@/layouts/BaseLayout'
 import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useGetLeagueQuery, useUpdateLeagueMutation } from '@/redux/leagues/leagues.api'
 
+import { BEST_RECORD_WINS, LEAGUE, WINNING } from '@/common/constants/league'
 import { PATH_TO_LEAGUES } from '@/common/constants/paths'
 import { PLAYOFFS_TEAMS_OPTIONS } from '@/common/constants/playoffsTeamsOptions'
 import { IFECreateLeagueBody } from '@/common/interfaces/league'
@@ -46,6 +48,12 @@ import { IFECreateLeagueBody } from '@/common/interfaces/league'
 import InfoCircleIcon from '@/assets/icons/info-circle.svg'
 
 const DEFAULT_PLAYOFFS_TEAMS_VALUE = 4
+
+const Title = styled(Typography)`
+  color: rgba(26, 22, 87, 1);
+  font-weight: 500;
+  margin-right: 8px;
+`
 
 const EditLeague = () => {
   const [updateLeague] = useUpdateLeagueMutation()
@@ -60,10 +68,10 @@ const EditLeague = () => {
   const initialFormValues: IFECreateLeagueBody = {
     description: currentData?.description || '',
     name: currentData?.name || '',
-    playoffFormat: (currentData?.playoffFormat === 'Best Record Wins' ? 0 : 1) || 0,
-    standingsFormat: currentData?.standingsFormat === 'Winning %' ? 0 : 1 || 0,
-    tiebreakersFormat: currentData?.tiebreakersFormat === 'Winning %' ? 0 : 1 || 0,
-    type: currentData?.type === 'League' ? 0 : 1 || 0,
+    playoffFormat: (currentData?.playoffFormat === BEST_RECORD_WINS ? 0 : 1) || 0,
+    standingsFormat: currentData?.standingsFormat === WINNING ? 0 : 1 || 0,
+    tiebreakersFormat: currentData?.tiebreakersFormat === WINNING ? 0 : 1 || 0,
+    type: currentData?.type === LEAGUE ? 0 : 1 || 0,
     welcomeNote: currentData?.welcomeNote || '',
     playoffsTeams: currentData?.playoffsTeams || 0,
   }
@@ -135,12 +143,12 @@ const EditLeague = () => {
                   return (
                     <Form onSubmit={handleSubmit}>
                       <Flex>
-                        <div style={{ flex: '0 0 40%' }}>
+                        <div className="f-40">
                           <ProtectedPageSubtitle>Main Info</ProtectedPageSubtitle>
                         </div>
 
-                        <Flex vertical justify="flex-start" style={{ width: '352px' }}>
-                          <div style={{ marginBottom: '8px' }}>
+                        <Flex className="w-352" vertical justify="flex-start">
+                          <div className="mg-b8">
                             <MonroeInput
                               name="name"
                               value={values.name}
@@ -152,7 +160,7 @@ const EditLeague = () => {
                             />
                           </div>
 
-                          <div style={{ marginBottom: '8px' }}>
+                          <div className="mg-b8">
                             <OptionTitle>Type *</OptionTitle>
                             <RadioGroupContainer name="type" onChange={handleChange} value={values.type}>
                               <Radio value={0}>League</Radio>
@@ -160,7 +168,7 @@ const EditLeague = () => {
                             </RadioGroupContainer>
                           </div>
 
-                          <div style={{ marginBottom: '8px' }}>
+                          <div className="mg-b8">
                             <OptionTitle>League Description</OptionTitle>
                             <MonroeTextarea
                               name="description"
@@ -172,7 +180,7 @@ const EditLeague = () => {
                             />
                           </div>
 
-                          <div style={{ marginBottom: '8px' }}>
+                          <div className="mg-b8">
                             <OptionTitle>Welcome Note</OptionTitle>
                             <MonroeTextarea
                               name="welcomeNote"
@@ -189,12 +197,12 @@ const EditLeague = () => {
                       <MonroeDivider />
 
                       <Flex>
-                        <div style={{ flex: '0 0 40%' }}>
+                        <div className="f-40">
                           <ProtectedPageSubtitle>Default Formats</ProtectedPageSubtitle>
                         </div>
 
                         <Flex vertical justify="flex-start">
-                          <div style={{ marginBottom: '8px' }}>
+                          <div className="mg-b8">
                             <OptionTitle>Default Playoff Format *</OptionTitle>
                             <RadioGroupContainer
                               name="playoffFormat"
@@ -207,30 +215,21 @@ const EditLeague = () => {
 
                             {values.playoffFormat === 1 && (
                               <Flex align="center">
-                                <Typography.Text
-                                  style={{
-                                    color: 'rgba(26, 22, 87, 1)',
-                                    fontWeight: 500,
-                                    marginRight: '8px',
-                                  }}
-                                >
-                                  # playoffs' teams:{' '}
-                                </Typography.Text>
+                                <Title># playoffs' teams: </Title>
 
-                                <MonroeSelect
-                                  defaultValue={`${initialFormValues.playoffsTeams}` || '4'}
-                                  name="playoffsTeams"
-                                  onChange={(value) => setFieldValue('playoffsTeams', +value)}
-                                  options={PLAYOFFS_TEAMS_OPTIONS}
-                                  styles={{
-                                    width: '82px',
-                                  }}
-                                />
+                                <div className="w-82">
+                                  <MonroeSelect
+                                    defaultValue={`${initialFormValues.playoffsTeams}` || '4'}
+                                    name="playoffsTeams"
+                                    onChange={(value) => setFieldValue('playoffsTeams', +value)}
+                                    options={PLAYOFFS_TEAMS_OPTIONS}
+                                  />
+                                </div>
                               </Flex>
                             )}
                           </div>
 
-                          <div style={{ marginBottom: '8px' }}>
+                          <div className="mg-b8">
                             <OptionTitle>Default Standings Format *</OptionTitle>
                             <RadioGroupContainer
                               name="standingsFormat"
@@ -258,7 +257,7 @@ const EditLeague = () => {
                             </RadioGroupContainer>
                           </div>
 
-                          <div style={{ marginBottom: '8px' }}>
+                          <div className="mg-b8">
                             <OptionTitle>Default Tiebreakers Format *</OptionTitle>
                             <RadioGroupContainer
                               name="tiebreakersFormat"
@@ -291,7 +290,7 @@ const EditLeague = () => {
                       <MonroeDivider />
 
                       <Flex>
-                        <div style={{ flex: '0 0 40%' }} />
+                        <div className="f-40" />
 
                         <Flex>
                           <CancelButton type="default" onClick={goBack}>

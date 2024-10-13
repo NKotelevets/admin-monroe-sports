@@ -14,6 +14,7 @@ import {
   IGetUsersRequestParams,
   IRole,
 } from '@/common/interfaces/user'
+import { TDeleteStatus } from '@/common/types'
 
 const USER_TAG = 'USER'
 
@@ -206,7 +207,7 @@ export const userApi = createApi({
       {
         total: number
         success: number
-        status: 'red' | 'green' | 'yellow'
+        status: TDeleteStatus
         items: IBlockedUserError[]
       },
       string[]
@@ -225,7 +226,7 @@ export const userApi = createApi({
       {
         total: number
         success: number
-        status: 'red' | 'green'
+        status: TDeleteStatus
         failed: IBulkEditError[]
       },
       {

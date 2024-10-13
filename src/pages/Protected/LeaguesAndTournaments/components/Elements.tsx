@@ -9,3 +9,7 @@ export const ViewSeasonText = styled(Typography)`
   margin-left: 4px;
 `
 
+export const TooltipContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`

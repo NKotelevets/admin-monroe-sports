@@ -1,13 +1,15 @@
+import { TooltipContainer } from '@/pages/Protected/LeaguesAndTournaments/components/Elements'
+
 export const DEFAULT_STANDING_FORMAT_WINNING_TOOLTIP = (
-  <div style={{ display: 'flex', flexDirection: 'column' }}>
+  <TooltipContainer>
     <p>Wins (info only) </p>
     <p>Losses (info only) </p>
     <p>Winning %</p>
-  </div>
+  </TooltipContainer>
 )
 
 export const DEFAULT_STANDING_FORMAT_POINTS_TOOLTIP = (
-  <div style={{ display: 'flex', flexDirection: 'column' }}>
+  <TooltipContainer>
     <p>Wins</p>
     <p>Losses</p>
     <p>Draws</p>
@@ -15,23 +17,22 @@ export const DEFAULT_STANDING_FORMAT_POINTS_TOOLTIP = (
     <p>Goals For [GF]</p>
     <p>Goals Against [GA]</p>
     <p>Goal Differential [GD]</p>
-  </div>
+  </TooltipContainer>
 )
 
 export const DEFAULT_TIEBREAKERS_FORMAT_WINNING_TOOLTIP = (
-  <div style={{ display: 'flex', flexDirection: 'column' }}>
+  <TooltipContainer>
     <p>Head to Head (Winning % between all teams)</p>
     <p>Winning % vs common opponents</p>
     <p>Winning % vs all subdivision teams</p>
     <p>Winning % vs all division teams</p>
-  </div>
+  </TooltipContainer>
 )
 
 export const DEFAULT_TIEBREAKERS_FORMAT_POINTS_TOOLTIP = (
-  <div style={{ display: 'flex', flexDirection: 'column' }}>
+  <TooltipContainer>
     <p>Head to Head</p>
     <p>Goal Differential</p>
     <p>Goals Allowed</p>
-  </div>
+  </TooltipContainer>
 )
-

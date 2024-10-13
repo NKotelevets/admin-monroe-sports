@@ -13,11 +13,21 @@ import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
 import { useBulkEditMutation } from '@/redux/user/user.api'
 
+import {
+  CHILD_ROLE,
+  COACH_ROLE,
+  HEAD_COACH_ROLE,
+  MASTER_ADMIN_ROLE,
+  OPERATOR_ROLE,
+  PARENT_ROLE,
+  PLAYER_ROLE,
+  TEAM_ADMIN_ROLE,
+} from '@/common/constants'
 import { PATH_TO_BULK_EDIT_USER_ERRORS, PATH_TO_USERS } from '@/common/constants/paths'
 import { IRole } from '@/common/interfaces/user'
 import { TRole } from '@/common/types'
 
-const ROLES_WITH_TEAMS: TRole[] = ['Head Coach', 'Coach', 'Player', 'Team Admin']
+const ROLES_WITH_TEAMS: TRole[] = [HEAD_COACH_ROLE, COACH_ROLE, PLAYER_ROLE, TEAM_ADMIN_ROLE]
 
 const UsersBulkEdit = () => {
   const { columns } = useUsersBulkEditTableParams()
@@ -45,7 +55,7 @@ const UsersBulkEdit = () => {
     const editRolesData = selectedRecords.map((record) => ({
       id: record.id,
       roles: record.userRoles
-        .filter((role) => !['Child', 'Parent'].includes(role.name))
+        .filter((role) => ![CHILD_ROLE, PARENT_ROLE].includes(role.name))
         .flatMap((role) => {
           if (ROLES_WITH_TEAMS.includes(role.name as TRole)) {
             return role!.linkedEntities!.map(
@@ -57,14 +67,14 @@ const UsersBulkEdit = () => {
             )
           }
 
-          if (role.name === 'Operator') {
+          if (role.name === OPERATOR_ROLE) {
             return {
               role: role.name,
               operator_id: role.linkedEntities?.[0].id,
             } as IRole
           }
 
-          if (role.name === 'Master Admin') {
+          if (role.name === MASTER_ADMIN_ROLE) {
             return {
               role: 'Swift Schedule Master Admin',
             } as unknown as IRole
@@ -102,7 +112,7 @@ const UsersBulkEdit = () => {
 
       <BaseLayout>
         <PageContainer>
-          <Flex justify="space-between" align="center" vertical={false}>
+          <Flex justify="space-between" align="center">
             <ProtectedPageTitle>Bulk edit</ProtectedPageTitle>
 
             <Flex>
@@ -127,10 +137,6 @@ const UsersBulkEdit = () => {
             dataSource={selectedRecords}
             scroll={{
               x: 1000,
-            }}
-            style={{
-              overflow: 'clip !important',
-              overflowClipMargin: '40px',
             }}
           />
         </PageContainer>

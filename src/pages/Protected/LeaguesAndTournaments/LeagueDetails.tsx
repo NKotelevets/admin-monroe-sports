@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
-import { Breadcrumb, Typography } from 'antd'
+import { Breadcrumb } from 'antd'
 import Flex from 'antd/es/flex'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -11,6 +11,7 @@ import LeagueTagType from '@/pages/Protected/LeaguesAndTournaments/components/Le
 import {
   MonroeBlueText,
   MonroeDeleteButton,
+  MonroeLightBlueText,
   MonroeSecondaryButton,
   PageContainer,
   ProtectedPageTitle,
@@ -26,6 +27,7 @@ import BaseLayout from '@/layouts/BaseLayout'
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
 import { useDeleteLeagueMutation, useGetLeagueQuery } from '@/redux/leagues/leagues.api'
 
+import { WINNING } from '@/common/constants/league'
 import {
   PATH_TO_CREATE_SEASON,
   PATH_TO_EDIT_LEAGUE,
@@ -141,15 +143,12 @@ const LeagueDetails = () => {
                 </MonroeSecondaryButton>
 
                 <MonroeButton
-                  isDisabled={false}
                   label="Connect team"
                   type="primary"
                   icon={<ReactSVG src={WhiteTShirtIcon} />}
                   iconPosition="start"
                   onClick={() => {}}
-                  style={{
-                    height: '32px',
-                  }}
+                  className="h-32"
                 />
               </Flex>
             </Flex>
@@ -162,7 +161,7 @@ const LeagueDetails = () => {
 
               <Flex className="mb-16">
                 <ViewText>Playoff format:</ViewText>
-                <ViewText style={{ width: '180px' }}>{data?.playoffFormat}</ViewText>
+                <ViewText className="w-180">{data?.playoffFormat}</ViewText>
               </Flex>
 
               <Flex className="mb-16">
@@ -171,8 +170,8 @@ const LeagueDetails = () => {
                 <Flex vertical>
                   <ViewText>{data?.standingsFormat}</ViewText>
 
-                  <ViewText style={{ width: '400px' }}>
-                    {data?.standingsFormat === 'Winning %' ? STANDING_FORMAT_WINNING_INFO : STANDING_FORMAT_POINTS_INFO}
+                  <ViewText className="w-400">
+                    {data?.standingsFormat === WINNING ? STANDING_FORMAT_WINNING_INFO : STANDING_FORMAT_POINTS_INFO}
                   </ViewText>
                 </Flex>
               </Flex>
@@ -183,8 +182,8 @@ const LeagueDetails = () => {
                 <Flex vertical>
                   <ViewText>{data?.tiebreakersFormat}</ViewText>
 
-                  <ViewTextInfo style={{ width: '400px' }}>
-                    {data?.tiebreakersFormat === 'Winning %'
+                  <ViewTextInfo className="w-400">
+                    {data?.tiebreakersFormat === WINNING
                       ? TIEBREAKERS_FORMAT_WINNING_INFO
                       : TIEBREAKERS_FORMAT_POINTS_INFO}
                   </ViewTextInfo>
@@ -193,37 +192,25 @@ const LeagueDetails = () => {
 
               <Flex className="mb-16">
                 <ViewText>Description:</ViewText>
-                <ViewText style={{ width: '400px' }}>{data?.description || '-'}</ViewText>
+                <ViewText className="w-400">{data?.description || '-'}</ViewText>
               </Flex>
 
               <Flex className="mb-16">
                 <ViewText>Welcome Note:</ViewText>
-                <ViewText style={{ width: '400px' }}>{data?.welcomeNote || '-'}</ViewText>
+                <ViewText className="w-400">{data?.welcomeNote || '-'}</ViewText>
               </Flex>
 
               <Flex className="mb-16">
                 <ViewText>Connected seasons:</ViewText>
 
-                <Flex style={{ width: '400px', flexWrap: 'wrap' }}>
+                <Flex className="w-400" wrap="wrap">
                   {data?.seasons.length
                     ? (data?.seasons as IIdName[]).map((season, idx) => (
                         <Flex key={season.id}>
                           <ViewSeasonText onClick={() => navigate(`${PATH_TO_SEASON_DETAILS}/${season.id}`)}>
                             {season.name}
                           </ViewSeasonText>
-
-                          {idx === data.seasons.length - 1 ? (
-                            ''
-                          ) : (
-                            <Typography
-                              style={{
-                                color: 'rgba(62, 52, 202, 1)',
-                                fontSize: '14px',
-                              }}
-                            >
-                              ,
-                            </Typography>
-                          )}
+                          {idx === data.seasons.length - 1 ? '' : <MonroeLightBlueText>,</MonroeLightBlueText>}
                         </Flex>
                       ))
                     : '-'}

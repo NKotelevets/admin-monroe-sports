@@ -1,7 +1,6 @@
 import { FilterFilled, SearchOutlined } from '@ant-design/icons'
-import { Button, GetProp, InputRef, Table, TableColumnType, TableProps } from 'antd'
+import { GetProp, InputRef, Table, TableColumnType, TableProps } from 'antd'
 import Breadcrumb from 'antd/es/breadcrumb'
-import Input from 'antd/es/input/Input'
 import { FilterDropdownProps, SorterResult } from 'antd/es/table/interface'
 import { useRef, useState } from 'react'
 import { ReactSVG } from 'react-svg'
@@ -11,11 +10,14 @@ import SeasonsReviewUpdateModal from '@/pages/Protected/Seasons/components/Seaso
 import { MonroeBlueText } from '@/components/Elements'
 import { Container, Description, Title } from '@/components/Elements/deletingBlockingInfoElements'
 import CellText from '@/components/Table/CellText'
+import FilterDropDown from '@/components/Table/FilterDropDown'
 import MonroeFilter from '@/components/Table/MonroeFilter'
 import TagType from '@/components/Table/TagType'
 import TextWithTooltip from '@/components/TextWithTooltip'
 
 import BaseLayout from '@/layouts/BaseLayout'
+
+import { getIconColor } from '@/utils'
 
 import { SHORT_GENDER_NAMES } from '@/common/constants'
 import { PATH_TO_SEASONS } from '@/common/constants/paths'
@@ -96,45 +98,8 @@ const UsersImportInfo = () => {
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
 
   const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IImportUserData> => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-        <Input
-          ref={searchInput}
-          placeholder="Search name"
-          value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(confirm)}
-          style={{ marginBottom: 8, display: 'block' }}
-        />
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Button
-            type="primary"
-            onClick={() => handleSearch(confirm)}
-            style={{
-              marginRight: '8px',
-              flex: '1 1 auto',
-            }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => {
-              clearFilters && handleReset(clearFilters)
-              handleSearch(confirm)
-            }}
-            style={{
-              flex: '1 1 auto',
-            }}
-          >
-            Reset
-          </Button>
-        </div>
-      </div>
+    filterDropdown: (props) => (
+      <FilterDropDown {...props} handleReset={handleReset} handleSearch={handleSearch} searchInput={searchInput} />
     ),
     filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1A1657' : '#BDBCC2' }} />,
     onFilter: (value, record) =>
@@ -159,8 +124,6 @@ const UsersImportInfo = () => {
     if (!Array.isArray(sorter) && sorter.field === 'name') setSortSeasonNameOrder(sorter.order || null)
     if (!Array.isArray(sorter) && sorter.field === 'leagueName') setSortLeagueNameOrder(sorter.order || null)
   }
-
-  const getIconColor = (isFiltered: boolean) => (isFiltered ? 'rgba(26, 22, 87, 1)' : 'rgba(189, 188, 194, 1)')
 
   const handleUpdate = (idx: number) => {
     return idx
@@ -235,7 +198,7 @@ const UsersImportInfo = () => {
       filterIcon: (filtered) => (
         <FilterFilled
           style={{
-            color: filtered ? 'rgba(26, 22, 87, 1)' : 'rgba(189, 188, 194, 1)',
+            color: getIconColor(filtered),
           }}
         />
       ),
@@ -252,7 +215,7 @@ const UsersImportInfo = () => {
       width: '80px',
       render: (_, record) =>
         record.status === 'Duplicate' && (
-          <ReactSVG style={{ cursor: 'pointer' }} src={SyncIcon} onClick={() => handleUpdate(record.idx)} />
+          <ReactSVG className="c-p" src={SyncIcon} onClick={() => handleUpdate(record.idx)} />
         ),
     },
   ]

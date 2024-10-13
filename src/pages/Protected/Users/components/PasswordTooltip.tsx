@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { Progress } from 'antd'
+import { Flex, Progress } from 'antd'
 import { FC } from 'react'
 import { ReactSVG } from 'react-svg'
 
@@ -31,16 +31,10 @@ const PasswordTooltipHeader = styled.p<{
 }))
 
 const TooltipItem: FC<{ isActive: boolean; itemTitle: string }> = ({ isActive, itemTitle }) => (
-  <div
-    style={{
-      display: 'flex',
-      alignItems: 'center',
-      marginTop: '8px',
-    }}
-  >
+  <Flex align="center" className="mg-t8">
     <ReactSVG src={getIcon(isActive)} />
-    <PasswordTooltipHeader style={{ marginLeft: '4px' }}>{itemTitle}</PasswordTooltipHeader>
-  </div>
+    <PasswordTooltipHeader className="mg-l4">{itemTitle}</PasswordTooltipHeader>
+  </Flex>
 )
 
 const passwordRulesTitleOptions: Record<keyof IPasswordErrors, string> = {
@@ -57,9 +51,7 @@ const PasswordTooltip: FC<{ passwordErrors: IPasswordErrors }> = ({ passwordErro
 
   const getColors = (percentage: number) => {
     if (percentage < 60) return '#BC261B'
-
     if (percentage < 100) return 'rgba(243, 178, 9, 1)'
-
     return 'rgba(26, 121, 11, 1)'
   }
 

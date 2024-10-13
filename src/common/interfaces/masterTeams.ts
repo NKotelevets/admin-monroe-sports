@@ -115,3 +115,8 @@ export interface IFEMasterTeamDetails {
   coaches: IFESimpleEntity[]
 }
 
+export interface IMasterTeamError {
+  id: string
+  name: string
+  error: string
+}

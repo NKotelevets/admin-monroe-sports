@@ -194,14 +194,14 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
               </p>
 
               <p>
-                If you’re <span style={{ fontWeight: 600, margin: '20px 0' }}>updating a record</span>, only the Playoff
-                change will be discarded and will have to be done manually through the Edit Season screen.
+                If you’re <span className="fw-600 mg-v20">updating a record</span>, only the Playoff change will be
+                discarded and will have to be done manually through the Edit Season screen.
               </p>
 
               <p>
-                If you’re <span style={{ fontWeight: 600 }}>adding a new record</span>, it will be created with the
-                Playoff Format set as “Best Record Win“. Changing and adding brackets can be done through the
-                corresponding Edit Season screen.
+                If you’re <span className="fw-600">adding a new record</span>, it will be created with the Playoff
+                Format set as “Best Record Win“. Changing and adding brackets can be done through the corresponding Edit
+                Season screen.
               </p>
             </div>
           }

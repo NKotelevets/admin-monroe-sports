@@ -1,4 +1,5 @@
 import { PlusOutlined } from '@ant-design/icons'
+import styled from '@emotion/styled'
 import { Button, Flex } from 'antd'
 import { FieldArray, FormikErrors, FormikTouched } from 'formik'
 import { ChangeEventHandler, FC, useEffect, useState } from 'react'
@@ -26,6 +27,12 @@ import { IFECreateSeason } from '@/common/interfaces/season'
 
 import DeleteIcon from '@/assets/icons/delete.svg'
 import ShowAllIcon from '@/assets/icons/show-all.svg'
+
+const TextButton = styled(Button)`
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+`
 
 interface ICreateDivisionProps {
   index: number
@@ -82,12 +89,7 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
   return (
     <CreateEntityContainer ref={ref} isError={isError}>
       {!isOpenedDetails && (
-        <Flex
-          justify="space-between"
-          align="center"
-          onClick={() => setIsOpenedDetails(true)}
-          style={{ cursor: 'pointer', padding: '8px 16px' }}
-        >
+        <Flex justify="space-between" align="center" onClick={() => setIsOpenedDetails(true)} className="c-p ph-8-v-16">
           <Flex vertical>
             <TitleStyle isError={isError}>{isError ? 'Missing mandatory data' : division.name}</TitleStyle>
 
@@ -106,16 +108,16 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
       )}
 
       {isOpenedDetails && (
-        <Flex vertical style={{ padding: '8px 16px' }}>
+        <Flex className="ph-8-v-16" vertical>
           <Flex vertical>
-            <div style={{ marginBottom: '8px' }}>
+            <div className="mg-b8">
               <MonroeInput
                 label={<OptionTitle>Division/Pool Name *</OptionTitle>}
                 name={`divisions.${index}.name`}
                 value={division.name}
                 onChange={onChange}
                 placeholder="Enter name"
-                style={{ height: '32px' }}
+                className="h-32"
                 error={
                   touched?.divisions?.[index]
                     ? notUniqueNameErrorText || (errors?.divisions?.[index] as FormikErrors<IFEDivision>)?.name
@@ -125,7 +127,7 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
                 onBlur={handleBlur}
               />
             </div>
-            <div style={{ marginBottom: '8px' }}>
+            <div className="mg-b8">
               <OptionTitle>Division/Pool Description</OptionTitle>
               <MonroeTextarea
                 name={`divisions.${index}.description`}
@@ -165,15 +167,7 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
                       handleBlur={handleBlur}
                     />
                   ),
-                  label: (
-                    <AccordionHeader
-                      style={{
-                        marginTop: idx > 0 ? '12px' : '0',
-                      }}
-                    >
-                      #{idx + 1} Subdivision/subpool
-                    </AccordionHeader>
-                  ),
+                  label: <AccordionHeader is_add_margin={`${idx > 0}`}>#{idx + 1} Subdivision/subpool</AccordionHeader>,
                 }
               })
 
@@ -187,10 +181,7 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
                         defaultActiveKey={[0]}
                         expandIcon={() => <ReactSVG src={ShowAllIcon} />}
                         accordion
-                        className="subdivision-collapse"
-                        style={{
-                          width: '100%',
-                        }}
+                        className="subdivision-collapse w-full"
                       />
 
                       <MonroeDivider />
@@ -206,18 +197,13 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
                     width="280px"
                     containerWidth="200px"
                   >
-                    <Button
-                      style={{
-                        border: 0,
-                        background: 'transparent',
-                        boxShadow: 'none',
-                      }}
+                    <TextButton
                       icon={<PlusOutlined />}
                       onClick={() => innerArrayHelpers.push(INITIAL_SUBDIVISION_DATA)}
                       disabled={isDisabled}
                     >
                       Add subdivision/subpool
-                    </Button>
+                    </TextButton>
                   </MonroeTooltip>
                 </div>
               )

@@ -50,6 +50,7 @@ import {
   useUpdateSeasonMutation,
 } from '@/redux/seasons/seasons.api'
 
+import { BEST_RECORD_WINS, POINTS, SINGLE_ELIMINATION_BRACKET, WINNING } from '@/common/constants/league'
 import { PATH_TO_EDIT_SEASON, PATH_TO_SEASONS } from '@/common/constants/paths'
 import { ICreateBESeason } from '@/common/interfaces/season'
 
@@ -175,9 +176,9 @@ const EditSeason = () => {
         sub_division: division.subdivisions.map((subdivision) => ({
           name: subdivision.name,
           description: subdivision.description,
-          playoff_format: subdivision.playoffFormat === 'Best Record Wins' ? 0 : 1,
-          standings_format: subdivision.standingsFormat !== 'Points' ? 0 : 1,
-          tiebreakers_format: subdivision.tiebreakersFormat !== 'Points' ? 0 : 1,
+          playoff_format: subdivision.playoffFormat === BEST_RECORD_WINS ? 0 : 1,
+          standings_format: subdivision.standingsFormat !== POINTS ? 0 : 1,
+          tiebreakers_format: subdivision.tiebreakersFormat !== POINTS ? 0 : 1,
           changed: subdivision.changed,
           brackets: subdivision.brackets.map((bracket) => ({
             id: bracket.id as number,
@@ -206,8 +207,6 @@ const EditSeason = () => {
         })),
       })),
     }
-
-    // TODO: handle modal behavior
 
     setShowModal(true)
 
@@ -246,10 +245,10 @@ const EditSeason = () => {
           id: subdivision.id as string,
           name: subdivision.name,
           description: subdivision.description,
-          playoff_format: subdivision.playoffFormat === 'Best Record Wins' ? 0 : 1,
-          standings_format: subdivision.standingsFormat !== 'Points' ? 0 : 1,
-          tiebreakers_format: subdivision.tiebreakersFormat !== 'Points' ? 0 : 1,
-          changed: subdivision.changed ? subdivision.playoffFormat === 'Best Record Wins' : false,
+          playoff_format: subdivision.playoffFormat === BEST_RECORD_WINS ? 0 : 1,
+          standings_format: subdivision.standingsFormat !== POINTS ? 0 : 1,
+          tiebreakers_format: subdivision.tiebreakersFormat !== POINTS ? 0 : 1,
+          changed: subdivision.changed ? subdivision.playoffFormat === BEST_RECORD_WINS : false,
           brackets: subdivision.brackets
             .map((bracket) => ({
               id: bracket.id as number,
@@ -304,7 +303,6 @@ const EditSeason = () => {
             })
         })
         .catch(() => {
-          // TODO: update message
           setAppNotification({
             message: "Can't delete bracket/bracket's. Please try again later",
             timestamp: new Date().getTime(),
@@ -339,9 +337,9 @@ const EditSeason = () => {
           id: subdivision.id || '',
           name: subdivision.name,
           description: subdivision.description,
-          playoffFormat: subdivision.playoff_format === 0 ? 'Best Record Wins' : 'Single Elimination Bracket',
-          standingsFormat: subdivision.standings_format === 0 ? 'Winning %' : 'Points',
-          tiebreakersFormat: subdivision.tiebreakers_format === 0 ? 'Winning %' : 'Points',
+          playoffFormat: subdivision.playoff_format === 0 ? BEST_RECORD_WINS : SINGLE_ELIMINATION_BRACKET,
+          standingsFormat: subdivision.standings_format === 0 ? WINNING : POINTS,
+          tiebreakersFormat: subdivision.tiebreakers_format === 0 ? WINNING : POINTS,
           changed: subdivision.changed,
           brackets: subdivision!.brackets!.map((bracket) => ({
             id: bracket.id,
@@ -468,7 +466,7 @@ const EditSeason = () => {
                           isDisabled
                           icon={<ReactSVG src={SwapIcon} />}
                           type="primary"
-                          style={{ height: '32px' }}
+                          className="h-32"
                           onClick={() => handlePopulateBrackets(values)}
                         />
                       </Flex>
@@ -477,27 +475,27 @@ const EditSeason = () => {
                   <PageContent>
                     {!isCreateBracketPage && (
                       <Form onSubmit={handleSubmit}>
-                        <Flex style={{ padding: '0' }}>
-                          <div style={{ flex: '0 0 40%' }}>
+                        <Flex className="p0">
+                          <div className="f-40">
                             <ProtectedPageSubtitle>Main Info</ProtectedPageSubtitle>
                           </div>
 
                           <MainContainer>
-                            <div style={{ marginBottom: '8px' }}>
+                            <div className="mg-b8">
                               <MonroeInput
                                 name="name"
                                 value={values.name}
                                 onChange={handleChange}
                                 placeholder="Enter season"
-                                style={{ height: '32px' }}
-                                label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Name *</OptionTitle>}
+                                className="h-32"
+                                label={<OptionTitle className="pb-5">Name *</OptionTitle>}
                                 error={touched.name ? errors.name : ''}
                                 onBlur={handleBlur}
                               />
                             </div>
 
                             <Flex vertical justify="flex-start">
-                              <div style={{ marginBottom: '8px' }}>
+                              <div className="mg-b8">
                                 <Flex align="center" justify="space-between">
                                   <OptionTitle>Linked League/Tourn *</OptionTitle>
 
@@ -535,10 +533,9 @@ const EditSeason = () => {
                               </div>
                             </Flex>
 
-                            <Flex vertical justify="flex-start" style={{ marginBottom: '8px', width: '100%' }}>
+                            <Flex className="mg-b8 w-full" vertical justify="flex-start">
                               <Flex align="center" justify="space-between">
                                 <OptionTitle>Start Date *</OptionTitle>
-
                                 {touched.startDate && errors.startDate && <InputError>{errors.startDate}</InputError>}
                               </Flex>
 
@@ -565,7 +562,7 @@ const EditSeason = () => {
                               />
                             </Flex>
 
-                            <Flex vertical justify="flex-start" style={{ marginBottom: '8px', width: '100%' }}>
+                            <Flex className="mg-b8 w-full" vertical justify="flex-start">
                               <Flex align="center" justify="space-between">
                                 <OptionTitle>Expected End Date *</OptionTitle>
                                 {touched.expectedEndDate && errors.expectedEndDate && (
@@ -601,7 +598,7 @@ const EditSeason = () => {
                         <MonroeDivider />
 
                         <Flex>
-                          <Flex vertical style={{ flex: '0 0 40%' }}>
+                          <Flex className="f-40" vertical>
                             <ProtectedPageSubtitle>Division/Pool</ProtectedPageSubtitle>
 
                             <ProtectedPageSubtitleDescription>
@@ -637,9 +634,7 @@ const EditSeason = () => {
                                       icon={<PlusOutlined />}
                                       iconPosition="start"
                                       onClick={() => push(INITIAL_DIVISION_DATA)}
-                                      style={{
-                                        width: 'auto',
-                                      }}
+                                      className="w-auto"
                                     >
                                       Add Division/Pool
                                     </AddEntityButton>
@@ -655,7 +650,7 @@ const EditSeason = () => {
                         <MonroeDivider />
 
                         <Flex>
-                          <div style={{ flex: '0 0 40%' }} />
+                          <div className="f-40" />
 
                           <Flex>
                             <CancelButton type="default" onClick={goBack}>

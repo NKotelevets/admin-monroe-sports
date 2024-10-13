@@ -1,4 +1,3 @@
-import OperatorsInput from '../components/OperatorsInput'
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import Flex from 'antd/es/flex'
 import { DefaultOptionType } from 'antd/es/select'
@@ -7,6 +6,8 @@ import { useNavigate } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
 import { AddRoleButton } from '@/pages/Protected/Seasons/components/Elements'
+import { DeleteIconWrapper, EmptySpace } from '@/pages/Protected/Users/components/Elements'
+import OperatorsInput from '@/pages/Protected/Users/components/OperatorsInput'
 import { ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES, ROLES } from '@/pages/Protected/Users/constants/roles'
 
 import MasterTeamsMultipleSelectWithSearch from '@/components/MasterTeamsMultipleSelectWithSearch'
@@ -16,6 +17,7 @@ import TextWithTooltip from '@/components/TextWithTooltip'
 
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
 
+import { CHILD_ROLE, HEAD_COACH_ROLE, MASTER_ADMIN_ROLE, OPERATOR_ROLE, PARENT_ROLE } from '@/common/constants'
 import { PATH_TO_USERS } from '@/common/constants/paths'
 import { IFERole } from '@/common/interfaces/role'
 import { IBulkEditFEUser } from '@/common/interfaces/user'
@@ -65,7 +67,7 @@ export const useUsersBulkEditTableParams = () => {
         const isSameUser = user?.id === record.id
         const MAX_CREATED_ROLES_BY_ADMIN = 6
         const MAX_CREATED_ROLES_BY_OPERATOR = 4
-        const userAdminRoles = user?.roles.filter((role) => ['Operator', 'Master Admin'].includes(role)).length
+        const userAdminRoles = user?.roles.filter((role) => [OPERATOR_ROLE, MASTER_ADMIN_ROLE].includes(role)).length
         const maximumRoles = user?.isSuperuser
           ? MAX_CREATED_ROLES_BY_ADMIN
           : userAdminRoles
@@ -173,99 +175,62 @@ export const useUsersBulkEditTableParams = () => {
         }
 
         return (
-          <Flex
-            vertical
-            justify="flex-start"
-            style={{
-              height: '100%',
-            }}
-          >
+          <Flex vertical justify="flex-start" className="h-full">
             {record.userRoles.map((role) => {
-              const isOperator = role.name === 'Operator'
+              const isOperator = role.name === OPERATOR_ROLE
               const operatorObject = {
                 id: role.linkedEntities?.[0]?.id || '',
                 name: role.linkedEntities?.[0]?.name || '',
               }
               const isRoleWithTeams = ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(role.name as TRole)
               const isHideDeleteBtn =
-                ['Parent', 'Child'].includes(role.name) ||
-                !!(isOperatorWithoutAdmin && role.name === 'Operator') ||
-                (role.name === 'Head Coach' && record.asHeadCoach?.length)
+                [PARENT_ROLE, CHILD_ROLE].includes(role.name) ||
+                !!(isOperatorWithoutAdmin && role.name === OPERATOR_ROLE) ||
+                (role.name === HEAD_COACH_ROLE && record.asHeadCoach?.length)
 
               return (
-                <Flex
-                  style={{
-                    marginBottom: '20px',
-                  }}
-                  align="start"
-                  key={role.name}
-                >
-                  <Flex
-                    style={{
-                      marginRight: '16px',
-                    }}
-                    align="center"
-                  >
+                <Flex className="mg-b24" align="start" key={role.name}>
+                  <Flex className="mg-r16" align="center">
                     <MonroeSelect
                       options={options}
                       onChange={(newRole) => handleChangeRole(role.name, newRole)}
-                      styles={{ width: '170px' }}
+                      className="w-170"
                       value={role.name}
                       disabled={
-                        ['Parent', 'Child'].includes(role.name) ||
-                        !!(isOperatorWithoutAdmin && role.name === 'Operator') ||
-                        (isSameUser && role.name === 'Master Admin')
+                        [PARENT_ROLE, CHILD_ROLE].includes(role.name) ||
+                        !!(isOperatorWithoutAdmin && role.name === OPERATOR_ROLE) ||
+                        (isSameUser && role.name === MASTER_ADMIN_ROLE)
                       }
                     />
 
-                    <div
-                      style={{
-                        marginLeft: '8px',
-                        overflow: isHideDeleteBtn ? 'hidden' : 'visible',
-                        opacity: isHideDeleteBtn ? 0 : 1,
-                        cursor: isHideDeleteBtn ? 'default' : 'pointer',
-                      }}
+                    <DeleteIconWrapper
+                      is_hide={`${isHideDeleteBtn}`}
                       onClick={() => {
-                        if (!isHideDeleteBtn) {
-                          handleDeleteRole(role.name)
-                        }
+                        if (!isHideDeleteBtn) handleDeleteRole(role.name)
                       }}
                     >
                       <ReactSVG src={DeleteIcon} />
-                    </div>
+                    </DeleteIconWrapper>
                   </Flex>
 
                   {isRoleWithTeams && (
-                    <div
-                      style={{
-                        width: '100%',
-                      }}
-                    >
+                    <div className="w-full">
                       <MasterTeamsMultipleSelectWithSearch
                         onChange={(newRole) => handleChangeData(role.name, newRole)}
                         isError={!role?.linkedEntities?.length}
                         selectedTeams={role?.linkedEntities || []}
-                        canRemoveTeam={role.name === 'Head Coach'}
+                        canRemoveTeam={role.name === HEAD_COACH_ROLE}
                       />
                     </div>
                   )}
 
-                  {!isRoleWithTeams && !isOperator && (
-                    <div
-                      style={{
-                        opacity: 0,
-                        visibility: 'hidden',
-                        width: '100%',
-                        height: '32px',
-                      }}
-                    />
-                  )}
+                  {!isRoleWithTeams && !isOperator && <EmptySpace />}
 
                   {isOperator && (
                     <OperatorsInput
                       isError={!operatorObject.id}
                       setOperator={(value) => {
-                        handleChangeData('Operator', value)
+                        handleChangeData(OPERATOR_ROLE, value)
                       }}
                       selectedOperator={operatorObject}
                       isHideAddOperatorBtn
@@ -291,9 +256,7 @@ export const useUsersBulkEditTableParams = () => {
                 disabled={isDisabledAddRoleButton}
                 onClick={handleAddRole}
                 icon={<PlusOutlined />}
-                style={{
-                  width: '100px',
-                }}
+                className="w-100"
               >
                 Add role
               </AddRoleButton>

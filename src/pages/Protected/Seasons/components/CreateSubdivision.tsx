@@ -31,6 +31,7 @@ import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
 
 import useIsActiveComponent from '@/hooks/useIsActiveComponent'
 
+import { BEST_RECORD_WINS, POINTS, SINGLE_ELIMINATION_BRACKET, WINNING } from '@/common/constants/league'
 import { IFEDivision, IFESubdivision } from '@/common/interfaces/division'
 import { IFECreateSeason } from '@/common/interfaces/season'
 
@@ -46,6 +47,12 @@ const StyledFlex = styled(Flex)`
     flex-direction: row;
     align-items: flex-end;
   }
+`
+
+const ErrorText = styled(Typography)`
+  font-weight: 400;
+  font-size: 12px;
+  color: #bc261b;
 `
 
 interface ICreateSubdivisionProps {
@@ -91,7 +98,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
     (errors?.divisions?.[divisionIndex] as FormikErrors<IFEDivision>)?.subdivisions?.[index]
   const isBlockAddBracketButton =
     !!(subdivisionError as FormikErrors<IFESubdivision>)?.name ||
-    (subdivision.playoffFormat === 'Single Elimination Bracket' && !subdivision.name)
+    (subdivision.playoffFormat === SINGLE_ELIMINATION_BRACKET && !subdivision.name)
   const { setIsCreateBracketPage, setSelectedBracketId, setPathToSubdivisionDataAndIndexes } = useSeasonSlice()
   const allSubdivisionsNames = division.subdivisions.map((sd) => sd.name)
   const listOfDuplicatedNames = allSubdivisionsNames
@@ -104,7 +111,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
   const notUniqueNameErrorText = listOfDuplicatedNames.find((dN) => dN === subdivision.name)
     ? 'Name already exists'
     : ''
-  const isBracketError = subdivision.playoffFormat === 'Single Elimination Bracket' && !subdivision.brackets?.length
+  const isBracketError = subdivision.playoffFormat === SINGLE_ELIMINATION_BRACKET && !subdivision.brackets?.length
   const isError = !!subdivisionError || !!notUniqueNameErrorText || isBracketError
   const lastBracketIdx = subdivision.brackets?.length ? subdivision.brackets.length : 0
   const [isShowModal, setIsShowModal] = useState(false)
@@ -200,12 +207,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
       )}
 
       {!isOpenedDetails && (
-        <Flex
-          justify="space-between"
-          align="center"
-          onClick={() => setIsOpenedDetails(true)}
-          style={{ padding: '8px 16px', cursor: 'pointer' }}
-        >
+        <Flex justify="space-between" align="center" onClick={() => setIsOpenedDetails(true)} className="c-p ph-8-v-16">
           <Flex vertical>
             <TitleStyle isError={isError}>
               {isError ? 'Missing mandatory data' : subdivision.name || 'subdivision/subpool name'}
@@ -213,7 +215,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
           </Flex>
 
           {isMultipleSubdivisions && (
-            <div onClick={handleDelete} style={{ cursor: 'pointer' }}>
+            <div onClick={handleDelete} className="c-p">
               <ReactSVG src={DeleteIcon} />
             </div>
           )}
@@ -221,21 +223,21 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
       )}
 
       {isOpenedDetails && (
-        <Flex vertical style={{ padding: '8px 16px' }}>
-          <div style={{ marginBottom: '8px' }}>
+        <Flex vertical className="ph-8-v-16">
+          <div className="mg-b8">
             <MonroeInput
               label={<OptionTitle>Subdivision/subpool Name *</OptionTitle>}
               name={`${namePrefix}.name`}
               value={subdivision.name}
               onChange={handleSubdivisionNameChange}
               placeholder="Enter name"
-              style={{ width: '100%', height: '32px' }}
+              className="w-full h-32"
               error={subdivError}
               errorPosition="bottom"
               onBlur={handleBlur}
             />
           </div>
-          <div style={{ marginBottom: '8px' }}>
+          <div className="mg-b8">
             <OptionTitle>Subdivision/subpool Description</OptionTitle>
             <MonroeTextarea
               name={`${namePrefix}.description`}
@@ -248,23 +250,18 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
           </div>
 
           <Flex vertical justify="flex-start">
-            <div style={{ marginBottom: '8px' }}>
+            <div className="mg-b8">
               <OptionTitle>Default Playoff Format *</OptionTitle>
               <RadioGroupContainer
                 name={`${namePrefix}.playoffFormat`}
                 onChange={(e: RadioChangeEvent) => setFieldValue(`${namePrefix}.playoffFormat`, e.target.value)}
                 value={subdivision.playoffFormat}
               >
-                <Radio value="Best Record Wins">Best Record Wins</Radio>
-                <Radio value="Single Elimination Bracket">
+                <Radio value={BEST_RECORD_WINS}>Best Record Wins</Radio>
+                <Radio value={SINGLE_ELIMINATION_BRACKET}>
                   <StyledFlex>
-                    <Typography style={{ marginRight: '4px' }}>Single Elimination Bracket</Typography>
-
-                    {isBracketError && (
-                      <Typography style={{ fontSize: '12px', fontWeight: 400, color: '#bc261b' }}>
-                        At least one bracket required
-                      </Typography>
-                    )}
+                    <Typography className="mg-r4">Single Elimination Bracket</Typography>
+                    {isBracketError && <ErrorText>At least one bracket required</ErrorText>}
                   </StyledFlex>
                 </Radio>
               </RadioGroupContainer>
@@ -272,29 +269,19 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
               <FieldArray name={`divisions[${divisionIndex}.subdivisions[${index}.brackets]]`}>
                 {(innerArrayHelpers) => (
                   <>
-                    {subdivision.playoffFormat === 'Single Elimination Bracket' && (
+                    {subdivision.playoffFormat === SINGLE_ELIMINATION_BRACKET && (
                       <>
                         {subdivision?.brackets && (
                           <Flex vertical>
                             {subdivision?.brackets?.map((bracketData, idx) => (
-                              <Flex
-                                key={bracketData.name}
-                                justify="space-between"
-                                style={{
-                                  marginTop: '5px',
-                                }}
-                              >
+                              <Flex key={bracketData.name} justify="space-between" className="mg-t5">
                                 <BracketNameWrapper>{bracketData.name}</BracketNameWrapper>
 
                                 <IconsWrapper>
-                                  <div
-                                    style={{
-                                      marginRight: '4px',
-                                    }}
-                                  >
+                                  <div className="mg-r4">
                                     <ReactSVG
                                       src={SmallEditIcon}
-                                      style={{ width: '14px', height: '14px', cursor: 'pointer' }}
+                                      className="c-p default-icon-sizes"
                                       onClick={() => {
                                         setIsCreateBracketPage(true)
                                         setPathToSubdivisionDataAndIndexes(`${namePrefix}&${divisionIndex}-${index}`)
@@ -307,7 +294,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
 
                                   <ReactSVG
                                     src={SmallDeleteIcon}
-                                    style={{ width: '14px', height: '14px', cursor: 'pointer' }}
+                                    className="c-p default-icon-sizes"
                                     onClick={() => {
                                       innerArrayHelpers.remove(idx)
                                       if (bracketData.id && setIds)
@@ -358,13 +345,13 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
               </FieldArray>
             </div>
 
-            <div style={{ marginBottom: '8px' }}>
+            <div className="mg-b8">
               <OptionTitle>Default Standings Format *</OptionTitle>
               <RadioGroupContainer
                 onChange={(e: RadioChangeEvent) => setFieldValue(`${namePrefix}.standingsFormat`, e.target.value)}
                 value={subdivision.standingsFormat}
               >
-                <Radio value="Winning %">
+                <Radio value={WINNING}>
                   <RadioGroupLabelTooltip>
                     <RadioGroupLabel>Winning %</RadioGroupLabel>
 
@@ -373,7 +360,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
                     </MonroeTooltip>
                   </RadioGroupLabelTooltip>
                 </Radio>
-                <Radio value="Points">
+                <Radio value={POINTS}>
                   <RadioGroupLabelTooltip>
                     <RadioGroupLabel>Points</RadioGroupLabel>
 
@@ -385,13 +372,13 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
               </RadioGroupContainer>
             </div>
 
-            <div style={{ marginBottom: '8px' }}>
+            <div className="mg-b8">
               <OptionTitle>Default Tiebreakers Format *</OptionTitle>
               <RadioGroupContainer
                 onChange={(e: RadioChangeEvent) => setFieldValue(`${namePrefix}.tiebreakersFormat`, e.target.value)}
                 value={subdivision.tiebreakersFormat}
               >
-                <Radio value="Winning %">
+                <Radio value={WINNING}>
                   <RadioGroupLabelTooltip>
                     <RadioGroupLabel>Winning %</RadioGroupLabel>
 
@@ -400,7 +387,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
                     </MonroeTooltip>
                   </RadioGroupLabelTooltip>
                 </Radio>
-                <Radio value="Points">
+                <Radio value={POINTS}>
                   <RadioGroupLabelTooltip>
                     <RadioGroupLabel>Points</RadioGroupLabel>
 

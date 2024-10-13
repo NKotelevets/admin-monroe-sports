@@ -6,14 +6,14 @@ import CellText from '@/components/Table/CellText'
 import MonroeFilterRadio from '@/components/Table/MonroeFilterRadio'
 import TextWithTooltip from '@/components/TextWithTooltip'
 
+import { getIconColor } from '@/utils'
+
 import { SHORT_GENDER_NAMES } from '@/common/constants'
 import { PATH_TO_USERS } from '@/common/constants/paths'
 import { IBulkEditError } from '@/common/interfaces/user'
 import { TGender } from '@/common/types'
 
 type TColumns<T> = TableProps<T>['columns']
-
-const getIconColor = (isFiltered: boolean) => (isFiltered ? 'rgba(26, 22, 87, 1)' : 'rgba(189, 188, 194, 1)')
 
 export const useUsersBulkEditErrorsTableParams = () => {
   const navigate = useNavigate()

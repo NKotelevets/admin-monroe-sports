@@ -1,27 +1,27 @@
+import styled from '@emotion/styled'
 import { Flex } from 'antd'
 import { Header } from 'antd/es/layout/layout'
-import { CSSProperties } from 'react'
 import { ReactSVG } from 'react-svg'
 
 import LogotypeIcon from '@/assets/icons/logotype.svg'
 
-const headerStyle: CSSProperties = {
-  height: 55,
-  backgroundColor: '#ffffff',
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  borderBottom: '1px solid  #F1F0FF',
-  padding: '0 16px',
-  width: '100vw',
-}
+const StyledHeader = styled(Header)`
+  height: 55px;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f1f0ff;
+  padding: 0 16px;
+  width: 100vw;
+`
 
 const OperatorOnboardingHeader = () => (
-  <Header style={headerStyle}>
-    <Flex vertical={false} style={{ width: '256px' }} justify="center">
+  <StyledHeader>
+    <Flex className="w-256" justify="center">
       <ReactSVG src={LogotypeIcon} />
     </Flex>
-  </Header>
+  </StyledHeader>
 )
 
 export default OperatorOnboardingHeader

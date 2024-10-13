@@ -29,19 +29,13 @@ import {
   useImportSeasonsCSVMutation,
 } from '@/redux/seasons/seasons.api'
 
+import { DEFAULT_IMPORT_MODAL_OPTIONS } from '@/common/constants/import'
 import {
   PATH_TO_CREATE_SEASON,
   PATH_TO_SEASONS_DELETING_INFO,
   PATH_TO_SEASONS_IMPORT_INFO,
 } from '@/common/constants/paths'
 import { IImportModalOptions } from '@/common/interfaces'
-
-const DEFAULT_IMPORT_MODAL_OPTIONS: IImportModalOptions = {
-  filename: '',
-  isOpen: false,
-  status: 'loading',
-  errorMessage: '',
-}
 
 const Seasons = () => {
   const { total } = useSeasonSlice()
@@ -147,12 +141,10 @@ const Seasons = () => {
           title={`Delete ${deleteRecordsModalCount > 1 ? deleteRecordsModalCount : ''} ${deleteSeasonsText}?`}
           type="warn"
           content={
-            <>
-              <p>
-                Are you sure you want to delete {deleteRecordsModalCount > 1 ? deleteRecordsModalCount : 'this'}{' '}
-                {deleteSeasonsText}?
-              </p>
-            </>
+            <p>
+              Are you sure you want to delete {deleteRecordsModalCount > 1 ? deleteRecordsModalCount : 'this'}{' '}
+              {deleteSeasonsText}?
+            </p>
           }
         />
       )}
@@ -214,7 +206,7 @@ const Seasons = () => {
             name="seasons"
             accept=".csv"
             onChange={handleChange}
-            style={{ display: 'none' }}
+            className="d-n"
             key={fileKey}
           />
 

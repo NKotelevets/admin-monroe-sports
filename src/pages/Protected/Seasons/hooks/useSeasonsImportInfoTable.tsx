@@ -1,7 +1,6 @@
 import FilterFilled from '@ant-design/icons/lib/icons/FilterFilled'
 import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined'
-import { Button, InputRef, TableColumnType } from 'antd'
-import Input from 'antd/es/input/Input'
+import { InputRef, TableColumnType } from 'antd'
 import { TableProps } from 'antd/es/table'
 import { FilterDropdownProps } from 'antd/es/table/interface'
 import { useRef } from 'react'
@@ -10,6 +9,7 @@ import { ReactSVG } from 'react-svg'
 
 import { MonroeBlueText } from '@/components/Elements'
 import CellText from '@/components/Table/CellText'
+import FilterDropDown from '@/components/Table/FilterDropDown'
 import MonroeFilter from '@/components/Table/MonroeFilter'
 import TagType from '@/components/Table/TagType'
 
@@ -35,45 +35,8 @@ export const useSeasonsImportTable = (
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
 
   const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IImportSeasonTableRecord> => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-        <Input
-          ref={searchInput}
-          placeholder="Search name"
-          value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(confirm)}
-          style={{ marginBottom: 8, display: 'block' }}
-        />
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Button
-            type="primary"
-            onClick={() => handleSearch(confirm)}
-            style={{
-              marginRight: '8px',
-              flex: '1 1 auto',
-            }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => {
-              clearFilters && handleReset(clearFilters)
-              handleSearch(confirm)
-            }}
-            style={{
-              flex: '1 1 auto',
-            }}
-          >
-            Reset
-          </Button>
-        </div>
-      </div>
+    filterDropdown: (props) => (
+      <FilterDropDown {...props} handleReset={handleReset} handleSearch={handleSearch} searchInput={searchInput} />
     ),
     filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1A1657' : '#BDBCC2' }} />,
     onFilter: (value, record) =>
@@ -151,7 +114,7 @@ export const useSeasonsImportTable = (
       width: '80px',
       render: (_, record) =>
         record.type === 'Duplicate' && (
-          <ReactSVG style={{ cursor: 'pointer' }} src={SyncIcon} onClick={() => setSelectedIdx(record.idx)} />
+          <ReactSVG className="c-p" src={SyncIcon} onClick={() => setSelectedIdx(record.idx)} />
         ),
     },
   ]

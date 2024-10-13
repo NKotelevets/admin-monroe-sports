@@ -1,7 +1,6 @@
 import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined'
-import { Breadcrumb, Button, Table } from 'antd'
+import { Breadcrumb, Table } from 'antd'
 import type { GetProp, InputRef, TableColumnType, TableProps } from 'antd'
-import Input from 'antd/es/input/Input'
 import type { FilterDropdownProps, SorterResult } from 'antd/es/table/interface'
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -9,6 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import { MonroeBlueText } from '@/components/Elements'
 import { Container, Description, Title } from '@/components/Elements/deletingBlockingInfoElements'
 import CellText from '@/components/Table/CellText'
+import FilterDropDown from '@/components/Table/FilterDropDown'
 import TextWithTooltip from '@/components/TextWithTooltip'
 
 import BaseLayout from '@/layouts/BaseLayout'
@@ -16,6 +16,7 @@ import BaseLayout from '@/layouts/BaseLayout'
 import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice'
 
 import { PATH_TO_MASTER_TEAMS, PATH_TO_SEASONS } from '@/common/constants/paths'
+import { IMasterTeamError } from '@/common/interfaces/masterTeams'
 
 const BREADCRUMB_ITEMS = [
   {
@@ -29,24 +30,12 @@ const BREADCRUMB_ITEMS = [
 type TColumns<T> = TableProps<T>['columns']
 type TTablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>
 
-type TDataIndex = keyof {
-  id: string
-  name: string
-  error: string
-}
+type TDataIndex = keyof IMasterTeamError
 
 interface ITableParams {
   pagination?: TTablePaginationConfig
-  sortField?: SorterResult<{
-    id: string
-    name: string
-    error: string
-  }>['field']
-  sortOrder?: SorterResult<{
-    id: string
-    name: string
-    error: string
-  }>['order']
+  sortField?: SorterResult<IMasterTeamError>['field']
+  sortOrder?: SorterResult<IMasterTeamError>['order']
   filters?: Parameters<GetProp<TableProps, 'onChange'>>[1]
 }
 
@@ -75,46 +64,8 @@ const MasterTeamsDeletingInfo = () => {
     name: string
     error: string
   }> => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-        <Input
-          ref={searchInput}
-          placeholder="Search name"
-          value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(confirm)}
-          style={{ marginBottom: 8, display: 'block' }}
-        />
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Button
-            type="primary"
-            onClick={() => handleSearch(confirm)}
-            style={{
-              marginRight: '8px',
-              flex: '1 1 auto',
-            }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => {
-              clearFilters && handleReset(clearFilters)
-              handleSearch(confirm)
-            }}
-            style={{
-              flex: '1 1 auto',
-              color: selectedKeys.length ? 'rgba(188, 38, 27, 1)' : 'rgba(189, 188, 194, 1)',
-            }}
-          >
-            Reset
-          </Button>
-        </div>
-      </div>
+    filterDropdown: (props) => (
+      <FilterDropDown {...props} handleReset={handleReset} handleSearch={handleSearch} searchInput={searchInput} />
     ),
     filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1A1657' : '#BDBCC2' }} />,
     onFilter: (value, record) =>
@@ -129,11 +80,7 @@ const MasterTeamsDeletingInfo = () => {
     },
   })
 
-  const columns: TColumns<{
-    id: string
-    name: string
-    error: string
-  }> = [
+  const columns: TColumns<IMasterTeamError> = [
     {
       title: 'Team Name',
       dataIndex: 'name',

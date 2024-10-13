@@ -4,6 +4,7 @@ import { seasonsApi } from '@/redux/seasons/seasons.api'
 
 import { getNormalizedVersionOfSeason } from '@/utils/season'
 
+import { SINGLE_ELIMINATION_BRACKET } from '@/common/constants/league'
 import {
   IDeletionSeasonItemError,
   IFESeason,
@@ -151,7 +152,7 @@ export const seasonsSlice = createSlice({
 
           const isSingleEliminationBracketInNewRecords = !!duplicates?.find((duplicate) => {
             const division = duplicate.existing.divisions?.find((d) => d.name === duplicate.new['Division/Pool Name'])
-            const isSEB = duplicate.new['Playoff Format'] === 'Single Elimination Bracket'
+            const isSEB = duplicate.new['Playoff Format'] === SINGLE_ELIMINATION_BRACKET
 
             if (!division) return isSEB
 

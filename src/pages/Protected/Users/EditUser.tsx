@@ -46,7 +46,15 @@ import { useBulkEditMutation, useGetUserDetailsQuery } from '@/redux/user/user.a
 
 import { calculateUserRoles } from '@/utils/user'
 
-import { FULL_GENDER_NAMES } from '@/common/constants'
+import {
+  COACH_ROLE,
+  FULL_GENDER_NAMES,
+  HEAD_COACH_ROLE,
+  MASTER_ADMIN_ROLE,
+  OPERATOR_ROLE,
+  PLAYER_ROLE,
+  TEAM_ADMIN_ROLE,
+} from '@/common/constants'
 import { PATH_TO_USERS } from '@/common/constants/paths'
 import { IDetailedError } from '@/common/interfaces'
 import { IRole } from '@/common/interfaces/user'
@@ -69,7 +77,7 @@ const GENDER_OPTIONS: DefaultOptionType[] = [
   },
 ]
 
-const ROLES_WITH_TEAMS: TRole[] = ['Head Coach', 'Coach', 'Player', 'Team Admin']
+const ROLES_WITH_TEAMS: TRole[] = [HEAD_COACH_ROLE, COACH_ROLE, PLAYER_ROLE, TEAM_ADMIN_ROLE]
 const MAX_CREATED_ROLES_BY_ADMIN = 6
 const MAX_CREATED_ROLES_BY_OPERATOR = 4
 
@@ -87,7 +95,7 @@ const EditUser = () => {
   const [bulkEdit] = useBulkEditMutation()
   const { setAppNotification } = useAppSlice()
   const { user } = useUserSlice()
-  const userAdminRoles = user?.roles.filter((role) => ['Operator', 'Master Admin'].includes(role)).length
+  const userAdminRoles = user?.roles.filter((role) => [OPERATOR_ROLE, MASTER_ADMIN_ROLE].includes(role)).length
   const maximumRoles = user?.isSuperuser
     ? MAX_CREATED_ROLES_BY_ADMIN
     : userAdminRoles
@@ -115,14 +123,14 @@ const EditUser = () => {
           )
         }
 
-        if (role.name === 'Operator') {
+        if (role.name === OPERATOR_ROLE) {
           return {
             role: role.name,
             operator_id: role.linkedEntities?.[0].id,
           } as IRole
         }
 
-        if (role.name === 'Master Admin') {
+        if (role.name === MASTER_ADMIN_ROLE) {
           return {
             role: 'Swift Schedule Master Admin',
           } as unknown as IRole
@@ -219,36 +227,36 @@ const EditUser = () => {
 
                   <PageContent>
                     <Flex>
-                      <div style={{ flex: '0 0 40%' }}>
+                      <div className="f-40">
                         <ProtectedPageSubtitle>Main Info</ProtectedPageSubtitle>
                       </div>
 
                       <MainContainer>
-                        <div style={{ marginBottom: '8px' }}>
-                          <OptionTitle style={{ padding: '0 0 5px 0' }}>First Name *</OptionTitle>
+                        <div className="mg-b8">
+                          <OptionTitle className="pb-5">First Name *</OptionTitle>
                           <MonroeInput
                             name="firstName"
                             value={values.firstName}
                             onChange={handleChange}
                             placeholder="Enter first name"
-                            style={{ height: '32px' }}
+                            className="h-32"
                             disabled
                           />
                         </div>
 
-                        <div style={{ marginBottom: '8px' }}>
-                          <OptionTitle style={{ padding: '0 0 5px 0' }}>Last Name *</OptionTitle>
+                        <div className="mg-b8">
+                          <OptionTitle className="pb-5">Last Name *</OptionTitle>
                           <MonroeInput
                             name="lastName"
                             value={values.lastName}
                             onChange={handleChange}
                             placeholder="Enter last name"
-                            style={{ height: '32px' }}
+                            className="h-32"
                             disabled
                           />
                         </div>
 
-                        <Flex vertical justify="flex-start" style={{ marginBottom: '8px', width: '100%' }}>
+                        <Flex vertical justify="flex-start" className="w-full mg-b8">
                           <OptionTitle>Birth Date</OptionTitle>
                           <MonroeDatePicker
                             name="birthDate"
@@ -265,7 +273,7 @@ const EditUser = () => {
                           />
                         </Flex>
 
-                        <Flex vertical justify="flex-start" style={{ marginBottom: '8px', width: '100%' }}>
+                        <Flex vertical justify="flex-start" className="w-full mg-b8">
                           <OptionTitle>Gender</OptionTitle>
 
                           <MonroeSelect
@@ -280,65 +288,57 @@ const EditUser = () => {
                       </MainContainer>
                     </Flex>
 
-                    <MonroeDivider
-                      style={{
-                        margin: '24px  0',
-                      }}
-                    />
+                    <MonroeDivider className="mg-v24" />
 
                     <Flex>
-                      <div style={{ flex: '0 0 40%' }}>
+                      <div className="f-40">
                         <ProtectedPageSubtitle>Contact info</ProtectedPageSubtitle>
                       </div>
 
                       <MainContainer>
-                        <div style={{ marginBottom: '8px' }}>
+                        <div className="mg-b8">
                           <MonroeInput
-                            label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Email *</OptionTitle>}
+                            label={<OptionTitle className="pb-5">Email *</OptionTitle>}
                             name="email"
                             value={values.email}
                             onChange={handleChange}
                             placeholder="Enter email"
-                            style={{ height: '32px' }}
+                            className="h-32"
                             error={errors.email}
                             disabled
                           />
                         </div>
 
-                        <div style={{ marginBottom: '8px' }}>
-                          <OptionTitle style={{ padding: '0 0 5px 0' }}>Phone</OptionTitle>
+                        <div className="mg-b8">
+                          <OptionTitle className="pb-5">Phone</OptionTitle>
                           <MonroeInput
                             name="phoneNumber"
                             value={values.phoneNumber}
                             onChange={handleChange}
                             placeholder="Enter phone"
-                            style={{ height: '32px' }}
+                            className="h-32"
                             disabled
                           />
                         </div>
 
-                        <div style={{ marginBottom: '8px' }}>
+                        <div className="mg-b8">
                           <OptionTitle>Zip Code</OptionTitle>
                           <MonroeInput
                             name="zipCode"
                             value={values.zipCode}
                             onChange={handleChange}
                             placeholder="Enter zip code"
-                            style={{ height: '32px' }}
+                            className="h-32"
                             disabled
                           />
                         </div>
                       </MainContainer>
                     </Flex>
 
-                    <MonroeDivider
-                      style={{
-                        margin: '24px 0 12px 0',
-                      }}
-                    />
+                    <MonroeDivider className="mg-v24" />
 
                     <Flex>
-                      <div style={{ flex: '0 0 40%', paddingTop: '12px' }}>
+                      <div className="f-40 pt-12">
                         <ProtectedPageSubtitle>Roles</ProtectedPageSubtitle>
                       </div>
 
@@ -371,9 +371,7 @@ const EditUser = () => {
                                   icon={<PlusOutlined />}
                                   iconPosition="start"
                                   onClick={() => push(INITIAL_ROLE_DATA)}
-                                  style={{
-                                    width: 'auto',
-                                  }}
+                                  className="w-auto"
                                 >
                                   Add Role
                                 </AddEntityButton>
@@ -387,7 +385,7 @@ const EditUser = () => {
                     <Divider />
 
                     <Flex>
-                      <div style={{ flex: '0 0 40%' }} />
+                      <div className="f-40" />
                       <Flex>
                         <CancelButton type="default" onClick={goBack}>
                           Cancel

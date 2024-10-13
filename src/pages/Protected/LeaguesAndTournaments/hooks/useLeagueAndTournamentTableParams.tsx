@@ -1,10 +1,8 @@
 import FilterFilled from '@ant-design/icons/lib/icons/FilterFilled'
 import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined'
 import { TableColumnType } from 'antd'
-import Button from 'antd/es/button'
 import Flex from 'antd/es/flex'
 import { InputRef } from 'antd/es/input'
-import Input from 'antd/es/input/Input'
 import { TableProps } from 'antd/es/table/InternalTable'
 import { FilterDropdownProps } from 'antd/es/table/interface'
 import { useRef } from 'react'
@@ -14,11 +12,14 @@ import { ReactSVG } from 'react-svg'
 import LeagueTagType from '@/pages/Protected/LeaguesAndTournaments/components/LeagueTagType'
 
 import CellText from '@/components/Table/CellText'
+import FilterDropDown from '@/components/Table/FilterDropDown'
 import MonroeFilter from '@/components/Table/MonroeFilter'
 import TextWithTooltip from '@/components/TextWithTooltip'
 
 import { useLeagueSlice } from '@/redux/hooks/useLeagueSlice'
 import { useLazyGetLeaguesQuery } from '@/redux/leagues/leagues.api'
+
+import { getIconColor } from '@/utils'
 
 import { PATH_TO_EDIT_LEAGUE, PATH_TO_LEAGUE_PAGE } from '@/common/constants/paths'
 import { IFELeague } from '@/common/interfaces/league'
@@ -34,8 +35,6 @@ interface IParams {
   setShowDeleteSingleRecordModal: (value: boolean) => void
 }
 
-const getIconColor = (isFiltered: boolean) => (isFiltered ? 'rgba(26, 22, 87, 1)' : 'rgba(189, 188, 194, 1)')
-
 export const useLeagueAndTournamentTableParams = ({ setSelectedRecordId, setShowDeleteSingleRecordModal }: IParams) => {
   const navigate = useNavigate()
   const searchInput = useRef<InputRef>(null)
@@ -44,47 +43,18 @@ export const useLeagueAndTournamentTableParams = ({ setSelectedRecordId, setShow
 
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
 
+  const handleReset = (clearFilters: () => void) => {
+    getLeagues({
+      limit,
+      offset,
+      order_by: order_by || undefined,
+    })
+    clearFilters()
+  }
+
   const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IFELeague> => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-        <Input
-          ref={searchInput}
-          placeholder="Search name"
-          value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(confirm)}
-          style={{ marginBottom: 8, display: 'block' }}
-        />
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Button
-            type="primary"
-            onClick={() => handleSearch(confirm)}
-            style={{
-              marginRight: '8px',
-              flex: '1 1 auto',
-            }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => {
-              clearFilters && handleReset(clearFilters)
-              handleSearch(confirm)
-            }}
-            style={{
-              flex: '1 1 auto',
-              color: selectedKeys.length ? 'rgba(188, 38, 27, 1)' : 'rgba(189, 188, 194, 1)',
-            }}
-          >
-            Reset
-          </Button>
-        </div>
-      </div>
+    filterDropdown: (props) => (
+      <FilterDropDown {...props} handleReset={handleReset} handleSearch={handleSearch} searchInput={searchInput} />
     ),
     filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1A1657' : '#BDBCC2' }} />,
     onFilter: (value, record) =>
@@ -98,15 +68,6 @@ export const useLeagueAndTournamentTableParams = ({ setSelectedRecordId, setShow
       }
     },
   })
-
-  const handleReset = (clearFilters: () => void) => {
-    getLeagues({
-      limit,
-      offset,
-      order_by: order_by || undefined,
-    })
-    clearFilters()
-  }
 
   const columns: TColumns<IFELeague> = [
     {
@@ -211,14 +172,7 @@ export const useLeagueAndTournamentTableParams = ({ setSelectedRecordId, setShow
       width: '96px',
       fixed: 'right',
       render: (value) => (
-        <Flex
-          vertical={false}
-          justify="center"
-          align="center"
-          style={{
-            cursor: 'pointer',
-          }}
-        >
+        <Flex vertical={false} justify="center" align="center" className="c-p">
           <ReactSVG
             src={EditIcon}
             onClick={() => {
@@ -232,7 +186,7 @@ export const useLeagueAndTournamentTableParams = ({ setSelectedRecordId, setShow
               setShowDeleteSingleRecordModal(true)
             }}
             src={DeleteIcon}
-            style={{ marginLeft: '8px' }}
+            className="mg-l8"
           />
         </Flex>
       ),

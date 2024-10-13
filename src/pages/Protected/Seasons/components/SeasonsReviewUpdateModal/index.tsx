@@ -1,11 +1,19 @@
-import { containerStyles, contentStyles, contentWrapperStyles, defaultButtonStyles, titleStyles } from './styles'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
-import { Button, Flex, Typography } from 'antd'
+import { Button, Flex } from 'antd'
 import { format } from 'date-fns'
 import { FC, useState } from 'react'
 
+import {
+  ArrowButton,
+  Container,
+  ContentWrapper,
+  DefaultButton,
+  Footer,
+  Title,
+} from '@/pages/Protected/Seasons/components/SeasonsReviewUpdateModal/Elements'
 import SeasonDetailsColumn from '@/pages/Protected/Seasons/components/SeasonsReviewUpdateModal/components/SeasonDetailsColumn'
 
+import { MonroeDarkBlueText } from '@/components/Elements'
 import Loader from '@/components/Loader'
 import Message from '@/components/Message'
 
@@ -14,6 +22,7 @@ import { useGetSeasonBEDetailsQuery, useUpdateSeasonMutation } from '@/redux/sea
 
 import { compareObjects } from '@/utils/compareObjects'
 
+import { BEST_RECORD_WINS, POINTS, SINGLE_ELIMINATION_BRACKET, WINNING } from '@/common/constants/league'
 import { IImportedSubdivision, IUpdateDivision } from '@/common/interfaces/division'
 import { IBESeason, ISeasonDuplicate, ISeasonReviewUpdateData } from '@/common/interfaces/season'
 
@@ -71,9 +80,9 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
       sub_division: division.sub_division.map((subdivision) => ({
         name: subdivision.name,
         description: subdivision.description,
-        playoff_format: subdivision.playoff_format === 0 ? 'Best Record Wins' : 'Single Elimination Bracket',
-        standings_format: subdivision.standings_format === 0 ? 'Winning %' : 'Points',
-        tiebreakers_format: subdivision.tiebreakers_format === 0 ? 'Winning %' : 'Points',
+        playoff_format: subdivision.playoff_format === 0 ? BEST_RECORD_WINS : SINGLE_ELIMINATION_BRACKET,
+        standings_format: subdivision.standings_format === 0 ? WINNING : POINTS,
+        tiebreakers_format: subdivision.tiebreakers_format === 0 ? WINNING : POINTS,
         changed: subdivision.changed,
         brackets: subdivision.brackets,
       })),
@@ -136,9 +145,9 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
       sub_division: division.sub_division.map((subdivision) => ({
         name: subdivision.name,
         description: subdivision.description,
-        playoff_format: subdivision.playoff_format === 'Best Record Wins' ? 0 : 1,
-        standings_format: subdivision.standings_format === 'Winning %' ? 0 : 1,
-        tiebreakers_format: subdivision.tiebreakers_format === 'Winning %' ? 0 : 1,
+        playoff_format: subdivision.playoff_format === BEST_RECORD_WINS ? 0 : 1,
+        standings_format: subdivision.standings_format === WINNING ? 0 : 1,
+        tiebreakers_format: subdivision.tiebreakers_format === WINNING ? 0 : 1,
         brackets: [],
         changed: false,
       })),
@@ -182,9 +191,9 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
           sub_division: normalizedNewData.divisions[0].sub_division.map((subdivision) => ({
             name: subdivision.name,
             description: subdivision.description,
-            playoff_format: subdivision.playoff_format === 'Best Record Wins' ? 0 : 1,
-            standings_format: subdivision.standings_format === 'Points' ? 1 : 0,
-            tiebreakers_format: subdivision.tiebreakers_format === 'Points' ? 1 : 0,
+            playoff_format: subdivision.playoff_format === BEST_RECORD_WINS ? 0 : 1,
+            standings_format: subdivision.standings_format === POINTS ? 1 : 0,
+            tiebreakers_format: subdivision.tiebreakers_format === POINTS ? 1 : 0,
             brackets: [],
             changed: false,
           })),
@@ -252,14 +261,12 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
   }
 
   return (
-    <Flex style={containerStyles} align="center" justify="center">
-      <Flex style={contentWrapperStyles} vertical>
-        <Flex vertical style={contentStyles}>
-          <Typography.Title level={3} style={titleStyles}>
-            Review update
-          </Typography.Title>
+    <Container>
+      <ContentWrapper>
+        <Flex className="p24" vertical>
+          <Title>Review update</Title>
 
-          <Flex style={{ width: '790px' }}>
+          <Flex className="w-790">
             <SeasonDetailsColumn
               {...normalizedExistingData}
               title="Current"
@@ -282,88 +289,51 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
           )}
         </Flex>
 
-        <Flex
-          align="center"
-          justify="space-between"
-          style={{
-            padding: '16px',
-            position: 'sticky',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            backgroundColor: 'white',
-            borderTop: '1px solid rgba(0, 0, 0, 0.12)',
-          }}
-        >
+        <Footer>
           <Flex align="center">
-            <Button
-              disabled={actualIndex === 0 || isUpdatedSeason}
-              style={{
-                background: 'transparent',
-                border: 0,
-                padding: 6,
-              }}
-              onClick={handlePrevDuplicate}
-            >
+            <ArrowButton disabled={actualIndex === 0 || isUpdatedSeason} onClick={handlePrevDuplicate}>
               <LeftOutlined />
-            </Button>
-            <Button
+            </ArrowButton>
+            <ArrowButton
               disabled={actualIndex + 1 === duplicates.length || isUpdatedSeason}
-              style={{
-                background: 'transparent',
-                border: 0,
-                padding: 6,
-              }}
               onClick={handleNextDuplicate}
             >
               <RightOutlined />
-            </Button>
+            </ArrowButton>
 
-            <Typography.Text style={{ color: 'rgba(26, 22, 87, 1)' }}>
+            <MonroeDarkBlueText>
               {actualIndex + 1} of {duplicates.length} duplicate
-            </Typography.Text>
+            </MonroeDarkBlueText>
           </Flex>
 
           <Flex>
-            <Button type="default" style={defaultButtonStyles} onClick={handleClose}>
+            <DefaultButton type="default" onClick={handleClose}>
               Close
-            </Button>
+            </DefaultButton>
 
             {duplicates.length > 1 && !isUpdatedSeason && (
-              <Button type="default" style={defaultButtonStyles} onClick={handleSkipForThis}>
+              <DefaultButton type="default" onClick={handleSkipForThis}>
                 Skip for this
-              </Button>
+              </DefaultButton>
             )}
 
             {isUpdatedSeason ? (
               <>
                 {duplicates.length > 1 && (
-                  <Button
-                    type="primary"
-                    style={{
-                      borderRadius: '4px',
-                    }}
-                    onClick={handleNextRecord}
-                  >
+                  <Button type="primary" className="br-4" onClick={handleNextRecord}>
                     Next record
                   </Button>
                 )}
               </>
             ) : (
-              <Button
-                type="primary"
-                style={{
-                  borderRadius: '4px',
-                }}
-                onClick={handleUpdate}
-              >
+              <Button type="primary" className="br-4" onClick={handleUpdate}>
                 Update current
               </Button>
             )}
           </Flex>
-        </Flex>
-      </Flex>
-    </Flex>
+        </Footer>
+      </ContentWrapper>
+    </Container>
   )
 }
 

@@ -1,3 +1,4 @@
+import { BEST_RECORD_WINS, SINGLE_ELIMINATION_BRACKET } from '@/common/constants/league'
 import { IBESeason, IImportedSeasonInfo, INewSeasonCSVFormat } from '@/common/interfaces/season'
 
 export const getNormalizedVersionOfSeason = (existing: IBESeason, season: INewSeasonCSVFormat): IImportedSeasonInfo => {
@@ -16,9 +17,9 @@ export const getNormalizedVersionOfSeason = (existing: IBESeason, season: INewSe
     divisionPollDescription: season['Div/Pool Description'],
     divisionPollName: season['Division/Pool Name'],
     playoffFormat:
-      season['Playoff Format'] === 'Single Elimination Bracket' && existedSubdivision === 1
-        ? 'Single Elimination Bracket'
-        : 'Best Record Wins',
+      season['Playoff Format'] === SINGLE_ELIMINATION_BRACKET && existedSubdivision === 1
+        ? SINGLE_ELIMINATION_BRACKET
+        : BEST_RECORD_WINS,
     playoffsTeams: season['Number of Teams to Qualify for Playoff'],
     standingsFormat: season['Standings Format'],
     subdivisionPollDescription: season['Subdiv/Pool Description'],

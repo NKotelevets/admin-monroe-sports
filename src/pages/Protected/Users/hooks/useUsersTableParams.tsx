@@ -1,10 +1,8 @@
 import FilterFilled from '@ant-design/icons/lib/icons/FilterFilled'
 import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined'
 import { TableColumnType } from 'antd'
-import Button from 'antd/es/button'
 import Flex from 'antd/es/flex'
 import { InputRef } from 'antd/es/input'
-import Input from 'antd/es/input/Input'
 import { TableProps } from 'antd/es/table/InternalTable'
 import { FilterDropdownProps } from 'antd/es/table/interface'
 import { format } from 'date-fns'
@@ -14,6 +12,7 @@ import { ReactSVG } from 'react-svg'
 
 import MonroeTooltip from '@/components/MonroeTooltip'
 import CellText from '@/components/Table/CellText'
+import FilterDropDown from '@/components/Table/FilterDropDown'
 import MonroeFilter from '@/components/Table/MonroeFilter'
 import MonroeFilterRadio from '@/components/Table/MonroeFilterRadio'
 import TextWithTooltip from '@/components/TextWithTooltip'
@@ -21,6 +20,8 @@ import TextWithTooltip from '@/components/TextWithTooltip'
 import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
 import { useLazyGetUsersQuery, useSendInvitationMutation } from '@/redux/user/user.api'
+
+import { getIconColor } from '@/utils'
 
 import { SHORT_GENDER_NAMES } from '@/common/constants'
 import { PATH_TO_EDIT_USER, PATH_TO_USERS } from '@/common/constants/paths'
@@ -44,8 +45,6 @@ interface IParams {
   setShowUnBlockSingleUserModal: (value: boolean) => void
 }
 
-const getIconColor = (isFiltered: boolean) => (isFiltered ? 'rgba(26, 22, 87, 1)' : 'rgba(189, 188, 194, 1)')
-
 export const useUsersTableParams = ({
   setSelectedRecordId,
   setShowBlockSingleUserModal,
@@ -61,46 +60,8 @@ export const useUsersTableParams = ({
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
 
   const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IExtendedFEUser> => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-        <Input
-          ref={searchInput}
-          placeholder="Search name"
-          value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(confirm)}
-          style={{ marginBottom: 8, display: 'block' }}
-        />
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Button
-            type="primary"
-            onClick={() => handleSearch(confirm)}
-            style={{
-              marginRight: '8px',
-              flex: '1 1 auto',
-            }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => {
-              clearFilters && handleReset(clearFilters)
-              handleSearch(confirm)
-            }}
-            style={{
-              flex: '1 1 auto',
-              color: selectedKeys.length ? 'rgba(188, 38, 27, 1)' : 'rgba(189, 188, 194, 1)',
-            }}
-          >
-            Reset
-          </Button>
-        </div>
-      </div>
+    filterDropdown: (props) => (
+      <FilterDropDown {...props} handleReset={handleReset} handleSearch={handleSearch} searchInput={searchInput} />
     ),
     filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1A1657' : '#BDBCC2' }} />,
     onFilter: (value, record) =>
@@ -229,19 +190,9 @@ export const useUsersTableParams = ({
         return (
           <>
             {value ? (
-              <Flex
-                style={{
-                  zIndex: 4,
-                }}
-                justify="space-between"
-              >
+              <Flex className="z-idx4" justify="space-between">
                 <TextWithTooltip maxLength={14} text={value} />
-                <Flex
-                  style={{
-                    marginLeft: '8px',
-                  }}
-                  align="center"
-                >
+                <Flex className="mg-l8" align="center">
                   {record.operator && inviteId && (
                     <MonroeTooltip width="auto" text="Resend email to Operator">
                       <ReactSVG
@@ -264,7 +215,7 @@ export const useUsersTableParams = ({
                     </MonroeTooltip>
                   )}
 
-                  <div className="c-p" style={{ marginLeft: '4px' }}>
+                  <div className="c-p mg-l4">
                     <ReactSVG src={CopyEmailIcon} onClick={() => handleCopyContent(value)} />
                   </div>
                 </Flex>
@@ -297,20 +248,13 @@ export const useUsersTableParams = ({
         const Icon = !record.isActive ? LockIcon : UnLockIcon
 
         return (
-          <Flex
-            vertical={false}
-            justify="center"
-            align="center"
-            style={{
-              cursor: 'pointer',
-            }}
-          >
+          <Flex className="c-p" justify="center" align="center">
             <ReactSVG
+              className="mg-r8"
               src={EditIcon}
               onClick={() => {
                 navigate(PATH_TO_EDIT_USER + `/${value.id}`)
               }}
-              style={{ marginRight: '8px' }}
             />
 
             <MonroeTooltip
@@ -330,7 +274,7 @@ export const useUsersTableParams = ({
                   }
                 }}
                 src={Icon}
-                style={{ marginTop: '4px' }}
+                className="c-p mg-t5"
               />
             </MonroeTooltip>
           </Flex>

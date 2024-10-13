@@ -3,7 +3,7 @@ import styled from '@emotion/styled'
 import { Flex } from 'antd'
 import { Button } from 'antd'
 import { DefaultOptionType } from 'antd/es/select'
-import { CSSProperties, ChangeEvent, FC, RefObject, useEffect, useState } from 'react'
+import { ChangeEvent, FC, RefObject, useEffect, useState } from 'react'
 import { ReactSVG } from 'react-svg'
 
 import { SearchLeagueInput, SearchSelectIconWrapper } from '@/components/Elements'
@@ -14,6 +14,8 @@ import { useLazyGetOperatorsQuery } from '@/redux/user/user.api'
 import useDebounceEffect from '@/hooks/useDebounceEffect'
 import useIsActiveComponent from '@/hooks/useIsActiveComponent'
 import useScroll from '@/hooks/useScroll'
+
+import { IIdName } from '@/common/interfaces'
 
 import ShowAllIcon from '@/assets/icons/show-all.svg'
 
@@ -47,10 +49,6 @@ const Container = styled.div`
   position: relative;
 `
 
-const defaultPadding: CSSProperties = {
-  padding: '5px 12px',
-}
-
 const AddOperatorButton = styled(Button)`
   border: none;
   background: transparent;
@@ -64,9 +62,14 @@ const AddOperatorButton = styled(Button)`
   }
 `
 
+const AddOperatorWrapper = styled(Flex)`
+  margin-top: 4px;
+  border-bottom: 1px solid rgb(189, 188, 194);
+`
+
 interface IOperatorsInputProps {
-  setOperator: (data: [{ id: string; name: string }]) => void
-  selectedOperator: { id: string; name: string }
+  setOperator: (data: [IIdName]) => void
+  selectedOperator: IIdName
   isError: boolean
   handleBlur?: () => void
   isHideAddOperatorBtn?: boolean
@@ -88,7 +91,7 @@ const OperatorsInput: FC<IOperatorsInputProps> = ({
   const { setIsCreateOperatorScreen } = useUserSlice()
   const ADD_OPERATOR_PROPERTY: DefaultOptionType = {
     label: (
-      <Flex style={{ borderBottom: '1px solid rgba(189, 188, 194, 1)', margin: '4px 0 0 0 ' }}>
+      <AddOperatorWrapper>
         <AddOperatorButton
           type="default"
           icon={<PlusOutlined />}
@@ -97,7 +100,7 @@ const OperatorsInput: FC<IOperatorsInputProps> = ({
         >
           Add Operator
         </AddOperatorButton>
-      </Flex>
+      </AddOperatorWrapper>
     ),
     value: '',
   }
@@ -127,8 +130,7 @@ const OperatorsInput: FC<IOperatorsInputProps> = ({
   const { handleScroll, ref: scrollRef } = useScroll(getData)
 
   useEffect(() => {
-    // eslint-disable-next-line no-extra-semi
-    ;(async () => {
+    const fetchResults = async () => {
       const response = await getOperators({
         limit: DEFAULT_LIMIT_RECORDS,
         offset,
@@ -144,7 +146,9 @@ const OperatorsInput: FC<IOperatorsInputProps> = ({
       } else {
         setOperatorsList(() => [ADD_OPERATOR_PROPERTY, ...options])
       }
-    })()
+    }
+
+    fetchResults()
   }, [])
 
   useEffect(() => {
@@ -179,15 +183,15 @@ const OperatorsInput: FC<IOperatorsInputProps> = ({
   }, [isComponentVisible])
 
   return (
-    <Flex vertical style={{ width: '100%' }}>
-      <div ref={ref} style={{ width: '100%' }}>
+    <Flex vertical className="w-full">
+      <div ref={ref} className="w-full">
         <Container>
           <SearchLeagueInput
             name="search"
             onChange={(event: ChangeEvent<HTMLInputElement>) => handleChange(event.target.value)}
             value={value}
             placeholder="Select operator"
-            style={{ height: '32px' }}
+            className="h-32"
             is_error={`${isError}`}
             onBlur={handleBlur}
             disabled={isDisabled}
@@ -199,7 +203,7 @@ const OperatorsInput: FC<IOperatorsInputProps> = ({
         </Container>
 
         {isComponentVisible && (
-          <Container style={defaultPadding}>
+          <Container className="ph-5-v-12">
             {operatorsList.length && (
               <List ref={scrollRef as unknown as RefObject<HTMLUListElement>} onScroll={handleScroll}>
                 {operatorsList.map((operator, idx) => (

@@ -151,32 +151,28 @@ const CreateMasterTeam = () => {
 
                   <PageContent>
                     <Flex>
-                      <div style={{ flex: '0 0 40%' }}>
+                      <div className="f-40">
                         <ProtectedPageSubtitle>Main Info</ProtectedPageSubtitle>
                       </div>
 
                       <MainContainer>
                         <MonroeInput
                           name="name"
-                          label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Master Team Name *</OptionTitle>}
+                          label={<OptionTitle className="pb-5">Master Team Name *</OptionTitle>}
                           value={values.name}
                           onChange={handleChange}
                           placeholder="Enter master team name"
-                          style={{ height: '32px' }}
+                          className="h-32"
                           error={touched.name ? errors.name : ''}
                           onBlur={handleBlur}
                         />
                       </MainContainer>
                     </Flex>
 
-                    <MonroeDivider
-                      style={{
-                        margin: '24px 0 12px',
-                      }}
-                    />
+                    <MonroeDivider className="mg-v24" />
 
                     <Flex>
-                      <div style={{ flex: '0 0 40%', paddingTop: '12px' }}>
+                      <div className="pt-12 f-40">
                         <ProtectedPageSubtitle>Team administrator(s)</ProtectedPageSubtitle>
                       </div>
 
@@ -206,9 +202,7 @@ const CreateMasterTeam = () => {
                                 icon={<PlusOutlined />}
                                 iconPosition="start"
                                 onClick={() => push(getInitialEntity('admin'))}
-                                style={{
-                                  width: 'auto',
-                                }}
+                                className="w-auto"
                               >
                                 Add admin
                               </AddEntityButton>
@@ -218,14 +212,10 @@ const CreateMasterTeam = () => {
                       </FieldArray>
                     </Flex>
 
-                    <MonroeDivider
-                      style={{
-                        margin: '24px 0 ',
-                      }}
-                    />
+                    <MonroeDivider className="mg-v24" />
 
                     <Flex>
-                      <div style={{ flex: '0 0 40%', paddingTop: '12px' }}>
+                      <div className="pt-12 f-40">
                         <ProtectedPageSubtitle>Coach(es)</ProtectedPageSubtitle>
                       </div>
 
@@ -255,9 +245,7 @@ const CreateMasterTeam = () => {
                                 icon={<PlusOutlined />}
                                 iconPosition="start"
                                 onClick={() => push(getInitialEntity('coach'))}
-                                style={{
-                                  width: 'auto',
-                                }}
+                                className="w-auto"
                               >
                                 Add coach
                               </AddEntityButton>
@@ -267,19 +255,15 @@ const CreateMasterTeam = () => {
                       </FieldArray>
                     </Flex>
 
-                    <MonroeDivider
-                      style={{
-                        margin: '24px 0 ',
-                      }}
-                    />
+                    <MonroeDivider className="mg-v24" />
 
                     <Flex>
-                      <div style={{ flex: '0 0 40%', paddingTop: '12px' }}>
+                      <div className="pt-12 f-40">
                         <ProtectedPageSubtitle>Players</ProtectedPageSubtitle>
                       </div>
 
                       <div>
-                        <AccordionHeader style={{ margin: '5px 0' }}>Players</AccordionHeader>
+                        <AccordionHeader className="mg-v5">Players</AccordionHeader>
 
                         <UsersMultipleSelectWithSearch
                           isError={false}
@@ -294,14 +278,10 @@ const CreateMasterTeam = () => {
                       </div>
                     </Flex>
 
-                    <MonroeDivider
-                      style={{
-                        margin: '24px 0 ',
-                      }}
-                    />
+                    <MonroeDivider className="mg-v24" />
 
                     <Flex>
-                      <div style={{ flex: '0 0 40%' }} />
+                      <div className="f-40" />
                       <Flex>
                         <CancelButton type="default" onClick={goBack}>
                           Cancel

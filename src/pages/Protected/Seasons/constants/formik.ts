@@ -1,5 +1,6 @@
 import * as Yup from 'yup'
 
+import { BEST_RECORD_WINS, SINGLE_ELIMINATION_BRACKET, WINNING } from '@/common/constants/league'
 import { IBracket } from '@/common/interfaces/bracket'
 
 export const participantSchema = Yup.object().shape({
@@ -48,7 +49,7 @@ const subdivisionValidationSchema = Yup.object().shape({
   brackets: Yup.array()
     .of(bracketSchema)
     .when('playoffFormat', {
-      is: (value: string) => value === 'Single Elimination Bracket',
+      is: (value: string) => value === SINGLE_ELIMINATION_BRACKET,
       then: (schema) => schema.required().min(1),
     }),
 })
@@ -70,9 +71,9 @@ export const seasonValidationSchema = Yup.object<ICreateSeasonFormValues>().shap
 export const INITIAL_SUBDIVISION_DATA = {
   name: '',
   description: '',
-  playoffFormat: 'Best Record Wins',
-  standingsFormat: 'Winning %',
-  tiebreakersFormat: 'Winning %',
+  playoffFormat: BEST_RECORD_WINS,
+  standingsFormat: WINNING,
+  tiebreakersFormat: WINNING,
   brackets: [],
 }
 
@@ -95,9 +96,9 @@ export const seasonInitialFormValues: ICreateSeasonFormValues = {
         {
           name: '',
           description: '',
-          playoffFormat: 'Best Record Wins',
-          standingsFormat: 'Winning %',
-          tiebreakersFormat: 'Winning %',
+          playoffFormat: BEST_RECORD_WINS,
+          standingsFormat: WINNING,
+          tiebreakersFormat: WINNING,
           brackets: [],
           changed: false,
         },

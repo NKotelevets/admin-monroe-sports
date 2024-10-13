@@ -1,12 +1,12 @@
 import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined'
-import { Button, GetProp, TableColumnType } from 'antd'
+import { GetProp, TableColumnType } from 'antd'
 import { InputRef } from 'antd/es/input'
-import Input from 'antd/es/input/Input'
 import { TableProps } from 'antd/es/table/InternalTable'
 import { FilterDropdownProps, SorterResult } from 'antd/es/table/interface'
 import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import FilterDropDown from '@/components/Table/FilterDropDown'
 import TextWithTooltip from '@/components/TextWithTooltip'
 
 import { PATH_TO_LEAGUE_PAGE } from '@/common/constants/paths'
@@ -33,46 +33,8 @@ export const useLeaguesDeletingInfoTableProps = (tableParams: ITableParams) => {
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
 
   const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<ILeagueDeletionItemError> => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-        <Input
-          ref={searchInput}
-          placeholder="Search name"
-          value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(confirm)}
-          style={{ marginBottom: 8, display: 'block' }}
-        />
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Button
-            type="primary"
-            onClick={() => handleSearch(confirm)}
-            style={{
-              marginRight: '8px',
-              flex: '1 1 auto',
-            }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => {
-              clearFilters && handleReset(clearFilters)
-              handleSearch(confirm)
-            }}
-            style={{
-              flex: '1 1 auto',
-              color: selectedKeys.length ? 'rgba(188, 38, 27, 1)' : 'rgba(189, 188, 194, 1)',
-            }}
-          >
-            Reset
-          </Button>
-        </div>
-      </div>
+    filterDropdown: (props) => (
+      <FilterDropDown {...props} handleReset={handleReset} handleSearch={handleSearch} searchInput={searchInput} />
     ),
     filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1A1657' : '#BDBCC2' }} />,
     onFilter: (value, record) =>

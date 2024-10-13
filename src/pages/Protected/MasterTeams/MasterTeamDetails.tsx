@@ -121,7 +121,7 @@ const MasterTeamDetails = () => {
                 icon={<EditOutlined />}
                 iconPosition="start"
                 onClick={() => navigate(`${PATH_TO_EDIT_MASTER_TEAM}/:id`)}
-                style={{ height: '32px' }}
+                className="h-32"
               >
                 Edit
               </MonroeSecondaryButton>
@@ -133,7 +133,7 @@ const MasterTeamDetails = () => {
                 icon={<PlusOutlined />}
                 iconPosition="start"
                 onClick={() => navigate(`${PATH_TO_EDIT_MASTER_TEAM}/:id`)}
-                style={{ height: '32px' }}
+                className="h-32"
               />
             </Flex>
           </Flex>
@@ -151,10 +151,7 @@ const MasterTeamDetails = () => {
                     •
                     <Flex align="center">
                       <DetailValue>{teamAdministrator.email}</DetailValue>
-                      <div
-                        onClick={() => handleCopyContent(teamAdministrator.email, 'email')}
-                        style={{ marginLeft: '8px', cursor: 'pointer' }}
-                      >
+                      <div onClick={() => handleCopyContent(teamAdministrator.email, 'email')} className="c-p mg-l8">
                         <ReactSVG src={CopyIcon} />
                       </div>
                     </Flex>
@@ -165,7 +162,7 @@ const MasterTeamDetails = () => {
                           <DetailValue>{teamAdministrator.phone}</DetailValue>
                           <div
                             onClick={() => handleCopyContent(teamAdministrator.phone as string, 'phone')}
-                            style={{ marginLeft: '8px', cursor: 'pointer' }}
+                            className="mg-l8 c-p"
                           >
                             <ReactSVG src={CopyIcon} />
                           </div>
@@ -189,10 +186,7 @@ const MasterTeamDetails = () => {
                 •
                 <Flex align="center">
                   <DetailValue>{data.headCoach.email}</DetailValue>
-                  <div
-                    onClick={() => handleCopyContent(data.headCoach.email as string, 'email')}
-                    style={{ marginLeft: '8px', cursor: 'pointer' }}
-                  >
+                  <div onClick={() => handleCopyContent(data.headCoach.email as string, 'email')} className="c-p mg-l8">
                     <ReactSVG src={CopyIcon} />
                   </div>
                 </Flex>
@@ -203,7 +197,7 @@ const MasterTeamDetails = () => {
                       <DetailValue>{data.headCoach.phone}</DetailValue>
                       <div
                         onClick={() => handleCopyContent(data.headCoach.phone as string, 'phone')}
-                        style={{ marginLeft: '8px', cursor: 'pointer' }}
+                        className="c-p mg-l8"
                       >
                         <ReactSVG src={CopyIcon} />
                       </div>
@@ -227,10 +221,7 @@ const MasterTeamDetails = () => {
                     •
                     <Flex align="center">
                       <DetailValue>{coach.email}</DetailValue>
-                      <div
-                        onClick={() => handleCopyContent(coach.email, 'email')}
-                        style={{ marginLeft: '8px', cursor: 'pointer' }}
-                      >
+                      <div onClick={() => handleCopyContent(coach.email, 'email')} className="c-p mg-l8">
                         <ReactSVG src={CopyIcon} />
                       </div>
                     </Flex>
@@ -239,10 +230,7 @@ const MasterTeamDetails = () => {
                         •
                         <Flex align="center">
                           <DetailValue>{coach.phone}</DetailValue>
-                          <div
-                            onClick={() => handleCopyContent(coach.phone as string, 'phone')}
-                            style={{ marginLeft: '8px', cursor: 'pointer' }}
-                          >
+                          <div onClick={() => handleCopyContent(coach.phone as string, 'phone')} className="c-p mg-l8">
                             <ReactSVG src={CopyIcon} />
                           </div>
                         </Flex>
@@ -267,10 +255,7 @@ const MasterTeamDetails = () => {
                     •
                     <Flex align="center">
                       <DetailValue>{player.email}</DetailValue>
-                      <div
-                        onClick={() => handleCopyContent(player.email, 'email')}
-                        style={{ marginLeft: '8px', cursor: 'pointer' }}
-                      >
+                      <div onClick={() => handleCopyContent(player.email, 'email')} className="c-p mg-l8">
                         <ReactSVG src={CopyIcon} />
                       </div>
                     </Flex>
@@ -279,10 +264,7 @@ const MasterTeamDetails = () => {
                         •
                         <Flex align="center">
                           <DetailValue>{player.phone}</DetailValue>
-                          <div
-                            onClick={() => handleCopyContent(player.phone as string, 'phone')}
-                            style={{ marginLeft: '8px', cursor: 'pointer' }}
-                          >
+                          <div onClick={() => handleCopyContent(player.phone as string, 'phone')} className="c-p mg-l8">
                             <ReactSVG src={CopyIcon} />
                           </div>
                         </Flex>
@@ -296,7 +278,7 @@ const MasterTeamDetails = () => {
             </Flex>
 
             <Flex className="mb-16" align="center">
-              <ViewText style={{ width: 'auto' }}>Linked league/tourn:</ViewText>
+              <ViewText className="w-auto">Linked league/tourn:</ViewText>
 
               <Flex vertical>-</Flex>
             </Flex>

@@ -1,7 +1,8 @@
 import styled from '@emotion/styled'
 import Space from 'antd/es/space'
-import Typography from 'antd/es/typography'
 import { FC } from 'react'
+
+import { MonroeErrorText, MonroeLightBlueText } from '@/components/Elements'
 
 const TournamentTag = styled(Space)`
   border: 1px solid #a49eff;
@@ -23,23 +24,11 @@ const LeagueTagType: FC<{ text: string }> = ({ text }) => (
   <>
     {text === 'Tourn' || text === 'Tournament' ? (
       <TournamentTag>
-        <Typography
-          style={{
-            color: '#4C41E6',
-          }}
-        >
-          {text}
-        </Typography>
+        <MonroeLightBlueText>{text}</MonroeLightBlueText>
       </TournamentTag>
     ) : (
       <LeagueTag>
-        <Typography
-          style={{
-            color: '#BC261B',
-          }}
-        >
-          {text}
-        </Typography>
+        <MonroeErrorText>{text}</MonroeErrorText>
       </LeagueTag>
     )}
   </>

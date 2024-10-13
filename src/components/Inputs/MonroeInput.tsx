@@ -15,6 +15,7 @@ interface IMonroeInputProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onBlur?: (e: React.FocusEvent<any>) => void
   errorPosition?: 'top' | 'bottom'
+  className?: string
 }
 
 const MonroeInput: FC<IMonroeInputProps> = ({ label, error, errorPosition = 'top', ...rest }) => (

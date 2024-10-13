@@ -1,3 +1,4 @@
+import styled from '@emotion/styled'
 import { Breadcrumb, Flex, Typography } from 'antd'
 import Radio from 'antd/es/radio'
 import { Form, Formik, FormikHelpers } from 'formik'
@@ -52,6 +53,12 @@ const BREAD_CRUMB_ITEMS = [
   },
 ]
 
+const Title = styled(Typography)`
+  color: rgba(26, 22, 87, 1);
+  font-weight: 500;
+  margin-right: 8px;
+`
+
 const CreateLeague = () => {
   const [createLeague] = useCreateLeagueMutation()
   const navigate = useNavigate()
@@ -105,12 +112,12 @@ const CreateLeague = () => {
                 return (
                   <Form onSubmit={handleSubmit}>
                     <Flex>
-                      <div style={{ flex: '0 0 40%' }}>
+                      <div className="f-40">
                         <ProtectedPageSubtitle>Main Info</ProtectedPageSubtitle>
                       </div>
 
-                      <Flex vertical justify="flex-start" style={{ width: '352px' }}>
-                        <div style={{ marginBottom: '8px', width: '100%' }}>
+                      <Flex className="w-352" vertical justify="flex-start">
+                        <div className="w-full mg-b8">
                           <MonroeInput
                             name="name"
                             value={values.name}
@@ -122,7 +129,7 @@ const CreateLeague = () => {
                           />
                         </div>
 
-                        <div style={{ marginBottom: '8px' }}>
+                        <div className="mg-b8">
                           <OptionTitle>Type *</OptionTitle>
                           <RadioGroupContainer name="type" onChange={handleChange} value={values.type}>
                             <Radio value={0}>League</Radio>
@@ -130,7 +137,7 @@ const CreateLeague = () => {
                           </RadioGroupContainer>
                         </div>
 
-                        <div style={{ marginBottom: '8px' }}>
+                        <div className="mg-b8">
                           <OptionTitle>League Description</OptionTitle>
                           <MonroeTextarea
                             name="description"
@@ -142,7 +149,7 @@ const CreateLeague = () => {
                           />
                         </div>
 
-                        <div style={{ marginBottom: '8px' }}>
+                        <div className="mg-b8">
                           <OptionTitle>Welcome Note</OptionTitle>
                           <MonroeTextarea
                             name="welcomeNote"
@@ -159,12 +166,12 @@ const CreateLeague = () => {
                     <MonroeDivider />
 
                     <Flex>
-                      <div style={{ flex: '0 0 40%' }}>
+                      <div className="f-40">
                         <ProtectedPageSubtitle>Default Formats</ProtectedPageSubtitle>
                       </div>
 
                       <Flex vertical justify="flex-start">
-                        <div style={{ marginBottom: '8px' }}>
+                        <div className="mg-b8">
                           <OptionTitle>Default Playoff Format *</OptionTitle>
                           <RadioGroupContainer
                             name="playoffFormat"
@@ -177,30 +184,21 @@ const CreateLeague = () => {
 
                           {values.playoffFormat === 1 && (
                             <Flex align="center">
-                              <Typography.Text
-                                style={{
-                                  color: 'rgba(26, 22, 87, 1)',
-                                  fontWeight: 500,
-                                  marginRight: '8px',
-                                }}
-                              >
-                                # playoffs' teams:{' '}
-                              </Typography.Text>
+                              <Title># playoffs' teams: </Title>
 
-                              <MonroeSelect
-                                defaultValue="4"
-                                name="playoffsTeams"
-                                onChange={(value) => setFieldValue('playoffsTeams', +value)}
-                                options={PLAYOFFS_TEAMS_OPTIONS}
-                                styles={{
-                                  width: '82px',
-                                }}
-                              />
+                              <div className="w-82">
+                                <MonroeSelect
+                                  defaultValue="4"
+                                  name="playoffsTeams"
+                                  onChange={(value) => setFieldValue('playoffsTeams', +value)}
+                                  options={PLAYOFFS_TEAMS_OPTIONS}
+                                />
+                              </div>
                             </Flex>
                           )}
                         </div>
 
-                        <div style={{ marginBottom: '8px' }}>
+                        <div className="mg-b8">
                           <OptionTitle>Default Standings Format *</OptionTitle>
                           <RadioGroupContainer
                             name="standingsFormat"
@@ -228,7 +226,7 @@ const CreateLeague = () => {
                           </RadioGroupContainer>
                         </div>
 
-                        <div style={{ marginBottom: '8px' }}>
+                        <div className="mg-b8">
                           <OptionTitle>Default Tiebreakers Format *</OptionTitle>
                           <RadioGroupContainer
                             name="tiebreakersFormat"
@@ -263,7 +261,7 @@ const CreateLeague = () => {
                     <MonroeDivider />
 
                     <Flex>
-                      <div style={{ flex: '0 0 40%' }} />
+                      <div className="f-40" />
 
                       <Flex>
                         <CancelButton type="default" onClick={goBack}>

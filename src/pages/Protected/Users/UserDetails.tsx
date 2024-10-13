@@ -186,7 +186,7 @@ const UserDetails = () => {
                 icon={<EditOutlined />}
                 iconPosition="start"
                 onClick={() => navigate(`${PATH_TO_EDIT_USER}/${data.id}`)}
-                style={{ height: '32px' }}
+                className="h-32"
               />
             </Flex>
           </Flex>
@@ -202,15 +202,12 @@ const UserDetails = () => {
               <DetailValue>{data.birthDate ? format(new Date(data.birthDate), 'MMM d, yyyy') : '-'}</DetailValue>
             </Flex>
 
-            <Flex className="mb-16" align="center" style={{ cursor: 'pointer' }}>
+            <Flex className="c-p mb-16" align="center">
               <ViewText>Email:</ViewText>
-              <ViewText style={{ width: 'auto', marginRight: '0px' }}>{data.email || '-'}</ViewText>
+              <ViewText className="w-auto mg-r4">{data.email || '-'}</ViewText>
 
               {data.email && (
-                <div
-                  onClick={() => handleCopyContent(data.email, 'email')}
-                  style={{ marginLeft: '8px', cursor: 'pointer' }}
-                >
+                <div className="c-p mg-l8" onClick={() => handleCopyContent(data.email, 'email')}>
                   <ReactSVG src={CopyIcon} />
                 </div>
               )}
@@ -220,10 +217,10 @@ const UserDetails = () => {
               <ViewText>Phone:</ViewText>
 
               <Flex align="center">
-                <ViewText style={{ width: 'auto' }}>{data.phoneNumber || '-'}</ViewText>
+                <ViewText className="w-auto">{data.phoneNumber || '-'}</ViewText>
 
                 {data.phoneNumber && (
-                  <div onClick={() => handleCopyContent(data.phoneNumber, 'phone')} style={{ cursor: 'pointer' }}>
+                  <div className="c-p" onClick={() => handleCopyContent(data.phoneNumber, 'phone')}>
                     <ReactSVG src={CopyIcon} />
                   </div>
                 )}
@@ -239,22 +236,21 @@ const UserDetails = () => {
               <ViewText>Roles:</ViewText>
 
               <Flex vertical>
-                {data.isSuperuser && <ViewText style={{ width: '250px', marginBottom: '8px' }}>Master Admin</ViewText>}
+                {data.isSuperuser && <ViewText className="mg-b8 w-250">Master Admin</ViewText>}
 
                 {!!data.operator && (
-                  <Flex vertical style={{ marginBottom: '8px' }}>
+                  <Flex vertical className="mg-b8">
                     <ViewText>Operator</ViewText>
-
-                    <ViewText style={{ marginRight: '4px' }}>{data.operator.name}</ViewText>
+                    <ViewText className="mg-r4">{data.operator.name}</ViewText>
                   </Flex>
                 )}
 
                 {!!data.asTeamAdmin?.length && (
-                  <Flex vertical style={{ marginBottom: '8px' }}>
+                  <Flex vertical className="mg-b8">
                     <ViewText>Team Admin</ViewText>
                     <Flex>
                       {data.asTeamAdmin.map((team, idx, arr) => (
-                        <MonroeLinkText key={team.name} style={{ marginRight: '4px' }}>
+                        <MonroeLinkText key={team.name} className="mg-r4">
                           {team.name}
                           {arr.length - 1 === idx ? ';' : ','}
                         </MonroeLinkText>
@@ -264,12 +260,12 @@ const UserDetails = () => {
                 )}
 
                 {!!data.asHeadCoach?.length && (
-                  <Flex vertical style={{ marginBottom: '8px' }}>
+                  <Flex vertical className="mg-b8">
                     <ViewText>Head Coach</ViewText>
                     <Flex>
                       {data.asHeadCoach.map((team, idx, arr) => (
                         <>
-                          <MonroeLinkText key={team.name} style={{ marginRight: '4px' }}>
+                          <MonroeLinkText key={team.name} className="mg-r4">
                             {team.name}
                             {arr.length - 1 === idx ? ';' : ','}
                           </MonroeLinkText>
@@ -280,12 +276,12 @@ const UserDetails = () => {
                 )}
 
                 {!!data.asCoach?.teams.length && (
-                  <Flex vertical style={{ marginBottom: '8px' }}>
+                  <Flex vertical className="mg-b8">
                     <ViewText>Coach</ViewText>
                     <Flex>
                       {data.asCoach.teams.map((team, idx, arr) => (
                         <>
-                          <MonroeLinkText key={team.name} style={{ marginRight: '4px' }}>
+                          <MonroeLinkText key={team.name} className="mg-r4">
                             {team.name}
                             {arr.length - 1 === idx ? ';' : ','}
                           </MonroeLinkText>
@@ -296,12 +292,12 @@ const UserDetails = () => {
                 )}
 
                 {!!data.asPlayer?.teams.length && (
-                  <Flex vertical style={{ marginBottom: '8px' }}>
+                  <Flex vertical className="mg-b8">
                     <ViewText>Player</ViewText>
                     <Flex>
                       {data.asPlayer.teams.map((team, idx, arr) => (
                         <>
-                          <MonroeLinkText key={team.name} style={{ marginRight: '4px' }}>
+                          <MonroeLinkText key={team.name} className="mg-r4">
                             {team.name}
                             {arr.length - 1 === idx ? ';' : ','}
                           </MonroeLinkText>
@@ -312,14 +308,14 @@ const UserDetails = () => {
                 )}
 
                 {!!data.asParent && (
-                  <Flex vertical style={{ marginBottom: '8px' }}>
+                  <Flex className="mg-b8" vertical>
                     <ViewText>Guardian</ViewText>
                     <Flex>
                       {data.asParent.map((child, idx, arr) => (
                         <>
                           <MonroeLinkText
                             key={child.id}
-                            style={{ marginRight: '4px' }}
+                            className="mg-r4"
                             onClick={() => navigate(PATH_TO_USERS + '/' + child.id)}
                           >
                             {child.firstName} {child.lastName}

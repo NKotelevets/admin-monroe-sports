@@ -142,24 +142,15 @@ const Match: FC<IMatchProps> = ({
               ] as FormikTouched<IParticipant>
 
               return (
-                <Flex
-                  key={participant.id}
-                  style={{
-                    height: '42px',
-                  }}
-                >
+                <Flex key={participant.id} className="h-42">
                   {participant.isEmpty ? (
                     <EmptyTeamWrapper>
                       <MonroeBlueText>Bye</MonroeBlueText>
                     </EmptyTeamWrapper>
                   ) : (
-                    <Flex
-                      style={{
-                        width: '100%',
-                      }}
-                    >
+                    <Flex className="w-full">
                       <MonroeSelect
-                        styles={{ flex: '1 1 auto', height: '42px' }}
+                        className="f-full h-42"
                         placeholder="Choose Subpool"
                         options={options}
                         onChange={(value) => {

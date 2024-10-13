@@ -1,7 +1,6 @@
 import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined'
-import { Breadcrumb, Button, Table } from 'antd'
+import { Breadcrumb, Table } from 'antd'
 import type { GetProp, InputRef, TableColumnType, TableProps } from 'antd'
-import Input from 'antd/es/input/Input'
 import type { FilterDropdownProps, SorterResult } from 'antd/es/table/interface'
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -9,6 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import { MonroeBlueText } from '@/components/Elements'
 import { Container, Description, Title } from '@/components/Elements/deletingBlockingInfoElements'
 import CellText from '@/components/Table/CellText'
+import FilterDropDown from '@/components/Table/FilterDropDown'
 import TextWithTooltip from '@/components/TextWithTooltip'
 
 import BaseLayout from '@/layouts/BaseLayout'
@@ -58,46 +58,8 @@ const SeasonsDeletingInfo = () => {
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
 
   const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IDeletionSeasonItemError> => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-        <Input
-          ref={searchInput}
-          placeholder="Search name"
-          value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(confirm)}
-          style={{ marginBottom: 8, display: 'block' }}
-        />
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Button
-            type="primary"
-            onClick={() => handleSearch(confirm)}
-            style={{
-              marginRight: '8px',
-              flex: '1 1 auto',
-            }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => {
-              clearFilters && handleReset(clearFilters)
-              handleSearch(confirm)
-            }}
-            style={{
-              flex: '1 1 auto',
-              color: selectedKeys.length ? 'rgba(188, 38, 27, 1)' : 'rgba(189, 188, 194, 1)',
-            }}
-          >
-            Reset
-          </Button>
-        </div>
-      </div>
+    filterDropdown: (props) => (
+      <FilterDropDown {...props} handleReset={handleReset} handleSearch={handleSearch} searchInput={searchInput} />
     ),
     filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1A1657' : '#BDBCC2' }} />,
     onFilter: (value, record) =>

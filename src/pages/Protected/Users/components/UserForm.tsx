@@ -1,4 +1,3 @@
-import CreateOperator from './CreateOperator'
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import { Divider } from 'antd'
 import Breadcrumb from 'antd/es/breadcrumb'
@@ -10,6 +9,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
+import CreateOperator from '@/pages/Protected/Users/components/CreateOperator'
 import PopulateRole from '@/pages/Protected/Users/components/PopulateRole'
 import {
   ICreateUserFormValues,
@@ -43,6 +43,14 @@ import { useCreateUserAsAdminMutation } from '@/redux/user/user.api'
 
 import { validateNumber } from '@/utils'
 
+import {
+  COACH_ROLE,
+  HEAD_COACH_ROLE,
+  MASTER_ADMIN_ROLE,
+  OPERATOR_ROLE,
+  PLAYER_ROLE,
+  TEAM_ADMIN_ROLE,
+} from '@/common/constants'
 import { PATH_TO_USERS } from '@/common/constants/paths'
 import { ICreateUserAsAdminRequestBody, IRole } from '@/common/interfaces/user'
 import { TGender, TRole } from '@/common/types'
@@ -73,8 +81,7 @@ const GENDER_OPTIONS: DefaultOptionType[] = [
   },
 ]
 
-const ROLES_WITH_TEAMS: TRole[] = ['Head Coach', 'Coach', 'Player', 'Team Admin']
-
+const ROLES_WITH_TEAMS: TRole[] = [HEAD_COACH_ROLE, COACH_ROLE, PLAYER_ROLE, TEAM_ADMIN_ROLE]
 const MAX_CREATED_ROLES_BY_ADMIN = 6
 const MAX_CREATED_ROLES_BY_OPERATOR = 4
 
@@ -110,13 +117,13 @@ const UserForm = () => {
             )
           }
 
-          if (role.name === 'Master Admin') {
+          if (role.name === MASTER_ADMIN_ROLE) {
             return {
               role: 'Swift Schedule Master Admin',
             } as unknown as IRole
           }
 
-          if (role.name === 'Operator') {
+          if (role.name === OPERATOR_ROLE) {
             return {
               role: role.name,
               operator_id: role.linkedEntities?.[0].id,
@@ -173,7 +180,7 @@ const UserForm = () => {
           }))
 
         const setOperator = (value: { id: string; name: string }) => {
-          const operatorIndex = values.roles.findIndex((role) => role.name === 'Operator')
+          const operatorIndex = values.roles.findIndex((role) => role.name === OPERATOR_ROLE)
           setFieldValue(`roles.${operatorIndex}.linkedEntities`, [value])
         }
 
@@ -190,38 +197,38 @@ const UserForm = () => {
 
                   <PageContent>
                     <Flex>
-                      <div style={{ flex: '0 0 40%' }}>
+                      <div className="f-40">
                         <ProtectedPageSubtitle>Main Info</ProtectedPageSubtitle>
                       </div>
 
                       <MainContainer>
-                        <div style={{ marginBottom: '8px' }}>
+                        <div className="mg-b8">
                           <MonroeInput
                             name="firstName"
-                            label={<OptionTitle style={{ padding: '0 0 5px 0' }}>First Name *</OptionTitle>}
+                            label={<OptionTitle className="pb-5">First Name *</OptionTitle>}
                             value={values.firstName}
                             onChange={handleChange}
                             placeholder="Enter first name"
-                            style={{ height: '32px' }}
+                            className="h-32"
                             error={touched.firstName ? errors.firstName : ''}
                             onBlur={handleBlur}
                           />
                         </div>
 
-                        <div style={{ marginBottom: '8px' }}>
+                        <div className="mg-b8">
                           <MonroeInput
-                            label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Last Name *</OptionTitle>}
+                            label={<OptionTitle className="pb-5">Last Name *</OptionTitle>}
                             name="lastName"
                             value={values.lastName}
                             onChange={handleChange}
                             placeholder="Enter last name"
-                            style={{ height: '32px' }}
+                            className="h-32"
                             error={touched.lastName ? errors.lastName : ''}
                             onBlur={handleBlur}
                           />
                         </div>
 
-                        <Flex vertical justify="flex-start" style={{ marginBottom: '8px', width: '100%' }}>
+                        <Flex className="mg-b8 w-full" vertical justify="flex-start">
                           <OptionTitle>Birth Date</OptionTitle>
 
                           <MonroeDatePicker
@@ -238,7 +245,7 @@ const UserForm = () => {
                           />
                         </Flex>
 
-                        <Flex vertical justify="flex-start" style={{ marginBottom: '8px', width: '100%' }}>
+                        <Flex className="mg-b8 w-full" vertical justify="flex-start">
                           <OptionTitle>Gender</OptionTitle>
 
                           <MonroeSelect
@@ -254,32 +261,28 @@ const UserForm = () => {
                       </MainContainer>
                     </Flex>
 
-                    <MonroeDivider
-                      style={{
-                        margin: '24px  0',
-                      }}
-                    />
+                    <MonroeDivider className="mg-v24" />
 
                     <Flex>
-                      <div style={{ flex: '0 0 40%' }}>
+                      <div className="f-40">
                         <ProtectedPageSubtitle>Contact info</ProtectedPageSubtitle>
                       </div>
 
                       <MainContainer>
-                        <div style={{ marginBottom: '8px' }}>
+                        <div className="mg-b8">
                           <MonroeInput
-                            label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Email *</OptionTitle>}
+                            label={<OptionTitle className="pb-5">Email *</OptionTitle>}
                             name="email"
                             value={values.email}
                             onChange={handleChange}
                             placeholder="Enter email"
-                            style={{ height: '32px' }}
+                            className="h-32"
                             error={touched.email ? errors.email : ''}
                             onBlur={handleBlur}
                           />
                         </div>
 
-                        <div style={{ marginBottom: '8px' }}>
+                        <div className="mg-b8">
                           <MonroeInput
                             name="phoneNumber"
                             value={values.phoneNumber}
@@ -287,13 +290,13 @@ const UserForm = () => {
                               if (validateNumber(event.target.value)) handleChange(event)
                             }}
                             placeholder="Enter phone"
-                            style={{ height: '32px' }}
-                            label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Phone</OptionTitle>}
+                            className="h-32"
+                            label={<OptionTitle className="pb-5">Phone</OptionTitle>}
                             error={errors.phoneNumber}
                           />
                         </div>
 
-                        <div style={{ marginBottom: '8px' }}>
+                        <div className="mg-b8">
                           <MonroeInput
                             name="zipCode"
                             value={values.zipCode}
@@ -301,7 +304,7 @@ const UserForm = () => {
                               if (validateNumber(event.target.value)) handleChange(event)
                             }}
                             placeholder="Enter zip code"
-                            style={{ height: '32px' }}
+                            className="h-32"
                             label={<OptionTitle>Zip Code</OptionTitle>}
                             error={errors.zipCode}
                           />
@@ -309,14 +312,10 @@ const UserForm = () => {
                       </MainContainer>
                     </Flex>
 
-                    <MonroeDivider
-                      style={{
-                        margin: '24px 0 12px 0',
-                      }}
-                    />
+                    <MonroeDivider className="mg-v24" />
 
                     <Flex>
-                      <div style={{ flex: '0 0 40%', paddingTop: '12px' }}>
+                      <div className="f-40">
                         <ProtectedPageSubtitle>Role</ProtectedPageSubtitle>
                       </div>
 
@@ -352,9 +351,7 @@ const UserForm = () => {
                                     push(INITIAL_ROLE_DATA)
                                     setActiveKey(values.roles.length - 1)
                                   }}
-                                  style={{
-                                    width: 'auto',
-                                  }}
+                                  className="w-auto"
                                 >
                                   Add Role
                                 </AddEntityButton>
@@ -368,7 +365,7 @@ const UserForm = () => {
                     <Divider />
 
                     <Flex>
-                      <div style={{ flex: '0 0 40%' }} />
+                      <div className="f-40" />
                       <Flex>
                         <CancelButton type="default" onClick={goBack}>
                           Cancel

@@ -114,39 +114,39 @@ const CreateOperator: FC<ICreateOperatorProps> = ({ setOperator }) => {
 
             <PageContent>
               <Flex>
-                <div style={{ flex: '0 0 40%' }}>
+                <div className="f-40">
                   <ProtectedPageSubtitle>Operator's Info</ProtectedPageSubtitle>
                 </div>
 
                 <MainContainer>
-                  <div style={{ marginBottom: '8px' }}>
+                  <div className="mg-b8">
                     <MonroeInput
                       name="name"
                       value={values.name}
                       onChange={handleChange}
                       placeholder="Enter name"
-                      style={{ height: '32px' }}
-                      label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Name *</OptionTitle>}
+                      className="h-32"
+                      label={<OptionTitle className="pb-5">Name *</OptionTitle>}
                       error={touched.name ? errors.name : ''}
                       onBlur={handleBlur}
                     />
                   </div>
 
-                  <div style={{ marginBottom: '8px' }}>
+                  <div className="mg-b8">
                     <MonroeInput
                       name="email"
                       value={values.email}
                       onChange={handleChange}
                       placeholder="Enter email"
-                      style={{ height: '32px' }}
+                      className="h-32"
                       error={errors.email}
-                      label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Email</OptionTitle>}
+                      label={<OptionTitle className="pb-5">Email</OptionTitle>}
                       onBlur={handleBlur}
                     />
                   </div>
 
-                  <div style={{ marginBottom: '8px' }}>
-                    <OptionTitle style={{ padding: '0 0 5px 0' }}>Phone</OptionTitle>
+                  <div className="mg-b8">
+                    <OptionTitle className="pb-5">Phone</OptionTitle>
                     <MonroeInput
                       name="phone"
                       value={values.phone}
@@ -154,120 +154,116 @@ const CreateOperator: FC<ICreateOperatorProps> = ({ setOperator }) => {
                         if (validateNumber(event.target.value)) handleChange(event)
                       }}
                       placeholder="Enter phone"
-                      style={{ height: '32px' }}
+                      className="h-32"
                     />
                   </div>
 
-                  <div style={{ marginBottom: '8px' }}>
+                  <div className="mg-b8">
                     <MonroeInput
                       name="zipCode"
                       value={values.zipCode}
-                      label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Zip Code</OptionTitle>}
+                      label={<OptionTitle className="pb-5">Zip Code</OptionTitle>}
                       onChange={(event) => {
                         if (validateNumber(event.target.value)) handleChange(event)
                       }}
                       placeholder="Enter zip code"
-                      style={{ height: '32px' }}
+                      className="h-32"
                       error={errors.zipCode}
                     />
                   </div>
 
-                  <div style={{ marginBottom: '8px' }}>
-                    <OptionTitle style={{ padding: '0 0 5px 0' }}>State</OptionTitle>
+                  <div className="mg-b8">
+                    <OptionTitle className="pb-5">State</OptionTitle>
                     <MonroeInput
                       name="state"
                       value={values.state}
                       onChange={handleChange}
                       placeholder="Enter state"
-                      style={{ height: '32px' }}
+                      className="h-32"
                     />
                   </div>
 
-                  <div style={{ marginBottom: '8px' }}>
-                    <OptionTitle style={{ padding: '0 0 5px 0' }}>City</OptionTitle>
+                  <div className="mg-b8">
+                    <OptionTitle className="pb-5">City</OptionTitle>
                     <MonroeInput
                       name="city"
                       value={values.city}
                       onChange={handleChange}
                       placeholder="Enter city"
-                      style={{ height: '32px' }}
+                      className="h-32"
                     />
                   </div>
 
-                  <div style={{ marginBottom: '8px' }}>
-                    <OptionTitle style={{ padding: '0 0 5px 0' }}>Street</OptionTitle>
+                  <div className="mg-b8">
+                    <OptionTitle className="pb-5">Street</OptionTitle>
                     <MonroeInput
                       name="street"
                       value={values.street}
                       onChange={handleChange}
                       placeholder="Enter street"
-                      style={{ height: '32px' }}
+                      className="h-32"
                     />
                   </div>
                 </MainContainer>
               </Flex>
 
-              <MonroeDivider
-                style={{
-                  margin: '24px  0',
-                }}
-              />
+              <MonroeDivider className="mg-v24" />
 
               <Flex>
-                <div style={{ flex: '0 0 40%' }}>
+                <div className="f-40">
                   <ProtectedPageSubtitle>Point of Contact</ProtectedPageSubtitle>
                 </div>
 
                 <MainContainer>
-                  <div style={{ marginBottom: '8px' }}>
+                  <div className="mg-b8">
                     <MonroeInput
                       name="firstName"
                       value={values.firstName}
                       onChange={handleChange}
                       placeholder="Enter First Name"
-                      style={{ height: '32px' }}
-                      label={<OptionTitle style={{ padding: '0 0 5px 0' }}>First Name *</OptionTitle>}
+                      className="h-32"
+                      label={<OptionTitle className="pb-5">First Name *</OptionTitle>}
                       error={touched.firstName ? errors.firstName : ''}
                       onBlur={handleBlur}
                     />
                   </div>
 
-                  <div style={{ marginBottom: '8px' }}>
+                  <div className="mg-b8">
                     <MonroeInput
                       name="lastName"
                       value={values.lastName}
                       onChange={handleChange}
                       placeholder="Enter Last Name"
-                      style={{ height: '32px' }}
-                      label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Last Name *</OptionTitle>}
+                      className="h-32"
+                      label={<OptionTitle className="pb-5">Last Name *</OptionTitle>}
                       error={touched.lastName ? errors.lastName : ''}
                       onBlur={handleBlur}
                     />
                   </div>
 
-                  <div style={{ marginBottom: '8px' }}>
+                  <div className="mg-b8">
                     <MonroeInput
-                      label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Email *</OptionTitle>}
+                      label={<OptionTitle className="pb-5">Email *</OptionTitle>}
                       name="pointOfContactEmail"
                       value={values.pointOfContactEmail}
                       onChange={handleChange}
                       placeholder="Enter email"
-                      style={{ height: '32px' }}
+                      className="h-32"
                       error={touched.pointOfContactEmail ? errors.pointOfContactEmail : ''}
                       onBlur={handleBlur}
                     />
                   </div>
 
-                  <div style={{ marginBottom: '8px' }}>
+                  <div className="mg-b8">
                     <MonroeInput
-                      label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Phone *</OptionTitle>}
+                      label={<OptionTitle className="pb-5">Phone *</OptionTitle>}
                       name="pointOfContactPhoneNumber"
                       value={values.pointOfContactPhoneNumber}
                       onChange={(event) => {
                         if (validateNumber(event.target.value)) handleChange(event)
                       }}
                       placeholder="Enter phone"
-                      style={{ height: '32px' }}
+                      className="h-32"
                       error={touched.pointOfContactPhoneNumber ? errors.pointOfContactPhoneNumber : ''}
                       onBlur={handleBlur}
                     />
@@ -275,14 +271,10 @@ const CreateOperator: FC<ICreateOperatorProps> = ({ setOperator }) => {
                 </MainContainer>
               </Flex>
 
-              <MonroeDivider
-                style={{
-                  margin: '24px  0',
-                }}
-              />
+              <MonroeDivider className="mg-v24" />
 
               <Flex>
-                <div style={{ flex: '0 0 40%' }} />
+                <div className="f-40" />
                 <Flex>
                   <CancelButton
                     type="default"

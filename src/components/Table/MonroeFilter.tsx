@@ -5,7 +5,7 @@ import { FC } from 'react'
 import { ConfirmButton, ResetButton, StyledListItem, TextWrapper } from '@/components/Table/Elements'
 
 const MonroeFilter: FC<FilterDropdownProps> = ({ confirm, selectedKeys, setSelectedKeys, clearFilters, filters }) => (
-  <Flex vertical>
+  <Flex vertical className="p8">
     <List
       dataSource={filters}
       renderItem={(item) => {
@@ -30,7 +30,7 @@ const MonroeFilter: FC<FilterDropdownProps> = ({ confirm, selectedKeys, setSelec
       }}
     />
 
-    <Flex className="p8" justify="space-around">
+    <Flex justify="space-around">
       <ResetButton
         onClick={() => {
           clearFilters && clearFilters()

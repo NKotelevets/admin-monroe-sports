@@ -17,4 +17,7 @@ export const MASTER_ADMIN_ROLE = 'Master Admin'
 export const PARENT_ROLE = 'Parent'
 export const CHILD_ROLE = 'Child'
 export const HEAD_COACH_ROLE = 'Head Coach'
+export const TEAM_ADMIN_ROLE = 'Team Admin'
+export const PLAYER_ROLE = 'Player'
+export const COACH_ROLE = 'Coach'
 

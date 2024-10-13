@@ -1,8 +1,8 @@
 import FilterFilled from '@ant-design/icons/lib/icons/FilterFilled'
 import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined'
-import { Button, GetProp, TableColumnType } from 'antd'
+import { GetProp, TableColumnType } from 'antd'
 import Breadcrumb from 'antd/es/breadcrumb/Breadcrumb'
-import Input, { InputRef } from 'antd/es/input/Input'
+import { InputRef } from 'antd/es/input/Input'
 import { TableProps } from 'antd/es/table/InternalTable'
 import Table from 'antd/es/table/Table'
 import { FilterDropdownProps, SorterResult } from 'antd/es/table/interface'
@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom'
 import { MonroeBlueText } from '@/components/Elements'
 import { Container, Description, Title } from '@/components/Elements/deletingBlockingInfoElements'
 import CellText from '@/components/Table/CellText'
+import FilterDropDown from '@/components/Table/FilterDropDown'
 import MonroeFilter from '@/components/Table/MonroeFilter'
 import TagType from '@/components/Table/TagType'
 import TextWithTooltip from '@/components/TextWithTooltip'
@@ -19,6 +20,8 @@ import TextWithTooltip from '@/components/TextWithTooltip'
 import BaseLayout from '@/layouts/BaseLayout'
 
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
+
+import { getIconColor } from '@/utils'
 
 import { SHORT_GENDER_NAMES } from '@/common/constants'
 import { PATH_TO_USERS } from '@/common/constants/paths'
@@ -46,8 +49,6 @@ const BREADCRUMB_ITEMS = [
   },
 ]
 
-const getIconColor = (isFiltered: boolean) => (isFiltered ? 'rgba(26, 22, 87, 1)' : 'rgba(189, 188, 194, 1)')
-
 const BlockingInfo = () => {
   const handleReset = (clearFilters: () => void) => clearFilters()
   const searchInput = useRef<InputRef>(null)
@@ -66,46 +67,8 @@ const BlockingInfo = () => {
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
 
   const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IBlockedUserError> => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-        <Input
-          ref={searchInput}
-          placeholder="Search name"
-          value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(confirm)}
-          style={{ marginBottom: 8, display: 'block' }}
-        />
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Button
-            type="primary"
-            onClick={() => handleSearch(confirm)}
-            style={{
-              marginRight: '8px',
-              flex: '1 1 auto',
-            }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => {
-              clearFilters && handleReset(clearFilters)
-              handleSearch(confirm)
-            }}
-            style={{
-              flex: '1 1 auto',
-              color: selectedKeys.length ? 'rgba(188, 38, 27, 1)' : 'rgba(189, 188, 194, 1)',
-            }}
-          >
-            Reset
-          </Button>
-        </div>
-      </div>
+    filterDropdown: (props) => (
+      <FilterDropDown {...props} handleReset={handleReset} handleSearch={handleSearch} searchInput={searchInput} />
     ),
     filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1A1657' : '#BDBCC2' }} />,
     onFilter: (value, record) =>

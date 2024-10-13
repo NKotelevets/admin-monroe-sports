@@ -1,12 +1,13 @@
 import { DeleteOutlined, DownloadOutlined, PlusOutlined } from '@ant-design/icons'
-import { Button, Flex, Typography } from 'antd'
+import styled from '@emotion/styled'
+import { Flex } from 'antd'
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useNavigate } from 'react-router-dom'
 
 import LeagueAndTournamentsTable from '@/pages/Protected/LeaguesAndTournaments/components/LeagueAndTournamentsTable'
 
-import { ImportButton, MonroeDeleteButton } from '@/components/Elements'
+import { CreateNewEntityButton, ImportButton, MonroeDeleteButton, PageContainer } from '@/components/Elements'
 import ImportModal from '@/components/ImportTooltip'
 import Loader from '@/components/Loader'
 import MonroeModal from '@/components/MonroeModal'
@@ -18,25 +19,19 @@ import { useLeagueSlice } from '@/redux/hooks/useLeagueSlice'
 import { useImportLeaguesCSVMutation } from '@/redux/leagues/leagues.api'
 import { useBulkDeleteLeaguesMutation, useDeleteAllLeaguesMutation } from '@/redux/leagues/leagues.api'
 
+import { DEFAULT_IMPORT_MODAL_OPTIONS } from '@/common/constants/import'
 import {
   PATH_TO_CREATE_LEAGUE,
   PATH_TO_LEAGUES_DELETING_INFO,
   PATH_TO_LEAGUES_IMPORT_INFO,
 } from '@/common/constants/paths'
+import { IImportModalOptions } from '@/common/interfaces'
 
-interface IImportModalOptions {
-  filename: string
-  errorMessage?: string
-  status: 'loading' | 'red' | 'green' | 'yellow'
-  isOpen: boolean
-}
-
-const DEFAULT_IMPORT_MODAL_OPTIONS: IImportModalOptions = {
-  filename: '',
-  isOpen: false,
-  status: 'loading',
-  errorMessage: '',
-}
+const Title = styled.h1`
+  font-size: 20px;
+  font-weight: 500;
+  color: rgba(26, 22, 87, 0.85);
+`
 
 const LeaguesAndTournaments = () => {
   const navigate = useNavigate()
@@ -166,42 +161,18 @@ const LeaguesAndTournaments = () => {
           title={`Delete ${deleteRecordsModalCount > 1 ? deleteRecordsModalCount : ''} ${leagueTournText}?`}
           type="warn"
           content={
-            <>
-              <p>
-                Are you sure you want to delete {deleteRecordsModalCount > 1 ? deleteRecordsModalCount : ''}{' '}
-                {leagueTournText}?
-              </p>
-            </>
+            <p>
+              Are you sure you want to delete {deleteRecordsModalCount > 1 ? deleteRecordsModalCount : ''}{' '}
+              {leagueTournText}?
+            </p>
           }
         />
       )}
 
       <BaseLayout>
-        <Flex
-          vertical
-          style={{
-            padding: '16px 24px',
-            overflow: 'auto',
-            height: '100%',
-          }}
-        >
-          <Flex
-            justify="space-between"
-            align="center"
-            vertical={false}
-            style={{
-              marginBottom: '24px',
-            }}
-          >
-            <Typography.Title
-              color="rgba(26, 22, 87, 0.85)"
-              style={{
-                fontSize: '20px',
-                fontWeight: 500,
-              }}
-            >
-              Leagues & Tournaments
-            </Typography.Title>
+        <PageContainer>
+          <Flex justify="space-between" align="center" className="mg-b24">
+            <Title>Leagues & Tournaments</Title>
 
             <Flex>
               {!!selectedRecordsIds.length && (
@@ -234,27 +205,18 @@ const LeaguesAndTournaments = () => {
                 name="leagues"
                 accept=".csv"
                 onChange={handleChange}
-                style={{ display: 'none' }}
+                className="d-n"
                 key={fileKey}
               />
 
-              <Button
+              <CreateNewEntityButton
                 icon={<PlusOutlined />}
                 iconPosition="start"
                 type="primary"
                 onClick={goToCreateLeagueTournamentPage}
-                style={{
-                  borderRadius: '2px',
-                  border: '1px solid #BC261B',
-                  background: '#BC261B',
-                  boxShadow: '0px 2px 0px 0px rgba(0, 0, 0, 0.04)',
-                  fontSize: '14px',
-                  fontWeight: 400,
-                  height: '32px',
-                }}
               >
                 Create new leagues/tourns
-              </Button>
+              </CreateNewEntityButton>
             </Flex>
           </Flex>
 
@@ -269,7 +231,7 @@ const LeaguesAndTournaments = () => {
               setIsDeleteAllRecords={setIsDeleteAllRecords}
             />
           </Flex>
-        </Flex>
+        </PageContainer>
       </BaseLayout>
     </>
   )

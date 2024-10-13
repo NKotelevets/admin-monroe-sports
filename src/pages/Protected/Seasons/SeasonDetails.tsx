@@ -66,11 +66,7 @@ export const SeasonDetails = () => {
             onOk={handleDelete}
             title="Delete season?"
             type="warn"
-            content={
-              <>
-                <p>Are you sure you want to delete this season?</p>
-              </>
-            }
+            content={<p>Are you sure you want to delete this season?</p>}
           />
         )}
 
@@ -97,7 +93,7 @@ export const SeasonDetails = () => {
                   icon={<EditOutlined />}
                   iconPosition="start"
                   onClick={() => navigate(`${PATH_TO_EDIT_SEASON}/${data!.id}`)}
-                  style={{ height: '32px' }}
+                  className="h-32"
                 />
               </Flex>
             </Flex>
@@ -113,12 +109,12 @@ export const SeasonDetails = () => {
 
               <Flex className="mb-16">
                 <ViewText>Start Date:</ViewText>
-                <ViewText style={{ color: '#1A1657' }}>{format(new Date(data?.startDate), 'dd MMM yyyy')}</ViewText>
+                <ViewText className="color-dark-blue">{format(new Date(data?.startDate), 'dd MMM yyyy')}</ViewText>
               </Flex>
 
               <Flex className="mb-16">
                 <ViewText>Expected End Date:</ViewText>
-                <ViewText style={{ color: '#1A1657' }}>
+                <ViewText className="color-dark-blue">
                   {format(new Date(data?.expectedEndDate), 'dd MMM yyyy')}
                 </ViewText>
               </Flex>

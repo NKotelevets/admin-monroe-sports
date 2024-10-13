@@ -83,12 +83,12 @@ export const appSlice = createSlice({
         state.notification.timestamp = new Date().getTime()
       })
       .addMatcher(leaguesApi.endpoints.deleteLeague.matchFulfilled, (state) => {
-        state.notification.message = 'league/tournament have been successfully removed.'
+        state.notification.message = 'League/Tournament have been successfully removed.'
         state.notification.timestamp = new Date().getTime()
         state.notification.type = 'success'
       })
       .addMatcher(seasonsApi.endpoints.deleteSeason.matchFulfilled, (state) => {
-        state.notification.message = 'season have been successfully removed.'
+        state.notification.message = 'Season have been successfully removed.'
         state.notification.timestamp = new Date().getTime()
         state.notification.type = 'success'
       })

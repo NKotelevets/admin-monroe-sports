@@ -11,6 +11,7 @@ import BaseLayout from '@/layouts/BaseLayout'
 import { useImportEventsCSVMutation } from '@/redux/games/games.api'
 
 import { DEFAULT_IMPORT_MODAL_OPTIONS } from '@/common/constants/import'
+import { IError } from '@/common/interfaces/api'
 
 const Events = () => {
   const [fileKey, setFileKey] = useState('')
@@ -48,7 +49,7 @@ const Events = () => {
             filename: file.name,
             isOpen: true,
             status: 'red',
-            errorMessage: (error.data as { code: string; detail: string }).detail,
+            errorMessage: (error.data as IError).details,
           })
         })
 
@@ -102,7 +103,7 @@ const Events = () => {
             name="seasons"
             accept=".csv"
             onChange={handleChange}
-            style={{ display: 'none' }}
+            className="d-n"
             key={fileKey}
           />
         </PageContainer>

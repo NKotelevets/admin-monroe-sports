@@ -2,6 +2,7 @@ import * as Yup from 'yup'
 
 import { ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES } from '@/pages/Protected/Users/constants/roles'
 
+import { OPERATOR_ROLE } from '@/common/constants'
 import { IFERole } from '@/common/interfaces/role'
 import { TRole } from '@/common/types'
 
@@ -16,7 +17,7 @@ const userRoleValidationSchema = Yup.object({
     .of(linkedEntityValidationSchema)
     .when('name', {
       is: (value: string) =>
-        ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(value as TRole) || (value as TRole) === 'Operator',
+        ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(value as TRole) || (value as TRole) === OPERATOR_ROLE,
       then: (schema) => schema.required('Required').min(1),
     }),
 })

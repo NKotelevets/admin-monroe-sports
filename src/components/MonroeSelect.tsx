@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 import { Select } from 'antd'
 import { DefaultOptionType } from 'antd/es/select'
-import { CSSProperties, FC } from 'react'
+import { FC } from 'react'
 import { ReactSVG } from 'react-svg'
 
 import ArrowDownIcon from '@/assets/icons/arrow-down.svg'
@@ -11,7 +11,6 @@ interface IMonroeSelectProps {
   options: DefaultOptionType[]
   onChange: (value: string) => void
   name?: string
-  styles?: CSSProperties
   placeholder?: string
   value?: string | null | undefined
   mode?: 'multiple' | 'tags' | undefined
@@ -21,13 +20,14 @@ interface IMonroeSelectProps {
   filterSort?: (optionA: DefaultOptionType, optionB: DefaultOptionType) => number
   onSearch?: (value: string) => void
   onBlur?: () => void
+  className?: string
 }
 
-const CustomSelect: FC<IMonroeSelectProps> = ({ styles, renderInside = false, onBlur, ...props }) => (
+const CustomSelect: FC<IMonroeSelectProps> = ({ renderInside = false, onBlur, className, ...props }) => (
   <Select
     showSearch={true}
     suffixIcon={<ReactSVG src={ArrowDownIcon} />}
-    style={styles}
+    className={className}
     {...props}
     getPopupContainer={(trigger) => (renderInside ? trigger.parentNode : undefined)}
     onDropdownVisibleChange={(isOpen) => {

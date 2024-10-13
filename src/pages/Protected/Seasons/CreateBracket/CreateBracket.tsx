@@ -79,7 +79,6 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue, handleBlur, 
 
   const handleResize = () => {
     const screenWidth = window.innerWidth
-
     setIsLargeScreen(screenWidth >= 1660)
   }
 
@@ -136,13 +135,13 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue, handleBlur, 
 
   return (
     <div>
-      <Flex style={{ padding: 0 }}>
-        <div style={{ flex: '0 0 40%' }}>
+      <Flex className="p0">
+        <div className="f-40">
           <ProtectedPageSubtitle>Main Info</ProtectedPageSubtitle>
         </div>
 
         <Flex vertical justify="flex-start">
-          <div style={{ marginBottom: '8px' }}>
+          <div className="mg-b8">
             <MonroeInput
               name={`${namePrefix}.brackets.${bracketIdx}.name`}
               value={newBracketData.name}
@@ -152,14 +151,14 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue, handleBlur, 
                 handleBlur(event as FocusEvent<any>)
               }}
               placeholder="Enter bracket name"
-              style={{ height: '32px' }}
+              className="h-32"
               label={<OptionTitle>Bracket Name *</OptionTitle>}
               error={bracketTouchedFields?.name ? (!newBracketData.name.length ? 'Bracket Name is required' : '') : ''}
               onBlur={handleBlur}
             />
           </div>
 
-          <MainContainer vertical style={{ marginBottom: '8px' }}>
+          <MainContainer className="mg-b8" vertical>
             <Flex align="center" justify="space-between">
               <OptionTitle>Subpools in Bracket *</OptionTitle>
 
@@ -169,7 +168,7 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue, handleBlur, 
             </Flex>
 
             <MonroeMultipleSelect
-              styles={{ width: '100%' }}
+              className="w-full"
               placeholder="Select subpools"
               options={filteredSubdivisionsInSeason}
               name={`${namePrefix}.brackets.${bracketIdx}.subdivisionsNames`}
@@ -209,7 +208,7 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue, handleBlur, 
             />
           </MainContainer>
 
-          <Flex vertical style={{ marginBottom: '8px' }}>
+          <Flex className="mg-b8" vertical>
             <OptionTitle># playoffs' teams *</OptionTitle>
             <CustomSelect
               name={`${namePrefix}.brackets.${bracketIdx}.playoffTeams`}
@@ -223,9 +222,7 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue, handleBlur, 
                 }))
                 calculateTeamsOptions()
               }}
-              styles={{
-                width: '100% !important',
-              }}
+              className="w-full"
             />
           </Flex>
         </Flex>
@@ -234,7 +231,7 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue, handleBlur, 
       <MonroeDivider />
 
       <Flex vertical>
-        <Flex vertical style={{ width: '330px', marginBottom: '24px' }}>
+        <Flex className="mg-b24 w-330" vertical>
           <ProtectedPageSubtitle>Bracket</ProtectedPageSubtitle>
         </Flex>
 
@@ -267,8 +264,8 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue, handleBlur, 
 
       <MonroeDivider />
 
-      <Flex style={{ marginTop: '20px' }}>
-        <div style={{ flex: '0 0 40%' }} />
+      <Flex className="mg-t20">
+        <div className="f-40" />
 
         <Flex>
           <CancelButton
@@ -291,7 +288,7 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue, handleBlur, 
               type="primary"
               onClick={handleClick}
               isDisabled={isEnabledButton}
-              style={{ width: '150px' }}
+              className="w-150"
             />
           </MonroeTooltip>
         </Flex>

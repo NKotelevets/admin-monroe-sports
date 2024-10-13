@@ -1,20 +1,21 @@
 import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined'
 import { TableColumnType } from 'antd'
-import Button from 'antd/es/button'
 import Flex from 'antd/es/flex'
 import { InputRef } from 'antd/es/input'
-import Input from 'antd/es/input/Input'
 import { TableProps } from 'antd/es/table/InternalTable'
 import { FilterDropdownProps } from 'antd/es/table/interface'
 import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
+import FilterDropDown from '@/components/Table/FilterDropDown'
 import TextWithTooltip from '@/components/TextWithTooltip'
 
 import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice'
 import { useLazyGetMasterTeamsQuery } from '@/redux/masterTeams/masterTeams.api'
+
+import { getIconColor } from '@/utils'
 
 import { PATH_TO_EDIT_MASTER_TEAM, PATH_TO_MASTER_TEAMS, PATH_TO_USERS } from '@/common/constants/paths'
 import { IFEMasterTeam } from '@/common/interfaces/masterTeams'
@@ -31,8 +32,6 @@ interface IParams {
   setShowDeleteSingleRecordModal: (value: boolean) => void
 }
 
-const getIconColor = (isFiltered: boolean) => (isFiltered ? 'rgba(26, 22, 87, 1)' : 'rgba(189, 188, 194, 1)')
-
 export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRecordModal }: IParams) => {
   const navigate = useNavigate()
   const searchInput = useRef<InputRef>(null)
@@ -42,47 +41,18 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
 
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
 
+  const handleReset = (clearFilters: () => void) => {
+    getMasterTeams({
+      limit,
+      offset,
+      ordering: ordering || undefined,
+    })
+    clearFilters()
+  }
+
   const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IFEMasterTeam> => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-        <Input
-          ref={searchInput}
-          placeholder="Search name"
-          value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(confirm)}
-          style={{ marginBottom: 8, display: 'block' }}
-        />
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Button
-            type="primary"
-            onClick={() => handleSearch(confirm)}
-            style={{
-              marginRight: '8px',
-              flex: '1 1 auto',
-            }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => {
-              clearFilters && handleReset(clearFilters)
-              handleSearch(confirm)
-            }}
-            style={{
-              flex: '1 1 auto',
-              color: selectedKeys.length ? 'rgba(188, 38, 27, 1)' : 'rgba(189, 188, 194, 1)',
-            }}
-          >
-            Reset
-          </Button>
-        </div>
-      </div>
+    filterDropdown: (props) => (
+      <FilterDropDown {...props} handleReset={handleReset} handleSearch={handleSearch} searchInput={searchInput} />
     ),
     filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: getIconColor(filtered) }} />,
     onFilter: (value, record) =>
@@ -96,15 +66,6 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
       }
     },
   })
-
-  const handleReset = (clearFilters: () => void) => {
-    getMasterTeams({
-      limit,
-      offset,
-      ordering: ordering || undefined,
-    })
-    clearFilters()
-  }
 
   const handleCopyContent = async (email: string) => {
     await navigator.clipboard.writeText(email)
@@ -171,7 +132,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
               onClick={() => handleCopyContent(record.teamAdminEmail as string)}
             >
               <TextWithTooltip maxLength={22} text={record.teamAdminEmail} isRegularText />
-              <ReactSVG className="c-p" src={CopyIcon} style={{ marginLeft: '4px' }} />
+              <ReactSVG className="c-p mg-l4" src={CopyIcon} />
             </Flex>
           ) : (
             '-'
@@ -217,7 +178,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
               onClick={() => handleCopyContent(record.headCoachEmail as string)}
             >
               <TextWithTooltip maxLength={22} text={record.headCoachEmail} isRegularText />
-              <ReactSVG className="c-p" src={CopyIcon} style={{ marginLeft: '4px' }} />
+              <ReactSVG className="c-p mg-l4" src={CopyIcon} />
             </Flex>
           ) : (
             '-'
@@ -244,14 +205,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
       width: '96px',
       fixed: 'right',
       render: (value) => (
-        <Flex
-          vertical={false}
-          justify="center"
-          align="center"
-          style={{
-            cursor: 'pointer',
-          }}
-        >
+        <Flex className="c-p" justify="center" align="center">
           <ReactSVG
             src={EditIcon}
             onClick={() => {
@@ -260,12 +214,12 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
           />
 
           <ReactSVG
+            className="mg-l8"
             onClick={() => {
               setSelectedRecordId(value.id)
               setShowDeleteSingleRecordModal(true)
             }}
             src={DeleteIcon}
-            style={{ marginLeft: '8px' }}
           />
         </Flex>
       ),

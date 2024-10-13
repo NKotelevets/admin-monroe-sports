@@ -1,7 +1,8 @@
-import { masterTeamsApi } from './masterTeams.api'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
-import { IFEMasterTeam } from '@/common/interfaces/masterTeams'
+import { masterTeamsApi } from '@/redux/masterTeams/masterTeams.api'
+
+import { IFEMasterTeam, IMasterTeamError } from '@/common/interfaces/masterTeams'
 
 interface IMasterTeamsSliceState {
   masterTeams: IFEMasterTeam[]
@@ -10,11 +11,7 @@ interface IMasterTeamsSliceState {
   total: number
   ordering: string | null
   createdRecordsNames: string[]
-  deletedRecordsErrors: {
-    id: string
-    name: string
-    error: string
-  }[]
+  deletedRecordsErrors: IMasterTeamError[]
   tableRecords: []
   duplicates: []
 }

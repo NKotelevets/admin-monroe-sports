@@ -42,6 +42,7 @@ import BaseLayout from '@/layouts/BaseLayout'
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
 import { useCreateSeasonMutation } from '@/redux/seasons/seasons.api'
 
+import { BEST_RECORD_WINS, POINTS } from '@/common/constants/league'
 import { PATH_TO_SEASONS } from '@/common/constants/paths'
 import { IBECreateSeasonBody } from '@/common/interfaces/season'
 
@@ -92,9 +93,9 @@ const CreateSeason = () => {
         sub_division: division.subdivisions.map((subdivision) => ({
           name: subdivision.name,
           description: subdivision.description,
-          playoff_format: subdivision.playoffFormat === 'Best Record Wins' ? 0 : 1,
-          standings_format: subdivision.standingsFormat !== 'Points' ? 0 : 1,
-          tiebreakers_format: subdivision.tiebreakersFormat !== 'Points' ? 0 : 1,
+          playoff_format: subdivision.playoffFormat === BEST_RECORD_WINS ? 0 : 1,
+          standings_format: subdivision.standingsFormat !== POINTS ? 0 : 1,
+          tiebreakers_format: subdivision.tiebreakersFormat !== POINTS ? 0 : 1,
           brackets: subdivision?.brackets?.map((bracket) => ({
             name: bracket.name,
             number_of_teams: bracket.playoffTeams,
@@ -229,26 +230,26 @@ const CreateSeason = () => {
                   {!isCreateBracketPage && (
                     <PageContent>
                       <Flex>
-                        <div style={{ flex: '0 0 40%' }}>
+                        <div className="f-40">
                           <ProtectedPageSubtitle>Main Info</ProtectedPageSubtitle>
                         </div>
 
                         <MainContainer>
-                          <div style={{ marginBottom: '8px' }}>
+                          <div className="mg-b8">
                             <MonroeInput
                               name="name"
                               value={values.name}
                               onChange={handleChange}
                               placeholder="Enter season"
-                              style={{ height: '32px' }}
-                              label={<OptionTitle style={{ padding: '0 0 5px 0' }}>Name *</OptionTitle>}
+                              className="h-32"
+                              label={<OptionTitle className="pb-5">Name *</OptionTitle>}
                               error={touched.name ? errors.name : ''}
                               onBlur={handleBlur}
                             />
                           </div>
 
                           <Flex vertical justify="flex-start">
-                            <div style={{ marginBottom: '8px' }}>
+                            <div className="mg-b8">
                               <Flex align="center" justify="space-between">
                                 <OptionTitle>Linked League/Tourn *</OptionTitle>
 
@@ -286,7 +287,7 @@ const CreateSeason = () => {
                             </div>
                           </Flex>
 
-                          <Flex vertical justify="flex-start" style={{ marginBottom: '8px', width: '100%' }}>
+                          <Flex vertical justify="flex-start" className="mg-b8 w-full">
                             <Flex align="center" justify="space-between">
                               <OptionTitle>Start Date *</OptionTitle>
 
@@ -316,7 +317,7 @@ const CreateSeason = () => {
                             />
                           </Flex>
 
-                          <Flex vertical justify="flex-start" style={{ marginBottom: '8px', width: '100%' }}>
+                          <Flex vertical justify="flex-start" className="mg-b8 w-full">
                             <Flex align="center" justify="space-between">
                               <OptionTitle>Expected End Date *</OptionTitle>
                               {touched.expectedEndDate && errors.expectedEndDate && (
@@ -349,14 +350,10 @@ const CreateSeason = () => {
                         </MainContainer>
                       </Flex>
 
-                      <MonroeDivider
-                        style={{
-                          margin: '24px 0 12px 0',
-                        }}
-                      />
+                      <MonroeDivider className="mg-v24" />
 
                       <Flex>
-                        <Flex vertical style={{ flex: '0 0 40%', paddingTop: '12px' }}>
+                        <Flex className="f-40 pt-12" vertical>
                           <ProtectedPageSubtitle>Division/Pool</ProtectedPageSubtitle>
 
                           <ProtectedPageSubtitleDescription>
@@ -391,9 +388,7 @@ const CreateSeason = () => {
                                   icon={<PlusOutlined />}
                                   iconPosition="start"
                                   onClick={() => push(INITIAL_DIVISION_DATA)}
-                                  style={{
-                                    width: 'auto',
-                                  }}
+                                  className="w-auto"
                                 >
                                   Add Division/Pool
                                 </AddEntityButton>
@@ -406,7 +401,7 @@ const CreateSeason = () => {
                       <MonroeDivider />
 
                       <Flex>
-                        <div style={{ flex: '0 0 40%' }} />
+                        <div className="f-40" />
                         <Flex>
                           <CancelButton type="default" onClick={goBack}>
                             Cancel

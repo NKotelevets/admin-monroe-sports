@@ -2,6 +2,7 @@ import { createApi } from '@reduxjs/toolkit/query/react'
 
 import baseQueryWithReAuth from '@/redux/reauthBaseQuery'
 
+import { BEST_RECORD_WINS, LEAGUE, POINTS, SINGLE_ELIMINATION_BRACKET, TOURN, WINNING } from '@/common/constants/league'
 import { IPaginationResponse } from '@/common/interfaces/api'
 import {
   IBECreateLeagueBody,
@@ -31,14 +32,14 @@ export const leaguesApi = createApi({
         count: data.count,
         leagues: data.results.map((league) => ({
           id: league.id,
-          type: league.type === 0 ? 'League' : 'Tourn',
+          type: league.type === 0 ? LEAGUE : TOURN,
           name: league.name,
           description: league.description,
           updatedAt: league.updated_at,
           createdAt: league.created_at,
-          playoffFormat: league.playoff_format === 0 ? 'Best Record Wins' : 'Single Elimination Bracket',
-          standingsFormat: league.standings_format === 0 ? 'Winning %' : 'Points',
-          tiebreakersFormat: league.tiebreakers_format === 0 ? 'Winning %' : 'Points',
+          playoffFormat: league.playoff_format === 0 ? BEST_RECORD_WINS : SINGLE_ELIMINATION_BRACKET,
+          standingsFormat: league.standings_format === 0 ? WINNING : POINTS,
+          tiebreakersFormat: league.tiebreakers_format === 0 ? WINNING : POINTS,
           playoffsTeams: league.playoffs_teams,
           welcomeNote: league.welcome_note,
           seasons: league.league_seasons.map((season) => ({ id: season.id, name: season.name })),
@@ -75,14 +76,14 @@ export const leaguesApi = createApi({
       keepUnusedDataFor: 0.0001,
       transformResponse: (league: IBELeague) => ({
         id: league.id,
-        type: league.type === 0 ? 'League' : 'Tourn',
+        type: league.type === 0 ? LEAGUE : TOURN,
         name: league.name,
         description: league.description,
         updatedAt: league.updated_at,
         createdAt: league.created_at,
-        playoffFormat: league.playoff_format === 0 ? 'Best Record Wins' : 'Single Elimination Bracket',
-        standingsFormat: league.standings_format === 0 ? 'Winning %' : 'Points',
-        tiebreakersFormat: league.tiebreakers_format === 0 ? 'Winning %' : 'Points',
+        playoffFormat: league.playoff_format === 0 ? BEST_RECORD_WINS : SINGLE_ELIMINATION_BRACKET,
+        standingsFormat: league.standings_format === 0 ? WINNING : POINTS,
+        tiebreakersFormat: league.tiebreakers_format === 0 ? WINNING : POINTS,
         playoffsTeams: league.playoffs_teams,
         welcomeNote: league.welcome_note,
         seasons: league.league_seasons.map((season) => ({ id: season.id, name: season.name })),

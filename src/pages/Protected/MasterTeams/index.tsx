@@ -24,19 +24,13 @@ import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice'
 import { useBulkDeleteMasterTeamsMutation, useMasterTeamsImportCSVMutation } from '@/redux/masterTeams/masterTeams.api'
 
+import { DEFAULT_IMPORT_MODAL_OPTIONS } from '@/common/constants/import'
 import {
   PATH_TO_CREATE_MASTER_TEAM,
   PATH_TO_DELETING_INFO_MASTER_TEAMS,
   PATH_TO_MASTER_TEAMS_IMPORT_INFO,
 } from '@/common/constants/paths'
 import { IImportModalOptions } from '@/common/interfaces'
-
-const DEFAULT_IMPORT_MODAL_OPTIONS: IImportModalOptions = {
-  filename: '',
-  isOpen: false,
-  status: 'loading',
-  errorMessage: '',
-}
 
 const MasterTeams = () => {
   const { total } = useMasterTeamsSlice()
@@ -205,7 +199,7 @@ const MasterTeams = () => {
             name="seasons"
             accept=".csv"
             onChange={handleChange}
-            style={{ display: 'none' }}
+            className="d-n"
             key={fileKey}
           />
 

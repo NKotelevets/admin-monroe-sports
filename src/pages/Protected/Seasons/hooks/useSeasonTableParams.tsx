@@ -1,7 +1,6 @@
 import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined'
-import { Button, Flex, TableColumnType, TableProps } from 'antd'
+import { Flex, TableColumnType, TableProps } from 'antd'
 import { InputRef } from 'antd/es/input'
-import Input from 'antd/es/input/Input'
 import { FilterDropdownProps } from 'antd/es/table/interface'
 import { format } from 'date-fns'
 import { useRef } from 'react'
@@ -10,6 +9,7 @@ import { ReactSVG } from 'react-svg'
 
 import MonroeTooltip from '@/components/MonroeTooltip'
 import CellText from '@/components/Table/CellText'
+import FilterDropDown from '@/components/Table/FilterDropDown'
 import TextWithTooltip from '@/components/TextWithTooltip'
 
 import { PATH_TO_EDIT_SEASON, PATH_TO_LEAGUE_PAGE, PATH_TO_SEASON_DETAILS } from '@/common/constants/paths'
@@ -36,46 +36,8 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
   const navigate = useNavigate()
 
   const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IFESeason> => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-        <Input
-          ref={searchInput}
-          placeholder="Search name"
-          value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(confirm)}
-          style={{ marginBottom: 8, display: 'block' }}
-        />
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Button
-            type="primary"
-            onClick={() => handleSearch(confirm)}
-            style={{
-              marginRight: '8px',
-              flex: '1 1 auto',
-            }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => {
-              clearFilters && handleReset(clearFilters)
-              handleSearch(confirm)
-            }}
-            style={{
-              flex: '1 1 auto',
-              color: selectedKeys.length ? 'rgba(188, 38, 27, 1)' : 'rgba(189, 188, 194, 1)',
-            }}
-          >
-            Reset
-          </Button>
-        </div>
-      </div>
+    filterDropdown: (props) => (
+      <FilterDropDown {...props} handleReset={handleReset} handleSearch={handleSearch} searchInput={searchInput} />
     ),
     filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1A1657' : '#BDBCC2' }} />,
     onFilter: (value, record) =>
@@ -110,7 +72,7 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
         return (
           <Flex align="center" justify="flex-start">
             {!!showIcon && (
-              <div style={{ marginRight: '8px' }}>
+              <div className="mg-r8">
                 <MonroeTooltip text="Season requires brackets setting." width="130px" containerWidth="auto">
                   <ReactSVG src={WarningIcon} />
                 </MonroeTooltip>
@@ -173,7 +135,7 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
         const divisionsLength = divisionsNames.length
 
         return (
-          <div style={{ maxWidth: '150px' }} onClick={() => navigate(`${PATH_TO_SEASON_DETAILS}/${record.id}`)}>
+          <div onClick={() => navigate(`${PATH_TO_SEASON_DETAILS}/${record.id}`)}>
             {divisionsLength > 20 ? (
               <MonroeTooltip
                 width="150px"
@@ -204,20 +166,14 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
       render: (_, record) => {
         return (
           <Flex vertical={false} justify="center" align="center">
-            <ReactSVG
-              src={EditIcon}
-              onClick={() => navigate(`${PATH_TO_EDIT_SEASON}/${record.id}`)}
-              style={{
-                cursor: 'pointer',
-              }}
-            />
+            <ReactSVG src={EditIcon} onClick={() => navigate(`${PATH_TO_EDIT_SEASON}/${record.id}`)} className="c-p" />
             <ReactSVG
               onClick={() => {
                 setSelectedRecordId(record.id)
                 setShowDeleteSingleRecordModal(true)
               }}
               src={DeleteIcon}
-              style={{ marginLeft: '8px', cursor: 'pointer' }}
+              className="c-p mg-l8"
             />
           </Flex>
         )

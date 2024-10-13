@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 import { Flex } from 'antd'
 import { DefaultOptionType } from 'antd/es/select'
-import { CSSProperties, ChangeEvent, FC, RefObject, useEffect, useState } from 'react'
+import { ChangeEvent, FC, RefObject, useEffect, useState } from 'react'
 import { ReactSVG } from 'react-svg'
 
 import { SearchLeagueInput, SearchSelectIconWrapper } from '@/components/Elements'
@@ -45,10 +45,6 @@ const List = styled.ul`
 const Container = styled.div`
   position: relative;
 `
-
-const defaultPadding: CSSProperties = {
-  padding: '5px 12px',
-}
 
 interface IMasterTeamRoleInputProps {
   handleClick: (data: IFEUser) => void
@@ -113,17 +109,17 @@ const MasterTeamRoleInput: FC<IMasterTeamRoleInputProps> = ({ handleClick, handl
   useDebounceEffect(getDataWithNewName, [value])
 
   return (
-    <Flex vertical style={{ width: '100%' }}>
-      <div ref={ref} style={{ width: '100%' }}>
+    <Flex vertical className="w-full">
+      <div ref={ref} className="w-full">
         <Container>
           <SearchLeagueInput
             name="search"
             onChange={(event: ChangeEvent<HTMLInputElement>) => handleChange(event.target.value)}
             value={value}
             placeholder="Select user"
-            style={{ height: '32px' }}
             is_error={`${isError}`}
             onBlur={handleBlur}
+            className="h-32"
           />
 
           <SearchSelectIconWrapper isComponentVisible={isComponentVisible}>
@@ -132,7 +128,7 @@ const MasterTeamRoleInput: FC<IMasterTeamRoleInputProps> = ({ handleClick, handl
         </Container>
 
         {isComponentVisible && (
-          <Container style={defaultPadding}>
+          <Container className="ph-5-v-12">
             <List ref={scrollRef as unknown as RefObject<HTMLUListElement>} onScroll={handleScroll}>
               {userOptions.length ? (
                 userOptions.map((user) => (
@@ -151,11 +147,7 @@ const MasterTeamRoleInput: FC<IMasterTeamRoleInputProps> = ({ handleClick, handl
                   </ListItem>
                 ))
               ) : (
-                <div
-                  style={{
-                    padding: '10px',
-                  }}
-                >
+                <div className="p12">
                   <Subtext>There's no match. Try a different name.</Subtext>
                 </div>
               )}

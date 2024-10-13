@@ -43,12 +43,7 @@ const Users = () => {
   const [isOpenModal, setIsOpenModal] = useState(false)
   const [selectedRecordsIds, setSelectedRecordsIds] = useState<string[]>([])
   const [showAdditionalHeader, setShowAdditionalHeader] = useState(false)
-  const [importModalOptions, setImportModalOptions] = useState<IImportModalOptions>({
-    filename: '',
-    isOpen: false,
-    status: 'loading',
-    errorMessage: '',
-  })
+  const [importModalOptions, setImportModalOptions] = useState<IImportModalOptions>(DEFAULT_IMPORT_MODAL_OPTIONS)
   const inputRef = useRef<HTMLInputElement | null>()
   const navigate = useNavigate()
   const { total } = useUserSlice()
@@ -270,7 +265,7 @@ const Users = () => {
             name="users"
             accept=".csv"
             onChange={handleChange}
-            style={{ display: 'none' }}
+            className="d-n"
             key={fileKey}
           />
 

@@ -10,7 +10,9 @@ import {
   IFEMasterTeamDetails,
   IGetMasterTeamsRequest,
   IGetMasterTeamsResponse,
+  IMasterTeamError,
 } from '@/common/interfaces/masterTeams'
+import { TDeleteStatus } from '@/common/types'
 
 const MASTER_TEAMS_TAG = 'MASTER_TEAMS'
 
@@ -126,12 +128,8 @@ export const masterTeamsApi = createApi({
 
     bulkDeleteMasterTeams: builder.mutation<
       {
-        items: {
-          id: string
-          name: string
-          error: string
-        }[]
-        status: 'green' | 'red' | 'yellow'
+        items: IMasterTeamError[]
+        status: TDeleteStatus
         total: number
         success: number
       },

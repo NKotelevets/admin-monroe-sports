@@ -18,6 +18,8 @@ import { useUserSlice } from '@/redux/hooks/useUserSlice'
 
 import useIsActiveComponent from '@/hooks/useIsActiveComponent'
 
+import { MASTER_ADMIN_ROLE, OPERATOR_ROLE } from '@/common/constants'
+import { IIdName } from '@/common/interfaces'
 import { IFERole } from '@/common/interfaces/role'
 import { TRole } from '@/common/types'
 
@@ -30,7 +32,7 @@ interface IPopulateRoleProps {
   errors: FormikErrors<ICreateUserFormValues>
   setFieldValue: (
     field: string,
-    value: string | { id: string; name: string }[] | { name: string; linkedEntities: { id: string; name: string }[] },
+    value: string | IIdName[] | IFERole,
     shouldValidate?: boolean,
   ) => Promise<void | FormikErrors<ICreateUserFormValues>>
   removeFn: (index: number) => void
@@ -60,8 +62,8 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
   const isAdmin = user?.isSuperuser
   const selectedRoles = values.roles.map((role) => role.name)
   const options: DefaultOptionType[] = ROLES.filter((initialRole) => {
-    if (!isAdmin && initialRole === 'Operator') return false
-    if (!isAdmin && initialRole === 'Master Admin') return false
+    if (!isAdmin && initialRole === OPERATOR_ROLE) return false
+    if (!isAdmin && initialRole === MASTER_ADMIN_ROLE) return false
     if (!selectedRoles.includes(initialRole)) return true
     return false
   }).map((role) => ({
@@ -69,8 +71,8 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
     value: role,
   }))
   const isRoleWithTeams = ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(role.name as TRole)
-  const isOperator = (role.name as TRole) === 'Operator'
-  const operator = values.roles.find((role) => role.name === 'Operator')?.linkedEntities?.[0] || { id: '', name: '' }
+  const isOperator = (role.name as TRole) === OPERATOR_ROLE
+  const operator = values.roles.find((role) => role.name === OPERATOR_ROLE)?.linkedEntities?.[0] || { id: '', name: '' }
   const isMissingName = !!(errors.roles?.[+index] as FormikErrors<IFERole>)?.name
   const isMissingEntities = !!(errors.roles?.[+index] as FormikErrors<IFERole>)?.linkedEntities
   const isHightestRoleOperator = isOperator && !user?.isSuperuser
@@ -84,12 +86,7 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
   return (
     <CreateEntityContainer ref={ref} isError={isError}>
       {!isOpenedDetails && (
-        <Flex
-          justify="space-between"
-          align="center"
-          onClick={() => setIsOpenedDetails(true)}
-          style={{ cursor: 'pointer', padding: '16px' }}
-        >
+        <Flex justify="space-between" align="center" onClick={() => setIsOpenedDetails(true)} className="c-p p16">
           <Flex vertical>
             <TitleStyle isError={isError}>{isError ? 'Missing mandatory data' : role.name || 'Role'}</TitleStyle>
 
@@ -106,8 +103,8 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
             )}
           </Flex>
 
-          {!(['Operator', 'Master Admin'].includes(role.name) && !isAdmin) &&
-            !(isSameUser && role.name === 'Master Admin') && (
+          {!([OPERATOR_ROLE, MASTER_ADMIN_ROLE].includes(role.name) && !isAdmin) &&
+            !(isSameUser && role.name === MASTER_ADMIN_ROLE) && (
               <div onClick={() => removeFn(index)}>
                 <ReactSVG src={DeleteIcon} />
               </div>
@@ -116,9 +113,9 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
       )}
 
       {isOpenedDetails && (
-        <Flex vertical style={{ padding: '16px' }}>
+        <Flex vertical className="p16">
           <Flex vertical>
-            <div style={{ marginBottom: '8px' }}>
+            <div className="mg-b8">
               <Flex align="center" justify="space-between">
                 <OptionTitle>Role</OptionTitle>
 
@@ -135,12 +132,10 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
                 placeholder="Select role"
                 value={role.name || null}
                 renderInside
-                styles={{
-                  width: '100%',
-                }}
+                className="w-full"
                 is_error={`${isMissingName}`}
                 onBlur={() => setFieldTouched(`roles.${index}.name`, true)}
-                disabled={isHightestRoleOperator && role.name === 'Operator'}
+                disabled={isHightestRoleOperator && role.name === OPERATOR_ROLE}
               />
             </div>
 

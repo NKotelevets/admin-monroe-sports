@@ -59,9 +59,7 @@ const PopulateEntity: FC<IPopulateRoleProps> = ({
   const touchedEntity = !!touched?.[entityName]?.[index]
   const isError = touchedEntity && !!errors?.[index]
 
-  const handleBlur = () => {
-    setFieldTouched(`${entityName}.${index}`, true)
-  }
+  const handleBlur = () => setFieldTouched(`${entityName}.${index}`, true)
 
   useEffect(() => {
     if (!isComponentVisible) setIsOpenedDetails(false)
@@ -84,12 +82,7 @@ const PopulateEntity: FC<IPopulateRoleProps> = ({
   return (
     <CreateEntityContainer ref={ref} isError={isError}>
       {!isOpenedDetails && (
-        <Flex
-          justify="space-between"
-          align="center"
-          onClick={() => setIsOpenedDetails(true)}
-          style={{ cursor: 'pointer', padding: '16px' }}
-        >
+        <Flex className="c-p p16" justify="space-between" align="center" onClick={() => setIsOpenedDetails(true)}>
           <Flex vertical>
             {isError && <TitleStyle isError={isError}>Missing mandatory data</TitleStyle>}
 
@@ -112,7 +105,7 @@ const PopulateEntity: FC<IPopulateRoleProps> = ({
             containerWidth="auto"
           >
             <div
-              style={{ marginTop: '8px' }}
+              className="mg-t8"
               onClick={() => {
                 if (totalNumberOfItems === 1) {
                   setFieldValue(`${entityName}.${index}`, {
@@ -135,9 +128,9 @@ const PopulateEntity: FC<IPopulateRoleProps> = ({
       )}
 
       {isOpenedDetails && (
-        <Flex vertical style={{ padding: '16px' }}>
+        <Flex vertical className="p16">
           <Flex vertical>
-            <div style={{ marginBottom: '8px' }}>
+            <div className="mg-b8">
               <Flex align="center" justify="space-between">
                 <OptionTitle>{entityName === 'teamAdministrators' ? 'Administrator' : 'Coach'} Name *</OptionTitle>
 
@@ -156,15 +149,9 @@ const PopulateEntity: FC<IPopulateRoleProps> = ({
               />
             </div>
 
-            <div style={{ marginBottom: '8px' }}>
+            <div className="mg-b8">
               <OptionTitle>Email *</OptionTitle>
-
-              <MonroeInput
-                name={`${entityName}.${index}.email`}
-                disabled
-                value={entity.email}
-                style={{ height: '32px' }}
-              />
+              <MonroeInput name={`${entityName}.${index}.email`} disabled value={entity.email} className="h-32" />
             </div>
           </Flex>
         </Flex>
