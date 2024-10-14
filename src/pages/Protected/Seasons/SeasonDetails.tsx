@@ -25,7 +25,7 @@ import { useDeleteSeasonMutation, useGetSeasonDetailsQuery } from '@/redux/seaso
 
 import { PATH_TO_EDIT_SEASON, PATH_TO_LEAGUE_PAGE, PATH_TO_SEASONS } from '@/common/constants/paths'
 
-export const SeasonDetails = () => {
+const SeasonDetails = () => {
   const params = useParams<{ id: string }>()
   const { data, isLoading } = useGetSeasonDetailsQuery(params?.id || '', {
     skip: !params?.id,
@@ -144,3 +144,5 @@ export const SeasonDetails = () => {
     </>
   )
 }
+
+export default SeasonDetails

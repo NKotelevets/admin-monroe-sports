@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from 'react'
 import { ReactSVG } from 'react-svg'
 
 import MasterTeamRoleInput from '@/pages/Protected/MasterTeams/components/MasterTeamRoleInput'
-import { ICreateMasterTeam, IMasterTeamRole } from '@/pages/Protected/MasterTeams/formik'
+import { IMasterTeamRole, IPopulateMasterTeam } from '@/pages/Protected/MasterTeams/formik'
 
 import { OptionTitle } from '@/components/Elements'
 import { CreateEntityContainer, Subtext, TitleStyle } from '@/components/Elements/entity'
@@ -28,15 +28,15 @@ interface IPopulateRoleProps {
     field: string,
     value: IMasterTeamRole,
     shouldValidate?: boolean,
-  ) => Promise<void | FormikErrors<ICreateMasterTeam>>
+  ) => Promise<void | FormikErrors<IPopulateMasterTeam>>
   removeFn: (index: number) => void
   setFieldTouched: (
     field: string,
     isTouched?: boolean,
     shouldValidate?: boolean,
-  ) => Promise<void | FormikErrors<ICreateMasterTeam>>
+  ) => Promise<void | FormikErrors<IPopulateMasterTeam>>
   entityName: 'teamAdministrators' | 'coaches'
-  touched: FormikTouched<ICreateMasterTeam>
+  touched: FormikTouched<IPopulateMasterTeam>
   totalNumberOfItems: number
 }
 

@@ -9,7 +9,7 @@ export interface IMasterTeamRole {
   role: TMasterTeamRole
 }
 
-export interface ICreateMasterTeam {
+export interface IPopulateMasterTeam {
   name: string
   teamAdministrators: IMasterTeamRole[]
   coaches: IMasterTeamRole[]
@@ -23,21 +23,21 @@ export const getInitialEntity = (entityRole: TMasterTeamRole): IMasterTeamRole =
   role: entityRole,
 })
 
-export const initialCreateMasterTeamValues: ICreateMasterTeam = {
+export const initialCreateMasterTeamValues: IPopulateMasterTeam = {
   name: '',
   coaches: [getInitialEntity('head-coach')],
   players: [],
   teamAdministrators: [getInitialEntity('admin')],
 }
 
-const masterTeamRoleValidationSchema = Yup.object<ICreateMasterTeam>().shape({
+const masterTeamRoleValidationSchema = Yup.object<IPopulateMasterTeam>().shape({
   fullName: Yup.string().required(),
   id: Yup.string().required(),
   email: Yup.string().required(),
   role: Yup.string().required(),
 })
 
-export const masterTeamsValidationSchema = Yup.object<ICreateMasterTeam>().shape({
+export const masterTeamsValidationSchema = Yup.object<IPopulateMasterTeam>().shape({
   name: Yup.string().required('Name is required'),
   teamAdministrators: Yup.array(masterTeamRoleValidationSchema).min(1, 'Error message'),
   coaches: Yup.array(masterTeamRoleValidationSchema).min(1, 'Error message'),

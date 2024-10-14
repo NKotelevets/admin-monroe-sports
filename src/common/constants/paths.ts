@@ -35,6 +35,7 @@ export const PATH_TO_EDIT_MASTER_TEAM = '/master-teams/edit'
 export const PATH_TO_DELETING_INFO_MASTER_TEAMS = '/master-teams/deleting-info'
 export const PATH_TO_MASTER_TEAMS_IMPORT_INFO = '/master-teams/import-info'
 
+// REST
 export const PATH_TO_LEAGUE_TEAMS = '/league-teams'
 export const PATH_TO_PLAYOFF_FORMAT = '/playoff-format'
 export const PATH_TO_STANDINGS_FORMAT = '/standings-format'

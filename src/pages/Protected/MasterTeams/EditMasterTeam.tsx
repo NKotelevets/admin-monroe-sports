@@ -2,16 +2,17 @@ import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import { Flex } from 'antd'
 import Breadcrumb from 'antd/es/breadcrumb'
 import { FieldArray, Form, Formik, FormikErrors } from 'formik'
+import { useEffect } from 'react'
 import { Helmet } from 'react-helmet'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
 import PopulateEntity from '@/pages/Protected/MasterTeams/components/PopulateEntity'
 import {
   IMasterTeamRole,
   IPopulateMasterTeam,
+  TMasterTeamRole,
   getInitialEntity,
-  initialCreateMasterTeamValues,
   masterTeamsValidationSchema,
 } from '@/pages/Protected/MasterTeams/formik'
 
@@ -30,6 +31,7 @@ import {
   ProtectedPageTitle,
 } from '@/components/Elements'
 import MonroeInput from '@/components/Inputs/MonroeInput'
+import Loader from '@/components/Loader'
 import MonroeButton from '@/components/MonroeButton'
 import MonroeTooltip from '@/components/MonroeTooltip'
 import UsersMultipleSelectWithSearch from '@/components/UsersMultipleSelectWithSearch'
@@ -37,28 +39,23 @@ import UsersMultipleSelectWithSearch from '@/components/UsersMultipleSelectWithS
 import BaseLayout from '@/layouts/BaseLayout'
 
 import { useAppSlice } from '@/redux/hooks/useAppSlice'
-import { useUserSlice } from '@/redux/hooks/useUserSlice'
-import { useCreateMasterTeamMutation } from '@/redux/masterTeams/masterTeams.api'
+import { useEditMasterTeamMutation, useGetMasterTeamQuery } from '@/redux/masterTeams/masterTeams.api'
 
 import { PATH_TO_MASTER_TEAMS } from '@/common/constants/paths'
 import { IDetailedError } from '@/common/interfaces'
 
 import ShowAllIcon from '@/assets/icons/show-all.svg'
 
-const BREAD_CRUMB_ITEMS = [
-  {
-    title: <a href={PATH_TO_MASTER_TEAMS}>Master Teams</a>,
-  },
-  {
-    title: <MonroeBlueText>Create master team</MonroeBlueText>,
-  },
-]
-
-const CreateMasterTeam = () => {
+const EditMasterTeam = () => {
+  const params = useParams<{ id: string }>()
   const navigation = useNavigate()
-  const [createMasterTeam] = useCreateMasterTeamMutation()
   const { setAppNotification } = useAppSlice()
-  const { user } = useUserSlice()
+  const { data, isLoading, isError } = useGetMasterTeamQuery({ id: params?.id || '' }, { skip: !params.id })
+  const [editMT] = useEditMasterTeamMutation()
+
+  useEffect(() => {
+    if (isError) navigation(PATH_TO_MASTER_TEAMS)
+  }, [isError])
 
   const goBack = () => navigation(PATH_TO_MASTER_TEAMS)
 
@@ -67,12 +64,17 @@ const CreateMasterTeam = () => {
     const playersIds = values.players.map((player) => player.id)
     const teamAdminIds = values.teamAdministrators.map((teamAdmin) => teamAdmin.id)
 
-    createMasterTeam({
+    const body = {
       name: values.name,
       head_coach: values.coaches[0].id,
       coaches: coachesIds,
       players: playersIds,
       team_admins: teamAdminIds,
+    }
+
+    editMT({
+      id: params!.id as string,
+      body,
     })
       .unwrap()
       .then(() => {
@@ -88,25 +90,52 @@ const CreateMasterTeam = () => {
       })
   }
 
+  if (!data && isLoading) return <Loader />
+
+  const BREAD_CRUMB_ITEMS = [
+    {
+      title: <a href={PATH_TO_MASTER_TEAMS}>Master Teams</a>,
+    },
+    {
+      title: <MonroeBlueText>{data!.name}</MonroeBlueText>,
+    },
+  ]
+
+  const initialData: IPopulateMasterTeam = {
+    name: data!.name,
+    coaches: [
+      {
+        ...data!.headCoach,
+        role: 'head-coach',
+      },
+      ...data!.coaches.map((coach) => ({
+        email: coach.email,
+        fullName: coach.fullName,
+        id: coach.id,
+        role: 'coach' as TMasterTeamRole,
+      })),
+    ],
+    players: data!.players.map((player) => ({
+      id: player.id,
+      name: player.fullName,
+    })),
+    teamAdministrators: data!.teamsAdmins.map((teamAdmin) => ({
+      email: teamAdmin.email,
+      fullName: teamAdmin.fullName,
+      id: teamAdmin.id,
+      role: 'admin',
+    })),
+  }
+
   return (
     <>
       <Helmet>
-        <title>Admin Panel | Create Master Team</title>
+        <title>Admin Panel | Edit Master Team</title>
       </Helmet>
 
       <BaseLayout>
         <Formik
-          initialValues={{
-            ...initialCreateMasterTeamValues,
-            teamAdministrators: [
-              {
-                id: user!.id,
-                fullName: user!.firstName + ' ' + user!.lastName,
-                email: user!.email,
-                role: 'admin',
-              },
-            ],
-          }}
+          initialValues={initialData}
           validationSchema={masterTeamsValidationSchema}
           onSubmit={handleSubmit}
           validateOnChange
@@ -159,7 +188,7 @@ const CreateMasterTeam = () => {
                 <PageContainer vertical>
                   <Breadcrumb items={BREAD_CRUMB_ITEMS} />
 
-                  <ProtectedPageTitle>Create master team</ProtectedPageTitle>
+                  <ProtectedPageTitle>Edit {data!.name}</ProtectedPageTitle>
 
                   <PageContent>
                     <Flex>
@@ -295,12 +324,7 @@ const CreateMasterTeam = () => {
                           Cancel
                         </CancelButton>
 
-                        <MonroeButton
-                          className="h-40"
-                          label="Create Master Team"
-                          type="primary"
-                          onClick={handleSubmit}
-                        />
+                        <MonroeButton className="h-40" label="Edit Master Team" type="primary" onClick={handleSubmit} />
                       </Flex>
                     </Flex>
                   </PageContent>
@@ -314,5 +338,5 @@ const CreateMasterTeam = () => {
   )
 }
 
-export default CreateMasterTeam
+export default EditMasterTeam
 

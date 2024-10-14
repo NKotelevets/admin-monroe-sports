@@ -205,12 +205,12 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
       dataIndex: '',
       width: '96px',
       fixed: 'right',
-      render: (value) => (
+      render: (value, record) => (
         <Flex className="c-p" justify="center" align="center">
           <ReactSVG
             src={EditIcon}
             onClick={() => {
-              navigate(PATH_TO_EDIT_MASTER_TEAM + `/${value.id}`)
+              navigate(PATH_TO_EDIT_MASTER_TEAM + `/${record.id}`)
             }}
           />
 

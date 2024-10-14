@@ -6,11 +6,11 @@ import { IPaginationResponse } from '@/common/interfaces/api'
 import {
   IBEMasterTeam,
   IBEMasterTeamDetails,
-  ICreateMTRequest,
   IFEMasterTeamDetails,
   IGetMasterTeamsRequest,
   IGetMasterTeamsResponse,
   IMasterTeamError,
+  IPopulateMTRequest,
 } from '@/common/interfaces/masterTeams'
 import { TDeleteStatus } from '@/common/types'
 
@@ -109,13 +109,27 @@ export const masterTeamsApi = createApi({
       }),
     }),
 
-    createMasterTeam: builder.mutation<void, ICreateMTRequest>({
+    createMasterTeam: builder.mutation<void, IPopulateMTRequest>({
       query: (body) => ({
         url: 'teams/teams/create-team-as-admin',
         method: 'POST',
         body,
       }),
       invalidatesTags: [MASTER_TEAMS_TAG],
+    }),
+
+    editMasterTeam: builder.mutation<
+      void,
+      {
+        id: string
+        body: IPopulateMTRequest
+      }
+    >({
+      query: ({ body, id }) => ({
+        url: `teams/teams/${id}/update-team-as-admin`,
+        method: 'PUT',
+        body,
+      }),
     }),
 
     deleteMasterTeam: builder.mutation<void, string>({
@@ -157,5 +171,6 @@ export const {
   useGetMasterTeamQuery,
   useDeleteMasterTeamMutation,
   useBulkDeleteMasterTeamsMutation,
+  useEditMasterTeamMutation,
 } = masterTeamsApi
 

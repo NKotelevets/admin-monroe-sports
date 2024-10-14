@@ -76,7 +76,7 @@ export interface IGetMasterTeamsResponse {
   results: IFEMasterTeam[]
 }
 
-export interface ICreateMTRequest {
+export interface IPopulateMTRequest {
   name: string
   head_coach: string
   coaches: string[]
@@ -120,3 +120,4 @@ export interface IMasterTeamError {
   name: string
   error: string
 }
+

@@ -10,12 +10,13 @@ import LeaguesDeletingInfo from '@/pages/Protected/LeaguesAndTournaments/Leagues
 import LeaguesImportInfo from '@/pages/Protected/LeaguesAndTournaments/LeaguesImportInfo'
 import MasterTeams from '@/pages/Protected/MasterTeams'
 import CreateMasterTeam from '@/pages/Protected/MasterTeams/CreateMasterTeams'
+import EditMasterTeam from '@/pages/Protected/MasterTeams/EditMasterTeam'
 import MasterTeamDetails from '@/pages/Protected/MasterTeams/MasterTeamDetails'
 import MasterTeamsDeletingInfo from '@/pages/Protected/MasterTeams/MasterTeamsDeletingInfo'
 import Seasons from '@/pages/Protected/Seasons'
 import CreateSeason from '@/pages/Protected/Seasons/CreateSeason'
 import EditSeason from '@/pages/Protected/Seasons/EditSeason'
-import { SeasonDetails } from '@/pages/Protected/Seasons/SeasonDetails'
+import SeasonDetails from '@/pages/Protected/Seasons/SeasonDetails'
 import SeasonsDeletingInfo from '@/pages/Protected/Seasons/SeasonsDeletingInfo'
 import SeasonsImportInfo from '@/pages/Protected/Seasons/SeasonsImportInfo'
 import Users from '@/pages/Protected/Users'
@@ -41,6 +42,7 @@ import {
   PATH_TO_CREATE_USER,
   PATH_TO_DELETING_INFO_MASTER_TEAMS,
   PATH_TO_EDIT_LEAGUE,
+  PATH_TO_EDIT_MASTER_TEAM,
   PATH_TO_EDIT_SEASON,
   PATH_TO_EDIT_USER,
   PATH_TO_EVENTS,
@@ -101,6 +103,7 @@ const Root = () => (
       <Route path={`${PATH_TO_MASTER_TEAMS}/:id`} element={<MasterTeamDetails />} />
       <Route path={PATH_TO_DELETING_INFO_MASTER_TEAMS} element={<MasterTeamsDeletingInfo />} />
       <Route path={PATH_TO_CREATE_MASTER_TEAM} element={<CreateMasterTeam />} />
+      <Route path={`${PATH_TO_EDIT_MASTER_TEAM}/:id`} element={<EditMasterTeam />} />
 
       {/* Events */}
       <Route path={PATH_TO_EVENTS} element={<Events />} />

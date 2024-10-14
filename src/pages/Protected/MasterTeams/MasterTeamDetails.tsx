@@ -120,7 +120,7 @@ const MasterTeamDetails = () => {
               <MonroeSecondaryButton
                 icon={<EditOutlined />}
                 iconPosition="start"
-                onClick={() => navigate(`${PATH_TO_EDIT_MASTER_TEAM}/:id`)}
+                onClick={() => navigate(`${PATH_TO_EDIT_MASTER_TEAM}/${params!.id}`)}
                 className="h-32"
               >
                 Edit
