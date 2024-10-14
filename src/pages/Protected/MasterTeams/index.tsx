@@ -45,7 +45,7 @@ const MasterTeams = () => {
   const navigate = useNavigate()
   const [importModalOptions, setImportModalOptions] = useState<IImportModalOptions>(DEFAULT_IMPORT_MODAL_OPTIONS)
   const deleteRecordsModalCount = isDeleteAllRecords ? total : selectedRecordsIds.length
-  const deleteSeasonsText = deleteRecordsModalCount > 1 ? 'seasons' : 'season'
+  const deleteSeasonsText = deleteRecordsModalCount > 1 ? 'master teams' : 'master team'
   const [fileKey, setFileKey] = useState('')
   const [bulkDeleteMT, { isLoading }] = useBulkDeleteMasterTeamsMutation()
 
