@@ -61,9 +61,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
         .toLowerCase()
         .includes((value as string).toLowerCase()),
     onFilterDropdownOpenChange: (visible) => {
-      if (visible) {
-        setTimeout(() => searchInput.current?.select(), 100)
-      }
+      if (visible) setTimeout(() => searchInput.current?.select(), 100)
     },
   })
 
@@ -131,7 +129,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
               justify="space-between"
               onClick={() => handleCopyContent(record.teamAdminEmail as string)}
             >
-              <TextWithTooltip maxLength={22} text={record.teamAdminEmail} isRegularText />
+              <TextWithTooltip maxLength={21} text={record.teamAdminEmail} isRegularText />
               <ReactSVG className="c-p mg-l4" src={CopyIcon} />
             </Flex>
           ) : (
@@ -177,7 +175,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
               justify="space-between"
               onClick={() => handleCopyContent(record.headCoachEmail as string)}
             >
-              <TextWithTooltip maxLength={22} text={record.headCoachEmail} isRegularText />
+              <TextWithTooltip maxLength={21} text={record.headCoachEmail} isRegularText />
               <ReactSVG className="c-p mg-l4" src={CopyIcon} />
             </Flex>
           ) : (
@@ -191,6 +189,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
       dataIndex: 'leagues',
       width: '240px',
       ...getColumnSearchProps('leagues'),
+      sorter: true,
       sortOrder: ordering?.includes('leagues') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
       render: (_, record) => (
         <TextWithTooltip

@@ -27,7 +27,7 @@ const Wrapper = styled(Flex)<{ is_error: string }>`
   box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.02);
   min-height: 32px;
 
-  padding: 1px 4px;
+  padding: 1px 14px 1px 4px;
 
   @media (width > 1660px) {
     min-height: 40px;

@@ -27,7 +27,7 @@ import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useBulkBlockUsersMutation, useBulkEditMutation, useGetUserDetailsQuery } from '@/redux/user/user.api'
 
 import { FULL_GENDER_NAMES } from '@/common/constants'
-import { PATH_TO_EDIT_USER, PATH_TO_USERS } from '@/common/constants/paths'
+import { PATH_TO_EDIT_USER, PATH_TO_MASTER_TEAMS, PATH_TO_USERS } from '@/common/constants/paths'
 import { TGender } from '@/common/types'
 
 import CopyIcon from '@/assets/icons/copy.svg'
@@ -249,7 +249,11 @@ const UserDetails = () => {
                     <ViewText>Team Admin</ViewText>
                     <Flex>
                       {data.asTeamAdmin.map((team, idx, arr) => (
-                        <MonroeLinkText key={team.name} className="mg-r4">
+                        <MonroeLinkText
+                          key={team.name}
+                          className="mg-r4"
+                          onClick={() => navigate(PATH_TO_MASTER_TEAMS + '/' + team.id)}
+                        >
                           {team.name}
                           {arr.length - 1 === idx ? ';' : ','}
                         </MonroeLinkText>
@@ -264,7 +268,11 @@ const UserDetails = () => {
                     <Flex>
                       {data.asHeadCoach.map((team, idx, arr) => (
                         <>
-                          <MonroeLinkText key={team.name} className="mg-r4">
+                          <MonroeLinkText
+                            key={team.name}
+                            className="mg-r4"
+                            onClick={() => navigate(PATH_TO_MASTER_TEAMS + '/' + team.id)}
+                          >
                             {team.name}
                             {arr.length - 1 === idx ? ';' : ','}
                           </MonroeLinkText>
@@ -280,7 +288,11 @@ const UserDetails = () => {
                     <Flex>
                       {data.asCoach.teams.map((team, idx, arr) => (
                         <>
-                          <MonroeLinkText key={team.name} className="mg-r4">
+                          <MonroeLinkText
+                            key={team.name}
+                            className="mg-r4"
+                            onClick={() => navigate(PATH_TO_MASTER_TEAMS + '/' + team.id)}
+                          >
                             {team.name}
                             {arr.length - 1 === idx ? ';' : ','}
                           </MonroeLinkText>
@@ -296,7 +308,11 @@ const UserDetails = () => {
                     <Flex>
                       {data.asPlayer.teams.map((team, idx, arr) => (
                         <>
-                          <MonroeLinkText key={team.name} className="mg-r4">
+                          <MonroeLinkText
+                            key={team.name}
+                            className="mg-r4"
+                            onClick={() => navigate(PATH_TO_MASTER_TEAMS + '/' + team.id)}
+                          >
                             {team.name}
                             {arr.length - 1 === idx ? ';' : ','}
                           </MonroeLinkText>

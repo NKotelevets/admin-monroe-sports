@@ -72,7 +72,7 @@ const CreateMasterTeam = () => {
       head_coach: values.coaches[0].id,
       coaches: coachesIds,
       players: playersIds,
-      team_admins: [...teamAdminIds, user!.id],
+      team_admins: teamAdminIds,
     })
       .unwrap()
       .then(() => {
@@ -96,7 +96,17 @@ const CreateMasterTeam = () => {
 
       <BaseLayout>
         <Formik
-          initialValues={initialCreateMasterTeamValues}
+          initialValues={{
+            ...initialCreateMasterTeamValues,
+            teamAdministrators: [
+              {
+                id: user!.id,
+                fullName: user!.firstName + ' ' + user!.lastName,
+                email: user!.email,
+                role: 'admin',
+              },
+            ],
+          }}
           validationSchema={masterTeamsValidationSchema}
           onSubmit={handleSubmit}
           validateOnChange
