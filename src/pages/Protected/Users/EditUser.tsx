@@ -391,7 +391,7 @@ const EditUser = () => {
                           Cancel
                         </CancelButton>
 
-                        <MonroeButton label="Save" type="primary" onClick={handleSubmit} />
+                        <MonroeButton className="h-40" label="Save" type="primary" onClick={handleSubmit} />
                       </Flex>
                     </Flex>
                   </PageContent>

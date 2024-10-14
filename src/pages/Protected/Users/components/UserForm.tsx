@@ -367,7 +367,7 @@ const UserForm = () => {
                           Cancel
                         </CancelButton>
 
-                        <MonroeButton label="Create User" type="primary" onClick={handleSubmit} />
+                        <MonroeButton className="h-40" label="Create User" type="primary" onClick={handleSubmit} />
                       </Flex>
                     </Flex>
                   </PageContent>

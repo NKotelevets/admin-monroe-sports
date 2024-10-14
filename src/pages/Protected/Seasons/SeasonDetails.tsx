@@ -87,7 +87,6 @@ export const SeasonDetails = () => {
                 </MonroeDeleteButton>
 
                 <MonroeButton
-                  isDisabled={false}
                   label="Edit"
                   type="primary"
                   icon={<EditOutlined />}

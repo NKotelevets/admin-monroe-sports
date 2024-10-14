@@ -302,6 +302,7 @@ const EditLeague = () => {
                             type="primary"
                             onClick={handleSubmit}
                             isDisabled={!isEnabledButton}
+                            className="h-40"
                           />
                         </Flex>
                       </Flex>

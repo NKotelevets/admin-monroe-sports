@@ -46,11 +46,11 @@ export const CheckboxText = styled(Typography)`
 `
 
 export const SignInButton = styled(MonroeButton)`
+  height: 40px;
+
   @media (width > 1660px) {
-    .sign-in-button {
-      font-size: 24px !important;
-      height: 60px !important;
-    }
+    font-size: 24px;
+    height: 60px;
   }
 `
 

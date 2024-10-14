@@ -289,7 +289,7 @@ const CreateOperator: FC<ICreateOperatorProps> = ({ setOperator }) => {
                     Cancel
                   </CancelButton>
 
-                  <MonroeButton label="Create Operator" type="primary" onClick={handleSubmit} />
+                  <MonroeButton className="h-40" label="Create Operator" type="primary" onClick={handleSubmit} />
                 </Flex>
               </Flex>
             </PageContent>

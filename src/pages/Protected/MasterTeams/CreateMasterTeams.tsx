@@ -37,6 +37,7 @@ import UsersMultipleSelectWithSearch from '@/components/UsersMultipleSelectWithS
 import BaseLayout from '@/layouts/BaseLayout'
 
 import { useAppSlice } from '@/redux/hooks/useAppSlice'
+import { useUserSlice } from '@/redux/hooks/useUserSlice'
 import { useCreateMasterTeamMutation } from '@/redux/masterTeams/masterTeams.api'
 
 import { PATH_TO_MASTER_TEAMS } from '@/common/constants/paths'
@@ -57,6 +58,7 @@ const CreateMasterTeam = () => {
   const navigation = useNavigate()
   const [createMasterTeam] = useCreateMasterTeamMutation()
   const { setAppNotification } = useAppSlice()
+  const { user } = useUserSlice()
 
   const goBack = () => navigation(PATH_TO_MASTER_TEAMS)
 
@@ -70,7 +72,7 @@ const CreateMasterTeam = () => {
       head_coach: values.coaches[0].id,
       coaches: coachesIds,
       players: playersIds,
-      team_admins: teamAdminIds,
+      team_admins: [...teamAdminIds, user!.id],
     })
       .unwrap()
       .then(() => {
@@ -267,12 +269,8 @@ const CreateMasterTeam = () => {
 
                         <UsersMultipleSelectWithSearch
                           isError={false}
-                          onBlur={() => {
-                            setFieldTouched('players', true)
-                          }}
-                          onChange={(values) => {
-                            setFieldValue(`players`, values)
-                          }}
+                          onBlur={() => setFieldTouched('players', true)}
+                          onChange={(values) => setFieldValue(`players`, values)}
                           selectedUsers={values.players}
                         />
                       </div>
@@ -287,7 +285,12 @@ const CreateMasterTeam = () => {
                           Cancel
                         </CancelButton>
 
-                        <MonroeButton label="Create Master Team" type="primary" onClick={handleSubmit} />
+                        <MonroeButton
+                          className="h-40"
+                          label="Create Master Team"
+                          type="primary"
+                          onClick={handleSubmit}
+                        />
                       </Flex>
                     </Flex>
                   </PageContent>

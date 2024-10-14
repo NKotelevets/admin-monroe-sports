@@ -1,5 +1,6 @@
+import styled from '@emotion/styled'
 import { Button } from 'antd'
-import { CSSProperties, FC, ReactNode } from 'react'
+import { FC, ReactNode } from 'react'
 
 interface IMonroeButtonProps {
   label: string
@@ -10,38 +11,18 @@ interface IMonroeButtonProps {
   className?: string
   icon?: ReactNode
   iconPosition?: 'start' | 'end' | undefined
-  style?: CSSProperties
 }
 
-const MonroeButton: FC<IMonroeButtonProps> = ({
-  isDisabled = false,
-  label,
-  onClick,
-  type,
-  htmlType = 'button',
-  className,
-  icon,
-  iconPosition,
-  style = {},
-}) => (
-  <Button
-    className={className}
-    style={{
-      border: 0,
-      height: '40px',
-      width: '100%',
-      fontSize: '16px',
-      ...style,
-    }}
-    type={type}
-    onClick={onClick}
-    disabled={isDisabled}
-    htmlType={htmlType}
-    icon={icon}
-    iconPosition={iconPosition}
-  >
+const StyledMonroeButton = styled(Button)`
+  border: 0;
+  width: 100%;
+  font-size: 16px;
+`
+
+const MonroeButton: FC<IMonroeButtonProps> = ({ isDisabled = false, label, htmlType = 'button', ...rest }) => (
+  <StyledMonroeButton disabled={isDisabled} htmlType={htmlType} {...rest}>
     {label}
-  </Button>
+  </StyledMonroeButton>
 )
 
 export default MonroeButton

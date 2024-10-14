@@ -157,7 +157,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
             <TextWithTooltip
               maxLength={22}
               text={record.headCoachFullName}
-              onClick={() => navigate(PATH_TO_USERS + '/' + record.headCoachFullName)}
+              onClick={() => navigate(PATH_TO_USERS + '/' + record.headCoachId)}
             />
           ) : (
             '-'
@@ -189,11 +189,13 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
     {
       title: 'Linked Leagues/Tourns',
       dataIndex: 'leagues',
-      width: '200px',
+      width: '240px',
+      ...getColumnSearchProps('leagues'),
+      sortOrder: ordering?.includes('leagues') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
       render: (_, record) => (
         <TextWithTooltip
           maxLength={22}
-          text={record.leagues.map((l) => l.name).join(', ')}
+          text={record.leagues.map((l) => l.name).join(', ') || '-'}
           onClick={() => navigate(PATH_TO_MASTER_TEAMS + '/' + record.id)}
         />
       ),

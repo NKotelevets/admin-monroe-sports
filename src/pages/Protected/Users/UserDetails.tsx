@@ -180,7 +180,6 @@ const UserDetails = () => {
               )}
 
               <MonroeButton
-                isDisabled={false}
                 label="Edit"
                 type="primary"
                 icon={<EditOutlined />}

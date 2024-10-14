@@ -657,7 +657,7 @@ const EditSeason = () => {
                               Cancel
                             </CancelButton>
 
-                            <MonroeButton label="Edit Season" type="primary" onClick={handleSubmit} />
+                            <MonroeButton className="h-40" label="Edit Season" type="primary" onClick={handleSubmit} />
                           </Flex>
                         </Flex>
                       </Form>

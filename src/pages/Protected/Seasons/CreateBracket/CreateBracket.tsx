@@ -283,13 +283,15 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue, handleBlur, 
           </CancelButton>
 
           <MonroeTooltip width="180px" containerWidth="auto" text={isEnabledButton ? 'Missing mandatory data' : ''}>
-            <MonroeButton
-              label={buttonLabel}
-              type="primary"
-              onClick={handleClick}
-              isDisabled={isEnabledButton}
-              className="w-150"
-            />
+            <div className="w-150">
+              <MonroeButton
+                label={buttonLabel}
+                type="primary"
+                onClick={handleClick}
+                isDisabled={isEnabledButton}
+                className="h-40"
+              />
+            </div>
           </MonroeTooltip>
         </Flex>
       </Flex>

@@ -71,7 +71,7 @@ const MasterTeamRoleInput: FC<IMasterTeamRoleInputProps> = ({ handleClick, handl
       const response = await getUsers({
         limit: DEFAULT_LIMIT_RECORDS,
         offset,
-        first_name: value || undefined,
+        first_name: value === selectedName ? '' : value,
       }).unwrap()
 
       if (response?.data) setUsers((prev) => [...prev, ...response.data])
@@ -94,7 +94,7 @@ const MasterTeamRoleInput: FC<IMasterTeamRoleInputProps> = ({ handleClick, handl
     const response = await getUsers({
       limit: DEFAULT_LIMIT_RECORDS,
       offset: 0,
-      first_name: value || undefined,
+      first_name: value === selectedName ? '' : value,
     }).unwrap()
 
     setUsers(() => response.data)
