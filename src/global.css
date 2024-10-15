@@ -706,3 +706,8 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
     width: 144px;
   }
 }
+
+
+.visible .ant-table-content {
+  overflow: visible !important
+}

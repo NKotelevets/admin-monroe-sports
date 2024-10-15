@@ -1,10 +1,12 @@
-import { MonroeBlueText, SearchSelectIconWrapper } from './Elements'
-import { Subtext } from './Elements/entity'
+import LoadingOutlined from '@ant-design/icons/lib/icons/LoadingOutlined'
 import styled from '@emotion/styled'
-import { Flex, Typography } from 'antd'
+import { Flex, Spin, Typography } from 'antd'
 import Checkbox from 'antd/es/checkbox/Checkbox'
 import { ChangeEventHandler, FC, RefObject, useRef, useState } from 'react'
 import { ReactSVG } from 'react-svg'
+
+import { MonroeBlueText, SearchSelectIconWrapper } from '@/components/Elements'
+import { Subtext } from '@/components/Elements/entity'
 
 import { useLazyGetMasterTeamsQuery } from '@/redux/masterTeams/masterTeams.api'
 
@@ -12,6 +14,7 @@ import useDebounceEffect from '@/hooks/useDebounceEffect'
 import useIsActiveComponent from '@/hooks/useIsActiveComponent'
 import useScroll from '@/hooks/useScroll'
 
+import { IIdName } from '@/common/interfaces'
 import { IFEMasterTeam } from '@/common/interfaces/masterTeams'
 
 import ShowAllIcon from '@/assets/icons/show-all.svg'
@@ -48,7 +51,7 @@ const List = styled.ul`
   left: 0;
   background-color: white;
   height: auto;
-  max-height: 240px;
+  max-height: 160px;
   width: 100%;
   box-shadow:
     0px 3px 6px -4px rgba(0, 0, 0, 0.12),
@@ -61,6 +64,7 @@ const List = styled.ul`
 
 const Container = styled.div`
   position: relative;
+  box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.02);
 
   margin-top: 4px;
 `
@@ -118,10 +122,10 @@ const TagList = styled(Flex)`
 const DEFAULT_LIMIT_RECORDS = 20
 
 interface IMasterTeamsMultipleSelectWithSearchProps {
-  onChange: (value: { id: string; name: string }[]) => void
+  onChange: (value: IIdName[]) => void
   onBlur?: () => void
   isError: boolean
-  selectedTeams: { id: string; name: string }[]
+  selectedTeams: IIdName[]
   canRemoveTeam?: boolean
 }
 
@@ -136,7 +140,7 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
   const { isComponentVisible, ref } = useIsActiveComponent(false)
   const inputRef = useRef<HTMLInputElement | null>()
   const [offset, setOffset] = useState(0)
-  const [getMasterTeams, { data }] = useLazyGetMasterTeamsQuery()
+  const [getMasterTeams, { data, isLoading, isFetching }] = useLazyGetMasterTeamsQuery()
   const [masterTeams, setMasterTeams] = useState<IFEMasterTeam[]>([])
 
   const handleSearchChange: ChangeEventHandler<HTMLInputElement> = (event) => setSearchTerm(event.target.value)
@@ -245,11 +249,39 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
                   <MonroeBlueText className="mg-l8">{masterTeam.name}</MonroeBlueText>
                 </ListItem>
               ))}
+
+              <Flex justify="center">
+                {isFetching && (
+                  <Spin
+                    indicator={
+                      <LoadingOutlined
+                        style={{
+                          color: 'rgba(26, 22, 87, 0.85)',
+                        }}
+                        spin
+                      />
+                    }
+                  />
+                )}
+              </Flex>
             </List>
           ) : (
-            <List as="div" className="ph-5-v-12">
-              <Subtext>There's no match. Try a different name.</Subtext>
-            </List>
+            <Flex className="ph-5-v-12" justify="center">
+              {!isLoading ? (
+                <Spin
+                  indicator={
+                    <LoadingOutlined
+                      style={{
+                        color: 'rgba(26, 22, 87, 0.85)',
+                      }}
+                      spin
+                    />
+                  }
+                />
+              ) : (
+                <Subtext>There's no match. Try a different name.</Subtext>
+              )}
+            </Flex>
           )}
         </Container>
       )}

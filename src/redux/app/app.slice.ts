@@ -1,3 +1,4 @@
+import { masterTeamsApi } from '../masterTeams/masterTeams.api'
 import { PayloadAction, createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import { authApi } from '@/redux/auth/auth.api'
@@ -109,6 +110,16 @@ export const appSlice = createSlice({
         state.notification.timestamp = new Date().getTime()
         state.notification.type = 'success'
       })
+      .addMatcher(
+        isAnyOf(
+          masterTeamsApi.endpoints.createMasterTeam.matchRejected,
+          masterTeamsApi.endpoints.editMasterTeam.matchRejected,
+        ),
+        (state, action) => {
+          state.notification.message = (action.payload?.data as IDetailedError).details
+          state.notification.timestamp = new Date().getTime()
+        },
+      )
       .addMatcher(
         isAnyOf(seasonsApi.endpoints.createSeason.matchRejected, seasonsApi.endpoints.updateSeason.matchRejected),
         (state, action) => {

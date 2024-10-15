@@ -68,7 +68,6 @@ export const useUsersBulkEditTableParams = () => {
           label: role,
           value: role,
         }))
-
         const isSameUser = user?.id === record.id
         const MAX_CREATED_ROLES_BY_ADMIN = 6
         const MAX_CREATED_ROLES_BY_OPERATOR = 4
@@ -212,7 +211,7 @@ export const useUsersBulkEditTableParams = () => {
                     />
 
                     <DeleteIconWrapper
-                      is_hide={`${isHideDeleteBtn}`}
+                      is_hide={`${!!isHideDeleteBtn}`}
                       onClick={() => {
                         if (!isHideDeleteBtn) handleDeleteRole(role.name)
                       }}

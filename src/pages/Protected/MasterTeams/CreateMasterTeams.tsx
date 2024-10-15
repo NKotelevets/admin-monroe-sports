@@ -36,12 +36,10 @@ import UsersMultipleSelectWithSearch from '@/components/UsersMultipleSelectWithS
 
 import BaseLayout from '@/layouts/BaseLayout'
 
-import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
 import { useCreateMasterTeamMutation } from '@/redux/masterTeams/masterTeams.api'
 
 import { PATH_TO_MASTER_TEAMS } from '@/common/constants/paths'
-import { IDetailedError } from '@/common/interfaces'
 
 import ShowAllIcon from '@/assets/icons/show-all.svg'
 
@@ -57,7 +55,6 @@ const BREAD_CRUMB_ITEMS = [
 const CreateMasterTeam = () => {
   const navigation = useNavigate()
   const [createMasterTeam] = useCreateMasterTeamMutation()
-  const { setAppNotification } = useAppSlice()
   const { user } = useUserSlice()
 
   const goBack = () => navigation(PATH_TO_MASTER_TEAMS)
@@ -77,14 +74,6 @@ const CreateMasterTeam = () => {
       .unwrap()
       .then(() => {
         goBack()
-      })
-      .catch((error) => {
-        const message = (error as IDetailedError).details
-
-        setAppNotification({
-          message,
-          type: 'error',
-        })
       })
   }
 
@@ -132,7 +121,7 @@ const CreateMasterTeam = () => {
                     totalNumberOfItems={values.teamAdministrators.length}
                   />
                 ),
-                label: <AccordionHeader>#{idx + 1} Admin</AccordionHeader>,
+                label: <AccordionHeader>#{idx + 1} Team Admin</AccordionHeader>,
               }))
 
             const collapsedCoaches = (removeFn: (index: number) => void) =>

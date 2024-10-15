@@ -1,5 +1,6 @@
+import LoadingOutlined from '@ant-design/icons/lib/icons/LoadingOutlined'
 import styled from '@emotion/styled'
-import { Flex } from 'antd'
+import { Flex, Spin } from 'antd'
 import { DefaultOptionType } from 'antd/es/select'
 import { ChangeEvent, FC, RefObject, useEffect, useState } from 'react'
 import { ReactSVG } from 'react-svg'
@@ -63,10 +64,12 @@ const MasterTeamRoleInput: FC<IMasterTeamRoleInputProps> = ({ handleClick, handl
     label: user.firstName + ' ' + user.lastName,
     value: user.id,
   }))
+  const [isLoading, setIsLoading] = useState(false)
 
   const getData = async () => {
     if (data && data?.count > users.length) {
       setOffset((prev) => prev + DEFAULT_LIMIT_RECORDS)
+      setIsLoading(true)
 
       const response = await getUsers({
         limit: DEFAULT_LIMIT_RECORDS,
@@ -75,6 +78,7 @@ const MasterTeamRoleInput: FC<IMasterTeamRoleInputProps> = ({ handleClick, handl
       }).unwrap()
 
       if (response?.data) setUsers((prev) => [...prev, ...response.data])
+      setIsLoading(false)
     }
   }
 
@@ -91,6 +95,7 @@ const MasterTeamRoleInput: FC<IMasterTeamRoleInputProps> = ({ handleClick, handl
   const handleChange = async (leagueName: string) => setValue(leagueName)
 
   const getDataWithNewName = async () => {
+    setIsLoading(true)
     const response = await getUsers({
       limit: DEFAULT_LIMIT_RECORDS,
       offset: 0,
@@ -104,6 +109,7 @@ const MasterTeamRoleInput: FC<IMasterTeamRoleInputProps> = ({ handleClick, handl
     } else {
       setOffset(20)
     }
+    setIsLoading(false)
   }
 
   useDebounceEffect(getDataWithNewName, [value])
@@ -129,9 +135,9 @@ const MasterTeamRoleInput: FC<IMasterTeamRoleInputProps> = ({ handleClick, handl
 
         {isComponentVisible && (
           <Container className="ph-5-v-12">
-            <List ref={scrollRef as unknown as RefObject<HTMLUListElement>} onScroll={handleScroll}>
-              {userOptions.length ? (
-                userOptions.map((user) => (
+            {userOptions.length ? (
+              <List ref={scrollRef as unknown as RefObject<HTMLUListElement>} onScroll={handleScroll}>
+                {userOptions.map((user) => (
                   <ListItem
                     key={user.value}
                     onClick={() => {
@@ -145,13 +151,41 @@ const MasterTeamRoleInput: FC<IMasterTeamRoleInputProps> = ({ handleClick, handl
                   >
                     {user.label}
                   </ListItem>
-                ))
-              ) : (
-                <div className="p12">
+                ))}
+
+                <Flex justify="center">
+                  {isLoading && userOptions.length && (
+                    <Spin
+                      indicator={
+                        <LoadingOutlined
+                          style={{
+                            color: 'rgba(26, 22, 87, 0.85)',
+                          }}
+                          spin
+                        />
+                      }
+                    />
+                  )}
+                </Flex>
+              </List>
+            ) : (
+              <Flex className="p12" justify="center">
+                {isLoading ? (
+                  <Spin
+                    indicator={
+                      <LoadingOutlined
+                        style={{
+                          color: 'rgba(26, 22, 87, 0.85)',
+                        }}
+                        spin
+                      />
+                    }
+                  />
+                ) : (
                   <Subtext>There's no match. Try a different name.</Subtext>
-                </div>
-              )}
-            </List>
+                )}
+              </Flex>
+            )}
           </Container>
         )}
       </div>

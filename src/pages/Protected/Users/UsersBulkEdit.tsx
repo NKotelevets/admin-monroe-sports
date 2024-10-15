@@ -132,6 +132,7 @@ const UsersBulkEdit = () => {
           </Flex>
 
           <Table
+            className="visible"
             columns={columns}
             rowKey={(record) => record.id}
             dataSource={selectedRecords}

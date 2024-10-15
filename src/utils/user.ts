@@ -79,7 +79,7 @@ export const calculateAllUserRoles = (data: IExtendedFEUser) => {
       name: CHILD_ROLE,
     })
 
-  if (data.asParent)
+  if (data.asParent || data.roles.includes(PARENT_ROLE))
     roles.push({
       name: PARENT_ROLE,
     })

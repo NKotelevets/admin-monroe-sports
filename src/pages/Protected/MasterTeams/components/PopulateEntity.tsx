@@ -132,11 +132,11 @@ const PopulateEntity: FC<IPopulateRoleProps> = ({
           <Flex vertical>
             <div className="mg-b8">
               <Flex align="center" justify="space-between">
-                <OptionTitle>{entityName === 'teamAdministrators' ? 'Administrator' : 'Coach'} Name *</OptionTitle>
+                <OptionTitle>{entityName === 'teamAdministrators' ? ' Admin' : 'Coach'} Name *</OptionTitle>
 
                 {isError && touchedEntity && (
                   <InputError>
-                    {entityName === 'teamAdministrators' ? 'Administrator Name' : 'Coach Name'} is required
+                    {entityName === 'teamAdministrators' ? 'Admin Name' : 'Coach Name'} is required
                   </InputError>
                 )}
               </Flex>

@@ -46,10 +46,10 @@ const InfoAlert = () => {
       {infoNotification.message && (
         <StyledAlert
           message={
-            <>
+            <Flex>
               {infoNotification.message}
               <AlertMessage onClick={handleClick}>{infoNotification.actionLabel}</AlertMessage>
-            </>
+            </Flex>
           }
           showIcon
           type="error"
