@@ -1,6 +1,6 @@
 import { IIdName } from '@/common/interfaces'
 import { IFERole } from '@/common/interfaces/role'
-import { TGender, TRole } from '@/common/types'
+import { TDeleteStatus, TErrorDuplicate, TGender, TRole } from '@/common/types'
 
 interface IInvite {
   created_at: string
@@ -167,4 +167,83 @@ export interface IBulkEditError {
   gender: number
   id: string
   last_name: string
+}
+
+// Import CSV
+
+export interface IImportUsersCSVTableData {
+  idx: number
+  firstName: string
+  lastName: string
+  gender: number
+  status: TErrorDuplicate
+  message: string
+}
+
+export interface IBENew {
+  address: string | null
+  birth_date: string | null
+  children: string[]
+  city: string | null
+  first_name: string
+  gender: number | null
+  last_name: string
+  parents: string[]
+  phone_number: number | null
+  roles: string[]
+  state: string | null
+  teams: string[]
+  zip_code: string | null
+  email: string
+}
+
+export interface IFENew {
+  address: string | null
+  birthDate: string | null
+  children: string[]
+  city: string | null
+  firstName: string
+  gender: number | null
+  lastName: string
+  parents: string[]
+  phoneNumber: number | null | string
+  roles: string[]
+  state: string | null
+  teams: string[]
+  zipCode: string | null
+  email: string
+}
+
+interface IBEDuplicate {
+  new: IBENew
+  existing: IExtendedBEUser
+}
+
+interface IFEDuplicate {
+  new: IFENew
+  existing: IExtendedFEUser
+}
+
+export interface IFEDuplicateWithIdx extends IFEDuplicate {
+  idx: number
+}
+
+interface IImportUsersCSVError {
+  index: string
+  error: string
+  row: IBENew
+}
+
+export interface IBEImportUsersCSVResponse {
+  status: TDeleteStatus
+  errors: IImportUsersCSVError[]
+  success: string[]
+  duplicates: IBEDuplicate[]
+}
+
+export interface IFEImportUsersCSVResponse {
+  status: TDeleteStatus
+  errors: IImportUsersCSVError[]
+  success: string[]
+  duplicates: IFEDuplicate[]
 }

@@ -2,22 +2,25 @@ import { createApi } from '@reduxjs/toolkit/query/react'
 
 import baseQueryWithReAuth from '@/redux/reauthBaseQuery'
 
+import { getFENewRecord, getFEUserRecord } from '@/utils/user'
+
 import { IGetEntityResponse } from '@/common/interfaces'
 import { IPaginationResponse } from '@/common/interfaces/api'
 import { IBEOperator, IFEOperator, IGetOperatorRequestParams } from '@/common/interfaces/operator'
 import {
+  IBEImportUsersCSVResponse,
   IBlockedUserError,
   IBulkEditError,
   ICreateUserAsAdminRequestBody,
   IExtendedBEUser,
   IExtendedFEUser,
+  IFEImportUsersCSVResponse,
   IGetUsersRequestParams,
   IRole,
 } from '@/common/interfaces/user'
 import { TDeleteStatus } from '@/common/types'
 
 const USER_TAG = 'USER'
-
 const OPERATOR_TAG = 'OPERATOR'
 
 export const userApi = createApi({
@@ -29,44 +32,7 @@ export const userApi = createApi({
       query: () => ({
         url: '/users/me',
       }),
-      transformResponse: (user: IExtendedBEUser) => ({
-        id: user.id,
-        email: user.email,
-        gender: user.gender,
-        city: user.city,
-        state: user.state,
-        phoneNumber: user.phone_number,
-        phoneNumberVerified: user.phone_number_verified,
-        emailVerified: user.email_verified,
-        inviteAccepted: user.invite_accepted,
-        inviteDate: user.invite_date,
-        updatedAt: user.updated_at,
-        createdAt: user.created_at,
-        photoS3Url: user.photo_s3_url,
-        firstName: user.first_name,
-        lastName: user.last_name,
-        birthDate: user.birth_date,
-        zipCode: user.zip_code,
-        emergencyContactName: user.emergency_contact_name,
-        emergencyContactPhone: user.emergency_contact_phone,
-        isActive: user.is_active,
-        isSuperuser: user.is_superuser,
-        roles: user.roles,
-        teams: user.teams,
-        asCoach: user.as_coach,
-        asPlayer: user.as_player,
-        operator: user.operator,
-        asHeadCoach: user.as_head_coach,
-        asTeamAdmin: user.as_team_admin,
-        isChild: user.is_child,
-        asParent:
-          user.as_supervisor?.supervised.map((s) => ({
-            id: s.id,
-            firstName: s.first_name,
-            lastName: s.last_name,
-          })) || null,
-        invitations: user.invitations,
-      }),
+      transformResponse: (user: IExtendedBEUser) => getFEUserRecord(user),
     }),
 
     getUserDetails: builder.query<IExtendedFEUser, { id: string }>({
@@ -74,44 +40,7 @@ export const userApi = createApi({
         url: 'users/' + id + '/profile',
       }),
       keepUnusedDataFor: 0.0001,
-      transformResponse: (user: IExtendedBEUser) => ({
-        id: user.id,
-        email: user.email,
-        gender: user.gender,
-        city: user.city,
-        state: user.state,
-        phoneNumber: user.phone_number,
-        phoneNumberVerified: user.phone_number_verified,
-        emailVerified: user.email_verified,
-        inviteAccepted: user.invite_accepted,
-        inviteDate: user.invite_date,
-        updatedAt: user.updated_at,
-        createdAt: user.created_at,
-        photoS3Url: user.photo_s3_url,
-        firstName: user.first_name,
-        lastName: user.last_name,
-        birthDate: user.birth_date,
-        zipCode: user.zip_code,
-        emergencyContactName: user.emergency_contact_name,
-        emergencyContactPhone: user.emergency_contact_phone,
-        isActive: user.is_active,
-        isSuperuser: user.is_superuser,
-        roles: user.roles,
-        teams: user.teams,
-        asCoach: user.as_coach,
-        asPlayer: user.as_player,
-        operator: user.operator,
-        asHeadCoach: user.as_head_coach,
-        asTeamAdmin: user.as_team_admin,
-        isChild: user.is_child,
-        asParent:
-          user.as_supervisor?.supervised.map((s) => ({
-            id: s.id,
-            firstName: s.first_name,
-            lastName: s.last_name,
-          })) || null,
-        invitations: user.invitations,
-      }),
+      transformResponse: (user: IExtendedBEUser) => getFEUserRecord(user),
       providesTags: [USER_TAG],
     }),
 
@@ -122,44 +51,7 @@ export const userApi = createApi({
       }),
       transformResponse: (response: IPaginationResponse<IExtendedBEUser[]>) => ({
         count: response.count,
-        data: response.results.map((user) => ({
-          id: user.id,
-          email: user.email,
-          gender: user.gender,
-          city: user.city,
-          state: user.state,
-          phoneNumber: user.phone_number,
-          phoneNumberVerified: user.phone_number_verified,
-          emailVerified: user.email_verified,
-          inviteAccepted: user.invite_accepted,
-          inviteDate: user.invite_date,
-          updatedAt: user.updated_at,
-          createdAt: user.created_at,
-          photoS3Url: user.photo_s3_url,
-          firstName: user.first_name,
-          lastName: user.last_name,
-          birthDate: user.birth_date,
-          zipCode: user.zip_code,
-          emergencyContactName: user.emergency_contact_name,
-          emergencyContactPhone: user.emergency_contact_phone,
-          isActive: user.is_active,
-          isSuperuser: user.is_superuser,
-          roles: user.roles,
-          teams: user.teams,
-          asCoach: user.as_coach,
-          asPlayer: user.as_player,
-          operator: user.operator,
-          asHeadCoach: user.as_head_coach,
-          asTeamAdmin: user.as_team_admin,
-          isChild: user.is_child,
-          asParent:
-            user.as_supervisor?.supervised.map((s) => ({
-              id: s.id,
-              firstName: s.first_name,
-              lastName: s.last_name,
-            })) || null,
-          invitations: user.invitations,
-        })),
+        data: response.results.map(getFEUserRecord),
       }),
       providesTags: [USER_TAG],
     }),
@@ -245,11 +137,19 @@ export const userApi = createApi({
       invalidatesTags: [USER_TAG],
     }),
 
-    importUsersCSV: builder.mutation<void, FormData>({
+    importUsersCSV: builder.mutation<IFEImportUsersCSVResponse, FormData>({
       query: (body) => ({
         method: 'POST',
         url: 'users/confirmation/import-users-from-csv-as-admin',
         body,
+      }),
+      invalidatesTags: [USER_TAG],
+      transformResponse: ({ duplicates, ...rest }: IBEImportUsersCSVResponse) => ({
+        ...rest,
+        duplicates: duplicates.map((d) => ({
+          existing: getFEUserRecord(d.existing),
+          new: getFENewRecord(d.new),
+        })),
       }),
     }),
 

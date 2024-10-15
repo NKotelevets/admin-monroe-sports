@@ -9,7 +9,7 @@ import {
   TEAM_ADMIN_ROLE,
 } from '@/common/constants'
 import { IFERole } from '@/common/interfaces/role'
-import { IExtendedFEUser } from '@/common/interfaces/user'
+import { IBENew, IExtendedBEUser, IExtendedFEUser, IFENew } from '@/common/interfaces/user'
 
 export const calculateUserRoles = (data: IExtendedFEUser) => {
   const roles: IFERole[] = []
@@ -86,4 +86,59 @@ export const calculateAllUserRoles = (data: IExtendedFEUser) => {
 
   return [...changedRoles, ...roles]
 }
+
+export const getFEUserRecord = (user: IExtendedBEUser): IExtendedFEUser => ({
+  id: user.id,
+  email: user.email,
+  gender: user.gender,
+  city: user.city,
+  state: user.state,
+  phoneNumber: user.phone_number,
+  phoneNumberVerified: user.phone_number_verified,
+  emailVerified: user.email_verified,
+  inviteAccepted: user.invite_accepted,
+  inviteDate: user.invite_date,
+  updatedAt: user.updated_at,
+  createdAt: user.created_at,
+  photoS3Url: user.photo_s3_url,
+  firstName: user.first_name,
+  lastName: user.last_name,
+  birthDate: user.birth_date,
+  zipCode: user.zip_code,
+  emergencyContactName: user.emergency_contact_name,
+  emergencyContactPhone: user.emergency_contact_phone,
+  isActive: user.is_active,
+  isSuperuser: user.is_superuser,
+  roles: user.roles,
+  teams: user.teams,
+  asCoach: user.as_coach,
+  asPlayer: user.as_player,
+  operator: user.operator,
+  asHeadCoach: user.as_head_coach,
+  asTeamAdmin: user.as_team_admin,
+  isChild: user.is_child,
+  asParent:
+    user.as_supervisor?.supervised.map((s) => ({
+      id: s.id,
+      firstName: s.first_name,
+      lastName: s.last_name,
+    })) || null,
+  invitations: user.invitations,
+})
+
+export const getFENewRecord = ({
+  birth_date,
+  first_name,
+  last_name,
+  phone_number,
+  zip_code,
+  ...rest
+}: IBENew): IFENew => ({
+  ...rest,
+  birthDate: birth_date,
+  firstName: first_name,
+  lastName: last_name,
+  phoneNumber: phone_number,
+  zipCode: zip_code,
+})
 

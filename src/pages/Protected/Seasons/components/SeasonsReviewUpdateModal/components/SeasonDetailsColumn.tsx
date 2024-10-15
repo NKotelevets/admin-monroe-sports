@@ -8,13 +8,13 @@ const Container = styled(Flex)<{ is_new: string }>`
   flex: 1 1 50%;
   flex-direction: column;
   border-right: ${(props) => (props.is_new === 'true' ? '0' : '2px solid #F4F4F5')};
-  padding-left: ${(props) => (props.is_new === 'true' ? '0' : '16px')};
-  padding-right: ${(props) => (props.is_new === 'true' ? '16px' : '0')};
+  padding-left: ${(props) => (props.is_new !== 'true' ? '0' : '16px')};
+  padding-right: ${(props) => (props.is_new !== 'true' ? '16px' : '0')};
 `
 
 const Title = styled(Typography)`
   color: #888791;
-  font-size: 12px;
+  font-size: 14px;
   margin-bottom: 8px;
 `
 

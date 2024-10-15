@@ -76,11 +76,11 @@ const Users = () => {
 
       await importUsersCSV(body)
         .unwrap()
-        .then(() => {
+        .then((response) => {
           setImportModalOptions({
             filename: file.name,
             isOpen: true,
-            status: 'green',
+            status: response.status,
             errorMessage: '',
           })
         })

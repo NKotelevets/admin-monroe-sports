@@ -45,9 +45,10 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
   setSelectedRecordsIds,
   setShowAdditionalHeader,
   showAdditionalHeader,
-  // showCreatedRecords,
+  showCreatedRecords,
 }) => {
-  const { limit, offset, setPaginationParams, total, users, setRecords } = useUserSlice()
+  const { limit, offset, setPaginationParams, total, users, setRecords, createdUsersIds, removeCreatedUsersIds } =
+    useUserSlice()
   const [getUsers, { isLoading, isFetching, data }] = useLazyGetUsersQuery()
   const [tableParams, setTableParams] = useState<ITableParams>({
     pagination: {
@@ -83,6 +84,12 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
       limit,
       offset,
     })
+
+    return () => {
+      if (createdUsersIds.length && showCreatedRecords) {
+        removeCreatedUsersIds()
+      }
+    }
   }, [])
 
   useEffect(() => {
@@ -270,9 +277,9 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
         pagination={tableParams.pagination}
         loading={isLoading || isFetching}
         onChange={handleTableChange}
-        // rowClassName={(record) =>
-        //   showCreatedRecords && createdRecordsNames.find((cRN) => cRN.name === record.name) ? 'highlighted-row' : ''
-        // }
+        rowClassName={(record) =>
+          showCreatedRecords && createdUsersIds.find((id) => id === record.id) ? 'highlighted-row' : ''
+        }
         rowSelection={{
           type: 'checkbox',
           selectedRowKeys: selectedRecordIds,

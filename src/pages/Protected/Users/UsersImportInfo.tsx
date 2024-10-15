@@ -5,7 +5,7 @@ import { FilterDropdownProps, SorterResult } from 'antd/es/table/interface'
 import { useRef, useState } from 'react'
 import { ReactSVG } from 'react-svg'
 
-import SeasonsReviewUpdateModal from '@/pages/Protected/Seasons/components/SeasonsReviewUpdateModal'
+import UsersReviewUpdateModal from '@/pages/Protected/Users/components/UsersReviewUpdateModal'
 
 import { MonroeBlueText } from '@/components/Elements'
 import { Container, Description, Title } from '@/components/Elements/deletingBlockingInfoElements'
@@ -17,35 +17,28 @@ import TextWithTooltip from '@/components/TextWithTooltip'
 
 import BaseLayout from '@/layouts/BaseLayout'
 
+import { useUserSlice } from '@/redux/hooks/useUserSlice'
+
 import { getIconColor } from '@/utils'
 
 import { SHORT_GENDER_NAMES } from '@/common/constants'
 import { PATH_TO_SEASONS } from '@/common/constants/paths'
-import { TErrorDuplicate, TGender, TSortOption } from '@/common/types'
+import { IImportUsersCSVTableData } from '@/common/interfaces/user'
+import { TGender, TSortOption } from '@/common/types'
 
 import SyncIcon from '@/assets/icons/sync.svg'
-
-interface IImportUserData {
-  idx: number
-  firstName: string
-  lastName: string
-  gender: number
-  status: TErrorDuplicate
-  message: string
-  email: string
-}
 
 type TColumns<T> = TableProps<T>['columns']
 type TTablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>
 
 interface ITableParams {
   pagination?: TTablePaginationConfig
-  sortField?: SorterResult<IImportUserData>['field']
-  sortOrder?: SorterResult<IImportUserData>['order']
+  sortField?: SorterResult<IImportUsersCSVTableData>['field']
+  sortOrder?: SorterResult<IImportUsersCSVTableData>['order']
   filters?: Parameters<GetProp<TableProps, 'onChange'>>[1]
 }
 
-type TDataIndex = keyof IImportUserData
+type TDataIndex = keyof IImportUsersCSVTableData
 
 const BREADCRUMB_ITEMS = [
   {
@@ -56,29 +49,9 @@ const BREADCRUMB_ITEMS = [
   },
 ]
 
-const MOCKED_TABLE_RECORDS: IImportUserData[] = [
-  {
-    idx: 0,
-    firstName: 'Joe',
-    lastName: 'Doe',
-    gender: 1,
-    message: 'Error message',
-    status: 'Duplicate',
-    email: 'joedoe@exampole.com',
-  },
-  {
-    idx: 1,
-    firstName: 'Joe 11',
-    lastName: 'Doe 22',
-    gender: 0,
-    message: 'Error message',
-    status: 'Error',
-    email: 'joedoe@exampole.com11',
-  },
-]
-
 const UsersImportInfo = () => {
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null)
+  const { importCSVTableRecords } = useUserSlice()
   const [tableParams, setTableParams] = useState<ITableParams>({
     pagination: {
       current: 1,
@@ -86,7 +59,7 @@ const UsersImportInfo = () => {
       pageSizeOptions: [5, 10, 30, 50],
       showQuickJumper: true,
       showSizeChanger: true,
-      total: MOCKED_TABLE_RECORDS.length,
+      total: importCSVTableRecords.length,
     },
   })
   const searchInput = useRef<InputRef>(null)
@@ -97,7 +70,7 @@ const UsersImportInfo = () => {
 
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
 
-  const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IImportUserData> => ({
+  const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IImportUsersCSVTableData> => ({
     filterDropdown: (props) => (
       <FilterDropDown {...props} handleReset={handleReset} handleSearch={handleSearch} searchInput={searchInput} />
     ),
@@ -114,7 +87,7 @@ const UsersImportInfo = () => {
     },
   })
 
-  const handleTableChange: TableProps<IImportUserData>['onChange'] = (pagination, _, sorter) => {
+  const handleTableChange: TableProps<IImportUsersCSVTableData>['onChange'] = (pagination, _, sorter) => {
     setTableParams({
       pagination: {
         ...pagination,
@@ -129,7 +102,7 @@ const UsersImportInfo = () => {
     return idx
   }
 
-  const columns: TColumns<IImportUserData> = [
+  const columns: TColumns<IImportUsersCSVTableData> = [
     {
       title: 'First Name',
       dataIndex: 'firstName',
@@ -222,7 +195,7 @@ const UsersImportInfo = () => {
 
   return (
     <>
-      {selectedIdx !== null && <SeasonsReviewUpdateModal idx={selectedIdx} onClose={() => setSelectedIdx(null)} />}
+      {selectedIdx !== null && <UsersReviewUpdateModal idx={selectedIdx} onClose={() => setSelectedIdx(null)} />}
 
       <BaseLayout>
         <Container>
@@ -238,8 +211,8 @@ const UsersImportInfo = () => {
 
           <Table
             columns={columns}
-            rowKey={(record) => record.email}
-            dataSource={MOCKED_TABLE_RECORDS}
+            rowKey={(record) => record.idx}
+            dataSource={importCSVTableRecords}
             pagination={tableParams.pagination}
             onChange={handleTableChange}
           />

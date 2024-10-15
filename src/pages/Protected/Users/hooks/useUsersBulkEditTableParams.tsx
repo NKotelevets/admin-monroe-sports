@@ -58,16 +58,22 @@ export const useUsersBulkEditTableParams = () => {
       width: '540px',
       render: (_, record) => {
         const existingRoles = record.userRoles.map((role) => role.name)
-        const options: DefaultOptionType[] = ROLES.filter((initialRole) => !existingRoles.includes(initialRole)).map(
-          (role) => ({
-            label: role,
-            value: role,
-          }),
-        )
+        const options: DefaultOptionType[] = ROLES.filter((initialRole) => {
+          if (isOperatorWithoutAdmin && [MASTER_ADMIN_ROLE, OPERATOR_ROLE].includes(initialRole)) return false
+
+          if (!existingRoles.includes(initialRole)) return true
+
+          return false
+        }).map((role) => ({
+          label: role,
+          value: role,
+        }))
+
         const isSameUser = user?.id === record.id
         const MAX_CREATED_ROLES_BY_ADMIN = 6
         const MAX_CREATED_ROLES_BY_OPERATOR = 4
-        const userAdminRoles = user?.roles.filter((role) => [OPERATOR_ROLE, MASTER_ADMIN_ROLE].includes(role)).length
+        const userAdminRoles = record?.roles.filter((role) => [OPERATOR_ROLE, MASTER_ADMIN_ROLE].includes(role)).length
+
         const maximumRoles = user?.isSuperuser
           ? MAX_CREATED_ROLES_BY_ADMIN
           : userAdminRoles
@@ -186,7 +192,8 @@ export const useUsersBulkEditTableParams = () => {
               const isHideDeleteBtn =
                 [PARENT_ROLE, CHILD_ROLE].includes(role.name) ||
                 !!(isOperatorWithoutAdmin && role.name === OPERATOR_ROLE) ||
-                (role.name === HEAD_COACH_ROLE && record.asHeadCoach?.length)
+                (role.name === HEAD_COACH_ROLE && record.asHeadCoach?.length) ||
+                (isOperatorWithoutAdmin && role.name === MASTER_ADMIN_ROLE)
 
               return (
                 <Flex className="mg-b24" align="start" key={role.name}>
@@ -194,12 +201,13 @@ export const useUsersBulkEditTableParams = () => {
                     <MonroeSelect
                       options={options}
                       onChange={(newRole) => handleChangeRole(role.name, newRole)}
-                      className="w-170"
+                      className="w-170 c-p"
                       value={role.name}
                       disabled={
                         [PARENT_ROLE, CHILD_ROLE].includes(role.name) ||
                         !!(isOperatorWithoutAdmin && role.name === OPERATOR_ROLE) ||
-                        (isSameUser && role.name === MASTER_ADMIN_ROLE)
+                        (isSameUser && role.name === MASTER_ADMIN_ROLE) ||
+                        (isOperatorWithoutAdmin && role.name === MASTER_ADMIN_ROLE)
                       }
                     />
 
