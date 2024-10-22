@@ -15,12 +15,12 @@ import BaseLayout from '@/layouts/BaseLayout'
 
 import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice'
 
-import { PATH_TO_MASTER_TEAMS, PATH_TO_SEASONS } from '@/common/constants/paths'
+import { PATH_TO_MASTER_TEAMS } from '@/common/constants/paths'
 import { IMasterTeamError } from '@/common/interfaces/masterTeams'
 
 const BREADCRUMB_ITEMS = [
   {
-    title: <a href={PATH_TO_SEASONS}>Master Teams</a>,
+    title: <a href={PATH_TO_MASTER_TEAMS}>Master Teams</a>,
   },
   {
     title: <MonroeBlueText>Deleting info</MonroeBlueText>,

@@ -68,7 +68,11 @@ const Notification = () => {
     <NotificationWrapper is_message={`${!!notification.message}`}>
       {notification.message && (
         <StyledAlert
-          message={notification.message}
+          message={
+            /[\[\]]/.test(notification.message)
+              ? JSON.parse(notification.message.replace(/'/g, '"'))[0]
+              : notification.message
+          }
           showIcon
           type={notification.type}
           closable
@@ -83,3 +87,4 @@ const Notification = () => {
 }
 
 export default Notification
+

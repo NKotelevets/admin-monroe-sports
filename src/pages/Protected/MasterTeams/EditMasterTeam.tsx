@@ -81,8 +81,8 @@ const EditMasterTeam = () => {
         goBack()
       })
       .catch((error) => {
-        const message = (error as IDetailedError).details
-
+        const errorResonce = error?.data
+        const message = (errorResonce as IDetailedError).details
         setAppNotification({
           message,
           type: 'error',
