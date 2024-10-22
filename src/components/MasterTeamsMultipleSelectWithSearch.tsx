@@ -139,7 +139,7 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
   const [searchTerm, setSearchTerm] = useState('')
   const { isComponentVisible, ref } = useIsActiveComponent(false)
   const inputRef = useRef<HTMLInputElement | null>()
-  const [offset, setOffset] = useState(0)
+  const [offset, setOffset] = useState(20)
   const [getMasterTeams, { data, isLoading, isFetching }] = useLazyGetMasterTeamsQuery()
   const [masterTeams, setMasterTeams] = useState<IFEMasterTeam[]>([])
 

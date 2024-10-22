@@ -211,8 +211,7 @@ export const useUsersBulkEditTableParams = () => {
                     />
 
                     <DeleteIconWrapper
-                      is_hide={`${!!isHideDeleteBtn}`}
-                      // is_hide={`${!!isHideDeleteBtn || (isSameUser && role.name === MASTER_ADMIN_ROLE)}`}
+                      is_hide={`${!!isHideDeleteBtn || (isSameUser && role.name === MASTER_ADMIN_ROLE) || (isOperatorWithoutAdmin && role.name === MASTER_ADMIN_ROLE)}`}
                       onClick={() => {
                         if (!isHideDeleteBtn) handleDeleteRole(role.name)
                       }}
