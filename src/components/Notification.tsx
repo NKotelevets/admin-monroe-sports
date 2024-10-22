@@ -69,6 +69,7 @@ const Notification = () => {
       {notification.message && (
         <StyledAlert
           message={
+            // eslint-disable-next-line no-useless-escape
             /[\[\]]/.test(notification.message)
               ? JSON.parse(notification.message.replace(/'/g, '"'))[0]
               : notification.message

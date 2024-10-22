@@ -67,9 +67,6 @@ export const useUsersBulkEditErrorsTableParams = ({ tableParams }: { tableParams
       sortOrder: tableParams.sortOrder,
       ...getColumnSearchProps('first_name'),
       render: (value, record) => {
-        console.log(value)
-        console.log(record)
-
         return <TextWithTooltip maxLength={25} text={value} onClick={() => navigate(PATH_TO_USERS + '/' + record.id)} />
       },
     },
@@ -115,7 +112,14 @@ export const useUsersBulkEditErrorsTableParams = ({ tableParams }: { tableParams
     {
       title: 'Error info',
       dataIndex: 'error',
-      render: (value) => <CellText>{/[\[\]]/.test(value) ? JSON.parse(value.replace(/'/g, '"'))[0] : value}</CellText>,
+      render: (value) => (
+        <CellText>
+          {
+            // eslint-disable-next-line no-useless-escape
+            /[\[\]]/.test(value) ? JSON.parse(value.replace(/'/g, '"'))[0] : value
+          }
+        </CellText>
+      ),
     },
   ]
 
