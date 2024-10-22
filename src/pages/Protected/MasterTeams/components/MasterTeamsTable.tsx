@@ -139,8 +139,8 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
     }
 
     const getBESortingField = (name: string) => {
-      if (name === 'headCoachFullName') return 'head_coach_first_name'
-      if (name === 'teamAdminFullName') return 'first_team_admin_first_name'
+      if (name === 'headCoachFullName') return 'head_coach'
+      if (name === 'teamAdminFullName') return 'team_admin'
       return name
     }
 

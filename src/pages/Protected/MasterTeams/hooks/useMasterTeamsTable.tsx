@@ -97,11 +97,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
       dataIndex: 'teamAdminFullName',
       width: '240px',
       ...getColumnSearchProps('teamAdminFullName'),
-      sortOrder: ordering?.includes('first_team_admin_first_name')
-        ? !ordering.startsWith('-')
-          ? 'ascend'
-          : 'descend'
-        : null,
+      sortOrder: ordering?.includes('team_admin') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
       sorter: true,
       render: (_, record) => (
         <>
@@ -143,11 +139,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
       dataIndex: 'headCoachFullName',
       width: '240px',
       ...getColumnSearchProps('headCoachFullName'),
-      sortOrder: ordering?.includes('head_coach_first_name')
-        ? !ordering.startsWith('-')
-          ? 'ascend'
-          : 'descend'
-        : null,
+      sortOrder: ordering?.includes('head_coach') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
       sorter: true,
       render: (_, record) => (
         <>
@@ -186,7 +178,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
     },
     {
       title: 'Linked Leagues/Tourns',
-      dataIndex: 'leagues',
+      dataIndex: 'league_name',
       width: '240px',
       ...getColumnSearchProps('leagues'),
       sorter: true,
