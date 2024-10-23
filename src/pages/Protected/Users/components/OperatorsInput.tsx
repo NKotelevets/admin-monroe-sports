@@ -102,7 +102,7 @@ const OperatorsInput: FC<IOperatorsInputProps> = ({
         </AddOperatorButton>
       </AddOperatorWrapper>
     ),
-    value: '',
+    value: undefined,
   }
   const [operatorsList, setOperatorsList] = useState<DefaultOptionType[]>(
     isHideAddOperatorBtn ? [ADD_OPERATOR_PROPERTY] : [],
@@ -206,23 +206,26 @@ const OperatorsInput: FC<IOperatorsInputProps> = ({
           <Container className="ph-5-v-12">
             {operatorsList.length && (
               <List ref={scrollRef as unknown as RefObject<HTMLUListElement>} onScroll={handleScroll}>
-                {operatorsList.map((operator, idx) => (
-                  <ListItem
-                    is_add_operator={`${!isHideAddOperatorBtn && idx === 0 ? 'true' : 'false'}`}
-                    key={operator.value}
-                    onClick={() => {
-                      setOperator([
-                        {
-                          id: operator.value as string,
-                          name: operator.label as string,
-                        },
-                      ])
-                      onClose()
-                    }}
-                  >
-                    {operator.label}
-                  </ListItem>
-                ))}
+                {operatorsList.map((operator, idx) => {
+                  const isAddOperator = !isHideAddOperatorBtn && idx === 0
+                  return (
+                    <ListItem
+                      is_add_operator={`${isAddOperator ? 'true' : 'false'}`}
+                      key={operator.value}
+                      onClick={() => {
+                        if (isAddOperator) return onClose()
+                        setOperator([
+                          {
+                            id: operator.value as string,
+                            name: operator.label as string,
+                          },
+                        ])
+                      }}
+                    >
+                      {operator.label}
+                    </ListItem>
+                  )
+                })}
               </List>
             )}
           </Container>
