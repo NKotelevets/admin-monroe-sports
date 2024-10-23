@@ -61,6 +61,7 @@ import { IRole } from '@/common/interfaces/user'
 import { TGender, TRole } from '@/common/types'
 
 import ShowAllIcon from '@/assets/icons/show-all.svg'
+import CreateOperator from '@/pages/Protected/Users/components/CreateOperator.tsx'
 
 const GENDER_OPTIONS: DefaultOptionType[] = [
   {
@@ -94,7 +95,7 @@ const EditUser = () => {
   )
   const [bulkEdit] = useBulkEditMutation()
   const { setAppNotification } = useAppSlice()
-  const { user } = useUserSlice()
+  const { user, isCreateOperatorScreen } = useUserSlice()
   const userAdminRoles = user?.roles.filter((role) => [OPERATOR_ROLE, MASTER_ADMIN_ROLE].includes(role)).length
   const maximumRoles = user?.isSuperuser
     ? MAX_CREATED_ROLES_BY_ADMIN
@@ -218,185 +219,193 @@ const EditUser = () => {
                 label: <AccordionHeader>#{idx + 1} Role</AccordionHeader>,
               }))
 
+            const setOperator = (value: { id: string; name: string }) => {
+              const operatorIndex = values.roles.findIndex((role) => role.name === OPERATOR_ROLE)
+              setFieldValue(`roles.${operatorIndex}.linkedEntities`, [value])
+            }
+
             return (
-              <Form onSubmit={handleSubmit}>
-                <PageContainer vertical>
-                  <Breadcrumb items={BREAD_CRUMB_ITEMS} />
+              <>
+                {isCreateOperatorScreen && <CreateOperator setOperator={setOperator} />}
+                {!isCreateOperatorScreen && <Form onSubmit={handleSubmit}>
+                  <PageContainer vertical>
+                    <Breadcrumb items={BREAD_CRUMB_ITEMS} />
 
-                  <ProtectedPageTitle>{initialValues.firstName + ' ' + initialValues.lastName}</ProtectedPageTitle>
+                    <ProtectedPageTitle>{initialValues.firstName + ' ' + initialValues.lastName}</ProtectedPageTitle>
 
-                  <PageContent>
-                    <Flex>
-                      <div className="f-40">
-                        <ProtectedPageSubtitle>Main Info</ProtectedPageSubtitle>
-                      </div>
-
-                      <MainContainer>
-                        <div className="mg-b8">
-                          <OptionTitle className="pb-5">First Name *</OptionTitle>
-                          <MonroeInput
-                            name="firstName"
-                            value={values.firstName}
-                            onChange={handleChange}
-                            placeholder="Enter first name"
-                            className="h-32"
-                            disabled
-                          />
-                        </div>
-
-                        <div className="mg-b8">
-                          <OptionTitle className="pb-5">Last Name *</OptionTitle>
-                          <MonroeInput
-                            name="lastName"
-                            value={values.lastName}
-                            onChange={handleChange}
-                            placeholder="Enter last name"
-                            className="h-32"
-                            disabled
-                          />
-                        </div>
-
-                        <Flex vertical justify="flex-start" className="w-full mg-b8">
-                          <OptionTitle>Birth Date</OptionTitle>
-                          <MonroeDatePicker
-                            name="birthDate"
-                            value={values.birthDate ? dayjs(values.birthDate, 'YYYY-MM-DD') : null}
-                            onChange={(_: unknown, data: string | string[]) => {
-                              if (data) {
-                                setFieldValue('birthDate', dayjs(data as string, 'YYYY-MM-DD'))
-                              } else {
-                                setFieldValue('birthDate', null)
-                              }
-                            }}
-                            maxDate={dayjs(new Date())}
-                            disabled
-                          />
-                        </Flex>
-
-                        <Flex vertical justify="flex-start" className="w-full mg-b8">
-                          <OptionTitle>Gender</OptionTitle>
-
-                          <MonroeSelect
-                            onChange={handleChange}
-                            options={GENDER_OPTIONS}
-                            value={values.gender}
-                            name="gender"
-                            placeholder="Select gender"
-                            disabled
-                          />
-                        </Flex>
-                      </MainContainer>
-                    </Flex>
-
-                    <MonroeDivider className="mg-v24" />
-
-                    <Flex>
-                      <div className="f-40">
-                        <ProtectedPageSubtitle>Contact info</ProtectedPageSubtitle>
-                      </div>
-
-                      <MainContainer>
-                        <div className="mg-b8">
-                          <MonroeInput
-                            label={<OptionTitle className="pb-5">Email *</OptionTitle>}
-                            name="email"
-                            value={values.email}
-                            onChange={handleChange}
-                            placeholder="Enter email"
-                            className="h-32"
-                            error={errors.email}
-                            disabled
-                          />
-                        </div>
-
-                        <div className="mg-b8">
-                          <OptionTitle className="pb-5">Phone</OptionTitle>
-                          <MonroeInput
-                            name="phoneNumber"
-                            value={values.phoneNumber}
-                            onChange={handleChange}
-                            placeholder="Enter phone"
-                            className="h-32"
-                            disabled
-                          />
-                        </div>
-
-                        <div className="mg-b8">
-                          <OptionTitle>Zip Code</OptionTitle>
-                          <MonroeInput
-                            name="zipCode"
-                            value={values.zipCode}
-                            onChange={handleChange}
-                            placeholder="Enter zip code"
-                            className="h-32"
-                            disabled
-                          />
-                        </div>
-                      </MainContainer>
-                    </Flex>
-
-                    <MonroeDivider className="mg-v24" />
-
-                    <Flex>
-                      <div className="f-40 pt-12">
-                        <ProtectedPageSubtitle>Roles</ProtectedPageSubtitle>
-                      </div>
-
-                      <MainContainer>
-                        <FieldArray name="roles">
-                          {({ push, remove }) => (
-                            <Flex vertical>
-                              <Accordion
-                                items={collapsedDivisionItems(remove)}
-                                expandIconPosition="end"
-                                defaultActiveKey={[0]}
-                                expandIcon={() => <ReactSVG src={ShowAllIcon} />}
-                                accordion
-                              />
-
-                              <MonroeTooltip
-                                text={
-                                  isAddEntityButtonDisabled
-                                    ? values.roles.length === maximumRoles
-                                      ? `Maximum roles is ${maximumRoles}`
-                                      : "You can't create role when you have errors in other roles"
-                                    : ''
-                                }
-                                width="220px"
-                                containerWidth="113px"
-                              >
-                                <AddEntityButton
-                                  disabled={isAddEntityButtonDisabled}
-                                  type="default"
-                                  icon={<PlusOutlined />}
-                                  iconPosition="start"
-                                  onClick={() => push(INITIAL_ROLE_DATA)}
-                                  className="w-auto"
-                                >
-                                  Add Role
-                                </AddEntityButton>
-                              </MonroeTooltip>
-                            </Flex>
-                          )}
-                        </FieldArray>
-                      </MainContainer>
-                    </Flex>
-
-                    <Divider />
-
-                    <Flex>
-                      <div className="f-40" />
+                    <PageContent>
                       <Flex>
-                        <CancelButton type="default" onClick={goBack}>
-                          Cancel
-                        </CancelButton>
+                        <div className="f-40">
+                          <ProtectedPageSubtitle>Main Info</ProtectedPageSubtitle>
+                        </div>
 
-                        <MonroeButton className="h-40" label="Save" type="primary" onClick={handleSubmit} />
+                        <MainContainer>
+                          <div className="mg-b8">
+                            <OptionTitle className="pb-5">First Name *</OptionTitle>
+                            <MonroeInput
+                              name="firstName"
+                              value={values.firstName}
+                              onChange={handleChange}
+                              placeholder="Enter first name"
+                              className="h-32"
+                              disabled
+                            />
+                          </div>
+
+                          <div className="mg-b8">
+                            <OptionTitle className="pb-5">Last Name *</OptionTitle>
+                            <MonroeInput
+                              name="lastName"
+                              value={values.lastName}
+                              onChange={handleChange}
+                              placeholder="Enter last name"
+                              className="h-32"
+                              disabled
+                            />
+                          </div>
+
+                          <Flex vertical justify="flex-start" className="w-full mg-b8">
+                            <OptionTitle>Birth Date</OptionTitle>
+                            <MonroeDatePicker
+                              name="birthDate"
+                              value={values.birthDate ? dayjs(values.birthDate, 'YYYY-MM-DD') : null}
+                              onChange={(_: unknown, data: string | string[]) => {
+                                if (data) {
+                                  setFieldValue('birthDate', dayjs(data as string, 'YYYY-MM-DD'))
+                                } else {
+                                  setFieldValue('birthDate', null)
+                                }
+                              }}
+                              maxDate={dayjs(new Date())}
+                              disabled
+                            />
+                          </Flex>
+
+                          <Flex vertical justify="flex-start" className="w-full mg-b8">
+                            <OptionTitle>Gender</OptionTitle>
+
+                            <MonroeSelect
+                              onChange={handleChange}
+                              options={GENDER_OPTIONS}
+                              value={values.gender}
+                              name="gender"
+                              placeholder="Select gender"
+                              disabled
+                            />
+                          </Flex>
+                        </MainContainer>
                       </Flex>
-                    </Flex>
-                  </PageContent>
-                </PageContainer>
-              </Form>
+
+                      <MonroeDivider className="mg-v24" />
+
+                      <Flex>
+                        <div className="f-40">
+                          <ProtectedPageSubtitle>Contact info</ProtectedPageSubtitle>
+                        </div>
+
+                        <MainContainer>
+                          <div className="mg-b8">
+                            <MonroeInput
+                              label={<OptionTitle className="pb-5">Email *</OptionTitle>}
+                              name="email"
+                              value={values.email}
+                              onChange={handleChange}
+                              placeholder="Enter email"
+                              className="h-32"
+                              error={errors.email}
+                              disabled
+                            />
+                          </div>
+
+                          <div className="mg-b8">
+                            <OptionTitle className="pb-5">Phone</OptionTitle>
+                            <MonroeInput
+                              name="phoneNumber"
+                              value={values.phoneNumber}
+                              onChange={handleChange}
+                              placeholder="Enter phone"
+                              className="h-32"
+                              disabled
+                            />
+                          </div>
+
+                          <div className="mg-b8">
+                            <OptionTitle>Zip Code</OptionTitle>
+                            <MonroeInput
+                              name="zipCode"
+                              value={values.zipCode}
+                              onChange={handleChange}
+                              placeholder="Enter zip code"
+                              className="h-32"
+                              disabled
+                            />
+                          </div>
+                        </MainContainer>
+                      </Flex>
+
+                      <MonroeDivider className="mg-v24" />
+
+                      <Flex>
+                        <div className="f-40 pt-12">
+                          <ProtectedPageSubtitle>Roles</ProtectedPageSubtitle>
+                        </div>
+
+                        <MainContainer>
+                          <FieldArray name="roles">
+                            {({ push, remove }) => (
+                              <Flex vertical>
+                                <Accordion
+                                  items={collapsedDivisionItems(remove)}
+                                  expandIconPosition="end"
+                                  defaultActiveKey={[0]}
+                                  expandIcon={() => <ReactSVG src={ShowAllIcon} />}
+                                  accordion
+                                />
+
+                                <MonroeTooltip
+                                  text={
+                                    isAddEntityButtonDisabled
+                                      ? values.roles.length === maximumRoles
+                                        ? `Maximum roles is ${maximumRoles}`
+                                        : "You can't create role when you have errors in other roles"
+                                      : ''
+                                  }
+                                  width="220px"
+                                  containerWidth="113px"
+                                >
+                                  <AddEntityButton
+                                    disabled={isAddEntityButtonDisabled}
+                                    type="default"
+                                    icon={<PlusOutlined />}
+                                    iconPosition="start"
+                                    onClick={() => push(INITIAL_ROLE_DATA)}
+                                    className="w-auto"
+                                  >
+                                    Add Role
+                                  </AddEntityButton>
+                                </MonroeTooltip>
+                              </Flex>
+                            )}
+                          </FieldArray>
+                        </MainContainer>
+                      </Flex>
+
+                      <Divider />
+
+                      <Flex>
+                        <div className="f-40" />
+                        <Flex>
+                          <CancelButton type="default" onClick={goBack}>
+                            Cancel
+                          </CancelButton>
+
+                          <MonroeButton className="h-40" label="Save" type="primary" onClick={handleSubmit} />
+                        </Flex>
+                      </Flex>
+                    </PageContent>
+                  </PageContainer>
+                </Form>}
+              </>
             )
           }}
         </Formik>
