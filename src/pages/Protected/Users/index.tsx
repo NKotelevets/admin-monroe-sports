@@ -89,7 +89,7 @@ const Users = () => {
             filename: file.name,
             isOpen: true,
             status: 'red',
-            errorMessage: (error.data as { code: string; details: string }).details,
+            errorMessage: (error.data as { code: string; detail: string }).detail,
           })
         })
 
