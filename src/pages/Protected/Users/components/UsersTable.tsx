@@ -86,7 +86,7 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
     })
 
     return () => {
-      if (createdUsersIds.length && showCreatedRecords) {
+      if (createdUsersIds?.length && showCreatedRecords) {
         removeCreatedUsersIds()
       }
     }
