@@ -22,7 +22,7 @@ import { useUserSlice } from '@/redux/hooks/useUserSlice'
 import { getIconColor } from '@/utils'
 
 import { SHORT_GENDER_NAMES } from '@/common/constants'
-import { PATH_TO_SEASONS } from '@/common/constants/paths'
+import { PATH_TO_USERS } from '@/common/constants/paths'
 import { IImportUsersCSVTableData } from '@/common/interfaces/user'
 import { TGender, TSortOption } from '@/common/types'
 
@@ -42,7 +42,7 @@ type TDataIndex = keyof IImportUsersCSVTableData
 
 const BREADCRUMB_ITEMS = [
   {
-    title: <a href={PATH_TO_SEASONS}>Users</a>,
+    title: <a href={PATH_TO_USERS}>Users</a>,
   },
   {
     title: <MonroeBlueText>Import info</MonroeBlueText>,
