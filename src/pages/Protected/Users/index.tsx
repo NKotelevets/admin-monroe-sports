@@ -17,7 +17,7 @@ import {
   PageContainer,
   ProtectedPageTitle,
 } from '@/components/Elements'
-import ImportModal from '@/components/ImportTooltip'
+import ImportModal from '@/components/ImportModal.tsx'
 import MonroeModal from '@/components/MonroeModal'
 
 import BaseLayout from '@/layouts/BaseLayout'
@@ -89,7 +89,7 @@ const Users = () => {
             filename: file.name,
             isOpen: true,
             status: 'red',
-            errorMessage: (error.data as { code: string; detail: string }).detail,
+            errorMessage: (error.data as { code: string; detail: string })?.detail || 'Something went wrong. Please, try again',
           })
         })
 
@@ -189,7 +189,7 @@ const Users = () => {
           title="Importing"
           filename={importModalOptions.filename}
           status={importModalOptions.status}
-          errorMessage={importModalOptions.errorMessage}
+          errorMessage={importModalOptions?.errorMessage}
           showInList={() => setShowCreatedRecords(true)}
           redirectToImportInfo={() => {
             setImportModalOptions((prev) => ({ ...prev, isOpen: false }))
