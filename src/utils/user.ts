@@ -10,6 +10,7 @@ import {
 } from '@/common/constants'
 import { IFERole } from '@/common/interfaces/role'
 import { IBENew, IExtendedBEUser, IExtendedFEUser, IFENew } from '@/common/interfaces/user'
+import { formatWithoutTZ } from '@/utils/index.ts'
 
 export const calculateUserRoles = (data: IExtendedFEUser) => {
   const roles: IFERole[] = []
@@ -104,6 +105,7 @@ export const getFEUserRecord = (user: IExtendedBEUser): IExtendedFEUser => ({
   firstName: user.first_name,
   lastName: user.last_name,
   birthDate: user.birth_date,
+  birthDateFormatted: user.birth_date ? formatWithoutTZ(user.birth_date) : '-',
   zipCode: user.zip_code,
   emergencyContactName: user.emergency_contact_name,
   emergencyContactPhone: user.emergency_contact_phone,
@@ -136,6 +138,7 @@ export const getFENewRecord = ({
 }: IBENew): IFENew => ({
   ...rest,
   birthDate: birth_date,
+  birthDateFormatted: birth_date ? formatWithoutTZ(birth_date) : '-',
   firstName: first_name,
   lastName: last_name,
   phoneNumber: phone_number,
