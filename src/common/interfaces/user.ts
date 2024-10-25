@@ -101,11 +101,11 @@ export interface IBlockedUserError {
   gender: number
 }
 
-interface IAsEntity {
+export interface IAsEntity {
   teams: IIdName[]
 }
 
-interface IOperator {
+export interface IOperator {
   id: string
   updated_at: string
   created_at: string
@@ -136,12 +136,13 @@ export interface IExtendedBEUser extends IBEUser {
   as_head_coach: IIdName[] | null
   as_team_admin: IIdName[] | null
   is_child: boolean
+  birthDateFormatted: string
   as_supervisor: {
     supervised: IBESupervised[]
   } | null
 }
 
-interface IChildren {
+export interface IChildren {
   id: string
   firstName: string
   lastName: string
@@ -153,6 +154,7 @@ export interface IExtendedFEUser extends IFEUser {
   operator: IOperator | null
   asHeadCoach: IIdName[] | null
   asTeamAdmin: IIdName[] | null
+  birthDateFormatted: string
   isChild: boolean
   asParent: null | IChildren[]
 }
@@ -200,6 +202,7 @@ export interface IBENew {
 export interface IFENew {
   address: string | null
   birthDate: string | null
+  birthDateFormatted: string
   children: string[]
   city: string | null
   firstName: string
@@ -243,7 +246,7 @@ export interface IBEImportUsersCSVResponse {
 
 export interface IFEImportUsersCSVResponse {
   status: TDeleteStatus
-  errors: IImportUsersCSVError[]
+  errors?: IImportUsersCSVError[]
   success: string[]
-  duplicates: IFEDuplicate[]
+  duplicates?: IFEDuplicate[]
 }
