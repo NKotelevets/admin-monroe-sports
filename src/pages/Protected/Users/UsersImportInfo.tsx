@@ -98,9 +98,9 @@ const UsersImportInfo = () => {
     if (!Array.isArray(sorter) && sorter.field === 'leagueName') setSortLeagueNameOrder(sorter.order || null)
   }
 
-  const handleUpdate = (idx: number) => {
-    return idx
-  }
+  // const handleUpdate = (idx: number) => {
+  //   return idx
+  // }
 
   const columns: TColumns<IImportUsersCSVTableData> = [
     {
@@ -146,8 +146,8 @@ const UsersImportInfo = () => {
       onFilter: (value, record) => value === record.gender,
       render: (value) => <CellText isLink>{SHORT_GENDER_NAMES[value as TGender]}</CellText>,
       filters: [
-        { text: 'Male', value: 0 },
-        { text: 'Female', value: 1 },
+        { text: 'Male', value: 1 },
+        { text: 'Female', value: 0 },
         { text: 'Other', value: 2 },
       ],
       filterDropdown: MonroeFilter,
@@ -188,7 +188,7 @@ const UsersImportInfo = () => {
       width: '80px',
       render: (_, record) =>
         record.status === 'Duplicate' && (
-          <ReactSVG className="c-p" src={SyncIcon} onClick={() => handleUpdate(record.idx)} />
+          <ReactSVG className="c-p" src={SyncIcon} onClick={() => setSelectedIdx(record.idx)} />
         ),
     },
   ]
