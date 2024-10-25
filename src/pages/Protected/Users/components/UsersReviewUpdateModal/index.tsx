@@ -111,7 +111,13 @@ const UsersReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx,
               differences={objectsDifferences}
             />
 
-            <UsersDetailsColumn {...newData} title="Imported" isNew differences={objectsDifferences} />
+            <UsersDetailsColumn
+              {...newData}
+              isNew
+              title="Imported"
+              current={data}
+              differences={objectsDifferences}
+            />
           </Flex>
 
           {isUpdatedSeason && (

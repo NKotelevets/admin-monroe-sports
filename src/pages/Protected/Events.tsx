@@ -4,7 +4,7 @@ import { ChangeEvent, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
 
 import { ImportButton, PageContainer, ProtectedPageTitle } from '@/components/Elements'
-import ImportModal from '@/components/ImportTooltip'
+import ImportModal from '@/components/ImportModal.tsx'
 
 import BaseLayout from '@/layouts/BaseLayout'
 
