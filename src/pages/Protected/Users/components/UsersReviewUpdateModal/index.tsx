@@ -53,14 +53,18 @@ const UsersReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = React.m
     }
 
     if (actualIndex === duplicates.length - 1) {
-      setCurrentIdx(0)
+      if (duplicates.length === 1) {
+        close()
+      } else {
+        setCurrentIdx(0)
+      }
     }
 
     setIsUpdatedSeason(false)
     setTimeout(() => {
       removeDuplicate(currentIdx)
     }, 500)
-  }, [currentIdx])
+  }, [currentIdx, duplicates])
 
   const handleUpdate = () => {}
 
