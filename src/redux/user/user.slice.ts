@@ -76,7 +76,7 @@ export const userSlice = createSlice({
       const remainingTableRecords = state.importCSVTableRecords.filter(
         (tableRecord) => tableRecord.idx !== action.payload,
       )
-      const updatedDuplicates = remainingDuplicates.map((tR, idx) => ({ ...tR, index: idx }))
+      const updatedDuplicates = remainingDuplicates.map((tR, idx) => ({ ...tR, idx: idx }))
       const updatedTableRecords = remainingTableRecords.map((tR, idx) => ({ ...tR, idx }))
 
       state.duplicates = updatedDuplicates
@@ -111,7 +111,7 @@ export const userSlice = createSlice({
         state.importCSVTableRecords = [
           ...(action.payload?.duplicates
             ? (action.payload.duplicates.map((duplicate, idx) => ({
-                message: 'A file with this data already exists',
+                message: 'A record with this data already exists',
                 type: 'Duplicate',
                 idx: idx,
                 firstName: duplicate.new.firstName,
