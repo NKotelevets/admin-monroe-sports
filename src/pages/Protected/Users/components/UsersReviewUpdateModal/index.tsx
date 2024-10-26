@@ -1,7 +1,7 @@
 import UsersDetailsColumn from './components/UsersDetailsColumn'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { Button, Flex } from 'antd'
-import { FC, useState } from 'react'
+import React, { FC, useCallback, useState } from 'react'
 
 import {
   ArrowButton,
@@ -26,7 +26,7 @@ import { IFEDuplicateWithIdx, IFENew } from '@/common/interfaces/user'
 const SUCCESS_MESSAGE = 'Record Updated'
 const ERROR_MESSAGE = "Record can't be updated. Please try again."
 
-const UsersReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx, onClose }) => {
+const UsersReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = React.memo(({ idx, onClose }) => {
   const { duplicates, removeDuplicate } = useUserSlice()
   const [currentIdx, setCurrentIdx] = useState<number>(idx)
   const currentDuplicate = duplicates.find((duplicate) => duplicate.idx === currentIdx)
@@ -39,31 +39,35 @@ const UsersReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx,
   const [isUpdatedSeason, setIsUpdatedSeason] = useState(false)
   const [isError] = useState(false)
 
-  if (!data || !newData) return <Loader />
-
-  const objectsDifferences: Record<Partial<keyof IFENew>, boolean> = compareObjects(newData, data)
-
   const handleNextDuplicate = () => setCurrentIdx((prev) => prev + 1)
 
   const handlePrevDuplicate = () => setCurrentIdx((prev) => prev - 1)
 
-  const handleSkipForThis = () => {
-    if (actualIndex === duplicates.length - 1) {
-      onClose()
-      return
-    }
-
-    handleNextDuplicate()
-  }
-
-  const handleUpdate = () => {}
-
-  const handleNextRecord = () => {
+  const handleSkipForThis = useCallback(() => {
     if (duplicates.length === 1) {
       onClose()
       setIsUpdatedSeason(false)
       removeDuplicate(currentIdx)
 
+      return
+    }
+
+    if (actualIndex === duplicates.length - 1) {
+      setCurrentIdx(0)
+    }
+
+    setIsUpdatedSeason(false)
+    setTimeout(() => {
+      removeDuplicate(currentIdx)
+    }, 500)
+  }, [currentIdx])
+
+  const handleUpdate = () => {}
+
+  const handleNextRecord = useCallback(() => {
+    if (duplicates.length === 1) {
+      onClose()
+      setIsUpdatedSeason(false)
       return
     }
 
@@ -80,19 +84,21 @@ const UsersReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx,
     }
 
     setIsUpdatedSeason(false)
-    setTimeout(() => {
-      removeDuplicate(currentIdx)
-    }, 500)
-  }
+  }, [actualIndex, currentIdx])
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     if (isUpdatedSeason) {
       setIsUpdatedSeason(false)
       removeDuplicate(currentIdx)
     }
 
     onClose()
-  }
+  }, [currentIdx])
+
+  // wait for data to load
+  if (!data || !newData) return <Loader />
+
+  const objectsDifferences: Record<Partial<keyof IFENew>, boolean> = compareObjects(newData, data)
 
   return (
     <Container>
@@ -147,9 +153,9 @@ const UsersReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx,
               Close
             </DefaultButton>
 
-            {duplicates.length > 1 && !isUpdatedSeason && (
+            {!isUpdatedSeason && (
               <DefaultButton type="default" onClick={handleSkipForThis}>
-                Skip for this
+                Skip
               </DefaultButton>
             )}
 
@@ -171,6 +177,8 @@ const UsersReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx,
       </ContentWrapper>
     </Container>
   )
-}
+}, (prevProps, nextProps) => {
+  return prevProps.idx === nextProps.idx
+})
 
 export default UsersReviewUpdateModal
