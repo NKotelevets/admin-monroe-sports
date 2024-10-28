@@ -60,7 +60,9 @@ const UsersImportInfo = (): ReactElement => {
 
   return (
     <>
-      {selectedIdx !== null && <UsersReviewUpdateModal idx={selectedIdx} onClose={() => setSelectedIdx(null)} />}
+      {selectedIdx !== null && (
+        <UsersReviewUpdateModal idx={selectedIdx} onClose={() => setSelectedIdx(null)} />
+      )}
 
       <BaseLayout>
         <Container>
