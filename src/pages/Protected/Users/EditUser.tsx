@@ -47,13 +47,9 @@ import { useBulkEditMutation, useGetUserDetailsQuery } from '@/redux/user/user.a
 import { calculateUserRoles } from '@/utils/user'
 
 import {
-  COACH_ROLE,
   FULL_GENDER_NAMES,
-  HEAD_COACH_ROLE,
   MASTER_ADMIN_ROLE,
-  OPERATOR_ROLE,
-  PLAYER_ROLE,
-  TEAM_ADMIN_ROLE,
+  OPERATOR_ROLE, ROLES_WITH_TEAMS
 } from '@/common/constants'
 import { PATH_TO_USERS } from '@/common/constants/paths'
 import { IDetailedError } from '@/common/interfaces'
@@ -78,7 +74,7 @@ const GENDER_OPTIONS: DefaultOptionType[] = [
   },
 ]
 
-const ROLES_WITH_TEAMS: TRole[] = [HEAD_COACH_ROLE, COACH_ROLE, PLAYER_ROLE, TEAM_ADMIN_ROLE]
+
 const MAX_CREATED_ROLES_BY_ADMIN = 6
 const MAX_CREATED_ROLES_BY_OPERATOR = 4
 

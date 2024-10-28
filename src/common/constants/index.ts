@@ -1,4 +1,4 @@
-import { TGender } from '@/common/types'
+import { TGender, TRole } from '@/common/types'
 
 export const SHORT_GENDER_NAMES: Record<TGender, string> = {
   '0': 'F',
@@ -21,3 +21,4 @@ export const TEAM_ADMIN_ROLE = 'Team Admin'
 export const PLAYER_ROLE = 'Player'
 export const COACH_ROLE = 'Coach'
 
+export const ROLES_WITH_TEAMS: TRole[] = [HEAD_COACH_ROLE, COACH_ROLE, PLAYER_ROLE, TEAM_ADMIN_ROLE]
