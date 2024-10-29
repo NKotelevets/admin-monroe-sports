@@ -1,9 +1,9 @@
 import { Flex } from 'antd'
-import { CSSProperties, ChangeEventHandler, FC, ReactNode } from 'react'
+import { CSSProperties, ChangeEventHandler, FC, ReactNode, InputHTMLAttributes } from 'react'
 
 import { InputError, InputLabel, StyledInput } from '@/components/Inputs/InputElements'
 
-interface IMonroeInputProps {
+interface IMonroeInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
   label?: string | ReactNode
   placeholder?: string
   value: string | number
