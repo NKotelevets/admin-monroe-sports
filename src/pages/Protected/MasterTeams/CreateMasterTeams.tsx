@@ -1,14 +1,10 @@
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import { Flex } from 'antd'
 import Breadcrumb from 'antd/es/breadcrumb'
-import { FieldArray, Form, Formik, FormikErrors } from 'formik'
+import { FieldArray, Form, Formik } from 'formik'
 import { Helmet } from 'react-helmet'
 import { useNavigate } from 'react-router-dom'
-import { ReactSVG } from 'react-svg'
-
-import PopulateEntity from '@/pages/Protected/MasterTeams/components/PopulateEntity'
 import {
-  IMasterTeamRole,
   IPopulateMasterTeam,
   getInitialEntity,
   initialCreateMasterTeamValues,
@@ -16,7 +12,6 @@ import {
 } from '@/pages/Protected/MasterTeams/formik'
 
 import {
-  Accordion,
   AccordionHeader,
   AddEntityButton,
   CancelButton,
@@ -41,8 +36,10 @@ import { useCreateMasterTeamMutation } from '@/redux/masterTeams/masterTeams.api
 
 import { PATH_TO_MASTER_TEAMS } from '@/common/constants/paths'
 
-import ShowAllIcon from '@/assets/icons/show-all.svg'
+import { useAppSlice } from '@/redux/hooks/useAppSlice.ts'
+import EntityList from '@/pages/Protected/MasterTeams/components/ListEntity.tsx'
 
+const DEFAULT_ERROR_MESSAGE = 'Master Team could not be created. Please, try again!'
 const BREAD_CRUMB_ITEMS = [
   {
     title: <a href={PATH_TO_MASTER_TEAMS}>Master Teams</a>,
@@ -54,6 +51,7 @@ const BREAD_CRUMB_ITEMS = [
 
 const CreateMasterTeam = () => {
   const navigation = useNavigate()
+  const { setAppNotification } = useAppSlice()
   const [createMasterTeam] = useCreateMasterTeamMutation()
   const { user } = useUserSlice()
 
@@ -73,7 +71,19 @@ const CreateMasterTeam = () => {
     })
       .unwrap()
       .then(() => {
+        setAppNotification({
+          message: `Master Team "${values.name}" was created`,
+          timestamp: new Date().getTime(),
+          type: 'success',
+        })
         goBack()
+      })
+      .catch(error => {
+        setAppNotification({
+          message: error?.data?.error || DEFAULT_ERROR_MESSAGE,
+          timestamp: new Date().getTime(),
+          type: 'error',
+        })
       })
   }
 
@@ -105,43 +115,6 @@ const CreateMasterTeam = () => {
           {({ values, handleChange, handleSubmit, errors, setFieldValue, handleBlur, touched, setFieldTouched }) => {
             const isTeamAdministratorsHaveErrors = !!errors.teamAdministrators?.length
             const isCoachesHaveErrors = !!errors.coaches?.length
-            const collapsedTeamAdministrators = (removeFn: (index: number) => void) =>
-              values.teamAdministrators.map((teamAdministrator, idx) => ({
-                key: idx,
-                children: (
-                  <PopulateEntity
-                    index={idx}
-                    entity={teamAdministrator}
-                    errors={errors.teamAdministrators as FormikErrors<IMasterTeamRole>[]}
-                    setFieldValue={setFieldValue}
-                    removeFn={removeFn}
-                    setFieldTouched={setFieldTouched}
-                    entityName="teamAdministrators"
-                    touched={touched}
-                    totalNumberOfItems={values.teamAdministrators.length}
-                  />
-                ),
-                label: <AccordionHeader>#{idx + 1} Team Admin</AccordionHeader>,
-              }))
-
-            const collapsedCoaches = (removeFn: (index: number) => void) =>
-              values.coaches.map((coach, idx) => ({
-                key: idx,
-                children: (
-                  <PopulateEntity
-                    index={idx}
-                    entity={coach}
-                    errors={errors.coaches as FormikErrors<IMasterTeamRole>[]}
-                    setFieldValue={setFieldValue}
-                    removeFn={removeFn}
-                    setFieldTouched={setFieldTouched}
-                    entityName="coaches"
-                    touched={touched}
-                    totalNumberOfItems={values.coaches.length}
-                  />
-                ),
-                label: <AccordionHeader>{idx === 0 ? 'Head Coach' : <>#{idx + 1} Coach</>}</AccordionHeader>,
-              }))
 
             return (
               <Form onSubmit={handleSubmit}>
@@ -180,12 +153,10 @@ const CreateMasterTeam = () => {
                       <FieldArray name="teamAdministrators">
                         {({ push, remove }) => (
                           <Flex vertical>
-                            <Accordion
-                              items={collapsedTeamAdministrators(remove)}
-                              expandIconPosition="end"
-                              defaultActiveKey={[0]}
-                              expandIcon={() => <ReactSVG src={ShowAllIcon} />}
-                              accordion
+                            <EntityList
+                              label={(idx: number) => `#${idx + 1} Team Admin`}
+                              removeFn={remove}
+                              entityName='teamAdministrators'
                             />
 
                             <MonroeTooltip
@@ -223,12 +194,10 @@ const CreateMasterTeam = () => {
                       <FieldArray name="coaches">
                         {({ push, remove }) => (
                           <Flex vertical>
-                            <Accordion
-                              items={collapsedCoaches(remove)}
-                              expandIconPosition="end"
-                              defaultActiveKey={[0]}
-                              expandIcon={() => <ReactSVG src={ShowAllIcon} />}
-                              accordion
+                            <EntityList
+                              label={(idx: number) => idx === 0 ? 'Head Coach' : `#${idx + 1} Coach`}
+                              removeFn={remove}
+                              entityName='coaches'
                             />
 
                             <MonroeTooltip
