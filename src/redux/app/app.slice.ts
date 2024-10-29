@@ -15,7 +15,7 @@ interface IInfoNotification {
   actionLabel: string
 }
 
-interface IAppNotification {
+export interface IAppNotification {
   message: string
   timestamp?: number
   type: 'success' | 'error' | 'info'

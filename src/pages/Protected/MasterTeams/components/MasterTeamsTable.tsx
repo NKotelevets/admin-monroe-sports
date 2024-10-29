@@ -32,7 +32,7 @@ interface IMasterTeamsTableProps {
   showCreatedRecords: boolean
 }
 
-type TFilterValueKey = 'name' | 'headCoachFullName' | 'teamAdminFullName'
+type TFilterValueKey = 'name' | 'headCoachFullName' | 'teamAdminFullName' | 'league_name'
 
 const showTotal = (total: number) => <MonroeBlueText>Total {total} items</MonroeBlueText>
 
@@ -141,6 +141,7 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
     const getBESortingField = (name: string) => {
       if (name === 'headCoachFullName') return 'head_coach'
       if (name === 'teamAdminFullName') return 'team_admin'
+      if (name === 'leagues') return 'league_name'
       return name
     }
 
@@ -156,6 +157,7 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
       team_name: (filters?.['name']?.[0] as string) ?? undefined,
       head_coach: (filters?.['headCoachFullName']?.[0] as string) ?? undefined,
       team_admin: (filters?.['teamAdminFullName']?.[0] as string) ?? undefined,
+      league_name: (filters?.['league_name']?.[0] as string) ?? undefined,
     }
 
     getMasterTeams(getMasterTeamsParams)

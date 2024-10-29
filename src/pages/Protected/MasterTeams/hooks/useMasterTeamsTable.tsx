@@ -1,21 +1,13 @@
-import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined'
-import { TableColumnType } from 'antd'
 import Flex from 'antd/es/flex'
-import { InputRef } from 'antd/es/input'
 import { TableProps } from 'antd/es/table/InternalTable'
-import { FilterDropdownProps } from 'antd/es/table/interface'
-import { useRef } from 'react'
+import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
-import FilterDropDown from '@/components/Table/FilterDropDown'
 import TextWithTooltip from '@/components/TextWithTooltip'
 
-import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice'
 import { useLazyGetMasterTeamsQuery } from '@/redux/masterTeams/masterTeams.api'
-
-import { getIconColor } from '@/utils'
 
 import { PATH_TO_EDIT_MASTER_TEAM, PATH_TO_MASTER_TEAMS, PATH_TO_USERS } from '@/common/constants/paths'
 import { IFEMasterTeam } from '@/common/interfaces/masterTeams'
@@ -23,9 +15,11 @@ import { IFEMasterTeam } from '@/common/interfaces/masterTeams'
 import CopyIcon from '@/assets/icons/copy.svg'
 import DeleteIcon from '@/assets/icons/delete.svg'
 import EditIcon from '@/assets/icons/edit.svg'
+import { useTableSearch } from '@/hooks/useTableSearch.tsx'
+import { useNotification } from '@/hooks/useNotification.ts'
+import { getColumnSort } from '@/utils'
 
 type TColumns<T> = TableProps<T>['columns']
-type TDataIndex = keyof IFEMasterTeam
 
 interface IParams {
   setSelectedRecordId: (value: string) => void
@@ -34,46 +28,28 @@ interface IParams {
 
 export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRecordModal }: IParams) => {
   const navigate = useNavigate()
-  const searchInput = useRef<InputRef>(null)
+  const { getColumnSearchProps } = useTableSearch(handleReset)
   const { limit, offset, ordering } = useMasterTeamsSlice()
   const [getMasterTeams] = useLazyGetMasterTeamsQuery()
-  const { setAppNotification } = useAppSlice()
+  const { notify } = useNotification()
 
-  const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
-
-  const handleReset = (clearFilters: () => void) => {
+  function handleReset() {
     getMasterTeams({
       limit,
       offset,
       ordering: ordering || undefined,
     })
-    clearFilters()
   }
 
-  const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IFEMasterTeam> => ({
-    filterDropdown: (props) => (
-      <FilterDropDown {...props} handleReset={handleReset} handleSearch={handleSearch} searchInput={searchInput} />
-    ),
-    filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: getIconColor(filtered) }} />,
-    onFilter: (value, record) =>
-      (record[dataIndex] || '')
-        .toString()
-        .toLowerCase()
-        .includes((value as string).toLowerCase()),
-    onFilterDropdownOpenChange: (visible) => {
-      if (visible) setTimeout(() => searchInput.current?.select(), 100)
-    },
-  })
-
-  const handleCopyContent = async (email: string) => {
+  const handleCopyContent = useCallback(async (email: string) => {
     await navigator.clipboard.writeText(email)
+    notify('Email successfully copied','success')
+  }, [])
 
-    setAppNotification({
-      message: 'Email successfully copied',
-      timestamp: new Date().getTime(),
-      type: 'success',
-    })
-  }
+  const onFilterLeague = useCallback((value: boolean | React.Key, record: IFEMasterTeam) => {
+    return !!record['leagues'].filter(league => league.name.toLowerCase().includes((value as string).toLowerCase())).length
+  }, [])
+
 
   const columns: TColumns<IFEMasterTeam> = [
     {
@@ -82,7 +58,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
       sorter: true,
       fixed: 'left',
       width: '240px',
-      sortOrder: ordering?.includes('name') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
+      sortOrder: getColumnSort('name', ordering),
       ...getColumnSearchProps('name'),
       render: (_, record) => (
         <TextWithTooltip
@@ -97,7 +73,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
       dataIndex: 'teamAdminFullName',
       width: '240px',
       ...getColumnSearchProps('teamAdminFullName'),
-      sortOrder: ordering?.includes('team_admin') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
+      sortOrder: getColumnSort('team_admin', ordering),
       sorter: true,
       render: (_, record) => (
         <>
@@ -139,7 +115,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
       dataIndex: 'headCoachFullName',
       width: '240px',
       ...getColumnSearchProps('headCoachFullName'),
-      sortOrder: ordering?.includes('head_coach') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
+      sortOrder: getColumnSort('head_coach', ordering),
       sorter: true,
       render: (_, record) => (
         <>
@@ -180,9 +156,9 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
       title: 'Linked Leagues/Tourns',
       dataIndex: 'league_name',
       width: '240px',
-      ...getColumnSearchProps('leagues'),
+      ...getColumnSearchProps('leagues', onFilterLeague),
       sorter: true,
-      sortOrder: ordering?.includes('leagues') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
+      sortOrder: getColumnSort('league_name', ordering),
       render: (_, record) => (
         <TextWithTooltip
           maxLength={22}
