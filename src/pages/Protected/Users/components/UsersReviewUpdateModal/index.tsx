@@ -1,7 +1,7 @@
 import UsersDetailsColumn from './components/UsersDetailsColumn'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
-import { Button, Flex } from 'antd'
-import { FC, useState } from 'react'
+import { Button, Flex, Spin } from 'antd'
+import React, { FC, useEffect, useState } from 'react'
 
 import {
   ArrowButton,
@@ -17,81 +17,76 @@ import Loader from '@/components/Loader'
 import Message from '@/components/Message'
 
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
-import { useGetUserDetailsQuery } from '@/redux/user/user.api'
+import { useBulkEditMutation } from '@/redux/user/user.api'
 
 import { compareObjects } from '@/utils/compareObjects'
 
-import { IFEDuplicateWithIdx, IFENew } from '@/common/interfaces/user'
+import { IExtendedFEUser, IFENew } from '@/common/interfaces/user'
+import { useLinkedRoles } from '@/pages/Protected/Users/hooks/useLinkedRoles.ts'
+import { useNewRoles } from '@/pages/Protected/Users/hooks/useNewRoles.ts'
+import styled from '@emotion/styled'
+import LoadingOutlined from '@ant-design/icons/lib/icons/LoadingOutlined'
+import {
+  useDuplicateModalControls
+} from '@/pages/Protected/Users/components/UsersReviewUpdateModal/hooks/useDuplicateModalControls.ts'
 
 const SUCCESS_MESSAGE = 'Record Updated'
 const ERROR_MESSAGE = "Record can't be updated. Please try again."
 
-const UsersReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx, onClose }) => {
-  const { duplicates, removeDuplicate } = useUserSlice()
-  const [currentIdx, setCurrentIdx] = useState<number>(idx)
-  const currentDuplicate = duplicates.find((duplicate) => duplicate.idx === currentIdx)
-  const actualIndex = duplicates.indexOf(currentDuplicate as IFEDuplicateWithIdx)
-  const newData = currentDuplicate?.new
-  const { data } = useGetUserDetailsQuery(
-    { id: currentDuplicate?.existing.id || '' },
-    { skip: !currentDuplicate?.existing.id },
-  )
-  const [isUpdatedSeason, setIsUpdatedSeason] = useState(false)
-  const [isError] = useState(false)
+const UsersReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = React.memo(({ idx, onClose }) => {
+  const { duplicates } = useUserSlice()
+  const {
+    currentIdx,
+    currentDuplicate,
+    actualIndex,
+    handleNext,
+    handlePrev,
+    handleSkip,
+    handleClose
+  } = useDuplicateModalControls(idx, onClose)
+  const [bulkEdit, { isLoading, isError, status, reset }] = useBulkEditMutation()
 
-  if (!data || !newData) return <Loader />
+  const [existingUser, setExistingUser ] = useState<IExtendedFEUser | undefined>(currentDuplicate?.existing)
+  const [newUserData, setNewUserData] = useState<IFENew | undefined>(currentDuplicate?.new)
+  const { linkedRoles, setLinkedRolesUser } = useLinkedRoles()
+  const { newRoles, setNewRolesUser } = useNewRoles()
 
-  const objectsDifferences: Record<Partial<keyof IFENew>, boolean> = compareObjects(newData, data)
+  // resets mutation on index change
+  useEffect(() => {
+    reset()
+  }, [currentIdx, duplicates.length])
 
-  const handleNextDuplicate = () => setCurrentIdx((prev) => prev + 1)
+  // updates current and new user data on duplicate change
+  useEffect(() => {
+    setExistingUser(currentDuplicate?.existing)
+    setNewUserData(currentDuplicate?.new)
+  }, [currentDuplicate])
 
-  const handlePrevDuplicate = () => setCurrentIdx((prev) => prev - 1)
+  // updates linked roles for existing user
+  useEffect(() => {
+    existingUser && setLinkedRolesUser(existingUser)
+  }, [existingUser])
 
-  const handleSkipForThis = () => {
-    if (actualIndex === duplicates.length - 1) {
-      onClose()
-      return
+  // updates new user roles
+  useEffect(() => {
+    newUserData && setNewRolesUser(newUserData)
+  }, [newUserData])
+
+  // wait for user data to load
+  if (!existingUser || !newUserData) return <Loader />
+
+  const objectsDifferences: Record<Partial<keyof IFENew>, boolean> = compareObjects(newUserData, existingUser)
+
+  // updates current user roles
+  const handleUpdate = async () => {
+    if (!objectsDifferences.roles) return
+
+    const updateUserAsAdminBody = {
+      id: existingUser.id,
+      roles: [...linkedRoles, ...newRoles],
     }
 
-    handleNextDuplicate()
-  }
-
-  const handleUpdate = () => {}
-
-  const handleNextRecord = () => {
-    if (duplicates.length === 1) {
-      onClose()
-      setIsUpdatedSeason(false)
-      removeDuplicate(currentIdx)
-
-      return
-    }
-
-    if (actualIndex === duplicates.length - 1) {
-      setCurrentIdx(0)
-    } else {
-      const newIndex = currentIdx + 1
-
-      if (newIndex > duplicates.length - 2) {
-        setCurrentIdx(0)
-      } else {
-        setCurrentIdx((prev) => prev + 1)
-      }
-    }
-
-    setIsUpdatedSeason(false)
-    setTimeout(() => {
-      removeDuplicate(currentIdx)
-    }, 500)
-  }
-
-  const handleClose = () => {
-    if (isUpdatedSeason) {
-      setIsUpdatedSeason(false)
-      removeDuplicate(currentIdx)
-    }
-
-    onClose()
+    await bulkEdit([updateUserAsAdminBody])
   }
 
   return (
@@ -102,31 +97,42 @@ const UsersReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx,
 
           <Flex className="w-790">
             <UsersDetailsColumn
+              title="Current"
+              {...existingUser}
               address={null}
               children={[]}
               parents={[]}
-              {...data}
-              title="Current"
+              roles={linkedRoles}
               isNew={false}
               differences={objectsDifferences}
             />
-
-            <UsersDetailsColumn {...newData} title="Imported" isNew differences={objectsDifferences} />
+            <UsersDetailsColumn
+              title="Imported"
+              {...newUserData}
+              roles={linkedRoles}
+              newRoles={newRoles}
+              isNew
+              current={existingUser}
+              differences={objectsDifferences}
+            />
           </Flex>
 
-          {isUpdatedSeason && (
-            <Message type={isError ? 'error' : 'success'} text={!isError ? SUCCESS_MESSAGE : ERROR_MESSAGE} />
+          {(isError || status === 'fulfilled')  && (
+            <Message
+              type={isError ? 'error' : 'success'}
+              text={!isError ? SUCCESS_MESSAGE : ERROR_MESSAGE}
+            />
           )}
         </Flex>
 
         <Footer>
           <Flex align="center">
-            <ArrowButton disabled={actualIndex === 0 || isUpdatedSeason} onClick={handlePrevDuplicate}>
+            <ArrowButton disabled={actualIndex === 0 || isLoading} onClick={handlePrev}>
               <LeftOutlined />
             </ArrowButton>
             <ArrowButton
-              disabled={actualIndex + 1 === duplicates.length || isUpdatedSeason}
-              onClick={handleNextDuplicate}
+              disabled={actualIndex + 1 === duplicates.length || isLoading}
+              onClick={handleNext}
             >
               <RightOutlined />
             </ArrowButton>
@@ -137,34 +143,46 @@ const UsersReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx,
           </Flex>
 
           <Flex>
-            <DefaultButton type="default" onClick={handleClose}>
+            <DefaultButton
+              type="default"
+              disabled={isLoading}
+              onClick={handleClose}
+            >
               Close
             </DefaultButton>
 
-            {duplicates.length > 1 && !isUpdatedSeason && (
-              <DefaultButton type="default" onClick={handleSkipForThis}>
-                Skip for this
+              <DefaultButton
+                type="default"
+                disabled={isLoading}
+                onClick={handleSkip}
+              >
+                Skip
               </DefaultButton>
-            )}
 
-            {isUpdatedSeason ? (
-              <>
-                {duplicates.length > 1 && (
-                  <Button type="primary" className="br-4" onClick={handleNextRecord}>
-                    Next record
-                  </Button>
-                )}
-              </>
-            ) : (
-              <Button type="primary" className="br-4" onClick={handleUpdate}>
-                Update current
-              </Button>
+            {!!objectsDifferences.roles && (
+              <ButtonSized
+                type="primary"
+                className="br-4"
+                onClick={!isLoading ? handleUpdate : undefined}
+              >
+                {isLoading ? <Spin indicator={<Indicator spin />} size='small' /> : 'Update current'}
+              </ButtonSized>
             )}
           </Flex>
         </Footer>
       </ContentWrapper>
     </Container>
   )
-}
+}, (prevProps, nextProps) => {
+  return prevProps.idx === nextProps.idx
+})
+
+const Indicator = styled(LoadingOutlined)`
+  font-size: 24px;
+  color: white;
+`
+const ButtonSized = styled(Button)`
+  width: 130px
+`
 
 export default UsersReviewUpdateModal

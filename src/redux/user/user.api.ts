@@ -146,7 +146,7 @@ export const userApi = createApi({
       invalidatesTags: [USER_TAG],
       transformResponse: ({ duplicates, ...rest }: IBEImportUsersCSVResponse) => ({
         ...rest,
-        duplicates: duplicates.map((d) => ({
+        duplicates: duplicates?.map((d) => ({
           existing: getFEUserRecord(d.existing),
           new: getFENewRecord(d.new),
         })),

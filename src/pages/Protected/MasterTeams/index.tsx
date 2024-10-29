@@ -14,7 +14,7 @@ import {
   PageContainer,
   ProtectedPageTitle,
 } from '@/components/Elements'
-import ImportModal from '@/components/ImportTooltip'
+import ImportModal from '@/components/ImportModal.tsx'
 import Loader from '@/components/Loader'
 import MonroeModal from '@/components/MonroeModal'
 

@@ -4,7 +4,7 @@ import Typography from 'antd/es/typography'
 import { FC, useState } from 'react'
 import { ReactSVG } from 'react-svg'
 
-import MonroeTooltip from '@/components/MonroeTooltip'
+// import MonroeTooltip from '@/components/MonroeTooltip'
 
 import { TImportStatus } from '@/common/types'
 
@@ -124,9 +124,7 @@ const ImportModal: FC<IImportModalProps> = ({
             <ReactSVG src={PaperClipIcon} />
 
             {isMoreThanMaxCharacters ? (
-              <MonroeTooltip text={filename} containerWidth="auto" width="200px">
-                <ImportModalFileName isError={isError}>{filename.substring(0, 30) + '...'}</ImportModalFileName>
-              </MonroeTooltip>
+              <ImportModalFileName isError={isError}>{filename.substring(0, 30) + '...'}</ImportModalFileName>
             ) : (
               <ImportModalFileName isError={isError}>{filename}</ImportModalFileName>
             )}

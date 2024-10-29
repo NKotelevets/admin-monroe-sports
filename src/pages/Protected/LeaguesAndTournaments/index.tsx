@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import LeagueAndTournamentsTable from '@/pages/Protected/LeaguesAndTournaments/components/LeagueAndTournamentsTable'
 
 import { CreateNewEntityButton, ImportButton, MonroeDeleteButton, PageContainer } from '@/components/Elements'
-import ImportModal from '@/components/ImportTooltip'
+import ImportModal from '@/components/ImportModal.tsx'
 import Loader from '@/components/Loader'
 import MonroeModal from '@/components/MonroeModal'
 
