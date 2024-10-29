@@ -3,7 +3,7 @@ import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined'
 import DownloadOutlined from '@ant-design/icons/lib/icons/DownloadOutlined'
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import { Flex } from 'antd'
-import { ChangeEvent, useCallback, useRef, useState } from 'react'
+import { ChangeEvent, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useNavigate } from 'react-router-dom'
 
@@ -12,42 +12,35 @@ import {
   ImportButton,
   MonroeDeleteButton,
   PageContainer,
-  ProtectedPageTitle,
+  ProtectedPageTitle
 } from '@/components/Elements'
 import ImportModal from '@/components/ImportModal.tsx'
-import Loader from '@/components/Loader'
-import MonroeModal from '@/components/MonroeModal'
 
 import BaseLayout from '@/layouts/BaseLayout'
-
-import { useAppSlice } from '@/redux/hooks/useAppSlice'
-import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice'
-import { useBulkDeleteMasterTeamsMutation, useMasterTeamsImportCSVMutation } from '@/redux/masterTeams/masterTeams.api'
+import { useMasterTeamsImportCSVMutation } from '@/redux/masterTeams/masterTeams.api'
 
 import { DEFAULT_IMPORT_MODAL_OPTIONS } from '@/common/constants/import'
-import {
-  PATH_TO_CREATE_MASTER_TEAM,
-  PATH_TO_DELETING_INFO_MASTER_TEAMS,
-  PATH_TO_MASTER_TEAMS_IMPORT_INFO,
-} from '@/common/constants/paths'
+import { PATH_TO_CREATE_MASTER_TEAM, PATH_TO_MASTER_TEAMS_IMPORT_INFO } from '@/common/constants/paths'
 import { IImportModalOptions } from '@/common/interfaces'
+import {
+  DeleteMasterTeamModal,
+  DeleteModalRef
+} from '@/pages/Protected/MasterTeams/components/DeleteMasterTeamModal.tsx'
 
 const MasterTeams = () => {
-  const { total } = useMasterTeamsSlice()
-  const { setInfoNotification, setAppNotification } = useAppSlice()
+  const navigate = useNavigate()
+  const inputRef = useRef<HTMLInputElement | null>()
+  const deleteModalRef = useRef<DeleteModalRef>()
+
   const [importSeasons] = useMasterTeamsImportCSVMutation()
-  const [isOpenModal, setIsOpenModal] = useState(false)
+
   const [selectedRecordsIds, setSelectedRecordsIds] = useState<string[]>([])
   const [showAdditionalHeader, setShowAdditionalHeader] = useState(false)
   const [isDeleteAllRecords, setIsDeleteAllRecords] = useState(false)
   const [showCreatedRecords, setShowCreatedRecords] = useState(false)
-  const inputRef = useRef<HTMLInputElement | null>()
-  const navigate = useNavigate()
   const [importModalOptions, setImportModalOptions] = useState<IImportModalOptions>(DEFAULT_IMPORT_MODAL_OPTIONS)
-  const deleteRecordsModalCount = isDeleteAllRecords ? total : selectedRecordsIds.length
-  const deleteSeasonsText = deleteRecordsModalCount > 1 ? 'master teams' : 'master team'
+
   const [fileKey, setFileKey] = useState('')
-  const [bulkDeleteMT, { isLoading }] = useBulkDeleteMasterTeamsMutation()
 
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
     setImportModalOptions(DEFAULT_IMPORT_MODAL_OPTIONS)
@@ -58,7 +51,7 @@ const MasterTeams = () => {
         filename: file.name,
         isOpen: true,
         status: 'loading',
-        errorMessage: '',
+        errorMessage: ''
       })
 
       const body = new FormData()
@@ -71,7 +64,7 @@ const MasterTeams = () => {
             filename: file.name,
             isOpen: true,
             status: 'green', // TODO: fix this issue
-            errorMessage: '',
+            errorMessage: ''
           })
         })
         .catch((error) => {
@@ -79,7 +72,7 @@ const MasterTeams = () => {
             filename: file.name,
             isOpen: true,
             status: 'red',
-            errorMessage: (error.data as { code: string; detail: string }).detail,
+            errorMessage: (error.data as { code: string; detail: string }).detail
           })
         })
 
@@ -87,35 +80,10 @@ const MasterTeams = () => {
     }
   }
 
-  const handleCloseModal = useCallback(() => setIsOpenModal(false), [])
-
-  const handleDelete = () => {
-    handleCloseModal()
-    const deleteHandler = isDeleteAllRecords ? bulkDeleteMT([]) : bulkDeleteMT(selectedRecordsIds)
-    deleteHandler.unwrap().then((response) => {
-      setSelectedRecordsIds([])
-      setShowAdditionalHeader(false)
-      setIsDeleteAllRecords(false)
-
-      const message = `${response.success}/${response.total}  master teams have been successfully removed.`
-
-      if (response.status !== 'green') {
-        setInfoNotification({
-          actionLabel: 'More info..',
-          message,
-          redirectedPageUrl: PATH_TO_DELETING_INFO_MASTER_TEAMS,
-        })
-
-        return
-      }
-
-      if (response.status === 'green') {
-        setAppNotification({
-          message,
-          type: 'success',
-        })
-      }
-    })
+  const onDelete = () => {
+    setSelectedRecordsIds([])
+    setShowAdditionalHeader(false)
+    setIsDeleteAllRecords(false)
   }
 
   return (
@@ -125,23 +93,12 @@ const MasterTeams = () => {
           <title>Admin Panel | Master Teams </title>
         </Helmet>
 
-        {isLoading && <Loader text={`Deleting ${deleteRecordsModalCount} records`} />}
-
-        {isOpenModal && (
-          <MonroeModal
-            onCancel={handleCloseModal}
-            okText="Delete"
-            onOk={handleDelete}
-            title={`Delete ${deleteRecordsModalCount > 1 ? deleteRecordsModalCount : ''} ${deleteSeasonsText}?`}
-            type="warn"
-            content={
-              <p>
-                Are you sure you want to delete {deleteRecordsModalCount > 1 ? deleteRecordsModalCount : 'this'}{' '}
-                {deleteSeasonsText}?
-              </p>
-            }
-          />
-        )}
+        <DeleteMasterTeamModal
+          ref={deleteModalRef}
+          onDelete={onDelete}
+          isDeleteAllRecords={isDeleteAllRecords}
+          selectedRecordsIds={selectedRecordsIds}
+        />
 
         {importModalOptions.isOpen && (
           <ImportModal
@@ -164,7 +121,7 @@ const MasterTeams = () => {
 
             <Flex>
               {!!selectedRecordsIds.length && (
-                <MonroeDeleteButton icon={<DeleteOutlined />} iconPosition="start" onClick={() => setIsOpenModal(true)}>
+                <MonroeDeleteButton icon={<DeleteOutlined />} iconPosition="start" onClick={deleteModalRef?.current?.openModal}>
                   Delete
                 </MonroeDeleteButton>
               )}

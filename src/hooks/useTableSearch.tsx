@@ -11,16 +11,24 @@ export const useTableSearch = (handleTableReset?: () => void) => {
 
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
 
-  const getColumnSearchProps = <T,>(dataIndex: keyof T): TableColumnType<T> => ({
+  const getColumnSearchProps = <T,>(
+    dataIndex: keyof T,
+    onFilter?: (value: boolean | React.Key, record: T) => boolean
+  ): TableColumnType<T> => ({
     filterDropdown: (props) => (
       <FilterDropDown {...props} handleReset={handleReset} handleSearch={handleSearch} searchInput={searchInput} />
     ),
     filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1A1657' : '#BDBCC2' }} />,
-    onFilter: (value, record) =>
-      (record[dataIndex] as string)
+    onFilter: (value, record) => {
+      if (onFilter) {
+        return onFilter(value, record)
+      }
+
+      return (record[dataIndex] as string)
         .toString()
         .toLowerCase()
-        .includes((value as string).toLowerCase()),
+        .includes((value as string).toLowerCase())
+    },
     onFilterDropdownOpenChange: (visible) => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100)
