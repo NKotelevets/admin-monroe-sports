@@ -20,7 +20,7 @@ import { IFEUser } from '@/common/interfaces/user'
 
 import DeleteIcon from '@/assets/icons/delete.svg'
 
-interface IPopulateRoleProps {
+export interface IPopulateRoleProps {
   index: number
   entity: IMasterTeamRole
   errors: FormikErrors<IMasterTeamRole>[]
@@ -51,8 +51,8 @@ const PopulateEntity: FC<IPopulateRoleProps> = ({
   touched,
   totalNumberOfItems,
 }) => {
-  const [isOpenedDetails, setIsOpenedDetails] = useState(index === 0 ? true : false)
-  const { ref, isComponentVisible } = useIsActiveComponent(index === 0 ? true : false)
+  const [isOpenedDetails, setIsOpenedDetails] = useState(index === 0)
+  const { ref, isComponentVisible } = useIsActiveComponent(index === 0)
   const [selectedName, setSelectedName] = useState(entity.fullName || '')
   const { user } = useUserSlice()
   const isTheSameUser = user?.email === entity.email
