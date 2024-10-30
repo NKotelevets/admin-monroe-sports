@@ -68,6 +68,7 @@ export interface IGetMasterTeamsRequest {
   team_name?: string | null
   head_coach?: string | null
   league_name?: string | null
+  league_teams?: string | null
   team_admin?: string | null
 }
 
