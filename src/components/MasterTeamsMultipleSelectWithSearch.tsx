@@ -19,6 +19,7 @@ import { IFEMasterTeam } from '@/common/interfaces/masterTeams'
 
 import ShowAllIcon from '@/assets/icons/show-all.svg'
 import SilverCloseIcon from '@/assets/icons/silver-close.svg'
+import { ISelectedTeams } from '@/common/interfaces/user.ts'
 
 const Wrapper = styled(Flex)<{ is_error: string }>`
   position: relative;
@@ -125,7 +126,7 @@ interface IMasterTeamsMultipleSelectWithSearchProps {
   onChange: (value: IIdName[]) => void
   onBlur?: () => void
   isError: boolean
-  selectedTeams: IIdName[]
+  selectedTeams: ISelectedTeams[]
   canRemoveTeam?: boolean
 }
 
@@ -134,7 +135,6 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
   isError,
   onBlur,
   selectedTeams,
-  canRemoveTeam = false,
 }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const { isComponentVisible, ref } = useIsActiveComponent(false)
@@ -214,8 +214,7 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
             {selectedTeams.map((option) => (
               <TeamNameWrapper key={option.id}>
                 {option.name}
-
-                {!canRemoveTeam && (
+                {option.canDelete && (
                   <ReactSVG
                     onClick={() => {
                       handleOptionToggle(option)
@@ -238,17 +237,23 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
         <Container>
           {masterTeams.length > 0 ? (
             <List ref={scrollRef as unknown as RefObject<HTMLUListElement>} onScroll={handleScroll}>
-              {masterTeams.map((masterTeam) => (
-                <ListItem key={masterTeam.id}>
-                  <Checkbox
-                    className="checkbox"
-                    checked={!!selectedTeams.find((sO) => sO.id === masterTeam.id)}
-                    onChange={() => handleOptionToggle(masterTeam)}
-                  />
+              {masterTeams.map((masterTeam) => {
+                const isSelected = !!selectedTeams.find((sO) => sO.id === masterTeam.id)
+                const isDisabled = selectedTeams.some(team => team.id === masterTeam.id && (team.canDelete === false))
 
-                  <MonroeBlueText className="mg-l8">{masterTeam.name}</MonroeBlueText>
-                </ListItem>
-              ))}
+                return (
+                  <ListItem key={masterTeam.id}>
+                    <Checkbox
+                      className="checkbox"
+                      disabled={isDisabled}
+                      checked={isSelected}
+                      onChange={() => handleOptionToggle(masterTeam)}
+                    />
+
+                    <MonroeBlueText className="mg-l8">{masterTeam.name}</MonroeBlueText>
+                  </ListItem>
+                )
+              })}
 
               <Flex justify="center">
                 {isFetching && (
