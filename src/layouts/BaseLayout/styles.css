@@ -52,3 +52,7 @@
 .items-menu .ant-menu-submenu-arrow {
   right: 24px;
 }
+
+.valign-top {
+  vertical-align: baseline;
+}

@@ -21,7 +21,7 @@ import {
   OPERATOR_ROLE,
   PARENT_ROLE,
   PLAYER_ROLE,
-  TEAM_ADMIN_ROLE,
+  TEAM_ADMIN_ROLE
 } from '@/common/constants'
 import { PATH_TO_BULK_EDIT_USER_ERRORS, PATH_TO_USERS } from '@/common/constants/paths'
 import { IRole } from '@/common/interfaces/user'
@@ -39,15 +39,10 @@ const UsersBulkEdit = () => {
   const isDisabledSaveChangesBtn = !!selectedRecords
     .flatMap((record) =>
       record.userRoles.filter((role) => {
-        if (
-          (ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(role.name as TRole) &&
+        return (ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(role.name as TRole) &&
             !role?.linkedEntities?.length) ||
           !role.name
-        )
-          return true
-
-        return false
-      }),
+      })
     )
     .filter((i) => !!i)?.length
 
@@ -62,28 +57,28 @@ const UsersBulkEdit = () => {
               (linkedEntity) =>
                 ({
                   role: role.name,
-                  team_id: linkedEntity?.id || '',
-                }) as IRole,
+                  team_id: linkedEntity?.id || ''
+                }) as IRole
             )
           }
 
           if (role.name === OPERATOR_ROLE) {
             return {
               role: role.name,
-              operator_id: role.linkedEntities?.[0].id,
+              operator_id: role.linkedEntities?.[0].id
             } as IRole
           }
 
           if (role.name === MASTER_ADMIN_ROLE) {
             return {
-              role: 'Swift Schedule Master Admin',
+              role: 'Swift Schedule Master Admin'
             } as unknown as IRole
           }
 
           return {
-            role: role.name,
+            role: role.name
           } as IRole
-        }),
+        })
     }))
 
     bulkEdit(editRolesData)
@@ -95,7 +90,7 @@ const UsersBulkEdit = () => {
           navigation(PATH_TO_USERS)
           setAppNotification({
             message: total > 1 ? 'Users successfully updated' : 'User successfully updated',
-            type: 'success',
+            type: 'success'
           })
         } else {
           setEditUsersErrors(failed)
@@ -112,7 +107,7 @@ const UsersBulkEdit = () => {
 
       <BaseLayout>
         <PageContainer>
-          <Flex justify="space-between" align="center">
+          <Flex justify="space-between" align="center" vertical={false}>
             <ProtectedPageTitle>Bulk edit</ProtectedPageTitle>
 
             <Flex>
@@ -132,12 +127,12 @@ const UsersBulkEdit = () => {
           </Flex>
 
           <Table
-            className="visible"
             columns={columns}
+            pagination={false}
             rowKey={(record) => record.id}
             dataSource={selectedRecords}
             scroll={{
-              x: 1000,
+              x: 1000
             }}
           />
         </PageContainer>

@@ -9,7 +9,7 @@ export const AddRoleButton = styled(Button)`
   font-size: 14px;
   color: #3e34ca;
   box-shadow: none;
-  width: 134px;
+  width: auto;
 
   &:disabled {
     color: #888791;
@@ -23,7 +23,7 @@ export const AddBracketButton = styled(MonroeSecondaryButton)`
   height: 20px;
   margin-left: 24px;
   margin-top: 5px;
-  box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.02);
 
   &:disabled {
     border-color: #d8d7db !important;

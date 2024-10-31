@@ -1,281 +1,65 @@
-import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
-import Flex from 'antd/es/flex'
-import { DefaultOptionType } from 'antd/es/select'
 import { TableProps } from 'antd/es/table/InternalTable'
 import { useNavigate } from 'react-router-dom'
-import { ReactSVG } from 'react-svg'
-
-import { AddRoleButton } from '@/pages/Protected/Seasons/components/Elements'
-import { DeleteIconWrapper, EmptySpace } from '@/pages/Protected/Users/components/Elements'
-import OperatorsInput from '@/pages/Protected/Users/components/OperatorsInput'
-import { ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES, ROLES } from '@/pages/Protected/Users/constants/roles'
-
-import MasterTeamsMultipleSelectWithSearch from '@/components/MasterTeamsMultipleSelectWithSearch'
-import MonroeSelect from '@/components/MonroeSelect'
-import MonroeTooltip from '@/components/MonroeTooltip'
 import TextWithTooltip from '@/components/TextWithTooltip'
 
-import { useUserSlice } from '@/redux/hooks/useUserSlice'
-
-import { CHILD_ROLE, HEAD_COACH_ROLE, MASTER_ADMIN_ROLE, OPERATOR_ROLE, PARENT_ROLE } from '@/common/constants'
+import { SHORT_GENDER_NAMES } from '@/common/constants'
 import { PATH_TO_USERS } from '@/common/constants/paths'
-import { IFERole } from '@/common/interfaces/role'
 import { IBulkEditFEUser } from '@/common/interfaces/user'
-import { TRole } from '@/common/types'
-
-import DeleteIcon from '@/assets/icons/delete.svg'
+import { TGender } from '@/common/types'
+import { BulkEditRecordRoles } from '@/pages/Protected/Users/components/BulkEditRecordRoles.tsx'
+import { useCallback, useMemo } from 'react'
 
 type TColumns<T> = TableProps<T>['columns']
 
+
 export const useUsersBulkEditTableParams = () => {
   const navigate = useNavigate()
-  const { setRecords, selectedRecords } = useUserSlice()
-  const { user } = useUserSlice()
-  const isOperatorWithoutAdmin = !!user?.operator && !user.isSuperuser
 
-  const columns: TColumns<IBulkEditFEUser> = [
-    {
-      title: 'First Name',
-      dataIndex: 'firstName',
-      fixed: 'left',
-      width: '240px',
-      render: (value, record) => (
-        <TextWithTooltip maxLength={25} text={value} onClick={() => navigate(PATH_TO_USERS + '/' + record.id)} />
-      ),
-    },
-    {
-      title: 'Last Name',
-      dataIndex: 'lastName',
-      fixed: 'left',
-      width: '240px',
-      render: (value, record) => (
-        <TextWithTooltip maxLength={25} text={value} onClick={() => navigate(PATH_TO_USERS + '/' + record.id)} />
-      ),
-    },
-    {
-      title: 'Roles',
-      dataIndex: 'userRoles',
-      width: '540px',
-      render: (_, record) => {
-        const existingRoles = record.userRoles.map((role) => role.name)
-        const options: DefaultOptionType[] = ROLES.filter((initialRole) => {
-          if (isOperatorWithoutAdmin && [MASTER_ADMIN_ROLE, OPERATOR_ROLE].includes(initialRole)) return false
+  const renderRecordRoles = useCallback((_: unknown, record: IBulkEditFEUser) => (
+    <BulkEditRecordRoles record={record} />
+  ), [])
 
-          if (!existingRoles.includes(initialRole)) return true
-
-          return false
-        }).map((role) => ({
-          label: role,
-          value: role,
-        }))
-        const isSameUser = user?.id === record.id
-        const MAX_CREATED_ROLES_BY_ADMIN = 6
-        const MAX_CREATED_ROLES_BY_OPERATOR = 4
-        const userAdminRoles = record?.roles.filter((role) => [OPERATOR_ROLE, MASTER_ADMIN_ROLE].includes(role)).length
-
-        const maximumRoles = user?.isSuperuser
-          ? MAX_CREATED_ROLES_BY_ADMIN
-          : userAdminRoles
-            ? MAX_CREATED_ROLES_BY_OPERATOR + userAdminRoles
-            : MAX_CREATED_ROLES_BY_OPERATOR
-        const isDisabledAddRoleButton =
-          !!record.userRoles
-            .filter((role) => {
-              if (
-                (ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(role.name as TRole) &&
-                  !role?.linkedEntities?.length) ||
-                !role.name
-              )
-                return true
-
-              return false
-            })
-            .filter((i) => !!i)?.length || maximumRoles === record.userRoles.length
-
-        const handleChangeRole = (oldRole: string, newRole: string) => {
-          const updatedRecord: IBulkEditFEUser = {
-            ...record,
-            userRoles: record.userRoles.map((role) => {
-              if (role.name === oldRole) {
-                return {
-                  ...role,
-                  name: newRole,
-                } as IFERole
-              }
-
-              return role
-            }),
-          }
-
-          const updatedRecords = selectedRecords.map((selectedRecord) => {
-            if (selectedRecord.id === record.id) {
-              return updatedRecord
-            }
-
-            return selectedRecord
-          })
-
-          setRecords(updatedRecords)
-        }
-
-        const handleDeleteRole = (roleName: string) => {
-          const updatedRecord: IBulkEditFEUser = {
-            ...record,
-            userRoles: record.userRoles.filter((role) => role.name !== roleName),
-          }
-
-          const updatedRecords = selectedRecords.map((selectedRecord) => {
-            if (selectedRecord.id === record.id) {
-              return updatedRecord
-            }
-
-            return selectedRecord
-          })
-
-          setRecords(updatedRecords)
-        }
-
-        const handleAddRole = () => {
-          const updatedRecords = selectedRecords.map((selectedRecord) => {
-            if (selectedRecord.id === record.id) {
-              return {
-                ...selectedRecord,
-                userRoles: [...selectedRecord.userRoles, { name: '', linkedEntities: [] }],
-              }
-            }
-
-            return selectedRecord
-          })
-
-          setRecords(updatedRecords)
-        }
-
-        const handleChangeData = (
-          roleName: string,
-          teams: {
-            id: string
-            name: string
-          }[],
-        ) => {
-          const updatedRecord: IBulkEditFEUser = {
-            ...record,
-            userRoles: record.userRoles.map((role) => {
-              if (role.name === roleName) {
-                return {
-                  ...role,
-                  linkedEntities: teams,
-                } as IFERole
-              }
-
-              return role
-            }),
-          }
-
-          const updatedRecords = selectedRecords.map((selectedRecord) => {
-            if (selectedRecord.id === record.id) return updatedRecord
-            return selectedRecord
-          })
-
-          setRecords(updatedRecords)
-        }
-
-        return (
-          <Flex vertical justify="flex-start" className="h-full">
-            {record.userRoles.map((role) => {
-              const isOperator = role.name === OPERATOR_ROLE
-              const operatorObject = {
-                id: role.linkedEntities?.[0]?.id || '',
-                name: role.linkedEntities?.[0]?.name || '',
-              }
-              const isRoleWithTeams = ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(role.name as TRole)
-              const isHideDeleteBtn =
-                [PARENT_ROLE, CHILD_ROLE].includes(role.name) ||
-                !!(isOperatorWithoutAdmin && role.name === OPERATOR_ROLE) ||
-                (role.name === HEAD_COACH_ROLE && record.asHeadCoach?.length) ||
-                (isOperatorWithoutAdmin && role.name === MASTER_ADMIN_ROLE)
-
-              return (
-                <Flex className="mg-b24" align="start" key={role.name}>
-                  <Flex className="mg-r16" align="center">
-                    <MonroeSelect
-                      options={options}
-                      onChange={(newRole) => handleChangeRole(role.name, newRole)}
-                      className="w-170 c-p"
-                      value={role.name}
-                      disabled={
-                        [PARENT_ROLE, CHILD_ROLE].includes(role.name) ||
-                        !!(isOperatorWithoutAdmin && role.name === OPERATOR_ROLE) ||
-                        (isSameUser && role.name === MASTER_ADMIN_ROLE) ||
-                        (isOperatorWithoutAdmin && role.name === MASTER_ADMIN_ROLE)
-                      }
-                    />
-
-                    <DeleteIconWrapper
-                      is_hide={`${!!isHideDeleteBtn || (isSameUser && role.name === MASTER_ADMIN_ROLE) || (isOperatorWithoutAdmin && role.name === MASTER_ADMIN_ROLE)}`}
-                      onClick={() => {
-                        if (!isHideDeleteBtn) handleDeleteRole(role.name)
-                      }}
-                    >
-                      <ReactSVG src={DeleteIcon} />
-                    </DeleteIconWrapper>
-                  </Flex>
-
-                  {isRoleWithTeams && (
-                    <div className="w-full">
-                      <MasterTeamsMultipleSelectWithSearch
-                        onChange={(newRole) => handleChangeData(role.name, newRole)}
-                        isError={!role?.linkedEntities?.length}
-                        selectedTeams={role?.linkedEntities || []}
-                        canRemoveTeam={role.name === HEAD_COACH_ROLE}
-                      />
-                    </div>
-                  )}
-
-                  {!isRoleWithTeams && !isOperator && <EmptySpace />}
-
-                  {isOperator && (
-                    <OperatorsInput
-                      isError={!operatorObject.id}
-                      setOperator={(value) => {
-                        handleChangeData(OPERATOR_ROLE, value)
-                      }}
-                      selectedOperator={operatorObject}
-                      isHideAddOperatorBtn
-                      isDisabled={isOperatorWithoutAdmin}
-                    />
-                  )}
-                </Flex>
-              )
-            })}
-
-            <MonroeTooltip
-              text={
-                isDisabledAddRoleButton
-                  ? record.userRoles.length === maximumRoles
-                    ? `Maximum roles is ${maximumRoles}`
-                    : "You can't create role when you have errors in other roles"
-                  : ''
-              }
-              width="220px"
-              containerWidth="113px"
-            >
-              <AddRoleButton
-                disabled={isDisabledAddRoleButton}
-                onClick={handleAddRole}
-                icon={<PlusOutlined />}
-                className="w-100"
-              >
-                Add role
-              </AddRoleButton>
-            </MonroeTooltip>
-          </Flex>
+  const columns: TColumns<IBulkEditFEUser> = useMemo(() => (
+    [
+      {
+        title: 'First Name',
+        dataIndex: 'firstName',
+        fixed: 'left',
+        width: '150px',
+        className: 'hide-right-border valign-top',
+        render: (value, record) => (
+          <TextWithTooltip maxLength={25} text={value} onClick={() => navigate(PATH_TO_USERS + '/' + record.id)} />
         )
       },
-    },
-  ]
+      {
+        title: 'Last Name',
+        dataIndex: 'lastName',
+        fixed: 'left',
+        width: '150px',
+        className: 'hide-right-border valign-top',
+        render: (value, record) => (
+          <TextWithTooltip maxLength={25} text={value} onClick={() => navigate(PATH_TO_USERS + '/' + record.id)} />
+        )
+      },
+      {
+        title: '',
+        dataIndex: 'gender',
+        fixed: 'left',
+        width: '50px',
+        className: 'valign-top',
+        render: (value) => SHORT_GENDER_NAMES[`${value as TGender}`]
+      },
+      {
+        title: 'Roles',
+        dataIndex: 'userRoles',
+        width: '540px',
+        render: renderRecordRoles
+      }
+    ]
+  ), [])
 
   return {
-    columns,
+    columns
   }
 }
 
