@@ -88,7 +88,7 @@ const OperatorsInput: FC<IOperatorsInputProps> = ({
   const { isComponentVisible, ref, onClose } = useIsActiveComponent(false)
   const [offset, setOffset] = useState(0)
   const [getOperators, { data }] = useLazyGetOperatorsQuery()
-  const { setIsCreateOperatorScreen } = useUserSlice()
+  const { setShowOperatorScreen } = useUserSlice()
   const ADD_OPERATOR_PROPERTY: DefaultOptionType = {
     label: (
       <AddOperatorWrapper>
@@ -96,7 +96,7 @@ const OperatorsInput: FC<IOperatorsInputProps> = ({
           type="default"
           icon={<PlusOutlined />}
           iconPosition="start"
-          onClick={() => setIsCreateOperatorScreen(true)}
+          onClick={() => setShowOperatorScreen(true)}
         >
           Add Operator
         </AddOperatorButton>

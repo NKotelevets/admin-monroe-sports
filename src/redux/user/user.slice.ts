@@ -20,7 +20,7 @@ interface IUserSliceState {
   ordering: string
   createdUsersIds: string[]
   selectedRecords: IBulkEditFEUser[]
-  isCreateOperatorScreen: boolean
+  showOperatorScreen: boolean
   blockedUserErrors: IBlockedUserError[]
   editUsersErrors: IBulkEditError[]
   importCSVTableRecords: IImportUsersCSVTableData[]
@@ -36,7 +36,7 @@ const userSliceState: IUserSliceState = {
   ordering: '',
   createdUsersIds: [],
   selectedRecords: [],
-  isCreateOperatorScreen: false,
+  showOperatorScreen: false,
   blockedUserErrors: [],
   editUsersErrors: [],
   importCSVTableRecords: [],
@@ -65,8 +65,8 @@ export const userSlice = createSlice({
     setRecords: (state, action: PayloadAction<IBulkEditFEUser[]>) => {
       state.selectedRecords = action.payload
     },
-    setIsCreateOperatorScreen: (state, action: PayloadAction<boolean>) => {
-      state.isCreateOperatorScreen = action.payload
+    setShowOperatorScreen: (state, action: PayloadAction<boolean>) => {
+      state.showOperatorScreen = action.payload
     },
     setEditUsersErrors: (state, action: PayloadAction<IBulkEditError[]>) => {
       state.editUsersErrors = action.payload

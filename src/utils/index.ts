@@ -1,5 +1,7 @@
 import { format, parse } from 'date-fns'
 import { SortOrder } from 'antd/es/table/interface'
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query'
+import { NestedObject } from '@/common/types'
 
 export const validateNumber = (value: string) => /^[0-9]+$/.test(value) || value === ''
 
@@ -44,4 +46,94 @@ export const getColumnSort = (sortParam: string, ordering: string | null): SortO
     return ordering.startsWith('-') ? 'descend' : 'ascend'
   }
   return undefined
+}
+
+/**
+ * Type guard function to check if an error is of type FetchBaseQueryError,
+ * with an optional generic type for the `data` property.
+ *
+ * @template T - The expected type of the `data` property in FetchBaseQueryError.
+ * @param error - The error object to check, which may be of any type.
+ * @returns A boolean indicating whether the error is a FetchBaseQueryError.
+ *
+ * @example
+ * if (isFetchBaseQueryError<{ exists: any[] new: any }>(error)) {
+ *   console.log(error.data.exists[0]) // `data` is now strongly typed
+ * }
+ */
+export function isFetchBaseQueryError<T = unknown>(error: unknown): error is FetchBaseQueryError & { data: T } {
+  return typeof error === 'object' && error != null && 'data' in error
+}
+
+
+const toCamelCase = (key: string): string =>
+  key.replace(/_./g, (match) => match.charAt(1).toUpperCase())
+
+/**
+ * Transforms the keys of an object or array from snake_case to camelCase.
+ *
+ * This function recursively traverses the input object or array and converts
+ * all keys to camelCase. It also handles nested objects and arrays, ensuring
+ * that all keys at all levels are transformed. If the input is null, it returns
+ * null. The function is type-safe and avoids the use of `any`, ensuring that
+ * only valid objects or arrays are processed.
+ *
+ * @param obj - The object or array to transform. Can be null, an object,
+ *              or an array of objects.
+ * @returns A new object or array with keys transformed to camelCase.
+ *          If the input is null, returns null.
+ */
+export const transformKeysToCamelCase = (obj: NestedObject): NestedObject => {
+  if (obj === null) return null
+
+  if (Array.isArray(obj)) {
+    return obj.map(transformKeysToCamelCase)
+  }
+
+  if (typeof obj === 'object') {
+    return Object.keys(obj).reduce((acc, key) => {
+      const camelCaseKey = toCamelCase(key)
+      acc[camelCaseKey] = transformKeysToCamelCase(obj[key] as NestedObject)
+      return acc
+    }, {} as Record<string, unknown>)
+  }
+
+  // not an array or object
+  return obj
+}
+
+const toSnakeCase = (key: string): string =>
+  key.replace(/([A-Z])/g, '_$1').toLowerCase()
+
+/**
+ * Transforms the keys of an object or array from camelCase to snake_case.
+ *
+ * This function recursively traverses the input object or array and converts
+ * all keys to snake_case. It also handles nested objects and arrays, ensuring
+ * that all keys at all levels are transformed. If the input is null, it returns
+ * null. The function is type-safe and avoids the use of `any`, ensuring that
+ * only valid objects or arrays are processed.
+ *
+ * @param obj - The object or array to transform. Can be null, an object,
+ *              or an array of objects.
+ * @returns A new object or array with keys transformed to snake_case.
+ *          If the input is null, returns null.
+ */
+export const transformKeysToSnakeCase = (obj: NestedObject): NestedObject => {
+  if (obj === null) return null
+
+  if (Array.isArray(obj)) {
+    return obj.map(transformKeysToSnakeCase)
+  }
+
+  if (typeof obj === 'object') {
+    return Object.keys(obj).reduce((acc, key) => {
+      const snakeCaseKey = toSnakeCase(key)
+      acc[snakeCaseKey] = transformKeysToSnakeCase(obj[key] as NestedObject)
+      return acc
+    }, {} as Record<string, unknown>)
+  }
+
+  // not an array or object
+  return obj
 }

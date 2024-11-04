@@ -16,9 +16,11 @@ import {
   IExtendedFEUser,
   IFEImportUsersCSVResponse,
   IGetUsersRequestParams,
-  IRole,
+  IRole
 } from '@/common/interfaces/user'
-import { TDeleteStatus } from '@/common/types'
+import { NestedObject, TDeleteStatus } from '@/common/types'
+import { transformKeysToCamelCase } from '@/utils'
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 
 const USER_TAG = 'USER'
 const OPERATOR_TAG = 'OPERATOR'
@@ -84,6 +86,15 @@ export const userApi = createApi({
         body,
         method: 'POST',
       }),
+      transformErrorResponse: (error: FetchBaseQueryError) => {
+        if ('data' in error && typeof error.data === 'object') {
+          return {
+            ...error,
+            data: transformKeysToCamelCase(error.data as NestedObject)
+          }
+        }
+        return error
+      },
     }),
 
     createOperator: builder.mutation<IBEOperator, Omit<IBEOperator, 'id'>>({

@@ -23,7 +23,7 @@ import { compareObjects } from '@/utils/compareObjects'
 
 import { IExtendedFEUser, IFENew } from '@/common/interfaces/user'
 import { useLinkedRoles } from '@/pages/Protected/Users/hooks/useLinkedRoles.ts'
-import { useNewRoles } from '@/pages/Protected/Users/hooks/useNewRoles.ts'
+import { TNewUser, useNewRoles } from '@/pages/Protected/Users/hooks/useNewRoles.ts'
 import styled from '@emotion/styled'
 import LoadingOutlined from '@ant-design/icons/lib/icons/LoadingOutlined'
 import {
@@ -47,7 +47,7 @@ const UsersReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = React.m
   const [bulkEdit, { isLoading, isError, status, reset }] = useBulkEditMutation()
 
   const [existingUser, setExistingUser ] = useState<IExtendedFEUser | undefined>(currentDuplicate?.existing)
-  const [newUserData, setNewUserData] = useState<IFENew | undefined>(currentDuplicate?.new)
+  const [newUserData, setNewUserData] = useState<TNewUser | undefined>(currentDuplicate?.new as TNewUser)
   const { linkedRoles, setLinkedRolesUser } = useLinkedRoles()
   const { newRoles, setNewRolesUser } = useNewRoles()
 
@@ -59,7 +59,7 @@ const UsersReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = React.m
   // updates current and new user data on duplicate change
   useEffect(() => {
     setExistingUser(currentDuplicate?.existing)
-    setNewUserData(currentDuplicate?.new)
+    setNewUserData(currentDuplicate?.new as TNewUser)
   }, [currentDuplicate])
 
   // updates linked roles for existing user
