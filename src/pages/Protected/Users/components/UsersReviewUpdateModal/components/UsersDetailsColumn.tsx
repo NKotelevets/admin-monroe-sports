@@ -3,7 +3,7 @@ import { Flex, Typography } from 'antd'
 import React, { FC, ReactElement } from 'react'
 
 import { FULL_GENDER_NAMES } from '@/common/constants'
-import { IAsEntity, IChildren, IExtendedFEUser, IFENew, IOperator } from '@/common/interfaces/user'
+import { IAsEntity, IChildren, IExtendedFEUser, IFENew, IOperator, IRole } from '@/common/interfaces/user'
 import { TGender, TRole } from '@/common/types'
 import { IIdName } from '@/common/interfaces'
 import { formatPhoneNumber } from '@/utils'
@@ -27,7 +27,7 @@ type TUsersDetailsColumnProps = Omit<IUsersDetailsColumnProps, 'roles'> & {
   birthDateFormatted?: string
   isChild?: boolean
   asParent?: null | IChildren[]
-  newRoles?: TLinkedRole[]
+  newRoles?: (IRole & { teamName: string })[]
   roles: TLinkedRole[]
 }
 
@@ -150,8 +150,10 @@ const UsersDetailsColumn: FC<TUsersDetailsColumnProps> = ({
   )
 }
 
+
+
 interface ICurrentRoleListProps {
-  roles: TLinkedRole[]
+  roles: (IRole & { teamName: string })[]
   isNew?: boolean
 }
 
@@ -181,9 +183,9 @@ const RoleList = React.memo((props: ICurrentRoleListProps) => {
   const { roles, isNew = false} = props
 
   const groupedByRole = Object.values(
-    roles.reduce((acc, { role, teamName }) => {
+    roles.reduce((acc, { role, team_id, teamName }) => {
       if (!acc[role]) acc[role] = { role, teamNames: [] }
-      if (teamName) acc[role].teamNames.push(teamName)
+      if (team_id) acc[role].teamNames.push(teamName)
       return acc
     }, {} as TMappedRoles)
   )

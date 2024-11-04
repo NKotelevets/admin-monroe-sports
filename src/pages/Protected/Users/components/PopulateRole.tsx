@@ -18,7 +18,7 @@ import { useUserSlice } from '@/redux/hooks/useUserSlice'
 
 import useIsActiveComponent from '@/hooks/useIsActiveComponent'
 
-import { MASTER_ADMIN_ROLE, OPERATOR_ROLE } from '@/common/constants'
+import { MASTER_ADMIN_ROLE, OPERATOR_ROLE, TEAM_ADMIN_ROLE } from '@/common/constants'
 import { IIdName } from '@/common/interfaces'
 import { IFERole } from '@/common/interfaces/role'
 import { TRole } from '@/common/types'
@@ -75,7 +75,10 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
   const operator = values.roles.find((role) => role.name === OPERATOR_ROLE)?.linkedEntities?.[0] || { id: '', name: '' }
   const isMissingName = !!(errors.roles?.[+index] as FormikErrors<IFERole>)?.name
   const isMissingEntities = !!(errors.roles?.[+index] as FormikErrors<IFERole>)?.linkedEntities
-  const isHightestRoleOperator = isOperator && !user?.isSuperuser
+  const isHighestRoleOperator = isOperator && !user?.isSuperuser
+
+  const cannotDeleteTeamAdmin = [TEAM_ADMIN_ROLE].includes(role.name)
+    && (role?.linkedEntities?.some(entity => entity.canDelete === false) || false)
 
   const handleBlur = () => setFieldTouched(`roles.${index}.linkedEntities`, true)
 
@@ -135,7 +138,7 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
                 className="w-full"
                 is_error={`${isMissingName}`}
                 onBlur={() => setFieldTouched(`roles.${index}.name`, true)}
-                disabled={isHightestRoleOperator && role.name === OPERATOR_ROLE}
+                disabled={(isHighestRoleOperator && role.name === OPERATOR_ROLE) || cannotDeleteTeamAdmin}
               />
             </div>
 
@@ -177,7 +180,7 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
                   }}
                   selectedOperator={operator}
                   handleBlur={handleBlur}
-                  isDisabled={isHightestRoleOperator}
+                  isDisabled={isHighestRoleOperator}
                 />
               </div>
             )}

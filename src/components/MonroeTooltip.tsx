@@ -33,7 +33,8 @@ const MonroeTooltipContent = styled.div`
   }
 `
 
-const TextWrapper = styled.div<{ height: string }>`
+const TextWrapper = styled.div<{ height: string, center?: boolean }>`
+  text-align: ${({ center }) => center === false ? `inherit` : 'center'};
   height: ${({ height }) => height};
   padding-right: 4px;
   overflow: auto;
@@ -46,6 +47,7 @@ interface IMonroeTooltipProps {
   containerWidth?: string
   height?: string
   isHideModalOnIconClick?: boolean
+  centerText?: boolean
 }
 
 const MonroeTooltip: FC<IMonroeTooltipProps> = ({
@@ -55,12 +57,13 @@ const MonroeTooltip: FC<IMonroeTooltipProps> = ({
   height = 'auto',
   containerWidth = 'auto',
   isHideModalOnIconClick = false,
+  centerText = true
 }) => {
   const [showTooltip, setShowTooltip] = useState(false)
   const ref = useRef<HTMLDivElement>()
   const boundingClientRect = ref.current?.getBoundingClientRect()
-  const top = boundingClientRect && boundingClientRect.y + boundingClientRect?.height / 2 - 10
-  const left = boundingClientRect && boundingClientRect.x + boundingClientRect?.width / 2
+  const top = boundingClientRect && boundingClientRect.y + boundingClientRect?.height / 2 - 15
+  const left = boundingClientRect && boundingClientRect.x + boundingClientRect?.width / 2 - 4
 
   return (
     <MonroeTooltipContainer
@@ -79,7 +82,7 @@ const MonroeTooltip: FC<IMonroeTooltipProps> = ({
               left,
             }}
           >
-            <TextWrapper height={height}>{text}</TextWrapper>
+            <TextWrapper height={height} center={centerText}>{text}</TextWrapper>
           </MonroeTooltipContent>,
           document.body,
         )}
