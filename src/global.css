@@ -4,6 +4,9 @@
   border: 0;
   box-sizing: border-box;
   font-family: "Inter", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-smooth: always;
 }
 
 #root {
@@ -486,6 +489,10 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
 
 .mg-r16 {
   margin-right: 16px !important;
+}
+
+.mg-r32 {
+  margin-right: 32px !important;
 }
 
 .mg-b8 {

@@ -15,7 +15,7 @@ import {
   MonroeDeleteButton,
   MonroeSecondaryButton,
   PageContainer,
-  ProtectedPageTitle,
+  ProtectedPageTitle
 } from '@/components/Elements'
 import ImportModal from '@/components/ImportModal.tsx'
 import MonroeModal from '@/components/MonroeModal'
@@ -32,7 +32,7 @@ import {
   PATH_TO_CREATE_USER,
   PATH_TO_USERS_BLOCKING_INFO,
   PATH_TO_USERS_BULK_EDIT,
-  PATH_TO_USERS_IMPORT_INFO,
+  PATH_TO_USERS_IMPORT_INFO
 } from '@/common/constants/paths'
 import { IImportModalOptions } from '@/common/interfaces'
 
@@ -68,7 +68,7 @@ const Users = () => {
         filename: file.name,
         isOpen: true,
         status: 'loading',
-        errorMessage: '',
+        errorMessage: ''
       })
 
       const body = new FormData()
@@ -81,7 +81,7 @@ const Users = () => {
             filename: file.name,
             isOpen: true,
             status: response.status,
-            errorMessage: '',
+            errorMessage: ''
           })
         })
         .catch((error) => {
@@ -89,7 +89,10 @@ const Users = () => {
             filename: file.name,
             isOpen: true,
             status: 'red',
-            errorMessage: (error.data as { code: string; detail: string })?.detail || 'Something went wrong. Please, try again',
+            errorMessage: (error.data as {
+              code: string;
+              detail: string
+            })?.detail || 'Something went wrong. Please, try again'
           })
         })
 
@@ -110,7 +113,7 @@ const Users = () => {
         setInfoNotification({
           actionLabel: 'More info...',
           message: `Cannot block users.`,
-          redirectedPageUrl: PATH_TO_USERS_BLOCKING_INFO,
+          redirectedPageUrl: PATH_TO_USERS_BLOCKING_INFO
         })
 
         return
@@ -120,7 +123,7 @@ const Users = () => {
         setAppNotification({
           message: `${response.success}/${response.total} users have been successfully blocked.`,
           timestamp: new Date().getTime(),
-          type: 'success',
+          type: 'success'
         })
       }
     })
@@ -130,16 +133,16 @@ const Users = () => {
     const body = isSelectedAllUsers
       ? JSON.stringify({})
       : JSON.stringify({
-          ids: selectedRecordsIds,
-        })
+        ids: selectedRecordsIds
+      })
 
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}users/export`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${access}`,
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body,
+      body
     })
 
     const fileData = await response.blob()
@@ -158,7 +161,7 @@ const Users = () => {
 
     setAppNotification({
       message: 'Users successfully exported',
-      type: 'success',
+      type: 'success'
     })
   }
 

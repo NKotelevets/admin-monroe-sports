@@ -1,6 +1,7 @@
 import { IIdName } from '@/common/interfaces'
 import { IFERole } from '@/common/interfaces/role'
 import { TDeleteStatus, TErrorDuplicate, TGender, TRole } from '@/common/types'
+import { IBEMasterTeam } from '@/common/interfaces/masterTeams.ts'
 
 interface IInvite {
   created_at: string
@@ -133,8 +134,8 @@ export interface IExtendedBEUser extends IBEUser {
   as_coach: IAsEntity | null
   as_player: IAsEntity | null
   operator: IOperator | null
-  as_head_coach: IIdName[] | null
-  as_team_admin: IIdName[] | null
+  as_head_coach: IBEMasterTeam[] | IIdName[] | null
+  as_team_admin: IBEMasterTeam[] | IIdName[] | null
   is_child: boolean
   birthDateFormatted: string
   as_supervisor: {
@@ -153,7 +154,7 @@ export interface IExtendedFEUser extends IFEUser {
   asPlayer: IAsEntity | null
   operator: IOperator | null
   asHeadCoach: IIdName[] | null
-  asTeamAdmin: IIdName[] | null
+  asTeamAdmin: IBEMasterTeam[] | IIdName[] | null
   birthDateFormatted: string
   isChild: boolean
   asParent: null | IChildren[]
@@ -249,4 +250,8 @@ export interface IFEImportUsersCSVResponse {
   errors?: IImportUsersCSVError[]
   success: string[]
   duplicates?: IFEDuplicate[]
+}
+
+export interface ISelectedTeams extends IIdName {
+  canDelete?: boolean
 }

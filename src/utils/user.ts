@@ -34,19 +34,25 @@ export const calculateUserRoles = (data: IExtendedFEUser) => {
   if (data.asTeamAdmin?.length)
     roles.push({
       name: TEAM_ADMIN_ROLE,
-      linkedEntities: data.asTeamAdmin.map((e) => ({
-        id: e.id,
-        name: e.name,
-      })),
+      linkedEntities: data.asTeamAdmin.map((e) => {
+        return ({
+          id: e.id,
+          name: e.name,
+          canDelete: 'team_admins' in e ? (e.team_admins?.length || 0) > 1 : true
+        })
+      }),
     })
 
   if (data.asHeadCoach?.length)
     roles.push({
       name: HEAD_COACH_ROLE,
-      linkedEntities: data.asHeadCoach.map((e) => ({
-        id: e.id,
-        name: e.name,
-      })),
+      linkedEntities: data.asHeadCoach.map((e) => {
+        return ({
+          id: e.id,
+          name: e.name,
+          canDelete: false
+        })
+      }),
     })
 
   if (data.asCoach?.teams.length)
@@ -55,6 +61,7 @@ export const calculateUserRoles = (data: IExtendedFEUser) => {
       linkedEntities: data.asCoach.teams.map((e) => ({
         id: e.id,
         name: e.name,
+        canDelete: true
       })),
     })
 
@@ -64,6 +71,7 @@ export const calculateUserRoles = (data: IExtendedFEUser) => {
       linkedEntities: data.asPlayer.teams.map((e) => ({
         id: e.id,
         name: e.name,
+        canDelete: true
       })),
     })
 
