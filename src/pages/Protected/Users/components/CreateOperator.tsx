@@ -1,8 +1,6 @@
 import Breadcrumb from 'antd/es/breadcrumb/Breadcrumb'
 import Flex from 'antd/es/flex'
-import { Form, Formik, FormikHelpers } from 'formik'
-import { FC } from 'react'
-
+import { Form, Formik, FormikHelpers, useFormikContext } from 'formik'
 import {
   ICreateOperatorFormValues,
   operatorInitialFormData,
@@ -30,14 +28,18 @@ import { validateNumber } from '@/utils'
 
 import { PATH_TO_USERS } from '@/common/constants/paths'
 import { IBEOperator } from '@/common/interfaces/operator'
+import { OPERATOR_ROLE } from '@/common/constants'
+import { ICreateUserFormValues } from '@/pages/Protected/Users/constants/formik.ts'
 
-interface ICreateOperatorProps {
-  setOperator: (value: { id: string; name: string }) => void
-}
-
-const CreateOperator: FC<ICreateOperatorProps> = ({ setOperator }) => {
-  const { setIsCreateOperatorScreen } = useUserSlice()
+const CreateOperator = () => {
+  const { values, setFieldValue } = useFormikContext<ICreateUserFormValues>()
+  const { setShowOperatorScreen } = useUserSlice()
   const [createOperator] = useCreateOperatorMutation()
+
+  const setOperator = (value: { id: string, name: string }) => {
+    const operatorIndex = values.roles.findIndex((role) => role.name === OPERATOR_ROLE)
+    setFieldValue(`roles.${operatorIndex}.linkedEntities`, [value])
+  }
 
   const BREAD_CRUMB_ITEMS = [
     {
@@ -52,7 +54,7 @@ const CreateOperator: FC<ICreateOperatorProps> = ({ setOperator }) => {
               name: '',
             })
 
-            setIsCreateOperatorScreen(false)
+            setShowOperatorScreen(false)
           }}
         >
           Create user
@@ -89,7 +91,7 @@ const CreateOperator: FC<ICreateOperatorProps> = ({ setOperator }) => {
     createOperator(createOperatorBody)
       .unwrap()
       .then((response) => {
-        setIsCreateOperatorScreen(false)
+        setShowOperatorScreen(false)
         setOperator({
           id: response.id,
           name: response.name,
@@ -279,7 +281,7 @@ const CreateOperator: FC<ICreateOperatorProps> = ({ setOperator }) => {
                   <CancelButton
                     type="default"
                     onClick={() => {
-                      setIsCreateOperatorScreen(false)
+                      setShowOperatorScreen(false)
                       setOperator({
                         id: '',
                         name: '',

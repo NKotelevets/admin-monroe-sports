@@ -35,8 +35,8 @@ export const ArrowButton = styled(Button)`
   padding: 6px;
 `
 
-export const DefaultButton = styled(Button)`
-  border: 1px solid #5d5c6d;
+export const DefaultButton = styled(Button)<{ border?: boolean }>`
+  border: ${({border}) => border === false ? `0` : `1px solid #5d5c6d`};
   margin-right: 8px;
   box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.04);
   color: rgba(26, 22, 87, 1);
