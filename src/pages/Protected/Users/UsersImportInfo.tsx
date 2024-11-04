@@ -57,6 +57,139 @@ const UsersImportInfo = (): ReactElement => {
     setSelectedIdx,
     records: importCSVTableRecords
   })
+<<<<<<< HEAD
+=======
+  const searchInput = useRef<InputRef>(null)
+  const [sortSeasonNameOrder, setSortSeasonNameOrder] = useState<TSortOption>(null)
+  const [sortLeagueNameOrder, setSortLeagueNameOrder] = useState<TSortOption>(null)
+
+  const handleReset = (clearFilters: () => void) => clearFilters()
+
+  const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
+
+  const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IImportUsersCSVTableData> => ({
+    filterDropdown: (props) => (
+      <FilterDropDown {...props} handleReset={handleReset} handleSearch={handleSearch} searchInput={searchInput} />
+    ),
+    filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1A1657' : '#BDBCC2' }} />,
+    onFilter: (value, record) =>
+      record[dataIndex]
+        .toString()
+        .toLowerCase()
+        .includes((value as string).toLowerCase()),
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100)
+      }
+    },
+  })
+
+  const handleTableChange: TableProps<IImportUsersCSVTableData>['onChange'] = (pagination, _, sorter) => {
+    setTableParams({
+      pagination: {
+        ...pagination,
+      },
+    })
+
+    if (!Array.isArray(sorter) && sorter.field === 'name') setSortSeasonNameOrder(sorter.order || null)
+    if (!Array.isArray(sorter) && sorter.field === 'leagueName') setSortLeagueNameOrder(sorter.order || null)
+  }
+
+  // const handleUpdate = (idx: number) => {
+  //   return idx
+  // }
+
+  const columns: TColumns<IImportUsersCSVTableData> = [
+    {
+      title: 'First Name',
+      dataIndex: 'firstName',
+      width: '240px',
+      sorter: (s1, s2) => s1.firstName.localeCompare(s2.firstName),
+      sortOrder: sortSeasonNameOrder,
+      ...getColumnSearchProps('firstName'),
+      render: (value, record) => (
+        <CellText
+          isLink
+          onClick={() => {
+            record.status === 'Duplicate' && setSelectedIdx(record.idx)
+          }}
+        >
+          {value}
+        </CellText>
+      ),
+    },
+    {
+      title: 'Last Name',
+      dataIndex: 'lastName',
+      width: '240px',
+      sortOrder: sortLeagueNameOrder,
+      sorter: (s1, s2) => s1.lastName.localeCompare(s2.lastName),
+      ...getColumnSearchProps('lastName'),
+      render: (value, record) => (
+        <CellText
+          isLink
+          onClick={() => {
+            record.status === 'Duplicate' && setSelectedIdx(record.idx)
+          }}
+        >
+          {value}
+        </CellText>
+      ),
+    },
+    {
+      title: '',
+      dataIndex: 'gender',
+      width: '80px',
+      onFilter: (value, record) => value === record.gender,
+      render: (value) => <CellText isLink>{SHORT_GENDER_NAMES[value as TGender]}</CellText>,
+      filters: [
+        { text: 'Male', value: 1 },
+        { text: 'Female', value: 0 },
+        { text: 'Other', value: 2 },
+      ],
+      filterDropdown: MonroeFilter,
+      filterIcon: (filtered) => (
+        <FilterFilled
+          style={{
+            color: getIconColor(filtered),
+          }}
+        />
+      ),
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      width: '132px',
+      filters: [
+        { text: 'Duplicate', value: 'Duplicate' },
+        { text: 'Error', value: 'Error' },
+      ],
+      onFilter: (value, record) => value === record.status,
+      filterIcon: (filtered) => (
+        <FilterFilled
+          style={{
+            color: getIconColor(filtered),
+          }}
+        />
+      ),
+      render: (value) => <TagType text={value} />,
+    },
+    {
+      title: 'Error info',
+      dataIndex: 'message',
+      render: (value) => <TextWithTooltip maxLength={100} text={value} />,
+    },
+    {
+      title: '',
+      dataIndex: '',
+      width: '80px',
+      render: (_, record) =>
+        record.status === 'Duplicate' && (
+          <ReactSVG className="c-p" src={SyncIcon} onClick={() => setSelectedIdx(record.idx)} />
+        ),
+    },
+  ]
+>>>>>>> 6882c6d (- fixed breadcrumb path)
 
   return (
     <>
