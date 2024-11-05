@@ -8,9 +8,9 @@ import { useCreateUserAsAdminMutation } from '@/redux/user/user.api.ts'
 import { useEffect, useState } from 'react'
 import {
   ICreateUserAsAdmin,
-  ICreateUserAsAdminRequestBody,
+  ICreateUserAsAdminRequestBody, ICreateUserAsAdminResponse,
   IExtendedFEUser,
-  IFEDuplicate
+  IFEDuplicate, IRole
 } from '@/common/interfaces/user.ts'
 import { useNavigate } from 'react-router-dom'
 import { PATH_TO_USERS } from '@/common/constants/paths.ts'
@@ -48,13 +48,14 @@ const BREAD_CRUMB_ITEMS = [
  */
 const CreateUser = () => {
   const navigation = useNavigate()
-  const [createUserAsAdmin, { error }] = useCreateUserAsAdminMutation()
-  const [duplicate, setDuplicate] = useState<IFEDuplicate>()
+  const [createUserAsAdmin, { error, isLoading }] = useCreateUserAsAdminMutation()
+  const [duplicate, setDuplicate] = useState<ICreateUserAsAdminResponse>()
+  const [selectedRoles, setSelectedRoles] = useState<IRole[]>()
 
   useEffect(() => {
     error
     && isFetchBaseQueryError<IFEDuplicate & { exists: IExtendedFEUser[] }>(error)
-    && setDuplicate({ existing: error.data.exists[0], new: error.data.new })
+    && setDuplicate({ existing: error.data.exists, new: error.data.new })
   }, [error])
 
   const goBack = () => navigation(PATH_TO_USERS)
@@ -73,6 +74,8 @@ const CreateUser = () => {
       roles: values.roles
     } as ICreateUserAsAdminRequestBody
 
+    setSelectedRoles(values.roles)
+
     createUserAsAdmin(body)
       .unwrap()
       .then(goBack)
@@ -88,8 +91,9 @@ const CreateUser = () => {
 
       {!!duplicate && (
         <UserCreationDuplicateModal
-          current={duplicate.existing}
-          duplicate={duplicate.new}
+          existing={duplicate.existing}
+          newUser={{ ...duplicate.new, roles: selectedRoles || [] }}
+          goBack={goBack}
           onClose={closeModal}
           hasError={false}
         />
@@ -101,6 +105,7 @@ const CreateUser = () => {
 
           <ProtectedPageTitle>Create User</ProtectedPageTitle>
           <UserForm
+            isLoading={isLoading}
             onSubmit={createUser}
             goBack={goBack}
           />

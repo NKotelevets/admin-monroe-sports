@@ -50,6 +50,7 @@ const GENDER_OPTIONS: DefaultOptionType[] = [
 interface IUserFormProps {
   validationSchema?: FormikConfig<ICreateUserFormValues>['validationSchema']
   initialValues?: ICreateUserFormValues
+  isLoading?: boolean
 
   onSubmit(body: ICreateUserAsAdmin): void
 
@@ -90,6 +91,7 @@ const UserForm = (props: IUserFormProps): ReactElement => {
   const {
     validationSchema,
     initialValues,
+    isLoading,
     onSubmit,
     goBack
   } = props
@@ -295,8 +297,9 @@ const UserForm = (props: IUserFormProps): ReactElement => {
                   </CancelButton>
 
                   <MonroeButton
-                    className="h-40"
                     type="primary"
+                    className="h-40"
+                    isLoading={isLoading}
                     isDisabled={!dirty}
                     label={pageTitle}
                     onClick={handleSubmit}
@@ -332,6 +335,7 @@ function formatUserRoles(userRoles: IFERole[]) {
         (linkedEntity) =>
           ({
             role: role.name,
+            teamName: linkedEntity.name,
             team_id: linkedEntity.id
           }) as IRole
       )
@@ -346,6 +350,7 @@ function formatUserRoles(userRoles: IFERole[]) {
     if (role.name === OPERATOR_ROLE) {
       return {
         role: role.name,
+        teamName: role.linkedEntities?.[0].name,
         operator_id: role.linkedEntities?.[0].id
       } as IRole
     }
