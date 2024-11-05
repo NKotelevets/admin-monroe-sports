@@ -12,7 +12,7 @@ export type TGender = 0 | 1 | 2
 
 export type TRole = 'Coach' | 'Head Coach' | 'Player' | 'Team Admin' | 'Operator' | 'Master Admin'
 
-export type NestedObject = Record<string, unknown> | Array<NestedObject> | null
+export type NestedObject = Record<string, unknown> | Array<NestedObject>
 
 export type IUserBulkEditPayload = {
   id: string

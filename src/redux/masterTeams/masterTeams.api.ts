@@ -13,6 +13,7 @@ import {
   IPopulateMTRequest,
 } from '@/common/interfaces/masterTeams'
 import { TDeleteStatus } from '@/common/types'
+import { transformKeysToCamelCase } from '@/utils'
 
 const MASTER_TEAMS_TAG = 'MASTER_TEAMS'
 
@@ -106,6 +107,15 @@ export const masterTeamsApi = createApi({
           fullName: response.head_coach.first_name + ' ' + response.head_coach.last_name,
           phone: response.head_coach.phone_number,
         },
+        leagues: (
+          transformKeysToCamelCase<IFEMasterTeamDetails['leagues'], IBEMasterTeamDetails['leagues']>(response.leagues)
+        ),
+        divisions: (
+          transformKeysToCamelCase<IFEMasterTeamDetails['divisions'], IBEMasterTeamDetails['divisions']>(response.divisions)
+        ),
+        subDivisions: (
+          transformKeysToCamelCase<IFEMasterTeamDetails['subDivisions'], IBEMasterTeamDetails['subdivisions']>(response.subdivisions)
+        ),
       }),
     }),
 
