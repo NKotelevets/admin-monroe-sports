@@ -1,5 +1,5 @@
 import { IExtendedFEUser, IFENew, IRole } from '@/common/interfaces/user.ts'
-import { useCallback, useEffect, useMemo } from 'react'
+import { ReactElement, useCallback, useEffect, useMemo } from 'react'
 import { compareObjects } from '@/utils/compareObjects.ts'
 import {
   ArrowButton,
@@ -27,13 +27,11 @@ const ERROR_MESSAGE = `Record can't be updated. Please try again.`
 
 
 interface IUserReviewModal {
-  current: IExtendedFEUser
-  duplicate: IFENew
-  amount?: number
+  existing: IExtendedFEUser[]
+  duplicates: IFENew[]
 
   type?: 'Imported' | 'Created'
   title: string
-  index?: number
 
   primaryButtonText: string
   primaryButtonLoading?: boolean
@@ -56,12 +54,55 @@ interface IUserReviewModal {
   secondaryButtonAction?(index: number): void
 }
 
-export const UserReviewModal = (props: IUserReviewModal) => {
+/**
+ * `UserReviewModal` is a modal component designed for reviewing potential user duplications. It displays
+ * user details side-by-side for comparison, supports pagination for multiple records, and provides customizable
+ * primary and secondary actions.
+ *
+ * @component
+ *
+ * @param {IUserReviewModal} props - The properties for `UserReviewModal`.
+ * @param {IExtendedFEUser[]} props.existing - Array of existing users for comparison.
+ * @param {IFENew[]} props.duplicates - Array of potential duplicate users.
+ * @param {'Imported' | 'Created'} [props.type='Imported'] - Specifies the type of duplicate records.
+ * @param {string} props.title - Title of the modal.
+ *
+ * @param {string} props.primaryButtonText - Label for the primary action button.
+ * @param {boolean} [props.primaryButtonLoading=false] - Indicates loading state for the primary button.
+ * @param {boolean} [props.primaryButtonDisabled=false] - Disables the primary button when `true`.
+ * @param {string} [props.primaryButtonTooltip] - Tooltip text for the primary button.
+ *
+ * @param {string} [props.secondaryButtonText] - Label for the secondary action button.
+ * @param {boolean} [props.secondaryButtonLoading=false] - Indicates loading state for the secondary button.
+ * @param {boolean} [props.secondaryButtonDisabled=false] - Disables the secondary button when `true`.
+ * @param {string} [props.secondaryButtonTooltip] - Tooltip text for the secondary button.
+ *
+ * @param {boolean} props.hasError - If `true`, displays an error message.
+ * @param {string} [props.errorMessage=ERROR_MESSAGE] - Custom error message to display when `hasError` is `true`.
+ * @param {string} [props.successMessage=SUCCESS_MESSAGE] - Custom success message to display when the action succeeds.
+ *
+ * @param {() => void} props.onClose - Function to execute when closing the modal.
+ * @param {(index: number) => void} props.primaryButtonAction - Function executed when the primary button is clicked, with the current index as an argument.
+ * @param {(index: number) => void} [props.secondaryButtonAction] - Function executed when the secondary button is clicked, with the current index as an argument.
+ *
+ * @returns {ReactElement} Rendered `UserReviewModal` component.
+ *
+ * @example
+ * <UserReviewModal
+ *   existing={[user1, user2]}
+ *   duplicates={[duplicate1, duplicate2]}
+ *   title="User Duplication Review"
+ *   primaryButtonText="Merge"
+ *   primaryButtonAction={(index) => handleMerge(index)}
+ *   onClose={() => setShowModal(false)}
+ *   hasError={false}
+ * />
+ */
+export const UserReviewModal = (props: IUserReviewModal): ReactElement => {
   const {
     type = 'Imported',
-    current,
-    duplicate,
-    amount,
+    existing,
+    duplicates,
     title,
     onClose,
     primaryButtonText,
@@ -87,13 +128,16 @@ export const UserReviewModal = (props: IUserReviewModal) => {
     handleClose
   } = useModalControls(0, onClose)
 
+  const amount = existing.length
+  const hasMany = existing.length > 1
+  const current = existing[index]
+  const duplicate = duplicates[index]
+
   const objectsDifferences: Record<Partial<keyof IFENew>, boolean> = compareObjects(current, duplicate)
 
-  const hasMany = useMemo(() => ((amount || 0) > 1), [amount])
   const isLoading = useMemo(() => (
     primaryButtonLoading || secondaryButtonLoading
   ), [primaryButtonLoading, secondaryButtonLoading])
-
 
   // updates linked roles for existing user
   useEffect(() => {
@@ -122,7 +166,7 @@ export const UserReviewModal = (props: IUserReviewModal) => {
               title={type}
               {...duplicate}
               roles={linkedRoles}
-              newRoles={duplicate.roles as (IRole & {teamName: string})[]}
+              newRoles={duplicate.roles as (IRole & { teamName: string })[]}
               isNew
               current={current}
               differences={objectsDifferences}
@@ -158,7 +202,7 @@ export const UserReviewModal = (props: IUserReviewModal) => {
             </Flex>
           )}
 
-          <Flex justify={hasMany ? undefined : 'flex-end'} flex={1}>
+          <Flex justify='flex-end' flex={1}>
             <DefaultButton
               type="default"
               disabled={isLoading}
@@ -239,6 +283,6 @@ const Indicator = styled(LoadingOutlined)`
     font-size: 24px;
     color: white;
 `
-const ButtonSized = styled(DefaultButton)<{ minWidth?: number}>`
-    min-width: ${({minWidth}) => minWidth !== undefined ? minWidth : 0}px;
+const ButtonSized = styled(DefaultButton)<{ minWidth?: number }>`
+    min-width: ${({ minWidth }) => minWidth !== undefined ? minWidth : 0}px;
 `

@@ -239,6 +239,11 @@ export interface IFEDuplicate {
   existing: IExtendedFEUser
 }
 
+export interface ICreateUserAsAdminResponse {
+  new: IFENew
+  existing: IExtendedFEUser[]
+}
+
 export interface IFEDuplicateWithIdx extends IFEDuplicate {
   idx: number
 }
