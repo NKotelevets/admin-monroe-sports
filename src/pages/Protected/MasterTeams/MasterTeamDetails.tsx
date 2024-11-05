@@ -25,7 +25,12 @@ import BaseLayout from '@/layouts/BaseLayout'
 
 import { useDeleteMasterTeamMutation, useGetMasterTeamQuery } from '@/redux/masterTeams/masterTeams.api'
 
-import { PATH_TO_EDIT_MASTER_TEAM, PATH_TO_LEAGUE_PAGE, PATH_TO_MASTER_TEAMS } from '@/common/constants/paths'
+import {
+  PATH_TO_CREATE_LEAGUE,
+  PATH_TO_EDIT_MASTER_TEAM,
+  PATH_TO_LEAGUE_PAGE,
+  PATH_TO_MASTER_TEAMS
+} from '@/common/constants/paths'
 import { IDetailedError } from '@/common/interfaces'
 import styled from '@emotion/styled'
 import { IFELeague } from '@/common/interfaces/league.ts'
@@ -136,12 +141,11 @@ const MasterTeamDetails = () => {
               </MonroeSecondaryButton>
 
               <MonroeButton
-                isDisabled
                 label="Connect to league/tourn"
                 type="primary"
                 icon={<PlusOutlined />}
                 iconPosition="start"
-                onClick={() => navigate(`${PATH_TO_EDIT_MASTER_TEAM}/:id`)}
+                onClick={() => navigate(`${PATH_TO_CREATE_LEAGUE}`)}
                 className="h-32"
               />
             </Flex>
