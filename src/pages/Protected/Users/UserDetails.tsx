@@ -247,15 +247,14 @@ const UserDetails = () => {
                 {!!data.asTeamAdmin?.length && (
                   <Flex vertical className="mg-b8">
                     <ViewText>Team Admin</ViewText>
-                    <Flex>
+                    <Flex wrap>
                       {data.asTeamAdmin.map((team, idx, arr) => (
                         <MonroeLinkText
                           key={team.name}
                           className="mg-r4"
                           onClick={() => navigate(PATH_TO_MASTER_TEAMS + '/' + team.id)}
                         >
-                          {team.name}
-                          {arr.length - 1 === idx ? ';' : ','}
+                          {team.name}{arr.length - 1 === idx ? ';' : ','}
                         </MonroeLinkText>
                       ))}
                     </Flex>
@@ -265,7 +264,7 @@ const UserDetails = () => {
                 {!!data.asHeadCoach?.length && (
                   <Flex vertical className="mg-b8">
                     <ViewText>Head Coach</ViewText>
-                    <Flex>
+                    <Flex wrap>
                       {data.asHeadCoach.map((team, idx, arr) => (
                         <>
                           <MonroeLinkText
@@ -285,7 +284,7 @@ const UserDetails = () => {
                 {!!data.asCoach?.teams.length && (
                   <Flex vertical className="mg-b8">
                     <ViewText>Coach</ViewText>
-                    <Flex>
+                    <Flex wrap>
                       {data.asCoach.teams.map((team, idx, arr) => (
                         <>
                           <MonroeLinkText
@@ -305,7 +304,7 @@ const UserDetails = () => {
                 {!!data.asPlayer?.teams.length && (
                   <Flex vertical className="mg-b8">
                     <ViewText>Player</ViewText>
-                    <Flex>
+                    <Flex wrap>
                       {data.asPlayer.teams.map((team, idx, arr) => (
                         <>
                           <MonroeLinkText
@@ -325,7 +324,7 @@ const UserDetails = () => {
                 {!!data.asParent && (
                   <Flex className="mg-b8" vertical>
                     <ViewText>Guardian</ViewText>
-                    <Flex>
+                    <Flex wrap>
                       {data.asParent.map((child, idx, arr) => (
                         <>
                           <MonroeLinkText

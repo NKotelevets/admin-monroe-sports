@@ -1,6 +1,6 @@
 import { IAdditionalEmail, IAdditionalPhone } from '@/common/interfaces'
-import { IBEDivision } from '@/common/interfaces/division'
-import { IBELeague } from '@/common/interfaces/league'
+import { IBEDivision, IBESubdivision, IFEDivision, IFESubdivision } from '@/common/interfaces/division'
+import { IBELeague, IFELeague } from '@/common/interfaces/league'
 import { IBEOperator } from '@/common/interfaces/operator'
 
 interface IHeadCoachTeamAdmin {
@@ -85,7 +85,7 @@ export interface IPopulateMTRequest {
   team_admins: string[]
 }
 
-interface IBESimpleEntity {
+export interface IBESimpleEntity {
   id: string
   first_name: string
   last_name: string
@@ -99,9 +99,12 @@ export interface IBEMasterTeamDetails {
   team_admins: IBESimpleEntity[]
   players: IBESimpleEntity[]
   coaches: IBESimpleEntity[]
+  leagues: IBELeague[]
+  divisions: IBEDivision[]
+  subdivisions: IBESubdivision[]
 }
 
-interface IFESimpleEntity {
+export interface IFESimpleEntity {
   id: string
   fullName: string
   phone: string | null
@@ -114,6 +117,9 @@ export interface IFEMasterTeamDetails {
   teamsAdmins: IFESimpleEntity[]
   players: IFESimpleEntity[]
   coaches: IFESimpleEntity[]
+  leagues: IFELeague[]
+  divisions: IFEDivision[]
+  subDivisions: IFESubdivision[]
 }
 
 export interface IMasterTeamError {
