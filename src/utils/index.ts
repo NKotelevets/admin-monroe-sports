@@ -83,23 +83,21 @@ const toCamelCase = (key: string): string =>
  * @returns A new object or array with keys transformed to camelCase.
  *          If the input is null, returns null.
  */
-export const transformKeysToCamelCase = (obj: NestedObject): NestedObject => {
-  if (obj === null) return null
-
+export const transformKeysToCamelCase = <T, K>(obj: K): T => {
   if (Array.isArray(obj)) {
-    return obj.map(transformKeysToCamelCase)
+    return obj.map(transformKeysToCamelCase) as T
   }
 
   if (typeof obj === 'object') {
-    return Object.keys(obj).reduce((acc, key) => {
+    return Object.keys(obj as object).reduce((acc, key) => {
       const camelCaseKey = toCamelCase(key)
-      acc[camelCaseKey] = transformKeysToCamelCase(obj[key] as NestedObject)
+      acc[camelCaseKey] = transformKeysToCamelCase((obj! as Record<string, unknown>)[key])
       return acc
-    }, {} as Record<string, unknown>)
+    }, {} as Record<string, unknown>) as T
   }
 
   // not an array or object
-  return obj
+  return obj as unknown as T
 }
 
 const toSnakeCase = (key: string): string =>
@@ -120,7 +118,6 @@ const toSnakeCase = (key: string): string =>
  *          If the input is null, returns null.
  */
 export const transformKeysToSnakeCase = (obj: NestedObject): NestedObject => {
-  if (obj === null) return null
 
   if (Array.isArray(obj)) {
     return obj.map(transformKeysToSnakeCase)
