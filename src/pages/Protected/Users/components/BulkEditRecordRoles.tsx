@@ -3,7 +3,14 @@ import { useCallback } from 'react'
 import { IBulkEditFEUser } from '@/common/interfaces/user.ts'
 import { DefaultOptionType } from 'antd/es/select'
 import { ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES, ROLES } from '@/pages/Protected/Users/constants/roles.ts'
-import { CHILD_ROLE, HEAD_COACH_ROLE, MASTER_ADMIN_ROLE, OPERATOR_ROLE, PARENT_ROLE } from '@/common/constants'
+import {
+  CHILD_ROLE,
+  HEAD_COACH_ROLE,
+  MASTER_ADMIN_ROLE,
+  OPERATOR_ROLE,
+  PARENT_ROLE,
+  TEAM_ADMIN_ROLE
+} from '@/common/constants'
 import { TRole } from '@/common/types'
 import { IFERole } from '@/common/interfaces/role.ts'
 import Flex from 'antd/es/flex'
@@ -215,8 +222,15 @@ export const BulkEditRecordRoles = ({ record }: IProps) => {
       name: role.linkedEntities?.[0]?.name || ''
     }
 
+    const cannotDeleteTeamAdmin = record.userRoles.some(role => {
+      return [TEAM_ADMIN_ROLE].includes(role.name) && (role?.linkedEntities?.some(entity => entity.canDelete === false) || false)
+    })
+
     const canDelete = !(
-      [PARENT_ROLE, CHILD_ROLE, HEAD_COACH_ROLE].includes(role.name) || (isOperatorWithoutAdmin && role.name === OPERATOR_ROLE) || (isOperatorWithoutAdmin && role.name === MASTER_ADMIN_ROLE)
+      cannotDeleteTeamAdmin
+      || [PARENT_ROLE, CHILD_ROLE, HEAD_COACH_ROLE].includes(role.name)
+      || (isOperatorWithoutAdmin && role.name === OPERATOR_ROLE)
+      || (isOperatorWithoutAdmin && role.name === MASTER_ADMIN_ROLE)
     )
 
     return {
@@ -255,7 +269,7 @@ export const BulkEditRecordRoles = ({ record }: IProps) => {
                 onChange={(newRole) => updateRecordRoles(record, role.name, newRole)}
                 className="w-170 c-p"
                 value={role.name}
-                disabled={!canEdit}
+                disabled={!canEdit || !canDelete}
               />
 
               <DeleteIconWrapper
