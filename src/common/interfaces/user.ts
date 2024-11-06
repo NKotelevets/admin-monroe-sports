@@ -92,6 +92,17 @@ export interface ICreateUserAsAdminRequestBody {
   roles: IRole[]
   team?: string
 }
+export interface ICreateUserAsAdmin {
+  firstName: string
+  lastName: string
+  birthDate?: string
+  gender: TGender
+  email: string
+  phoneNumber?: string
+  zipCode?: string
+  roles: IRole[]
+  team?: string
+}
 
 export interface IBlockedUserError {
   email: string
@@ -193,7 +204,7 @@ export interface IBENew {
   last_name: string
   parents: string[]
   phone_number: number | null
-  roles: string[]
+  roles: IRole[]
   state: string | null
   teams: string[]
   zip_code: string | null
@@ -211,7 +222,7 @@ export interface IFENew {
   lastName: string
   parents: string[]
   phoneNumber: number | null | string
-  roles: string[]
+  roles: IRole[]
   state: string | null
   teams: string[]
   zipCode: string | null
@@ -223,9 +234,14 @@ interface IBEDuplicate {
   existing: IExtendedBEUser
 }
 
-interface IFEDuplicate {
+export interface IFEDuplicate {
   new: IFENew
   existing: IExtendedFEUser
+}
+
+export interface ICreateUserAsAdminResponse {
+  new: IFENew
+  existing: IExtendedFEUser[]
 }
 
 export interface IFEDuplicateWithIdx extends IFEDuplicate {

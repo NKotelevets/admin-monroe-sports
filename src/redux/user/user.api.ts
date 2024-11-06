@@ -11,14 +11,15 @@ import {
   IBEImportUsersCSVResponse,
   IBlockedUserError,
   IBulkEditError,
-  ICreateUserAsAdminRequestBody,
+  ICreateUserAsAdminRequestBody, ICreateUserAsAdminResponse,
   IExtendedBEUser,
   IExtendedFEUser,
   IFEImportUsersCSVResponse,
-  IGetUsersRequestParams,
-  IRole,
+  IGetUsersRequestParams
 } from '@/common/interfaces/user'
-import { TDeleteStatus } from '@/common/types'
+import { IUserBulkEditPayload, NestedObject, TDeleteStatus } from '@/common/types'
+import { transformKeysToCamelCase } from '@/utils'
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 
 const USER_TAG = 'USER'
 const OPERATOR_TAG = 'OPERATOR'
@@ -78,12 +79,21 @@ export const userApi = createApi({
       providesTags: [OPERATOR_TAG],
     }),
 
-    createUserAsAdmin: builder.mutation<void, ICreateUserAsAdminRequestBody>({
+    createUserAsAdmin: builder.mutation<ICreateUserAsAdminResponse, ICreateUserAsAdminRequestBody>({
       query: (body) => ({
         url: 'users/operator/create-user-as-admin',
         body,
         method: 'POST',
       }),
+      transformErrorResponse: (error: FetchBaseQueryError) => {
+        if ('data' in error && typeof error.data === 'object') {
+          return {
+            ...error,
+            data: transformKeysToCamelCase(error.data as NestedObject)
+          }
+        }
+        return error
+      },
     }),
 
     createOperator: builder.mutation<IBEOperator, Omit<IBEOperator, 'id'>>({
@@ -121,11 +131,7 @@ export const userApi = createApi({
         status: TDeleteStatus
         failed: IBulkEditError[]
       },
-      {
-        id: string
-        roles?: IRole[]
-        is_active?: boolean
-      }[]
+      IUserBulkEditPayload[]
     >({
       query: (users) => ({
         url: 'users/operator/bulk-edit-roles-as-admin',

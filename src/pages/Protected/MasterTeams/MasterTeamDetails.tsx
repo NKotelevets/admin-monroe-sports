@@ -3,13 +3,11 @@ import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined'
 import EditOutlined from '@ant-design/icons/lib/icons/EditOutlined'
 import { Flex } from 'antd'
 import Breadcrumb from 'antd/es/breadcrumb'
-import { useEffect, useState } from 'react'
+import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ReactSVG } from 'react-svg'
 
 import {
-  DetailValue,
   MonroeBlueText,
   MonroeDeleteButton,
   MonroeLightBlueText,
@@ -17,6 +15,7 @@ import {
   PageContainer,
   ProtectedPageTitle,
   ViewText,
+  ViewTextInfo
 } from '@/components/Elements'
 import Loader from '@/components/Loader'
 import MonroeButton from '@/components/MonroeButton'
@@ -24,65 +23,80 @@ import MonroeModal from '@/components/MonroeModal'
 
 import BaseLayout from '@/layouts/BaseLayout'
 
-import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useDeleteMasterTeamMutation, useGetMasterTeamQuery } from '@/redux/masterTeams/masterTeams.api'
 
-import { PATH_TO_EDIT_MASTER_TEAM, PATH_TO_MASTER_TEAMS, PATH_TO_USERS } from '@/common/constants/paths'
+import {
+  PATH_TO_CREATE_LEAGUE,
+  PATH_TO_EDIT_MASTER_TEAM,
+  PATH_TO_LEAGUE_PAGE,
+  PATH_TO_MASTER_TEAMS
+} from '@/common/constants/paths'
 import { IDetailedError } from '@/common/interfaces'
+import styled from '@emotion/styled'
+import { IFELeague } from '@/common/interfaces/league.ts'
+import { IFEDivision, IFESubdivision } from '@/common/interfaces/division.ts'
+import { useNotification } from '@/hooks/useNotification.ts'
+import { SimpleEntityList } from './components/SimpleEntityList'
 
-import CopyIcon from '@/assets/icons/copy.svg'
-
+/**
+ * Page for showing details of a master team in the admin panel.
+ *
+ * This page fetches and displays information about a specific master team,
+ * including its administrator, head coach, coaches, players, and associated leagues.
+ * It also provides options for editing or deleting the team.
+ *
+ * @component
+ */
 const MasterTeamDetails = () => {
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
   const navigate = useNavigate()
-  const { setAppNotification } = useAppSlice()
   const params = useParams<{ id: string }>()
-  const { data, isLoading, isError, error } = useGetMasterTeamQuery({ id: params.id || '' }, { skip: !params.id })
+
+  const {
+    data,
+    isLoading,
+    isError,
+    error
+  } = useGetMasterTeamQuery({ id: params.id || '' }, { skip: !params.id })
+  const { notify } = useNotification()
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deleteMT] = useDeleteMasterTeamMutation()
 
-  const handleDelete = (id: string) =>
+  /**
+   * Redirects to the master teams list if there is an error fetching the team,
+   * and displays an error notification.
+   */
+  useEffect(() => {
+    if (isError) {
+      navigate(PATH_TO_MASTER_TEAMS)
+      notify((error as IDetailedError).details, 'error')
+    }
+  }, [isError])
+
+
+  const breadCrumbItems = useMemo(() => ([
+    { title: <a href={PATH_TO_MASTER_TEAMS}>Master Teams</a> },
+    { title: <MonroeBlueText>{data?.name}</MonroeBlueText> }
+  ]), [data])
+
+  /**
+   * Processes and removes duplicate league entries from the master team data.
+   */
+  const leagues = useMemo(() => (
+    [...new Map(data?.leagues.map(item => [item.id, item])).values()]
+  ), [data])
+
+  const handleDelete = useCallback((id: string) => {
     deleteMT(id)
       .unwrap()
       .then(() => navigate(PATH_TO_MASTER_TEAMS))
       .catch((error) => {
-        setAppNotification({
-          message: (error as IDetailedError).details,
-          type: 'error',
-        })
+        notify((error as IDetailedError).details, 'error')
       })
+  }, [])
 
-  const handleCopyContent = async (text: string, type: 'email' | 'phone') => {
-    await navigator.clipboard.writeText(text)
-
-    setAppNotification({
-      message: `${type === 'phone' ? 'Phone' : 'Email'} successfully copied`,
-      timestamp: new Date().getTime(),
-      type: 'success',
-    })
-  }
-
-  const handleUserFullNameClick = (id: string) => navigate(`${PATH_TO_USERS}/${id}`)
-
-  useEffect(() => {
-    if (isError) {
-      navigate(PATH_TO_MASTER_TEAMS)
-      setAppNotification({
-        message: (error as IDetailedError).details,
-        type: 'error',
-      })
-    }
-  }, [isError])
-
+  // Render a loading indicator if data is still loading or unavailable
   if (isLoading || !data) return <Loader />
-
-  const BREAD_CRUMB_ITEMS = [
-    {
-      title: <a href={PATH_TO_MASTER_TEAMS}>Master Teams</a>,
-    },
-    {
-      title: <MonroeBlueText>{data.name}</MonroeBlueText>,
-    },
-  ]
 
   return (
     <>
@@ -103,7 +117,7 @@ const MasterTeamDetails = () => {
 
       <BaseLayout>
         <PageContainer>
-          <Breadcrumb items={BREAD_CRUMB_ITEMS} />
+          <Breadcrumb items={breadCrumbItems} />
 
           <Flex justify="space-between">
             <ProtectedPageTitle>{data.name}</ProtectedPageTitle>
@@ -127,167 +141,95 @@ const MasterTeamDetails = () => {
               </MonroeSecondaryButton>
 
               <MonroeButton
-                isDisabled
                 label="Connect to league/tourn"
                 type="primary"
                 icon={<PlusOutlined />}
                 iconPosition="start"
-                onClick={() => navigate(`${PATH_TO_EDIT_MASTER_TEAM}/:id`)}
+                onClick={() => navigate(`${PATH_TO_CREATE_LEAGUE}`)}
                 className="h-32"
               />
             </Flex>
           </Flex>
 
           <Flex vertical>
-            <Flex className="mb-16">
-              <ViewText>Team Administrator:</ViewText>
-
-              <Flex vertical>
-                {data.teamsAdmins.map((teamAdministrator) => (
-                  <Flex align="center">
-                    <MonroeLightBlueText className="c-p" onClick={() => handleUserFullNameClick(teamAdministrator.id)}>
-                      {teamAdministrator.fullName}
-                    </MonroeLightBlueText>
-                    •
-                    <Flex align="center">
-                      <DetailValue>{teamAdministrator.email}</DetailValue>
-                      <div onClick={() => handleCopyContent(teamAdministrator.email, 'email')} className="c-p mg-l8">
-                        <ReactSVG src={CopyIcon} />
-                      </div>
-                    </Flex>
-                    {teamAdministrator.phone ? (
-                      <>
-                        •
-                        <Flex align="center">
-                          <DetailValue>{teamAdministrator.phone}</DetailValue>
-                          <div
-                            onClick={() => handleCopyContent(teamAdministrator.phone as string, 'phone')}
-                            className="mg-l8 c-p"
-                          >
-                            <ReactSVG src={CopyIcon} />
-                          </div>
-                        </Flex>
-                      </>
-                    ) : (
-                      ''
-                    )}
-                  </Flex>
-                ))}
-              </Flex>
-            </Flex>
-
-            <Flex className="mb-16">
-              <ViewText>Head Coach:</ViewText>
-
-              <Flex align="center">
-                <MonroeLightBlueText className="c-p" onClick={() => handleUserFullNameClick(data.headCoach.id)}>
-                  {data.headCoach.fullName}
-                </MonroeLightBlueText>
-                •
-                <Flex align="center">
-                  <DetailValue>{data.headCoach.email}</DetailValue>
-                  <div onClick={() => handleCopyContent(data.headCoach.email as string, 'email')} className="c-p mg-l8">
-                    <ReactSVG src={CopyIcon} />
-                  </div>
-                </Flex>
-                {data.headCoach.phone ? (
-                  <>
-                    •
-                    <Flex align="center">
-                      <DetailValue>{data.headCoach.phone}</DetailValue>
-                      <div
-                        onClick={() => handleCopyContent(data.headCoach.phone as string, 'phone')}
-                        className="c-p mg-l8"
-                      >
-                        <ReactSVG src={CopyIcon} />
-                      </div>
-                    </Flex>
-                  </>
-                ) : (
-                  ''
-                )}
-              </Flex>
-            </Flex>
-
-            <Flex className="mb-16">
-              <ViewText>Coach(es):</ViewText>
-
-              <Flex vertical>
-                {data.coaches.map((coach) => (
-                  <Flex align="center">
-                    <MonroeLightBlueText className="c-p" onClick={() => handleUserFullNameClick(coach.id)}>
-                      {coach.fullName}
-                    </MonroeLightBlueText>
-                    •
-                    <Flex align="center">
-                      <DetailValue>{coach.email}</DetailValue>
-                      <div onClick={() => handleCopyContent(coach.email, 'email')} className="c-p mg-l8">
-                        <ReactSVG src={CopyIcon} />
-                      </div>
-                    </Flex>
-                    {coach.phone ? (
-                      <>
-                        •
-                        <Flex align="center">
-                          <DetailValue>{coach.phone}</DetailValue>
-                          <div onClick={() => handleCopyContent(coach.phone as string, 'phone')} className="c-p mg-l8">
-                            <ReactSVG src={CopyIcon} />
-                          </div>
-                        </Flex>
-                      </>
-                    ) : (
-                      ''
-                    )}
-                  </Flex>
-                ))}
-              </Flex>
-            </Flex>
-
-            <Flex className="mb-16">
-              <ViewText>Players:</ViewText>
-
-              <Flex vertical>
-                {data.players.map((player) => (
-                  <Flex align="center">
-                    <MonroeLightBlueText className="c-p" onClick={() => handleUserFullNameClick(player.id)}>
-                      {player.fullName}
-                    </MonroeLightBlueText>
-                    •
-                    <Flex align="center">
-                      <DetailValue>{player.email}</DetailValue>
-                      <div onClick={() => handleCopyContent(player.email, 'email')} className="c-p mg-l8">
-                        <ReactSVG src={CopyIcon} />
-                      </div>
-                    </Flex>
-                    {player.phone ? (
-                      <>
-                        •
-                        <Flex align="center">
-                          <DetailValue>{player.phone}</DetailValue>
-                          <div onClick={() => handleCopyContent(player.phone as string, 'phone')} className="c-p mg-l8">
-                            <ReactSVG src={CopyIcon} />
-                          </div>
-                        </Flex>
-                      </>
-                    ) : (
-                      ''
-                    )}
-                  </Flex>
-                ))}
-              </Flex>
-            </Flex>
-
-            <Flex className="mb-16" align="center">
-              <ViewText className="w-auto">Linked league/tourn:</ViewText>
-
-              <Flex vertical>-</Flex>
-            </Flex>
+            <SimpleEntityList title="Team Administrator:" entities={data.teamsAdmins} />
+            <SimpleEntityList title="Head Coach:" entities={[data.headCoach]} />
+            <SimpleEntityList title="Coach(es):" entities={data.coaches} />
+            <SimpleEntityList title="Players:" entities={data.players} />
+            <LinkedLeagueList
+              leagues={leagues}
+              divisions={data.divisions}
+              subDivisions={data.subDivisions}
+            />
           </Flex>
         </PageContainer>
       </BaseLayout>
     </>
   )
 }
+
+interface ILinkedLeagueListProps {
+  leagues: IFELeague[]
+  divisions: IFEDivision[]
+  subDivisions: IFESubdivision[]
+}
+
+/**
+ * LinkedLeagueList component displays a list of leagues associated with a master team.
+ * Each league can be navigated to, and it also shows the relevant division and subdivision names.
+ *
+ * @component
+ * @param {ILinkedLeagueListProps} props - Properties for the component.
+ * @returns {ReactElement} A component that renders linked leagues with division and subdivision details.
+ */
+const LinkedLeagueList = (props: ILinkedLeagueListProps): ReactElement => {
+  const { leagues, divisions, subDivisions } = props
+  const navigate = useNavigate()
+
+  const goToLeague = (id: string) => navigate(`${PATH_TO_LEAGUE_PAGE}/${id}`)
+
+  /**
+   * Renders the list of leagues, each with its division and subdivision names if available.
+   *
+   * @function
+   * @returns {ReactElement[]} An array components, each displaying a league name with division and subdivision info.
+   */
+  const renderLeagues = useCallback(() => (
+    leagues.map((league, index) => {
+      const divisionName = divisions[index]?.name
+      const subDivisionName = subDivisions[index]?.name ? `, ${subDivisions[index]?.name}` : undefined
+
+      return (
+        <Flex vertical key={league.id}>
+          <MonroeLightBlueText className="c-p" onClick={() => goToLeague(league.id)}>
+            {league.name}
+          </MonroeLightBlueText>
+
+          <SubText>
+            {divisionName} {subDivisionName}
+          </SubText>
+        </Flex>
+      )
+    })
+  ), [leagues])
+
+  return (
+    <Flex className="mb-16" align="start">
+      <ViewText className="w-auto">Linked league/tourn:</ViewText>
+
+      <Flex vertical>
+        {renderLeagues()}
+      </Flex>
+    </Flex>
+  )
+}
+
+
+const SubText = styled(ViewTextInfo)`
+    width: auto;
+    margin-top: 0;
+    margin-bottom: 12px
+`
 
 export default MasterTeamDetails
 

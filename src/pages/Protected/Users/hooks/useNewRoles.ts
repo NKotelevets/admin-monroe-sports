@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { TRole } from '@/common/types'
 import { TLinkedRole } from '@/pages/Protected/Users/hooks/useLinkedRoles.ts'
 
+export type TNewUser = Omit<IFENew, 'roles'> & { roles: (IRole & { team: string })[] }
+
 /**
  * Matches user roles with teams, fetches team IDs by team name,
  * and provides structured data for updating user roles.
@@ -25,13 +27,14 @@ import { TLinkedRole } from '@/pages/Protected/Users/hooks/useLinkedRoles.ts'
  */
 export const useNewRoles = () => {
   const [newRoles, setNewRoles] = useState<TLinkedRole[]>([])
-  const [newUserData, setNewRolesUser] = useState<IFENew>()
+  const [newUserData, setNewRolesUser] = useState<TNewUser>()
   const [getMasterTeams] = useLazyGetMasterTeamsQuery()
-  const { roles, teams } = newUserData || { roles: [], teams: [] }
+  const { roles } = newUserData || { roles: [], teams: [] }
+
 
   const matchedRolesTeams = roles
-    .filter(role => role.toLowerCase() !== 'master admin')
-    .map((role, index) => ({ role, team: teams[index] }))
+    .filter(role => role.role.toLowerCase() !== 'master admin')
+    .map((role) => ({ role: role, team: role.team }))
 
   const fetchRolesWithTeamIds = useCallback(async () => {
     const roles: IRole[] = await Promise.all(
@@ -43,7 +46,7 @@ export const useNewRoles = () => {
         }).unwrap()
 
         const team_id = teams.results.length > 0 ? teams.results[0].id : ''
-        return { role: role as TRole, teamName: team, team_id }
+        return { role: role.role as TRole, teamName: team, team_id }
       })
     )
     setNewRoles(roles as TLinkedRole[])
