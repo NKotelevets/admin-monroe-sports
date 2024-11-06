@@ -215,7 +215,10 @@ export const BulkEditRecordRoles = ({ record }: IProps) => {
     const isOperator = role.name === OPERATOR_ROLE
     const hasTeams = ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(role.name as TRole)
 
-    const cannotDeleteTeamAdmin = [TEAM_ADMIN_ROLE].includes(role.name) && (role.linkedEntities?.some(entity => entity?.canDelete === false) || false)
+    const cannotDeleteTeamAdmin = record.userRoles.some(role => {
+      return [TEAM_ADMIN_ROLE].includes(role.name) && (role?.linkedEntities?.some(entity => entity.canDelete === false) || false)
+    })
+
     const canEdit = (!([PARENT_ROLE, CHILD_ROLE, HEAD_COACH_ROLE].includes(role.name) || (isOperatorWithoutAdmin && role.name === OPERATOR_ROLE) || (isSameUser && role.name === MASTER_ADMIN_ROLE) ||
       (isOperatorWithoutAdmin && role.name === MASTER_ADMIN_ROLE))) && !cannotDeleteTeamAdmin
 
@@ -223,10 +226,6 @@ export const BulkEditRecordRoles = ({ record }: IProps) => {
       id: role.linkedEntities?.[0]?.id || '',
       name: role.linkedEntities?.[0]?.name || ''
     }
-
-    const cannotDeleteTeamAdmin = record.userRoles.some(role => {
-      return [TEAM_ADMIN_ROLE].includes(role.name) && (role?.linkedEntities?.some(entity => entity.canDelete === false) || false)
-    })
 
     const canDelete = !(
       cannotDeleteTeamAdmin
