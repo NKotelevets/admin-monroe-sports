@@ -26,15 +26,19 @@ import {
 import { PATH_TO_BULK_EDIT_USER_ERRORS, PATH_TO_USERS } from '@/common/constants/paths'
 import { IRole } from '@/common/interfaces/user'
 import { TRole } from '@/common/types'
+import { useNotification } from '@/hooks/useNotification.ts'
 
 const ROLES_WITH_TEAMS: TRole[] = [HEAD_COACH_ROLE, COACH_ROLE, PLAYER_ROLE, TEAM_ADMIN_ROLE]
+const DEFAULT_ERROR_MESSAGE = 'Unable to save changes. Please, try again!'
 
 const UsersBulkEdit = () => {
+  const navigation = useNavigate()
   const { columns } = useUsersBulkEditTableParams()
   const { selectedRecords, setEditUsersErrors } = useUserSlice()
-  const navigation = useNavigate()
-  const [bulkEdit] = useBulkEditMutation()
   const { setAppNotification } = useAppSlice()
+  const { notify } = useNotification()
+
+  const [bulkEdit] = useBulkEditMutation()
 
   const isDisabledSaveChangesBtn = !!selectedRecords
     .flatMap((record) =>
@@ -96,6 +100,12 @@ const UsersBulkEdit = () => {
           setEditUsersErrors(failed)
           navigation(PATH_TO_BULK_EDIT_USER_ERRORS)
         }
+      })
+      .catch((error) => {
+        notify(
+          error?.data?.error || DEFAULT_ERROR_MESSAGE,
+          'error'
+        )
       })
   }
 
