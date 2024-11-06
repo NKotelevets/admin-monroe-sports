@@ -717,3 +717,7 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
 .visible .ant-table-content {
   overflow: visible !important
 }
+
+.dropdown ul {
+  margin-top: 0 !important
+}

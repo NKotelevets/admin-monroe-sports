@@ -26,6 +26,7 @@ import {
   DeleteMasterTeamModal,
   DeleteModalRef
 } from '@/pages/Protected/MasterTeams/components/DeleteMasterTeamModal.tsx'
+import { ExportAvailability } from '@/pages/Protected/MasterTeams/components/ExportAvailability.tsx'
 
 const MasterTeams = () => {
   const navigate = useNavigate()
@@ -125,6 +126,8 @@ const MasterTeams = () => {
                   Delete
                 </MonroeDeleteButton>
               )}
+
+              <ExportAvailability selectedMasterTeamIds={selectedRecordsIds} />
 
               <ImportButton
                 icon={<DownloadOutlined />}

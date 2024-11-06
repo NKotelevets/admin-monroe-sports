@@ -1,7 +1,6 @@
 import { format, parse } from 'date-fns'
 import { SortOrder } from 'antd/es/table/interface'
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query'
-import { NestedObject } from '@/common/types'
 
 export const validateNumber = (value: string) => /^[0-9]+$/.test(value) || value === ''
 
@@ -106,37 +105,37 @@ export const transformKeysToCamelCase = <T, K>(obj: K): T => {
   return obj as unknown as T
 }
 
-const toSnakeCase = (key: string): string =>
-  key.replace(/([A-Z])/g, '_$1').toLowerCase()
-
 /**
- * Transforms the keys of an object or array from camelCase to snake_case.
+ * Recursively transforms the keys of an object or array from camelCase to snake_case.
  *
- * This function recursively traverses the input object or array and converts
- * all keys to snake_case. It also handles nested objects and arrays, ensuring
- * that all keys at all levels are transformed. If the input is null, it returns
- * null. The function is type-safe and avoids the use of `any`, ensuring that
- * only valid objects or arrays are processed.
+ * @template T - The expected output type.
+ * @template K - The input object or array type.
  *
- * @param obj - The object or array to transform. Can be null, an object,
- *              or an array of objects.
- * @returns A new object or array with keys transformed to snake_case.
- *          If the input is null, returns null.
+ * @param {K} obj - The input object or array with camelCase keys to be transformed.
+ *
+ * @returns {T} A new object or array with all keys converted to snake_case.
  */
-export const transformKeysToSnakeCase = (obj: NestedObject): NestedObject => {
-
+export const transformKeysToSnakeCase = <T, K>(obj: K): T => {
   if (Array.isArray(obj)) {
-    return obj.map(transformKeysToSnakeCase)
+    return obj.map(item => transformKeysToSnakeCase(item)) as T
   }
 
-  if (typeof obj === 'object') {
+  if (obj !== null && typeof obj === 'object') {
     return Object.keys(obj).reduce((acc, key) => {
       const snakeCaseKey = toSnakeCase(key)
-      acc[snakeCaseKey] = transformKeysToSnakeCase(obj[key] as NestedObject)
+
+      const value = (obj as Record<string, unknown>)[key]
+      acc[snakeCaseKey] = value && typeof value === 'object'
+        ? transformKeysToSnakeCase(value)
+        : value
+
       return acc
-    }, {} as Record<string, unknown>)
+    }, {} as Record<string, unknown>) as T
   }
 
-  // not an array or object
-  return obj
+  return obj as unknown as T
 }
+
+// Helper function to convert camelCase to snake_case
+const toSnakeCase = (str: string): string =>
+  str.replace(/([A-Z])/g, '_$1').toLowerCase()
