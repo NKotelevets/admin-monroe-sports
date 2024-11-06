@@ -85,18 +85,24 @@ const toCamelCase = (key: string): string =>
  */
 export const transformKeysToCamelCase = <T, K>(obj: K): T => {
   if (Array.isArray(obj)) {
-    return obj.map(transformKeysToCamelCase) as T
+    return obj.map(item => transformKeysToCamelCase(item)) as T
   }
 
-  if (typeof obj === 'object') {
-    return Object.keys(obj as object).reduce((acc, key) => {
+  if (obj !== null && typeof obj === 'object') {
+    return Object.keys(obj).reduce((acc, key) => {
       const camelCaseKey = toCamelCase(key)
-      acc[camelCaseKey] = transformKeysToCamelCase((obj! as Record<string, unknown>)[key])
+
+      // Ensure obj[key] is defined and transform recursively if it's an object
+      const value = (obj as Record<string, unknown>)[key]
+      acc[camelCaseKey] = value && typeof value === 'object'
+        ? transformKeysToCamelCase(value)
+        : value
+
       return acc
     }, {} as Record<string, unknown>) as T
   }
 
-  // not an array or object
+  // Return obj as-is if it's not an array or object
   return obj as unknown as T
 }
 
