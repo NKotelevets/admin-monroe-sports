@@ -14,6 +14,7 @@ import { useDeleteMasterTeamMutation, useLazyGetMasterTeamsQuery } from '@/redux
 import { IFEMasterTeam, IGetMasterTeamsRequest } from '@/common/interfaces/masterTeams'
 
 type TTablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>
+type TFilterValueKey = 'name' | 'headCoachFullName' | 'teamAdminFullName' | 'league_name'
 
 interface ITableParams {
   pagination?: TTablePaginationConfig
@@ -31,8 +32,6 @@ interface IMasterTeamsTableProps {
   setIsDeleteAllRecords: Dispatch<SetStateAction<boolean>>
   showCreatedRecords: boolean
 }
-
-type TFilterValueKey = 'name' | 'headCoachFullName' | 'teamAdminFullName' | 'league_name'
 
 const showTotal = (total: number) => <MonroeBlueText>Total {total} items</MonroeBlueText>
 
@@ -55,7 +54,11 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
     setPaginationParams,
     masterTeams,
   } = useMasterTeamsSlice()
+
   const [getMasterTeams, { isLoading, isFetching, data }] = useLazyGetMasterTeamsQuery()
+  const [showDeleteSingleRecordModal, setShowDeleteSingleRecordModal] = useState(false)
+  const [selectedRecordId, setSelectedRecordId] = useState('')
+  const [deleteMT] = useDeleteMasterTeamMutation()
   const [tableParams, setTableParams] = useState<ITableParams>({
     pagination: {
       current: offset / limit + 1,
@@ -67,22 +70,11 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
       showTotal,
     },
   })
-  const [showDeleteSingleRecordModal, setShowDeleteSingleRecordModal] = useState(false)
-  const [selectedRecordId, setSelectedRecordId] = useState('')
-  const [deleteMT] = useDeleteMasterTeamMutation()
+
   const { columns } = useMasterTeamsTable({
     setSelectedRecordId,
     setShowDeleteSingleRecordModal,
   })
-
-  const handleDelete = () =>
-    deleteMT(selectedRecordId)
-      .unwrap()
-      .then(() => {
-        setShowDeleteSingleRecordModal(false)
-        setSelectedRecordId('')
-      })
-      .catch(() => setShowDeleteSingleRecordModal(false))
 
   useEffect(() => {
     setPaginationParams({
@@ -121,8 +113,17 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
     }
   }, [data, isDeleteAllRecords])
 
-  type TFilter = Record<TFilterValueKey, FilterValue | null>
+  const handleDelete = () =>
+    deleteMT(selectedRecordId)
+      .unwrap()
+      .then(() => {
+        setShowDeleteSingleRecordModal(false)
+        setSelectedRecordId('')
+      })
+      .catch(() => setShowDeleteSingleRecordModal(false))
 
+
+  type TFilter = Record<TFilterValueKey, FilterValue | null>
   const handleTableChange: TableProps<IFEMasterTeam>['onChange'] = (pagination, filters: TFilter, sorter) => {
     const newOffset = (pagination?.current && (pagination?.current - 1) * (pagination?.pageSize || 10)) || 0
     const newLimit = pagination?.pageSize || 10
@@ -140,7 +141,7 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
 
     const getBESortingField = (name: string) => {
       if (name === 'headCoachFullName') return 'head_coach'
-      if (name === 'teamAdminFullName') return 'team_admin'
+      if (name === 'teamAdmins') return 'team_admin'
       if (name === 'leagues') return 'league_name'
       return name
     }
