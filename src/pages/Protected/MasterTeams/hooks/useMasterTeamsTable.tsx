@@ -1,6 +1,6 @@
 import Flex from 'antd/es/flex'
 import { TableProps } from 'antd/es/table/InternalTable'
-import { useCallback } from 'react'
+import { Fragment, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
@@ -18,6 +18,7 @@ import EditIcon from '@/assets/icons/edit.svg'
 import { useTableSearch } from '@/hooks/useTableSearch.tsx'
 import { useNotification } from '@/hooks/useNotification.ts'
 import { getColumnSort } from '@/utils'
+import { MonroeLinkText } from '@/components/Elements'
 
 type TColumns<T> = TableProps<T>['columns']
 
@@ -37,19 +38,37 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
     getMasterTeams({
       limit,
       offset,
-      ordering: ordering || undefined,
+      ordering: ordering || undefined
     })
   }
 
   const handleCopyContent = useCallback(async (email: string) => {
     await navigator.clipboard.writeText(email)
-    notify('Email successfully copied','success')
+    notify('Email successfully copied', 'success')
   }, [])
 
   const onFilterLeague = useCallback((value: boolean | React.Key, record: IFEMasterTeam) => {
     return !!record['leagues'].filter(league => league.name.toLowerCase().includes((value as string).toLowerCase())).length
   }, [])
 
+  const renderTeamAdmins = useCallback((_: unknown, record: IFEMasterTeam) => (
+    <>
+      {record.teamAdmins?.map((admin, index) => (
+        (
+          <Fragment key={`${admin.id}-row-team-admin`}>
+            <MonroeLinkText
+              inline={true}
+              underline={false}
+              onClick={() => navigate(PATH_TO_USERS + '/' + admin.id)}
+            >
+              {admin.firstName}
+            </MonroeLinkText>
+            {record.teamAdmins?.length !== index + 1 ? `, ` : undefined}
+          </Fragment>
+        )
+      ))}
+    </>
+  ), [])
 
   const columns: TColumns<IFEMasterTeam> = [
     {
@@ -66,28 +85,16 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
           text={record.name}
           onClick={() => navigate(PATH_TO_MASTER_TEAMS + '/' + record.id)}
         />
-      ),
+      )
     },
     {
       title: 'Team Administrator',
-      dataIndex: 'teamAdminFullName',
+      dataIndex: 'teamAdmins',
       width: '240px',
-      ...getColumnSearchProps('teamAdminFullName'),
+      ...getColumnSearchProps('teamAdmins'),
       sortOrder: getColumnSort('team_admin', ordering),
       sorter: true,
-      render: (_, record) => (
-        <>
-          {record.teamAdminFullName ? (
-            <TextWithTooltip
-              maxLength={22}
-              text={record.teamAdminFullName}
-              onClick={() => navigate(PATH_TO_USERS + '/' + record.teamAdminId)}
-            />
-          ) : (
-            '-'
-          )}
-        </>
-      ),
+      render: renderTeamAdmins
     },
     {
       title: 'Team Admin Email',
@@ -108,7 +115,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
             '-'
           )}
         </>
-      ),
+      )
     },
     {
       title: 'Head Coach',
@@ -129,7 +136,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
             '-'
           )}
         </>
-      ),
+      )
     },
     {
       title: 'Coach email',
@@ -150,7 +157,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
             '-'
           )}
         </>
-      ),
+      )
     },
     {
       title: 'Linked Leagues/Tourns',
@@ -165,7 +172,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
           text={record.leagues.map((l) => l.name).join(', ') || '-'}
           onClick={() => navigate(PATH_TO_MASTER_TEAMS + '/' + record.id)}
         />
-      ),
+      )
     },
 
     {
@@ -191,12 +198,12 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
             src={DeleteIcon}
           />
         </Flex>
-      ),
-    },
+      )
+    }
   ]
 
   return {
-    columns,
+    columns
   }
 }
 

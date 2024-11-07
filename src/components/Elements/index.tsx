@@ -10,9 +10,10 @@ export const MonroeBlueText = styled(Typography)`
   color: rgba(26, 22, 87, 0.85);
 `
 
-export const MonroeLinkText = styled(Typography)`
+export const MonroeLinkText = styled(Typography)<{ underline?: boolean, inline?: boolean }>`
   color: rgba(62, 52, 202, 1);
-  text-decoration: underline;
+  text-decoration: ${({ underline }) => underline === false ? 'none' : 'underline'};
+  display: ${({ inline }) => inline === true ? 'inline-block' : 'block'};
   cursor: pointer;
 `
 

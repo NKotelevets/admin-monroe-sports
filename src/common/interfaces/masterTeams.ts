@@ -3,7 +3,7 @@ import { IBEDivision, IBESubdivision, IFEDivision, IFESubdivision } from '@/comm
 import { IBELeague, IFELeague } from '@/common/interfaces/league'
 import { IBEOperator } from '@/common/interfaces/operator'
 
-interface IHeadCoachTeamAdmin {
+interface IBETeamAdmin {
   additional_emails: IAdditionalEmail[]
   additional_phone: IAdditionalPhone[]
   birth_date: string | null
@@ -29,6 +29,32 @@ interface IHeadCoachTeamAdmin {
   zip_code: null | string
 }
 
+export interface ITeamAdmin {
+  additionalEmails: IAdditionalEmail[]
+  additionalPhone: IAdditionalPhone[]
+  birthDate: string | null
+  city: string | null
+  createdAt: string
+  email: string
+  emailVerified: false
+  emergencyContactName: string | null
+  emergencyContactPhone: string | null
+  firstName: string
+  gender: number
+  id: string
+  isActive: boolean
+  isStaff: boolean
+  lastName: string
+  operator: null | IBEOperator
+  phoneNumber: null | string
+  phoneNumberVerified: false
+  photoS3Url: null | string
+  state: null | string
+  systemRole: number
+  updatedAt: string
+  zipCode: null | string
+}
+
 export interface IBEMasterTeam {
   id: string
   division: IBEDivision[]
@@ -44,8 +70,8 @@ export interface IBEMasterTeam {
   team_administrator_email: string
   head_coach_email: string
   team_administrator: string
-  head_coach: IHeadCoachTeamAdmin | null
-  team_admins: IHeadCoachTeamAdmin[] | null
+  head_coach: IBETeamAdmin | null
+  team_admins: IBETeamAdmin[] | null
   leagues: IBELeague[]
 }
 
@@ -55,6 +81,7 @@ export interface IFEMasterTeam {
   headCoachId: string | null
   headCoachFullName: string | null
   headCoachEmail: string | null
+  teamAdmins: ITeamAdmin[] | null
   teamAdminId: string | null
   teamAdminFullName: string | null
   teamAdminEmail: string | null
