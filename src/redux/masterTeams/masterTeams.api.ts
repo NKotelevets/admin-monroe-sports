@@ -11,6 +11,7 @@ import {
   IGetMasterTeamsResponse,
   IMasterTeamError,
   IPopulateMTRequest,
+  ITeamAdmin
 } from '@/common/interfaces/masterTeams'
 import { TDeleteStatus } from '@/common/types'
 import { transformKeysToCamelCase } from '@/utils'
@@ -37,6 +38,11 @@ export const masterTeamsApi = createApi({
           headCoachFullName: result.head_coach
             ? result.head_coach?.first_name + ' ' + result.head_coach?.last_name
             : null,
+          teamAdmins: (
+            (transformKeysToCamelCase(result.team_admins) as ITeamAdmin[])?.sort(
+              (a, b) => a.firstName > b.firstName ? 1 : -1
+            )
+          ),
           teamAdminEmail: result.team_admins?.[0].email || '',
           teamAdminId: result.team_admins?.[0].id || '',
           teamAdminFullName: result.team_admins?.[0]
