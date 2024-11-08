@@ -68,7 +68,7 @@ export interface IBELeagueTeam {
   master_team_admin: IBESimpleEntity
   master_team_admins: IBESimpleEntity[]
   league: IBELeague
-  sub_division: IBESubdivision
+  subdivision: IBESubdivision
   operator: IBESimpleEntity
 }
 
@@ -78,7 +78,7 @@ export interface IFELeagueTeam {
   headCoach:  IFEHeadCoachTeamAdmin | null
   league: IBELeague
   division: IFEDivision | null
-  subDivision: IFESubdivision | null
+  subdivision: IFESubdivision | null
   masterTeam: IFEMasterTeam | null
   operator: IFESimpleEntity | null
   logoS3Url: string
@@ -88,11 +88,10 @@ export interface IGetLeagueTeamsRequest {
   limit: number
   offset: number
   ordering?: string | null
-  team_name?: string | null
-  head_coach?: string | null
+  name?: string | null
+  division_name?: string | null
+  subdivision_name?: string | null
   league_name?: string | null
-  league_teams?: string | null
-  team_admin?: string | null
 }
 
 export interface IGetLeagueTeamsResponse {

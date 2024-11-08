@@ -21,16 +21,16 @@ import EditIcon from '@/assets/icons/edit.svg'
 import DeleteIcon from '@/assets/icons/delete.svg'
 import CopyIcon from '@/assets/icons/copy.svg'
 import { useCopyContent } from '@/hooks/useCopyContent.tsx'
+import { useTableContext } from '@/hooks/useTableContext.ts'
 
 const EMAIL_COPIED_MESSAGE = 'Email successfully copied'
 
-interface IParams {
-  setSelectedIds: (value: string[]) => void
-  setSingleDeleting: (value: boolean) => void
-}
-
-export const useLeagueTeamTable = ({ setSelectedIds, setSingleDeleting }: IParams) => {
+export const useLeagueTeamTable = () => {
   const navigate = useNavigate()
+  const {
+    setSelectedIds,
+    setSingleDeleting
+  } = useTableContext<IFELeagueTeam>()
 
   const [getLeagueTeams] = useLazyGetLeagueTeamsQuery()
 
@@ -59,6 +59,12 @@ export const useLeagueTeamTable = ({ setSelectedIds, setSingleDeleting }: IParam
     })
   }
 
+  const onFilter = useCallback((fieldName: keyof Pick<IFELeagueTeam, 'league' | 'division' | 'subdivision'>) => (
+    (value: boolean | React.Key, record: IFELeagueTeam) => {
+      return !!record[fieldName]?.name.toLowerCase().includes((value as string).toLowerCase())
+    }
+  ), [])
+
   const columns: TColumns<IFELeagueTeam> = [
     {
       title: 'Team Name',
@@ -75,8 +81,8 @@ export const useLeagueTeamTable = ({ setSelectedIds, setSingleDeleting }: IParam
       dataIndex: 'league',
       sorter: true,
       width: '240px',
-      sortOrder: getColumnSort('league', ordering),
-      ...getColumnSearchProps('league'),
+      sortOrder: getColumnSort('league_name', ordering),
+      ...getColumnSearchProps('league', onFilter('league')),
       render: renderLeague
     },
     {
@@ -84,42 +90,41 @@ export const useLeagueTeamTable = ({ setSelectedIds, setSingleDeleting }: IParam
       dataIndex: 'division',
       sorter: true,
       width: '240px',
-      sortOrder: getColumnSort('division', ordering),
-      ...getColumnSearchProps('division'),
+      sortOrder: getColumnSort('division_name', ordering),
+      ...getColumnSearchProps('division', onFilter('division')),
+      render: renderDivision
+    },
+    {
+      title: 'Sub Division',
+      dataIndex: 'subdivision',
+      sorter: true,
+      width: '240px',
+      sortOrder: getColumnSort('subdivision_name', ordering),
+      ...getColumnSearchProps('subdivision', onFilter('subdivision')),
       render: renderDivision
     },
     {
       title: 'Master Team',
       dataIndex: 'masterTeam',
-      sorter: true,
       width: '240px',
-      sortOrder: getColumnSort('masterTeam', ordering),
-      ...getColumnSearchProps('masterTeam'),
       render: renderMasterTeam
     },
     {
       title: 'Team Admin Name',
       dataIndex: 'masterTeam',
-      sorter: true,
       width: '240px',
-      sortOrder: getColumnSort('masterTeam', ordering),
-      ...getColumnSearchProps('masterTeam'),
       render: renderTeamAdminName
     },
     {
       title: 'Team Admin Email',
       dataIndex: 'masterTeam',
       width: '240px',
-      sortOrder: getColumnSort('masterTeam', ordering),
       render: renderTeamAdminEmail
     },
     {
       title: 'Coach Name',
       dataIndex: 'masterTeam',
-      sorter: true,
       width: '240px',
-      sortOrder: getColumnSort('masterTeam', ordering),
-      ...getColumnSearchProps('masterTeam'),
       render: renderCoachName
     },
     {

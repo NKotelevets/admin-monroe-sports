@@ -1,26 +1,35 @@
-import { MonroeTable } from '@/components/Table/MonroeTable.tsx'
+import { MonroeTable } from '@/components/Table/MonroeTable'
 import { useLeagueTeamsSlice } from '@/redux/hooks/useLeagueTeamsSlice.tsx'
 import { useLazyGetLeagueTeamsQuery } from '@/redux/leagueTeams/leagueTeams.api.ts'
 import { useEffect, useMemo } from 'react'
 import { useLeagueTeamTable } from '../hooks/useLeagueTeamTable'
-import { IFELeagueTeam } from '@/common/interfaces/leagueTeams.ts'
+import { IFELeagueTeam, IGetLeagueTeamsRequest } from '@/common/interfaces/leagueTeams.ts'
 import { useNotification } from '@/hooks/useNotification.ts'
-// import { ExpandedHeaderLeftText, ExpandedTableHeader, MonroeLightBlueText } from '@/components/Elements'
+import { useTableContext } from '@/hooks/useTableContext.ts'
+import type { FilterValue } from 'antd/es/table/interface'
+import type { TableProps } from 'antd'
+import { getTableSortField } from '@/utils'
+import { showTotal } from '@/components/Table/utils'
 
 const ERROR_LOADING_LEAGUE_TEAMS_MESSAGE = `Could not load league teams. Please, try again!`
 
-interface ILeagueTeamsTableProps {
-  selectedIds: string[]
+type TFilterValueKey = 'name' | 'division' | 'subdivision' | 'league'
 
-  setSelectedIds(ids: string[]): void
 
-  setSingleDeleting(value: boolean): void
-}
+export const LeagueTeamsTable = () => {
+  const [listLeagueTeam] = useLazyGetLeagueTeamsQuery()
 
-export const LeagueTeamsTable = (props: ILeagueTeamsTableProps) => {
-  const { selectedIds, setSelectedIds, setSingleDeleting } = props
-  const { columns } = useLeagueTeamTable({ setSelectedIds, setSingleDeleting })
+  const { columns } = useLeagueTeamTable()
   const { notify } = useNotification()
+
+  const {
+    setIsLoading,
+    isAllSelected,
+    setSelectedIds,
+    setShowAdditionalHeader,
+    setTableParams
+  } = useTableContext<IFELeagueTeam>()
+
   const {
     leagueTeams, offset,
     limit,
@@ -29,10 +38,15 @@ export const LeagueTeamsTable = (props: ILeagueTeamsTableProps) => {
     setPaginationParams
   } = useLeagueTeamsSlice()
 
-  const [listLeagueTeam] = useLazyGetLeagueTeamsQuery()
-  // const [showAdditionalHeader, setShowAdditionalHeader] = useState(false)
+  const pagination = useMemo(() => ({
+    offset, ordering, limit, total
+  }), [offset, ordering, limit, total])
 
+  /**
+   * Fetches League Teams on mount
+   */
   useEffect(() => {
+    setIsLoading(true)
     setPaginationParams({ offset, limit, ordering })
     listLeagueTeam({
       limit,
@@ -40,60 +54,62 @@ export const LeagueTeamsTable = (props: ILeagueTeamsTableProps) => {
       ordering: ordering || undefined
     })
       .catch(() => notify(ERROR_LOADING_LEAGUE_TEAMS_MESSAGE, 'error'))
+      .finally(() => setIsLoading(false))
   }, [])
 
-  const pagination = useMemo(() => ({
-    offset, ordering, limit, total
-  }), [offset, ordering, limit, total])
 
-  const handleTableChange = () => {
-    setSelectedIds([])
+  /**
+   * Handles table changes like pagination, filtering and sorting
+   */
+  type TFilter = Record<TFilterValueKey, FilterValue | null>
+  const handleTableChange: TableProps<IFELeagueTeam>['onChange'] = (pagination, filters: TFilter, sorter) => {
+    const newOffset = (pagination?.current && (pagination?.current - 1) * (pagination?.pageSize || 10)) || 0
+    const newLimit = pagination?.pageSize || 10
+    setTableParams({
+      pagination: {
+        ...pagination,
+        showTotal
+      }
+    })
+
+    if (!isAllSelected) {
+      setSelectedIds([])
+      setShowAdditionalHeader(false)
+    }
+
+    const fieldMap = {
+      league: 'league_name',
+      division: 'division_name',
+      subdivision: 'subdivision_name'
+    }
+
+    const leagueTeamsRequestParams: IGetLeagueTeamsRequest = {
+      offset: newOffset,
+      limit: newLimit,
+      ordering: getTableSortField<IFELeagueTeam>(sorter, fieldMap),
+      name: (filters?.['name']?.[0] as string) ?? undefined,
+      division_name: (filters?.['division']?.[0] as string) ?? undefined,
+      subdivision_name: (filters?.['subdivision']?.[0] as string) ?? undefined,
+      league_name: (filters?.['league']?.[0] as string) ?? undefined
+    }
+
+    listLeagueTeam(leagueTeamsRequestParams)
+
+    setPaginationParams({
+      offset: leagueTeamsRequestParams.offset,
+      limit: leagueTeamsRequestParams.limit,
+      ordering: leagueTeamsRequestParams.ordering || null
+    })
   }
 
   return (
-    <>
-      {/*{showAdditionalHeader && (*/}
-      {/*  <ExpandedTableHeader>*/}
-      {/*    <ExpandedHeaderLeftText>*/}
-      {/*      {isDeleteAllRecords*/}
-      {/*        ? `All ${total} master teams are selected.`*/}
-      {/*        : `All ${limit} master teams on this page are selected.`}*/}
-      {/*    </ExpandedHeaderLeftText>*/}
-
-      {/*    {!isDeleteAllRecords ? (*/}
-      {/*      <MonroeLightBlueText onClick={() => setIsDeleteAllRecords(true)}>*/}
-      {/*        Select all {total} master teams instead.*/}
-      {/*      </MonroeLightBlueText>*/}
-      {/*    ) : (*/}
-      {/*      <MonroeLightBlueText*/}
-      {/*        onClick={() => {*/}
-      {/*          setSelectedIds([])*/}
-      {/*          setShowAdditionalHeader(false)*/}
-      {/*        }}*/}
-      {/*      >*/}
-      {/*        Unselect all league teams*/}
-      {/*      </MonroeLightBlueText>*/}
-      {/*    )}*/}
-      {/*  </ExpandedTableHeader>*/}
-      {/*)}*/}
-      <MonroeTable<IFELeagueTeam>
-        columns={columns}
-        dataSource={leagueTeams}
-        onChange={handleTableChange} // FIXME
-        pagination={pagination}
-        showCreated={false}
-        createdIds={[]}
-        loading={false}
-        rowSelection={{
-          type: 'checkbox',
-          selectedRowKeys: selectedIds,
-          onChange: (selected) => {
-            // if (selected.length === limit) setShowAdditionalHeader(true)
-            // if (selected.length < limit) setShowAdditionalHeader(false)
-            setSelectedIds(selected as string[])
-          },
-        }}
-      />
-    </>
+    <MonroeTable<IFELeagueTeam>
+      columns={columns}
+      dataSource={leagueTeams}
+      onChange={handleTableChange}
+      pagination={pagination}
+      showCreated={false}
+      createdIds={[]}
+    />
   )
 }
