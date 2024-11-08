@@ -1,4 +1,5 @@
 import { IRole } from '@/common/interfaces/user.ts'
+import { TableProps } from 'antd/es/table/InternalTable'
 
 export type TDeleteStatus = 'red' | 'green' | 'yellow'
 
@@ -19,3 +20,5 @@ export type IUserBulkEditPayload = {
   roles?: IRole[]
   is_active?: boolean
 }
+
+export type TColumns<T> = TableProps<T>['columns']

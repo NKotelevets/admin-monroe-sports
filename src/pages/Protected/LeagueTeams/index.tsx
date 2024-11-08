@@ -1,5 +1,6 @@
 import { Page } from '@/layouts/Page.tsx'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
+import { LeagueTeamsTable } from './components/LeagueTeamsTable'
 
 const DELETE_TERMS = {
   singular: 'league team',
@@ -7,19 +8,31 @@ const DELETE_TERMS = {
 }
 
 const LeagueTeams = () => {
-  const [selectedIds, setSelectedIds] = useState<string[] | null>(null)
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [singleDeleting, setSingleDeleting] = useState<boolean>(false)
 
-
+  const onDeleteModalClose = useCallback(() => {
+    if (singleDeleting) {
+      setSelectedIds([])
+    }
+    setSingleDeleting(false)
+  }, [singleDeleting])
 
   return (
     <Page
       title="League Teams"
       onCreate={alert}
       onDelete={alert}
+      onDeleteModalClose={onDeleteModalClose}
       deleteTerm={DELETE_TERMS}
       selectedIds={selectedIds}
+      singleDeleting={singleDeleting}
     >
-      <div onClick={() => setSelectedIds(null)}>hellow</div>
+      <LeagueTeamsTable
+        selectedIds={selectedIds}
+        setSelectedIds={setSelectedIds}
+        setSingleDeleting={setSingleDeleting}
+      />
     </Page>
   )
 }
