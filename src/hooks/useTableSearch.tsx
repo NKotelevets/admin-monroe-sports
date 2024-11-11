@@ -5,13 +5,12 @@ import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined'
 import { useRef } from 'react'
 
 
-
 export const useTableSearch = (handleTableReset?: () => void) => {
   const searchInput = useRef<InputRef>(null)
 
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
 
-  const getColumnSearchProps = <T,>(
+  const getColumnSearchProps = <T, >(
     dataIndex: keyof T,
     onFilter?: (value: boolean | React.Key, record: T) => boolean
   ): TableColumnType<T> => ({
@@ -33,7 +32,7 @@ export const useTableSearch = (handleTableReset?: () => void) => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100)
       }
-    },
+    }
   })
 
   const handleReset = (clearFilters: () => void) => {

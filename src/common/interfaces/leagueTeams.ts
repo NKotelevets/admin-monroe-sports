@@ -1,9 +1,10 @@
 import { IAdditionalEmail, IAdditionalPhone } from '@/common/interfaces'
 import { IBEDivision, IBESubdivision, IFEDivision, IFESubdivision } from '@/common/interfaces/division'
 import { IBELeague, IFELeague } from '@/common/interfaces/league'
-import { IBEOperator } from '@/common/interfaces/operator'
+import { IBEOperator, IFEOperator } from '@/common/interfaces/operator'
+import { IBEMasterTeam, IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
 
-interface IBETeamAdmin {
+interface IHeadCoachTeamAdmin {
   additional_emails: IAdditionalEmail[]
   additional_phone: IAdditionalPhone[]
   birth_date: string | null
@@ -29,7 +30,7 @@ interface IBETeamAdmin {
   zip_code: null | string
 }
 
-export interface ITeamAdmin {
+interface IFEHeadCoachTeamAdmin {
   additionalEmails: IAdditionalEmail[]
   additionalPhone: IAdditionalPhone[]
   birthDate: string | null
@@ -45,7 +46,7 @@ export interface ITeamAdmin {
   isActive: boolean
   isStaff: boolean
   lastName: string
-  operator: null | IBEOperator
+  operator: null | IFEOperator
   phoneNumber: null | string
   phoneNumberVerified: false
   photoS3Url: null | string
@@ -55,54 +56,47 @@ export interface ITeamAdmin {
   zipCode: null | string
 }
 
-export interface IBEMasterTeam {
+export interface IBELeagueTeam {
   id: string
-  division: IBEDivision[]
+  division: IBEDivision
   updated_at: string
   created_at: string
   name: string
   logo_s3_url: string
-  home_uniform: string
-  away_uniform: string
-  arrive_early_for_practice: number
-  arrive_early_for_games: number
-  who_can_join_this_team: number
-  team_administrator_email: string
-  head_coach_email: string
-  team_administrator: string
-  head_coach: IBETeamAdmin | null
-  team_admins: IBETeamAdmin[] | null
-  leagues: IBELeague[]
+  head_coach: IHeadCoachTeamAdmin | null
+  master_team: IBEMasterTeam
+  master_team_admin: IBESimpleEntity
+  master_team_admins: IBESimpleEntity[]
+  league: IBELeague
+  subdivision: IBESubdivision
+  operator: IBESimpleEntity
 }
 
-export interface IFEMasterTeam {
+export interface IFELeagueTeam {
   id: string
   name: string
-  headCoachId: string | null
-  headCoachFullName: string | null
-  headCoachEmail: string | null
-  teamAdmin: ITeamAdmin | null
-  teamAdmins: ITeamAdmin[] | null
-  teamAdminId: string | null
-  teamAdminFullName: string | null
-  teamAdminEmail: string | null
-  leagues: IBELeague[]
+  headCoach:  IFEHeadCoachTeamAdmin | null
+  league: IBELeague
+  division: IFEDivision | null
+  subdivision: IFESubdivision | null
+  masterTeam: IFEMasterTeam | null
+  operator: IFESimpleEntity | null
+  logoS3Url: string
 }
 
-export interface IGetMasterTeamsRequest {
+export interface IGetLeagueTeamsRequest {
   limit: number
   offset: number
   ordering?: string | null
-  team_name?: string | null
-  head_coach?: string | null
+  name?: string | null
+  division_name?: string | null
+  subdivision_name?: string | null
   league_name?: string | null
-  league_teams?: string | null
-  team_admin?: string | null
 }
 
-export interface IGetMasterTeamsResponse {
+export interface IGetLeagueTeamsResponse {
   count: number
-  results: IFEMasterTeam[]
+  results: IFELeagueTeam[]
 }
 
 export interface IPopulateMTRequest {
@@ -121,7 +115,7 @@ export interface IBESimpleEntity {
   email: string
 }
 
-export interface IBEMasterTeamDetails {
+export interface IBELeagueTeamDetails {
   name: string
   head_coach: IBESimpleEntity
   team_admins: IBESimpleEntity[]
@@ -139,7 +133,7 @@ export interface IFESimpleEntity {
   email: string
 }
 
-export interface IFEMasterTeamDetails {
+export interface IFELeagueTeamDetails {
   name: string
   headCoach: IFESimpleEntity
   teamsAdmins: IFESimpleEntity[]
@@ -150,7 +144,7 @@ export interface IFEMasterTeamDetails {
   subDivisions: IFESubdivision[]
 }
 
-export interface IMasterTeamError {
+export interface ILeagueTeamError {
   id: string
   name: string
   error: string

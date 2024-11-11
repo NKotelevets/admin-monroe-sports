@@ -5,13 +5,14 @@ import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 
 import { useMasterTeamsTable } from '@/pages/Protected/MasterTeams/hooks/useMasterTeamsTable'
 
-import { ExpandedHeaderLeftText, ExpandedTableHeader, MonroeBlueText, MonroeLightBlueText } from '@/components/Elements'
+import { ExpandedHeaderLeftText, ExpandedTableHeader, MonroeLightBlueText } from '@/components/Elements'
 import MonroeModal from '@/components/MonroeModal'
 
 import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice'
 import { useDeleteMasterTeamMutation, useLazyGetMasterTeamsQuery } from '@/redux/masterTeams/masterTeams.api'
 
 import { IFEMasterTeam, IGetMasterTeamsRequest } from '@/common/interfaces/masterTeams'
+import { showTotal } from '@/components/Table/utils.tsx'
 
 type TTablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>
 type TFilterValueKey = 'name' | 'headCoachFullName' | 'teamAdminFullName' | 'league_name'
@@ -32,8 +33,6 @@ interface IMasterTeamsTableProps {
   setIsDeleteAllRecords: Dispatch<SetStateAction<boolean>>
   showCreatedRecords: boolean
 }
-
-const showTotal = (total: number) => <MonroeBlueText>Total {total} items</MonroeBlueText>
 
 const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
   setSelectedRecordsIds,

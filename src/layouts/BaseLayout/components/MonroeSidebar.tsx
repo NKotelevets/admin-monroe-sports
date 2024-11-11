@@ -134,7 +134,7 @@ const MonroeSidebar = () => {
           label: 'Master Teams',
           onClick: () => navigateTo(PATH_TO_MASTER_TEAMS),
         },
-        { key: 'league-teams', label: 'League Teams', onClick: () => navigateTo(PATH_TO_LEAGUE_TEAMS) },
+        { key: PATH_TO_LEAGUE_TEAMS, label: 'League Teams', onClick: () => navigateTo(PATH_TO_LEAGUE_TEAMS) },
       ],
     },
     {
