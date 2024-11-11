@@ -85,7 +85,7 @@ export const masterTeamsApi = createApi({
 
     getMasterTeam: builder.query<IFEMasterTeamDetails, { id: string }>({
       query: ({ id }) => ({
-        url: `teams/teams/${id}/details`,
+        url: `teams/teams/${id}`,
       }),
       keepUnusedDataFor: 0.0001,
       transformResponse: (response: IBEMasterTeamDetails) => ({
