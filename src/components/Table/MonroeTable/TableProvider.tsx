@@ -26,11 +26,11 @@ interface TableProviderProps {
  * </TableProvider>
  */
 export const TableProvider = <T,>({ children }: TableProviderProps): ReactElement => {
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [singleDeleting, setSingleDeleting] = useState<boolean>(false);
-  const [isAllSelected, setIsAllSelected] = useState<boolean>(false);
-  const [showAdditionalHeader, setShowAdditionalHeader] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [singleDeleting, setSingleDeleting] = useState<boolean>(false)
+  const [isAllSelected, setIsAllSelected] = useState<boolean>(false)
+  const [showAdditionalHeader, setShowAdditionalHeader] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const [tableParams, setTableParams] = useState<ITableParams<T>>({
     pagination: {
@@ -39,7 +39,7 @@ export const TableProvider = <T,>({ children }: TableProviderProps): ReactElemen
       showSizeChanger: true,
       showTotal,
     },
-  });
+  })
 
   return (
     <TableContext.Provider
@@ -60,5 +60,5 @@ export const TableProvider = <T,>({ children }: TableProviderProps): ReactElemen
     >
       {children}
     </TableContext.Provider>
-  );
-};
+  )
+}
