@@ -27,7 +27,7 @@ const EditMasterTeam = () => {
 
   const { data, isLoading, isError } = useGetMasterTeamQuery(
     { id: params?.id || '' },
-    { skip: !params.id }
+    { skip: !params?.id }
   )
 
   const goBack = () => navigation(PATH_TO_MASTER_TEAMS)
@@ -52,11 +52,11 @@ const EditMasterTeam = () => {
       })
   }
 
-  if (!data && isLoading) return <Loader />
+  if (!data || isLoading || isError) return <Loader />
 
   const BREAD_CRUMB_ITEMS = [
     { title: <a href={PATH_TO_MASTER_TEAMS}>Master Teams</a> },
-    { title: <MonroeBlueText>{data!.name}</MonroeBlueText> }
+    { title: <MonroeBlueText>{data?.name}</MonroeBlueText> }
   ]
 
   const initialData: IPopulateMasterTeam = {
