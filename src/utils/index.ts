@@ -1,5 +1,5 @@
 import { format, parse } from 'date-fns'
-import { SortOrder } from 'antd/es/table/interface'
+import { SorterResult, SortOrder } from 'antd/es/table/interface'
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 
 export const validateNumber = (value: string) => /^[0-9]+$/.test(value) || value === ''
@@ -139,3 +139,15 @@ export const transformKeysToSnakeCase = <T, K>(obj: K): T => {
 // Helper function to convert camelCase to snake_case
 const toSnakeCase = (str: string): string =>
   str.replace(/([A-Z])/g, '_$1').toLowerCase()
+
+
+export const getTableSortField = <T,>(sorter:  SorterResult<T> | SorterResult<T>[], fieldMap: { [key: string]: string }) => {
+  if (Array.isArray(sorter) || !sorter.order) return undefined
+  const getField = (field: string): string => {
+    if (field in fieldMap) return fieldMap[field]
+    return field
+  }
+
+  const field = getField(sorter.field as string)
+  return sorter.order === 'descend' ? `-${field}` : field
+}
