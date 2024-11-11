@@ -73,7 +73,7 @@ export const masterTeamsApi = createApi({
 
     masterTeamsImportCSV: builder.mutation<void, FormData>({
       query: (body) => ({
-        url: 'teams/seasons/import-seasons',
+        url: 'teams/teams/import-master-teams-from-csv',
         body,
         method: 'POST',
       }),
@@ -82,7 +82,7 @@ export const masterTeamsApi = createApi({
 
     getMasterTeam: builder.query<IFEMasterTeamDetails, { id: string }>({
       query: ({ id }) => ({
-        url: `teams/teams/${id}`,
+        url: `teams/teams/${id}/details`,
       }),
       keepUnusedDataFor: 0.0001,
       transformResponse: (response: IBEMasterTeamDetails) => ({
