@@ -38,12 +38,9 @@ export const masterTeamsApi = createApi({
           headCoachFullName: result.head_coach
             ? result.head_coach?.first_name + ' ' + result.head_coach?.last_name
             : null,
+
           teamAdmin: null,
-          teamAdmins: (
-            (transformKeysToCamelCase(result.team_admins) as ITeamAdmin[])?.sort(
-              (a, b) => a.firstName > b.firstName ? 1 : -1
-            )
-          ),
+          teamAdmins: transformKeysToCamelCase(result.team_admins) as ITeamAdmin[],
           teamAdminEmail: result.team_admins?.[0].email || '',
           teamAdminId: result.team_admins?.[0].id || '',
           teamAdminFullName: result.team_admins?.[0]
