@@ -61,8 +61,9 @@ import {
   PATH_TO_USERS,
   PATH_TO_USERS_BLOCKING_INFO,
   PATH_TO_USERS_BULK_EDIT,
-  PATH_TO_USERS_IMPORT_INFO, PATH_TO_LEAGUE_TEAMS
+  PATH_TO_USERS_IMPORT_INFO, PATH_TO_LEAGUE_TEAMS, PATH_TO_MASTER_TEAMS_IMPORT_INFO
 } from '@/common/constants/paths'
+import MasterTeamImportInfo from '@/pages/Protected/MasterTeams/MasterTeamImportInfo.tsx'
 
 
 const Root = () => (
@@ -102,6 +103,7 @@ const Root = () => (
 
       {/* Master Teams */}
       <Route path={PATH_TO_MASTER_TEAMS} element={<MasterTeams />} />
+      <Route path={PATH_TO_MASTER_TEAMS_IMPORT_INFO} element={<MasterTeamImportInfo />} />
       <Route path={`${PATH_TO_MASTER_TEAMS}/:id`} element={<MasterTeamDetails />} />
       <Route path={PATH_TO_DELETING_INFO_MASTER_TEAMS} element={<MasterTeamsDeletingInfo />} />
       <Route path={PATH_TO_CREATE_MASTER_TEAM} element={<CreateMasterTeam />} />

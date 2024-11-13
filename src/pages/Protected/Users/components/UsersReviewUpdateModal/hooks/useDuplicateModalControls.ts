@@ -1,12 +1,20 @@
 import { useCallback, useState } from 'react'
-import { IFEDuplicateWithIdx } from '@/common/interfaces/user.ts'
-import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 
-export const useDuplicateModalControls = (idx: number, onClose: () => void) => {
-  const { duplicates, removeDuplicate } = useUserSlice()
+interface IProps<T> {
+  duplicates: T[]
+  idx: number
+
+  removeDuplicateByIndex(index: number): void
+
+  onClose?(): void
+}
+
+export const useDuplicateModalControls = <T extends { idx: number }, >(props: IProps<T>) => {
+  const { duplicates, idx, removeDuplicateByIndex, onClose } = props
+
   const [currentIdx, setCurrentIdx] = useState<number>(idx)
   const currentDuplicate = duplicates.find((duplicate) => duplicate.idx === currentIdx)
-  const actualIndex = duplicates.indexOf(currentDuplicate as IFEDuplicateWithIdx)
+  const actualIndex = duplicates.indexOf(currentDuplicate as T)
 
   const handleNext = useCallback(() => (
     setCurrentIdx((prev) => prev + 1)
@@ -18,13 +26,13 @@ export const useDuplicateModalControls = (idx: number, onClose: () => void) => {
 
   const handleSkip = useCallback(() => {
     if (duplicates.length === 1) {
-      onClose()
-      removeDuplicate(currentIdx)
+      !!onClose && onClose()
+      removeDuplicateByIndex(currentIdx)
 
       return
     }
 
-    if (actualIndex === duplicates.length - 1) {
+    if (currentIdx === duplicates.length - 1) {
       if (duplicates.length === 1) {
         close()
       } else {
@@ -32,19 +40,17 @@ export const useDuplicateModalControls = (idx: number, onClose: () => void) => {
       }
     }
 
-    setTimeout(() => {
-      removeDuplicate(currentIdx)
-    }, 500)
+    removeDuplicateByIndex(currentIdx)
   }, [currentIdx, duplicates])
 
   const handleClose = useCallback(() => {
-    onClose()
+    !!onClose && onClose()
   }, [])
 
   return {
+    actualIndex,
     currentDuplicate,
     currentIdx,
-    actualIndex,
     handleNext,
     handlePrev,
     handleSkip,

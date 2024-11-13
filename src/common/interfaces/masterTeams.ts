@@ -2,6 +2,7 @@ import { IAdditionalEmail, IAdditionalPhone } from '@/common/interfaces'
 import { IBEDivision, IBESubdivision, IFEDivision, IFESubdivision } from '@/common/interfaces/division'
 import { IBELeague, IFELeague } from '@/common/interfaces/league'
 import { IBEOperator } from '@/common/interfaces/operator'
+import { TDeleteStatus, TErrorDuplicate } from '@/common/types'
 
 interface IBETeamAdmin {
   additional_emails: IAdditionalEmail[]
@@ -156,3 +157,81 @@ export interface IMasterTeamError {
   error: string
 }
 
+export interface IImportMasterTeamCSVTableData {
+  idx: number
+  index: number
+  type: string
+  headCoachName: string
+  headCoachEmail: string
+  masterTeamName: string
+  teamAdminEmail: string
+  teamAdminName: string
+  status: TErrorDuplicate
+  message: string
+}
+
+export interface IBENewMasterTeamDuplicate {
+  'Head Coach Email': string
+  'Head Coach First and Last Name': string
+  'Master Team Name': string
+  'Team Admin Email': string
+  'Team Admin First and Last Name': string
+}
+
+export interface IBEExistingMasterTeamDuplicate {
+  head_coach: string
+  head_coach_email: string
+  name: string
+  team_admins: string[]
+  team_admins_emails: string[]
+}
+
+interface IBEDuplicate {
+  index: number
+  new: IBENewMasterTeamDuplicate
+  existing: IBEExistingMasterTeamDuplicate
+  differences: { [key: string]: unknown }
+}
+
+export interface IFENewMasterTeamDuplicate {
+  headCoachName: string
+  headCoachEmail: string
+  masterTeamName: string
+  teamAdminEmail: string
+  teamAdminName: string
+}
+
+export interface IImportMasterTeamCSVError {
+  idx: string
+  error: string
+  master_team_name: string
+}
+
+export interface IBEImportMasterTeamCSVResponse {
+  status: TDeleteStatus
+  errors: IImportMasterTeamCSVError[]
+  success: string[]
+  duplicates: IBEDuplicate[]
+}
+
+export interface IFEExistingMasterTeamDuplicate {
+  headCoach: string
+  headCoachEmail: string
+  name: string
+  teamAdmins: string[]
+  teamAdminsEmails: string[]
+}
+
+export interface IFEDuplicate {
+  idx: number
+  new: IFENewMasterTeamDuplicate
+  existing: IFEExistingMasterTeamDuplicate
+  differences: { [key: string]: unknown }
+}
+
+export interface IFEImportMasterTeamCSVResponse {
+  status: TDeleteStatus
+  errors?: IImportMasterTeamCSVError[]
+  success: string[]
+  duplicates?: IFEDuplicate[]
+}

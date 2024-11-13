@@ -4,6 +4,9 @@ import { Flex } from 'antd'
 import BaseLayout from '@/layouts/BaseLayout'
 import { FC, ReactElement } from 'react'
 import styled from '@emotion/styled'
+import Breadcrumb from 'antd/es/breadcrumb'
+import { Description } from '@/components/Elements/deletingBlockingInfoElements.tsx'
+
 
 /**
  * Interface representing the props for the Page component.
@@ -16,6 +19,8 @@ import styled from '@emotion/styled'
 export interface IPageProps {
   title: string
   children: ReactElement
+  subtitle?: string
+  breadcrumbs?: { title: ReactElement }[]
   controls?(): ReactElement
 }
 
@@ -32,34 +37,52 @@ export interface IPageProps {
  * </Page>
  */
 export const Page: FC<IPageProps> = (props: IPageProps): ReactElement => {
-  const { title, children, controls } = props
+  const { title, children, subtitle, breadcrumbs, controls } = props
 
   return (
-    <BaseLayout>
-      <>
-        <Helmet>
-          <title>Admin Panel | {title}</title>
-        </Helmet>
+    <>
+      <div id="page-portal"></div>
+      <BaseLayout>
+        <>
+          <Helmet>
+            <title>Admin Panel | {title}</title>
+          </Helmet>
 
-        <PageContainer>
-          <Header justify="space-between" align="center" vertical={false}>
-            <ProtectedPageTitle>{title}</ProtectedPageTitle>
+          <PageContainer>
+            {!!breadcrumbs && <Breadcrumb items={breadcrumbs} />}
 
-            <Controls>
-              {!!controls && controls()}
-            </Controls>
-          </Header>
+            <Header justify="space-between" align="center" vertical={false}>
+              <PageInfo vertical>
+                <Title>{title}</Title>
+                {!!subtitle && <Subtitle>{subtitle}</Subtitle>}
+              </PageInfo>
 
-          <Flex flex="1 1 auto" vertical>
-            {children}
-          </Flex>
-        </PageContainer>
-      </>
-    </BaseLayout>
+              <Controls>
+                {!!controls && controls()}
+              </Controls>
+            </Header>
+
+            <Flex flex="1 1 auto" vertical>
+              {children}
+            </Flex>
+          </PageContainer>
+        </>
+      </BaseLayout>
+    </>
   )
 }
 
 const Header = styled(Flex)`
 `
 const Controls = styled(Flex)`
+`
+const PageInfo = styled(Flex)`
+    margin: 8px 0 24px;
+`
+const Title = styled(ProtectedPageTitle)`
+    margin: 0;
+`
+const Subtitle = styled(Description)`
+    margin: 0;
+    margin-top: 8px
 `

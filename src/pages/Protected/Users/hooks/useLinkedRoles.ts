@@ -6,9 +6,9 @@ import { TRole } from '@/common/types'
 
 export type TLinkedRole = IRole & { teamName: string, teamNames?: string[]}
 
-export const useLinkedRoles = () => {
+export const useLinkedRoles = (existingUser?: IExtendedFEUser) => {
   const [linkedRoles, setLinkedRoles] = useState<TLinkedRole[]>([])
-  const [user, setLinkedRolesUser] = useState<IExtendedFEUser>()
+  const [user, setLinkedRolesUser] = useState<IExtendedFEUser | undefined>(existingUser)
 
   useEffect(() => {
     if (!user) return

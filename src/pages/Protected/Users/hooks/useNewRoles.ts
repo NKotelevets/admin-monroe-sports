@@ -25,9 +25,9 @@ export type TNewUser = Omit<IFENew, 'roles'> & { roles: (IRole & { team: string 
  *   </div>
  * )
  */
-export const useNewRoles = () => {
+export const useNewRoles = (userNewRoles?: TNewUser) => {
   const [newRoles, setNewRoles] = useState<TLinkedRole[]>([])
-  const [newUserData, setNewRolesUser] = useState<TNewUser>()
+  const [newUserData, setNewRolesUser] = useState<TNewUser | undefined>(userNewRoles)
   const [getMasterTeams] = useLazyGetMasterTeamsQuery()
   const { roles } = newUserData || { roles: [], teams: [] }
 

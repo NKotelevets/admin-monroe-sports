@@ -66,8 +66,12 @@ export function isFetchBaseQueryError<T = unknown>(error: unknown): error is Fet
 
 
 const toCamelCase = (key: string): string =>
-  key.replace(/_./g, (match) => match.charAt(1).toUpperCase())
-
+  key
+    .replace(/_./g, (match) => match.charAt(1).toUpperCase())
+    .replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) =>
+      index === 0 ? match.toLowerCase() : match.toUpperCase()
+    )
+    .replace(/\s+/g, '')
 /**
  * Transforms the keys of an object or array from snake_case to camelCase.
  *

@@ -48,3 +48,10 @@ export interface ITableParams<T> {
   sortOrder?: SorterResult<T>['order']
   filters?: Parameters<GetProp<TableProps, 'onChange'>>[1]
 }
+
+export interface IDuplicate<T, Y> {
+  idx: number
+  new: T
+  existing: Y
+  differences?: { [key: string]: unknown } | object
+}
