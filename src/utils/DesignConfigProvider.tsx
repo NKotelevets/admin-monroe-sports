@@ -12,7 +12,13 @@ const DesignConfigProvider: FC<{ children: ReactNode }> = ({ children }) => (
         borderRadius: 0,
         fontFamily: 'Inter, sans-serif',
       },
+      components: {
+        Button: {
+          borderRadius: 2,
+        },
+      },
     }}
+
   >
     {children}
   </ConfigProvider>

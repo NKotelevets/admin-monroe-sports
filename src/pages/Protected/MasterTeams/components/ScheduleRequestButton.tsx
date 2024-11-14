@@ -1,22 +1,18 @@
-import { ScheduleOutlined } from '@ant-design/icons'
-import Btn from 'antd/es/button/button'
+import { IExportInfoProps } from '@/common/interfaces/masterTeams.ts'
 import styled from '@emotion/styled'
+import Btn from 'antd/es/button/button'
 import { Dropdown, Flex } from 'antd'
+import { ScheduleOutlined } from '@ant-design/icons'
+import { useDownloadFile } from '@/hooks/useDownloadFile.ts'
+import { useNotification } from '@/hooks/useNotification.ts'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import MonroeButton from '@/components/MonroeButton.tsx'
 import DatePickerRange, { IDateRangePickerRef } from '@/components/DatePickerRange.tsx'
 import { Dayjs } from 'dayjs'
 import { transformKeysToSnakeCase } from '@/utils'
-import { useDownloadFile } from '@/hooks/useDownloadFile.ts'
-import { useNotification } from '@/hooks/useNotification.ts'
-import { IExportInfoProps } from '@/common/interfaces/masterTeams.ts'
-
-export const ExportAvailability = (props: IExportInfoProps) => {
+export const ScheduleRequestButton = (props: IExportInfoProps) => {
   const { selectedMasterTeamIds } = props
 
-  const content = useCallback(() => (
-    !!selectedMasterTeamIds.length && <DropdownContent masterTeamIds={selectedMasterTeamIds} />
-  ), [selectedMasterTeamIds])
+  const content = () => <DropdownContent masterTeamIds={selectedMasterTeamIds} />
 
   // At least one Master Team needs to be selected
   // to show this component
@@ -32,15 +28,15 @@ export const ExportAvailability = (props: IExportInfoProps) => {
       overlayClassName="dropdown"
     >
       <Button icon={<ScheduleOutlined />} iconPosition="start">
-        Export Availability
+        Schedule Request
       </Button>
     </Dropdown>
   )
 }
 
-const DropdownContent = (props: {masterTeamIds: string[]}) => {
+const DropdownContent = (props: { masterTeamIds: string[] }) => {
   const { masterTeamIds } = props
-  const {download, isLoading, status} = useDownloadFile()
+  const { download, isLoading, status } = useDownloadFile()
   const { notify } = useNotification()
 
   const datePickerRef = useRef<IDateRangePickerRef>()
@@ -94,19 +90,29 @@ const DropdownContent = (props: {masterTeamIds: string[]}) => {
       </PickerWrapper>
       <Flex>
         <MButton
-          label="Reset"
           type="text"
-          isDisabled={!isValid || isLoading}
+          disabled={!isValid || isLoading}
           onClick={datePickerRef?.current?.reset}
-        />
+        >
+          Reset
+        </MButton>
         <Spacer />
         <MButton
-          label="Export"
+          type="default"
+          disabled={!isValid || isLoading}
+          onClick={datePickerRef?.current?.reset}
+        >
+          Export CSV
+        </MButton>
+        <Spacer />
+        <MButton
           type="primary"
-          isLoading={isLoading}
-          isDisabled={!isValid}
+          loading={isLoading}
+          disabled={!isValid}
           onClick={onExport}
-        />
+        >
+          Show in app
+        </MButton>
       </Flex>
     </View>
   )
@@ -115,8 +121,10 @@ const DropdownContent = (props: {masterTeamIds: string[]}) => {
 const Button = styled(Btn)`
     margin-right: 8px
 `
-const MButton = styled(MonroeButton)`
-    font-size: 14px
+const MButton = styled(Btn)`
+    font-size: 14px;
+    display: flex;
+    flex: 1
 `
 const View = styled(Flex)`
     margin-top: 0 !important;

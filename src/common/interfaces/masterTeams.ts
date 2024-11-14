@@ -156,3 +156,6 @@ export interface IMasterTeamError {
   error: string
 }
 
+export interface IExportInfoProps {
+  selectedMasterTeamIds: string[]
+}
