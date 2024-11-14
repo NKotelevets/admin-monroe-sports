@@ -95,7 +95,7 @@ export const useLeagueTeamTable = () => {
       render: renderDivision
     },
     {
-      title: 'Sub Division',
+      title: 'Subdivision / Pool',
       dataIndex: 'subdivision',
       sorter: true,
       width: '240px',
