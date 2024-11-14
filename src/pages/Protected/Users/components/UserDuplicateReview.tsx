@@ -1,20 +1,16 @@
-import { Flex, Table, Typography } from 'antd'
-import { useCallback, useState } from 'react'
-import { createPortal } from 'react-dom'
-import { DuplicateReviewModal } from '@/components/DuplicateReviewModal.tsx'
+import { RoleList } from './RoleList.tsx'
 import styled from '@emotion/styled'
-import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
-import { useUsersImportInfoTableParams } from '@/pages/Protected/Users/hooks/useUsersImportInfoTableParams.tsx'
-import { IExtendedFEUser, IFENew } from '@/common/interfaces/user.ts'
-import { IDuplicate } from '@/common/interfaces'
+import { Flex, Typography } from 'antd'
 import { FULL_GENDER_NAMES } from '@/common/constants'
 import { TGender } from '@/common/types'
-import { formatPhoneNumber } from '@/utils'
-import { TLinkedRole, useLinkedRoles } from '@/pages/Protected/Users/hooks/useLinkedRoles.ts'
-import { TNewUser, useNewRoles } from '@/pages/Protected/Users/hooks/useNewRoles.ts'
 import { compareObjects } from '@/utils/compareObjects.ts'
-import { useBulkEditMutation } from '@/redux/user/user.api.ts'
-import { RoleList } from '@/pages/Protected/Users/components/RoleList.tsx'
+import { IExtendedFEUser, IFENew } from '@/common/interfaces/user.ts'
+import { ReactElement, useCallback } from 'react'
+import { IDuplicate } from '@/common/interfaces'
+import { formatPhoneNumber } from '@/utils'
+import { TLinkedRole } from '@/common/types/users.ts'
+
+type TUserDuplicate = Omit<IDuplicate<IFENew, IExtendedFEUser>, 'differences'>
 
 interface IDuplicateReviewProps {
   index: number
@@ -23,100 +19,22 @@ interface IDuplicateReviewProps {
   newRoles: TLinkedRole[]
 }
 
-type TUserDuplicate = Omit<IDuplicate<IFENew, IExtendedFEUser>, 'differences'>
-
-export const UserImportTable = () => {
-  const [bulkEdit, { isLoading, isError, status, reset }] = useBulkEditMutation()
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
-
-  const { linkedRoles, setLinkedRolesUser } = useLinkedRoles()
-  const { newRoles, setNewRolesUser } = useNewRoles()
-
-  const {
-    importCSVTableRecords: records,
-    duplicates,
-    removeDuplicate
-  } = useUserSlice()
-
-  const {
-    columns,
-    tableParams,
-    handleTableChange
-  } = useUsersImportInfoTableParams({
-    setSelectedIndex,
-    records
-  })
-
-
-  const onSkip = (index: number) => {
-    removeDuplicate(index)
-  }
-
-  const onClose = () => setSelectedIndex(null)
-
-  const onChange = (index: number) => {
-    setSelectedIndex(index)
-    setLinkedRolesUser(duplicates[index].existing)
-    setNewRolesUser(duplicates[index].new as TNewUser)
-    reset()
-  }
-
-  const onUpdate = useCallback(async (index: number) => {
-    if (!duplicates[index]) return
-
-    const updateUserAsAdminBody = {
-      id: duplicates[index].existing.id,
-      roles: [...linkedRoles, ...newRoles]
-    }
-
-    await bulkEdit([updateUserAsAdminBody])
-  }, [duplicates, linkedRoles, newRoles])
-
-  return (
-    <>
-      {selectedIndex !== null && (
-        createPortal((
-          <DuplicateReviewModal<IFENew, IExtendedFEUser>
-            duplicates={duplicates}
-            isLoading={isLoading}
-            error={isError || status === 'rejected'}
-            success={status === 'fulfilled'}
-            idx={selectedIndex}
-            onClose={onClose}
-            onChange={onChange}
-            handleUpdate={onUpdate}
-            removeDuplicateByIndex={onSkip}
-          >
-            {(index: number) => (
-              <UserDuplicateReview
-                index={index}
-                duplicates={duplicates}
-                linkedRoles={linkedRoles}
-                newRoles={newRoles}
-              />
-            )}
-          </DuplicateReviewModal>
-        ), document.getElementById('page-portal')!)
-      )}
-
-      <Table
-        columns={columns}
-        rowKey={(record) => record.idx}
-        dataSource={records}
-        pagination={tableParams.pagination}
-        onChange={handleTableChange}
-      />
-    </>
-  )
-}
-
-
 /**
- * List duplicate users side by side for comparison
- * @param props
- * @constructor
+ * UserDuplicateReview Component
+ *
+ * This component is designed to review and compare user duplicates, displaying both existing and newly imported user information.
+ *
+ * @param {IDuplicateReviewProps} props - The properties for the UserDuplicateReview component, including:
+ * - `index`: The index of the current duplicate being reviewed.
+ * - `duplicates`: An array of user duplicates, each containing existing and new user data.
+ * - `linkedRoles`: An array of roles linked to the existing user.
+ * - `newRoles`: An array of new roles linked to the imported user.
+ *
+ * @returns {ReactElement} A JSX element containing two sections:
+ * - **Current**: Displays immutable information of the existing user, such as name, gender, email, birthdate, phone, zip code, and current roles.
+ * - **Imported**: Displays the same immutable information for the new user and highlights differences, including new roles if they are present.
  */
-const UserDuplicateReview = (props: IDuplicateReviewProps) => {
+const UserDuplicateReview = (props: IDuplicateReviewProps): ReactElement => {
   const { duplicates, index, linkedRoles, newRoles } = props
   const { existing, 'new': newUser } = duplicates[index]
 
@@ -186,6 +104,8 @@ const UserDuplicateReview = (props: IDuplicateReviewProps) => {
     </Flex>
   )
 }
+
+export default UserDuplicateReview
 
 
 const Container = styled(Flex)<{ is_newUser: string }>`

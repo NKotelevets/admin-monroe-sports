@@ -1,6 +1,7 @@
 import {
+  IDuplicateModalControlsProps,
   useDuplicateModalControls
-} from '@/pages/Protected/Users/components/UsersReviewUpdateModal/hooks/useDuplicateModalControls.ts'
+} from '@/components/DuplicateReviewModal/hooks/useDuplicateModalControls.ts'
 import {
   ArrowButton,
   Container,
@@ -8,12 +9,12 @@ import {
   DefaultButton,
   Footer,
   Title
-} from '@/pages/Protected/Users/components/UsersReviewUpdateModal/Elements.tsx'
+} from '@/components/DuplicateReviewModal/components'
 import { Button, Flex, Spin } from 'antd'
 import Message from '@/components/Message.tsx'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { MonroeDarkBlueText } from '@/components/Elements'
-import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react'
+import { ReactElement, useEffect, useMemo } from 'react'
 import styled from '@emotion/styled'
 import LoadingOutlined from '@ant-design/icons/lib/icons/LoadingOutlined'
 import { IDuplicate } from '@/common/interfaces'
@@ -28,12 +29,16 @@ interface IDuplicateReviewModalProps<T, Y> {
   isLoading: boolean
   error: boolean
   success: boolean
+  removeDuplicateByIndex?: IDuplicateModalControlsProps<T>['removeDuplicateByIndex']
+  hideSkipButton?: boolean
+  mainButtonText?: string
+  buttonSize?: number
 
-  children(index: number, setPayload: (payload: unknown) => void): ReactElement
+  children(index: number): ReactElement
+
+  customButton?(): ReactElement
 
   handleUpdate(index: number): void
-
-  removeDuplicateByIndex(index: number): void
 
   onChange?(index: number): void
 
@@ -42,14 +47,18 @@ interface IDuplicateReviewModalProps<T, Y> {
 
 export const DuplicateReviewModal = <T, Y>(props: IDuplicateReviewModalProps<T, Y>) => {
   const {
-    children,
     idx = 1,
     duplicates,
     isLoading = false,
     success = false,
     error = false,
-    handleUpdate,
+    hideSkipButton = false,
+    mainButtonText = 'Replace',
+    buttonSize,
     removeDuplicateByIndex,
+    children,
+    customButton,
+    handleUpdate,
     onChange,
     onClose
   } = props
@@ -63,7 +72,6 @@ export const DuplicateReviewModal = <T, Y>(props: IDuplicateReviewModalProps<T, 
     currentIdx
   } = useDuplicateModalControls<IDuplicate<T, Y>>({ idx, duplicates, removeDuplicateByIndex, onClose })
 
-  const [payload, setPayload] = useState<unknown>()
   const total = useMemo(() => duplicates.length, [duplicates])
   const current = duplicates[currentIdx]
   const difference = current.differences || compareObjects(current.new as object, current.existing as object) || {}
@@ -71,11 +79,11 @@ export const DuplicateReviewModal = <T, Y>(props: IDuplicateReviewModalProps<T, 
 
   useEffect(() => {
     !!onChange && onChange(actualIndex)
-  }, [actualIndex, payload])
-
-  const onUpdate = useCallback(() => {
-    handleUpdate(actualIndex)
   }, [actualIndex])
+
+  const onUpdate = () => {
+    handleUpdate(actualIndex)
+  }
 
   return (
     <Container>
@@ -84,7 +92,7 @@ export const DuplicateReviewModal = <T, Y>(props: IDuplicateReviewModalProps<T, 
           <Title>Review update</Title>
 
           <Flex className="w-790">
-            {children(actualIndex, setPayload)}
+            {children(actualIndex)}
           </Flex>
 
           {error && <Message type="error" text={ERROR_MESSAGE} />}
@@ -117,21 +125,26 @@ export const DuplicateReviewModal = <T, Y>(props: IDuplicateReviewModalProps<T, 
               Close
             </DefaultButton>
 
-            <DefaultButton
-              type="default"
-              disabled={isLoading}
-              onClick={handleSkip}
-            >
-              Skip
-            </DefaultButton>
+            {!!customButton && customButton()}
+
+            {!hideSkipButton && (
+              <DefaultButton
+                type="default"
+                disabled={isLoading}
+                onClick={handleSkip}
+              >
+                Skip
+              </DefaultButton>
+            )}
 
             {hasDifferences && (
               <ButtonSized
                 type="primary"
                 className="br-4"
+                width={buttonSize}
                 onClick={!isLoading ? onUpdate : undefined}
               >
-                {isLoading ? <Spin indicator={<Indicator spin />} size="small" /> : 'Update current'}
+                {isLoading ? <Spin indicator={<Indicator spin />} size="small" /> : mainButtonText}
               </ButtonSized>
             )}
           </Flex>
@@ -145,6 +158,6 @@ const Indicator = styled(LoadingOutlined)`
     font-size: 24px;
     color: white;
 `
-const ButtonSized = styled(Button)`
-    width: 130px
+const ButtonSized = styled(Button)<{ width?: number }>`
+    width: ${({ width }) => width ?? 90}px;
 `

@@ -5,7 +5,7 @@ import {
   useMasterTeamImportInfoTableParams
 } from '@/pages/Protected/MasterTeams/hooks/useMasterTeamImportInfoTableParams.tsx'
 import { createPortal } from 'react-dom'
-import { DuplicateReviewModal } from '@/components/DuplicateReviewModal.tsx'
+import { DuplicateReviewModal } from '@/components/DuplicateReviewModal'
 import {
   IFEDuplicate,
   IFEExistingMasterTeamDuplicate,

@@ -14,6 +14,21 @@ const PAGE_SUBTITLE = `This panel provides a summary of your CSV import, listing
   duplicate to review details, compare and decide whether to keep existing records or replace them with new
   entries. This helps ensure your data is accurate and up-to-date.`
 
+/**
+ * MasterTeamImportInfo Component
+ *
+ * This component renders the "League Teams" page, which provides an overview of the CSV import process,
+ * highlighting rows with errors and duplicates for review and action.
+ *
+ * @returns {ReactElement} A React element that renders the "League Teams" page with a table displaying import details.
+ *
+ * @description
+ * - The `Page` component sets up the main structure of the page, including:
+ *   - `title`: The title of the page, "League Teams."
+ *   - `subtitle`: A detailed description of the import panel's purpose, set by `PAGE_SUBTITLE`.
+ *   - `breadcrumbs`: Navigation breadcrumbs defined by `BREADCRUMB_ITEMS` to help users track their location.
+ * - The `MasterTeamImportTable` component is rendered within the page to display the team import information.
+ */
 
 const MasterTeamImportInfo = (): ReactElement => {
   return (

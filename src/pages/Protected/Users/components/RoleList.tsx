@@ -35,9 +35,9 @@ export const RoleList = React.memo((props: ICurrentRoleListProps) => {
   const { roles, isNew = false} = props
 
   const groupedByRole = Object.values(
-    roles.reduce((acc, { role, team_id, teamName }) => {
+    roles.reduce((acc, { role, teamName }) => {
       if (!acc[role]) acc[role] = { role, teamNames: [] }
-      if (team_id) acc[role].teamNames.push(teamName)
+      acc[role].teamNames.push(teamName)
       return acc
     }, {} as TMappedRoles)
   )

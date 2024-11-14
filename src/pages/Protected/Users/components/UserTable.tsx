@@ -38,7 +38,7 @@ interface ISeasonsTableTableProps {
   showCreatedRecords: boolean
 }
 
-const UsersTable: FC<ISeasonsTableTableProps> = ({
+const UserTable: FC<ISeasonsTableTableProps> = ({
   isBlockAllUsers,
   selectedRecordIds,
   setIsDeleteAllRecords,
@@ -306,5 +306,5 @@ const UsersTable: FC<ISeasonsTableTableProps> = ({
   )
 }
 
-export default UsersTable
+export default UserTable
 
