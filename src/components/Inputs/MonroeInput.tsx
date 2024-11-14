@@ -27,7 +27,7 @@ const MonroeInput: FC<IMonroeInputProps> = ({ label, error, errorPosition = 'top
       </Flex>
     )}
 
-    <StyledInput is_error={`${error ? 'true' : 'false'}`} {...rest} />
+    <StyledInput isError={!!error} {...rest} />
 
     {error && errorPosition === 'bottom' && <InputError>{error}</InputError>}
   </>

@@ -2,6 +2,8 @@ import { LeagueTeamsTable } from './components/LeagueTeamsTable'
 import { TableProvider } from '@/components/Table/MonroeTable/TableProvider.tsx'
 import { TablePage } from '@/layouts/TablePage'
 import { ReactElement } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { PATH_TO_CREATE_LEAGUE_TEAM } from '@/common/constants/paths.ts'
 
 const DELETE_TERMS = {
   singular: 'league team',
@@ -27,11 +29,13 @@ const DELETE_TERMS = {
  * @returns {ReactElement} The LeagueTeams page component.
  */
 const LeagueTeams = (): ReactElement => {
+  const navigation = useNavigate()
+
   return (
     <TableProvider>
       <TablePage
         title="League Teams"
-        onCreate={() => undefined}
+        onCreate={() => navigation(PATH_TO_CREATE_LEAGUE_TEAM)}
         onDelete={() => undefined}
         deleteTerm={DELETE_TERMS}
       >
