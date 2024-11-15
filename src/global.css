@@ -769,7 +769,7 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
   display: inline-block !important;
 }
 
-.ant-menu-submenu-arrow::before, .ant-menu-submenu-arrow::after {
+.ant-select .ant-menu-submenu-arrow::before, .ant-select .ant-menu-submenu-arrow::after {
   position: absolute;
   right: 2px;
   top: 7px;
@@ -781,7 +781,7 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
   content: "";
   transform: rotate(-45deg) translateX(2.5px);
 }
-.ant-menu-submenu-arrow::after {
+.ant-select .ant-menu-submenu-arrow::after {
   transform: rotate(45deg) translateX(-2.5px);
 }
 

@@ -11,7 +11,8 @@ const DesignConfigProvider: FC<{ children: ReactNode }> = ({ children }) => (
         colorPrimaryActive: colors.primary,
         colorTextDisabled: colors.dim,
         borderRadius: 0,
-        fontFamily: 'Inter, sans-serif'
+        fontFamily: 'Inter, sans-serif',
+        colorError: colors.primary
       },
       components: {
         Tabs: {
