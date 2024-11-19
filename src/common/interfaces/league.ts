@@ -103,7 +103,7 @@ export interface IGetLeaguesRequestParams {
   standings_format?: string | undefined
   tiebreakers_format?: string | undefined
   type?: string | undefined
-  order_by?: string
+  order_by: string | null
 }
 
 export interface IGetLeaguesResponse {
@@ -135,4 +135,15 @@ export interface ILeagueImportInfoTableRecord {
   message: string
   type: TErrorDuplicate
   idx: number
+}
+
+export interface ILeagueForm {
+  name: string
+  masterTeam: string | undefined
+  masterTeamAdmin: string | undefined
+  masterTeamAdminName: string
+  masterTeamAdminEmail: string
+  league: string | undefined
+  division: string | undefined
+  subdivision: string | undefined
 }

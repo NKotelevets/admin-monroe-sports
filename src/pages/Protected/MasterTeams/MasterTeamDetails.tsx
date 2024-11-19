@@ -159,7 +159,7 @@ const MasterTeamDetails = () => {
             <LinkedLeagueList
               leagues={leagues}
               divisions={data.divisions}
-              subDivisions={data.subDivisions}
+              subdivisions={data.subdivisions}
             />
           </Flex>
         </PageContainer>
@@ -171,7 +171,7 @@ const MasterTeamDetails = () => {
 interface ILinkedLeagueListProps {
   leagues: IFELeague[]
   divisions: IFEDivision[]
-  subDivisions: IFESubdivision[]
+  subdivisions: IFESubdivision[]
 }
 
 /**
@@ -183,7 +183,7 @@ interface ILinkedLeagueListProps {
  * @returns {ReactElement} A component that renders linked leagues with division and subdivision details.
  */
 const LinkedLeagueList = (props: ILinkedLeagueListProps): ReactElement => {
-  const { leagues, divisions, subDivisions } = props
+  const { leagues, divisions, subdivisions } = props
   const navigate = useNavigate()
 
   const goToLeague = (id: string) => navigate(`${PATH_TO_LEAGUE_PAGE}/${id}`)
@@ -197,7 +197,7 @@ const LinkedLeagueList = (props: ILinkedLeagueListProps): ReactElement => {
   const renderLeagues = useCallback(() => (
     leagues.map((league, index) => {
       const divisionName = divisions[index]?.name
-      const subDivisionName = subDivisions[index]?.name ? `, ${subDivisions[index]?.name}` : undefined
+      const subdivisionName = subdivisions[index]?.name ? `, ${subdivisions[index]?.name}` : undefined
 
       return (
         <Flex vertical key={league.id}>
@@ -206,7 +206,7 @@ const LinkedLeagueList = (props: ILinkedLeagueListProps): ReactElement => {
           </MonroeLightBlueText>
 
           <SubText>
-            {divisionName} {subDivisionName}
+            {divisionName} {subdivisionName}
           </SubText>
         </Flex>
       )

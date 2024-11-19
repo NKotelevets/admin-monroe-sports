@@ -1,5 +1,5 @@
 import { Page } from '@/layouts/Page.tsx'
-import { LeagueTeamForm } from './components/LeagueTeamForm.tsx'
+import { LeagueTeamForm } from './components/LeagueTeamForm'
 
 const LeagueTeamCreate = () => {
   return (

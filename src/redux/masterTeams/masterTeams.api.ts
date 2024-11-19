@@ -117,8 +117,8 @@ export const masterTeamsApi = createApi({
         divisions: (
           transformKeysToCamelCase<IFEMasterTeamDetails['divisions'], IBEMasterTeamDetails['divisions']>(response.divisions)
         ),
-        subDivisions: (
-          transformKeysToCamelCase<IFEMasterTeamDetails['subDivisions'], IBEMasterTeamDetails['subdivisions']>(response.subdivisions)
+        subdivisions: (
+          transformKeysToCamelCase<IFEMasterTeamDetails['subdivisions'], IBEMasterTeamDetails['subdivisions']>(response.subdivisions)
         ),
       }),
     }),

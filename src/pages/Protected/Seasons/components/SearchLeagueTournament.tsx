@@ -74,6 +74,7 @@ const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({
         limit: DEFAULT_LIMIT_RECORDS,
         offset,
         league_name: value,
+        order_by: null
       }).unwrap()
 
       if (response?.leagues) setLeaguesList((prev) => [...prev, ...response.leagues])
@@ -87,6 +88,7 @@ const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({
       const response = await getLeagues({
         limit: DEFAULT_LIMIT_RECORDS,
         offset,
+        order_by: null
       }).unwrap()
 
       setLeaguesList(response.leagues || [])
@@ -106,6 +108,7 @@ const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({
       limit: DEFAULT_LIMIT_RECORDS,
       offset: 0,
       league_name: value === selectedLeague ? '' : value,
+      order_by: null
     }).unwrap()
 
     setLeaguesList(res?.leagues || [])

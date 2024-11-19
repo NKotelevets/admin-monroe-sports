@@ -1,4 +1,4 @@
-import { LeagueTeamsTable } from './components/LeagueTeamsTable'
+import { LeagueTeamsTable } from './components/leagueTeamsTable.tsx'
 import { TableProvider } from '@/components/Table/MonroeTable/TableProvider.tsx'
 import { TablePage } from '@/layouts/TablePage'
 import { ReactElement } from 'react'
@@ -14,7 +14,7 @@ const DELETE_TERMS = {
  * LeagueTeams Page
  *
  * This component sets up a page for managing "league teams" using a table layout.
- * It utilizes the `TableProvider` to supply context to the `TablePage` and `LeagueTeamsTable`,
+ * It utilizes the `TableProvider` to supply context to the `TablePage` and `Index`,
  * providing features such as item selection, loading states, and handling table parameters.
  *
  * The `TablePage` handles the main layout, including create and delete actions,

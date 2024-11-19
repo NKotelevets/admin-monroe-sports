@@ -4,14 +4,21 @@ import { IBEDivision, IBESubdivision, IFEDivision } from '@/common/interfaces/di
 import { IBELeague } from '@/common/interfaces/league'
 import { TDeleteStatus, TErrorDuplicate } from '@/common/types'
 
-interface ISeasonCommonFields {
+interface IBESeasonCommonFields {
   id: string
   name: string
   league: IBELeague
   divisions: IBEDivision[]
 }
 
-export interface IBESeason extends ISeasonCommonFields {
+interface ISeasonCommonFields {
+  id: string
+  name: string
+  league: IBELeague
+  divisions: IFEDivision[]
+}
+
+export interface IBESeason extends IBESeasonCommonFields {
   updated_at?: string
   created_at?: string
   start_date: string

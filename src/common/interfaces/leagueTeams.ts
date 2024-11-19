@@ -141,7 +141,7 @@ export interface IFELeagueTeamDetails {
   coaches: IFESimpleEntity[]
   leagues: IFELeague[]
   divisions: IFEDivision[]
-  subDivisions: IFESubdivision[]
+  subdivisions: IFESubdivision[]
 }
 
 export interface ILeagueTeamError {

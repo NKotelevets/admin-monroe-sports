@@ -99,8 +99,8 @@ export const leagueTeamsApi = createApi({
         divisions: (
           transformKeysToCamelCase<IFELeagueTeamDetails['divisions'], IBELeagueTeamDetails['divisions']>(response.divisions)
         ),
-        subDivisions: (
-          transformKeysToCamelCase<IFELeagueTeamDetails['subDivisions'], IBELeagueTeamDetails['subdivisions']>(response.subdivisions)
+        subdivisions: (
+          transformKeysToCamelCase<IFELeagueTeamDetails['subdivisions'], IBELeagueTeamDetails['subdivisions']>(response.subdivisions)
         ),
       }),
     }),
