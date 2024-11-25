@@ -76,8 +76,14 @@ export const MasterTeamDropdown = React.memo((props: {
     if (values.masterTeam) {
       const mt = masterTeamItems.findIndex(mt => mt.id === values.masterTeam)
       setSelectedMasterTeam(masterTeamItems[mt])
-      setFieldValue('masterTeamAdminName', mt >= 0 ? masterTeamItems[mt]?.teamAdminId : '')
-      setFieldValue('masterTeamAdminEmail', mt >= 0 ? masterTeamItems[mt]?.teamAdminEmail : '')
+
+      const teamAdmin = masterTeamItems[mt]?.teamAdmins
+      const isValidAdmin = Array.isArray(teamAdmin) && teamAdmin.length > 0
+      const adminName = isValidAdmin ? teamAdmin[0]?.firstName ?? '' : ''
+      const adminEmail = isValidAdmin ? teamAdmin[0]?.email ?? '' : ''
+
+      setFieldValue('masterTeamAdminName', adminName)
+      setFieldValue('masterTeamAdminEmail', adminEmail)
     }
   }, [values.masterTeam, masterTeamItems])
 
