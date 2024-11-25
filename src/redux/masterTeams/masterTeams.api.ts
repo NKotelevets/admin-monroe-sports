@@ -123,7 +123,7 @@ export const masterTeamsApi = createApi({
       }),
     }),
 
-    createMasterTeam: builder.mutation<void, IPopulateMTRequest>({
+    createMasterTeam: builder.mutation<{ team_id: string }, IPopulateMTRequest>({
       query: (body) => ({
         url: 'teams/teams/create-team-as-admin',
         method: 'POST',
@@ -183,6 +183,7 @@ export const {
   useLazyGetMasterTeamsQuery,
   useCreateMasterTeamMutation,
   useGetMasterTeamQuery,
+  useLazyGetMasterTeamQuery,
   useDeleteMasterTeamMutation,
   useBulkDeleteMasterTeamsMutation,
   useEditMasterTeamMutation,

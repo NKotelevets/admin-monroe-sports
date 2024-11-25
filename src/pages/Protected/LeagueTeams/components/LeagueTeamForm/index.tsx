@@ -13,13 +13,14 @@ import styled from '@emotion/styled'
 import MonroeButton from '@/components/MonroeButton.tsx'
 import TabPane from 'antd/es/tabs/TabPane'
 import TextInput from '@/components/Inputs/TextInput.tsx'
-import * as Yup from 'yup'
-import { useState } from 'react'
+import { ReactElement, useCallback, useState } from 'react'
 import { IFELeague, ILeagueForm } from '@/common/interfaces/league.ts'
 import { DivisionSubdivisionDropdown } from './DivisionSubdivisionDropdown'
 import { MasterTeamDropdown } from '@/pages/Protected/LeagueTeams/components/LeagueTeamForm/MasterTeamDropdown.tsx'
 import { MasterTeamAdminDropdown } from './MasterTeamAdminDropdown'
 import { LeagueTournDropdown } from './LeagueTournDropdown'
+import { leagueTeamValidationSchema } from './validation'
+import { AddingMasterTeam } from '@/pages/Protected/LeagueTeams/components/LeagueTeamForm/AddingMasterTeam.tsx'
 
 const leagueTeamInitialValues: ILeagueForm = {
   name: '',
@@ -32,37 +33,31 @@ const leagueTeamInitialValues: ILeagueForm = {
   masterTeamAdminEmail: ''
 }
 
-const leagueTeamValidationSchema = Yup.object<ILeagueForm>().shape({
-  name: Yup.string().required('Name is required'),
-  masterTeam: Yup.string()
-    .test(
-      'fieldA-required-if-fieldB-empty',
-      'Master Team is required',
-      function(value) {
-        const { masterTeamAdmin } = this.parent
-        if (!masterTeamAdmin || masterTeamAdmin.trim() === '') {
-          return !!value && value.trim() !== ''
-        }
-        return true
-      }
-    ),
-  masterTeamAdmin: Yup.string().test(
-    'fieldB-required-if-fieldA-filled',
-    'Master Team Admin is required',
-    function(value) {
-      const { masterTeam } = this.parent
-      if (!masterTeam || masterTeam.trim() === '') {
-        return !!value && value.trim() !== ''
-      }
-      return true
-    }
-  ),
-  league: Yup.string().required('League is required'),
-  division: Yup.string().required('Division is required'),
-  subdivision: Yup.string().required('Subdivision is required')
-})
-
-export const LeagueTeamForm = (props: IFormProps<ILeagueForm, ILeagueForm>) => {
+/**
+ * LeagueTeamForm Component
+ *
+ * This component renders a form to create or edit a league team.
+ * It provides fields for entering the team name, selecting or assigning a master team,
+ * and linking the team to leagues or tournaments. Validation and submission logic
+ * are implemented using Formik, ensuring a seamless user experience.
+ *
+ * @param {IFormProps<ILeagueForm, ILeagueForm>} props - The properties passed to the component.
+ * @param {Object} props.validationSchema - The validation schema for form fields.
+ * @param {ILeagueForm | undefined} props.initialValues - The initial values for the form fields.
+ * @param {boolean} props.isLoading - Indicates if the form submission is in progress.
+ * @param {function} props.onSubmit - Callback function triggered on form submission.
+ * @param {function} props.goBack - Callback function triggered when the cancel button is clicked.
+ *
+ * Main Features:
+ * - Formik integration for managing form state, validation, and submission.
+ * - Dynamic form behavior based on whether the team is new or being edited.
+ * - Tabbed interface for selecting a master team by dropdown or assigning an admin.
+ * - Validates exclusive selection between master team and master team admin.
+ * - League and tournament linkage using dropdowns.
+ *
+ * @returns {ReactElement} A form for creating or editing a league team.
+ */
+export const LeagueTeamForm = (props: IFormProps<ILeagueForm, ILeagueForm>): ReactElement => {
   const {
     validationSchema,
     initialValues,
@@ -71,20 +66,25 @@ export const LeagueTeamForm = (props: IFormProps<ILeagueForm, ILeagueForm>) => {
     goBack
   } = props
 
-  const isNew = true
-  const pageTitle = isNew ? 'Create' : 'Edit'
+  const isNew = initialValues === undefined
+  const buttonTitle = isNew ? `Create League Team` : `Edit League Team`
   const [selectedLeague, setSelectedLeague] = useState<IFELeague | null>(null)
+  const [addingMasterTeam, setAddingMasterTeam] = useState<boolean>(false)
 
-  const onTabChange = (setFieldValue: FormikHelpers<ILeagueForm>['setFieldValue']) => {
-   return () => {
-     setFieldValue('masterTeam', undefined)
-     setFieldValue('masterTeamAdmin', undefined)
-     setFieldValue('masterTeamAdminName', undefined)
-     setFieldValue('masterTeamAdminEmail', undefined)
+  const onTabChange = useCallback((setFieldValue: FormikHelpers<ILeagueForm>['setFieldValue']) => {
+    return () => {
+      setFieldValue('masterTeam', undefined)
+      setFieldValue('masterTeamAdmin', undefined)
+      setFieldValue('masterTeamAdminName', undefined)
+      setFieldValue('masterTeamAdminEmail', undefined)
     }
+  }, [])
+
+  const onAddMasterTeam = () => {
+    setAddingMasterTeam(true)
   }
 
-  const handleSubmit = (values: ILeagueForm, { setFieldError }: FormikHelpers<ILeagueForm>) => {
+  const handleSubmit = useCallback((values: ILeagueForm, { setFieldError }: FormikHelpers<ILeagueForm>) => {
     if (values.masterTeam && values.masterTeamAdmin) {
       setFieldError('masterTeam', 'Choose either a master team or a master team admin')
       return
@@ -96,7 +96,7 @@ export const LeagueTeamForm = (props: IFormProps<ILeagueForm, ILeagueForm>) => {
     }
 
     onSubmit(values)
-  }
+  }, [])
 
   return (
     <Formik
@@ -118,6 +118,14 @@ export const LeagueTeamForm = (props: IFormProps<ILeagueForm, ILeagueForm>) => {
           isValid,
           setFieldValue
         }) => {
+
+        if (addingMasterTeam) {
+          return (
+            <AddingMasterTeam
+              setAddingMasterTeam={setAddingMasterTeam}
+            />
+          )
+        }
 
         return (
           <Form onSubmit={handleSubmit} className="league-teams">
@@ -158,7 +166,7 @@ export const LeagueTeamForm = (props: IFormProps<ILeagueForm, ILeagueForm>) => {
                     centered
                   >
                     <TabPane tab="By Master Team" key="1">
-                      <MasterTeamDropdown />
+                      <MasterTeamDropdown onAddMasterTeam={onAddMasterTeam} setAddingMasterTeam={setAddingMasterTeam} />
                     </TabPane>
 
                     <TabPane tab="By MT Admin" key="2">
@@ -197,7 +205,7 @@ export const LeagueTeamForm = (props: IFormProps<ILeagueForm, ILeagueForm>) => {
                     className="h-40"
                     isLoading={isLoading}
                     isDisabled={!dirty || !isValid}
-                    label={pageTitle}
+                    label={buttonTitle}
                     onClick={handleSubmit}
                   />
                 </Flex>

@@ -29,7 +29,7 @@ import {
   PATH_TO_SEASONS,
   PATH_TO_STANDINGS_FORMAT,
   PATH_TO_TIEBREAKERS,
-  PATH_TO_USERS,
+  PATH_TO_USERS, PATH_TO_EDIT_LEAGUE_TEAM, PATH_TO_CREATE_LEAGUE_TEAM
 } from '@/common/constants/paths'
 
 import UserIcon from '@/assets/icons/header/user.svg'
@@ -73,11 +73,14 @@ const MonroeSidebar = () => {
     pathname.includes(PATH_TO_CREATE_USER) ||
     pathname.includes(PATH_TO_EDIT_USER) ||
     pathname.includes(PATH_TO_EDIT_MASTER_TEAM) ||
-    pathname.includes(PATH_TO_CREATE_MASTER_TEAM)
+    pathname.includes(PATH_TO_CREATE_MASTER_TEAM) ||
+    pathname.includes(PATH_TO_CREATE_LEAGUE_TEAM) ||
+    pathname.includes(PATH_TO_EDIT_LEAGUE_TEAM)
   const isLeagueTournamentPage = pathname.includes(PATH_TO_LEAGUES)
   const isSeasonsPage = pathname.includes(PATH_TO_SEASONS)
   const isUsersPage = pathname.includes(PATH_TO_USERS)
   const isMasterTeamsPage = pathname.includes(PATH_TO_MASTER_TEAMS)
+  const isLeagueTeamsPage = pathname.includes(PATH_TO_LEAGUE_TEAMS)
 
   const { setIsCreateBracketPage, setSelectedBracketId } = useSeasonSlice()
 
@@ -89,6 +92,8 @@ const MonroeSidebar = () => {
     if (isUsersPage) return USERS_KEY
 
     if (isMasterTeamsPage) return TEAMS_KEY
+
+    if (isLeagueTeamsPage) return TEAMS_KEY
 
     if ([PATH_TO_PLAYOFF_FORMAT, PATH_TO_STANDINGS_FORMAT, PATH_TO_TIEBREAKERS].includes(pathname))
       return STANDINGS_DISPLAY_KEY
@@ -102,6 +107,8 @@ const MonroeSidebar = () => {
     if (isSeasonsPage) return PATH_TO_SEASONS
 
     if (isMasterTeamsPage) return PATH_TO_MASTER_TEAMS
+
+    if (isLeagueTeamsPage) return PATH_TO_LEAGUE_TEAMS
 
     return ''
   }
