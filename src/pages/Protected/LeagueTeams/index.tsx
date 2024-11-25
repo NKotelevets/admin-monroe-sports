@@ -11,7 +11,7 @@ const DELETE_TERMS = {
 }
 
 /**
- * LeagueTeams Page
+ * League Teams Page
  *
  * This component sets up a page for managing "league teams" using a table layout.
  * It utilizes the `TableProvider` to supply context to the `TablePage` and `Index`,
