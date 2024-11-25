@@ -1,0 +1,10 @@
+
+export const colors = {
+  primary: '#BC261B',
+  primaryHover: '#BC261B',
+  secondary: '#3E34CA',
+  secondaryText: '#1A1657D9',
+  dim: '#888791',
+  dimLight: '#EFEFF1',
+  transparent: 'transparent'
+}

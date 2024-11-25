@@ -47,7 +47,7 @@ export const useLeagueAndTournamentTableParams = ({ setSelectedRecordId, setShow
     getLeagues({
       limit,
       offset,
-      order_by: order_by || undefined,
+      order_by: order_by || null,
     })
     clearFilters()
   }

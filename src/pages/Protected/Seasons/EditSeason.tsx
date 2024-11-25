@@ -57,6 +57,7 @@ import { ICreateBESeason } from '@/common/interfaces/season'
 import FileExcel from '@/assets/icons/file-exel.svg'
 import ShowAllIcon from '@/assets/icons/show-all.svg'
 import SwapIcon from '@/assets/icons/swap.svg'
+import { IMatch, IParticipant } from '@/common/interfaces/bracket.ts'
 
 const EditSeason = () => {
   const params = useParams<{ id: string }>()
@@ -143,7 +144,7 @@ const EditSeason = () => {
       let bracketName = 'bracket'
 
       currentData?.divisions.map((div) =>
-        div.sub_division.map((subDiv) =>
+        div.subdivisions.map((subDiv) =>
           subDiv.brackets?.map((bracket) => {
             if (bracket.id === selectedBracketId) {
               bracketName = bracket.name
@@ -194,8 +195,7 @@ const EditSeason = () => {
               start_time: null,
               tournament_round_text: match.tournamentRoundText || '',
               next_match_id: match.nextMatchId,
-              match_participants: match.participants
-                .map((p) => ({
+              match_participants: match?.participants?.map((p) => ({
                   sub_division: p.subpoolName,
                   seed: p.seed,
                   is_empty: p.isEmpty,
@@ -265,8 +265,7 @@ const EditSeason = () => {
                 start_time: null,
                 tournament_round_text: match.tournamentRoundText || '',
                 next_match_id: match.nextMatchId,
-                match_participants: match.participants
-                  .map((p) =>
+                match_participants: match.participants?.map((p) =>
                     p.id.length > 2
                       ? {
                           id: p.id.length > 2 ? p.id : '',
@@ -333,37 +332,37 @@ const EditSeason = () => {
         id: division.id || '',
         name: division.name,
         description: division.description,
-        subdivisions: division.sub_division.map((subdivision) => ({
+        subdivisions: division.subdivisions.map((subdivision) => ({
           id: subdivision.id || '',
           name: subdivision.name,
           description: subdivision.description,
-          playoffFormat: subdivision.playoff_format === 0 ? BEST_RECORD_WINS : SINGLE_ELIMINATION_BRACKET,
-          standingsFormat: subdivision.standings_format === 0 ? WINNING : POINTS,
-          tiebreakersFormat: subdivision.tiebreakers_format === 0 ? WINNING : POINTS,
+          playoffFormat: subdivision.playoffFormat === 0 ? BEST_RECORD_WINS : SINGLE_ELIMINATION_BRACKET,
+          standingsFormat: subdivision.standingsFormat === 0 ? WINNING : POINTS,
+          tiebreakersFormat: subdivision.tiebreakersFormat === 0 ? WINNING : POINTS,
           changed: subdivision.changed,
           brackets: subdivision!.brackets!.map((bracket) => ({
             id: bracket.id,
             name: bracket.name,
             subdivisionsNames: bracket.subdivision,
-            playoffTeams: bracket.number_of_teams,
+            playoffTeams: bracket.numberOfTeams,
             matches: bracket.matches.map((match) => ({
-              id: match.match_integer_id,
-              nextMatchId: match.next_match_id,
-              tournamentRoundText: match.tournament_round_text,
+              id: match.id,
+              nextMatchId: match.nextMatchId,
+              tournamentRoundText: match.tournamentRoundText,
               state: 'SCHEDULED',
-              isNotFirstRound: match.is_not_first_round,
-              gameNumber: match.game_number,
+              isNotFirstRound: match.isNotFirstRound,
+              gameNumber: match.gameNumber,
               startTime: '-',
-              topTeam: match.top_team,
-              bottomTeam: match.bottom_team,
-              participants: match.match_participants.map((p) => ({
+              topTeam: match.topTeam,
+              bottomTeam: match.bottomTeam,
+              participants: match.participants?.map((p) => ({
                 id: p.id || '',
-                isEmpty: p.is_empty,
-                subpoolName: p.sub_division,
+                isEmpty: p.isEmpty,
+                subpoolName: '',
                 seed: p.seed,
-              })),
-              primaryId: match.id,
-            })),
+              })) as IParticipant[],
+              primaryId: match.primaryId,
+            })) as IMatch[],
           })),
         })),
       })) || [],

@@ -1,7 +1,9 @@
-import { LeagueTeamsTable } from './components/LeagueTeamsTable'
+import { LeagueTeamsTable } from './components/leagueTeamsTable.tsx'
 import { TableProvider } from '@/components/Table/MonroeTable/TableProvider.tsx'
 import { TablePage } from '@/layouts/TablePage'
 import { ReactElement } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { PATH_TO_CREATE_LEAGUE_TEAM } from '@/common/constants/paths.ts'
 
 const DELETE_TERMS = {
   singular: 'league team',
@@ -12,7 +14,7 @@ const DELETE_TERMS = {
  * LeagueTeams Page
  *
  * This component sets up a page for managing "league teams" using a table layout.
- * It utilizes the `TableProvider` to supply context to the `TablePage` and `LeagueTeamsTable`,
+ * It utilizes the `TableProvider` to supply context to the `TablePage` and `Index`,
  * providing features such as item selection, loading states, and handling table parameters.
  *
  * The `TablePage` handles the main layout, including create and delete actions,
@@ -27,11 +29,13 @@ const DELETE_TERMS = {
  * @returns {ReactElement} The LeagueTeams page component.
  */
 const LeagueTeams = (): ReactElement => {
+  const navigation = useNavigate()
+
   return (
     <TableProvider>
       <TablePage
         title="League Teams"
-        onCreate={() => undefined}
+        onCreate={() => navigation(PATH_TO_CREATE_LEAGUE_TEAM)}
         onDelete={() => undefined}
         deleteTerm={DELETE_TERMS}
       >
