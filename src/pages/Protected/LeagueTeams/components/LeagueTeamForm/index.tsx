@@ -1,4 +1,4 @@
-import { Form, Formik } from 'formik'
+import { Form, Formik, FormikHelpers } from 'formik'
 import {
   CancelButton,
   MainContainer,
@@ -75,7 +75,26 @@ export const LeagueTeamForm = (props: IFormProps<ILeagueForm, ILeagueForm>) => {
   const pageTitle = isNew ? 'Create' : 'Edit'
   const [selectedLeague, setSelectedLeague] = useState<IFELeague | null>(null)
 
-  const handleSubmit = (values: ILeagueForm) => {
+  const onTabChange = (setFieldValue: FormikHelpers<ILeagueForm>['setFieldValue']) => {
+   return () => {
+     setFieldValue('masterTeam', undefined)
+     setFieldValue('masterTeamAdmin', undefined)
+     setFieldValue('masterTeamAdminName', undefined)
+     setFieldValue('masterTeamAdminEmail', undefined)
+    }
+  }
+
+  const handleSubmit = (values: ILeagueForm, { setFieldError }: FormikHelpers<ILeagueForm>) => {
+    if (values.masterTeam && values.masterTeamAdmin) {
+      setFieldError('masterTeam', 'Choose either a master team or a master team admin')
+      return
+    }
+
+    if (!values.masterTeam && !values.masterTeamAdmin) {
+      setFieldError('masterTeam', 'Choose one master team or one master team admin')
+      return
+    }
+
     onSubmit(values)
   }
 
@@ -96,7 +115,8 @@ export const LeagueTeamForm = (props: IFormProps<ILeagueForm, ILeagueForm>) => {
           handleBlur,
           touched,
           dirty,
-          isValid
+          isValid,
+          setFieldValue
         }) => {
 
         return (
@@ -104,7 +124,7 @@ export const LeagueTeamForm = (props: IFormProps<ILeagueForm, ILeagueForm>) => {
             <PageContent>
               <Flex>
                 <div className="f-40">
-                  <ProtectedPageSubtitle>Main Info {isValid ? 'valido' : 'invalido'}</ProtectedPageSubtitle>
+                  <ProtectedPageSubtitle>Main Info</ProtectedPageSubtitle>
                 </div>
 
                 <MainContainer>
@@ -133,6 +153,7 @@ export const LeagueTeamForm = (props: IFormProps<ILeagueForm, ILeagueForm>) => {
 
                 <MainContainer>
                   <Tabs
+                    onChange={onTabChange(setFieldValue)}
                     defaultActiveKey="1"
                     centered
                   >
@@ -153,8 +174,6 @@ export const LeagueTeamForm = (props: IFormProps<ILeagueForm, ILeagueForm>) => {
               <Flex>
                 <div className="f-40">
                   <ProtectedPageSubtitle>Linked Leagues/Tourns</ProtectedPageSubtitle>
-                  <ProtectedPageSubtitleDescription>You can join the Master team you own or select an administrator who
-                    will join the corresponding team from his list.</ProtectedPageSubtitleDescription>
                 </div>
 
                 <MainContainer>
@@ -177,7 +196,7 @@ export const LeagueTeamForm = (props: IFormProps<ILeagueForm, ILeagueForm>) => {
                     type="primary"
                     className="h-40"
                     isLoading={isLoading}
-                    isDisabled={!dirty}
+                    isDisabled={!dirty || !isValid}
                     label={pageTitle}
                     onClick={handleSubmit}
                   />

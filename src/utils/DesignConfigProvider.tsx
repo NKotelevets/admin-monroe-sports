@@ -26,6 +26,9 @@ const DesignConfigProvider: FC<{ children: ReactNode }> = ({ children }) => (
           activeOutlineColor: colors.transparent,
           hoverBorderColor: colors.dim,
           colorText: colors.secondaryText
+        },
+        Button: {
+          borderRadius: 2
         }
       }
     }}

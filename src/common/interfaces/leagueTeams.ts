@@ -99,12 +99,13 @@ export interface IGetLeagueTeamsResponse {
   results: IFELeagueTeam[]
 }
 
-export interface IPopulateMTRequest {
+export interface ICreateLeagueTeamRequest {
   name: string
-  head_coach: string
-  coaches: string[]
-  players: string[]
-  team_admins: string[]
+  masterTeam?: string
+  masterTeamAdmin?: string
+  league: string
+  division: string
+  subdivision: string
 }
 
 export interface IBESimpleEntity {
