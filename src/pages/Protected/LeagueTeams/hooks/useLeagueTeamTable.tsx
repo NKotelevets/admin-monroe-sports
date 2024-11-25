@@ -268,7 +268,6 @@ const useLeagueTeamTableRenderers = () => {
     renderLeague,
     renderSubdivision,
     renderDivision,
-    renderSubdivision,
     renderMasterTeam,
     renderCoachName,
     renderCoachEmail,
