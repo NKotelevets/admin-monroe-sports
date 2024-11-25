@@ -2,7 +2,7 @@ import { Divider } from 'antd'
 import Flex from 'antd/es/flex'
 import { DefaultOptionType } from 'antd/es/select'
 import dayjs from 'dayjs'
-import { Form, Formik, FormikConfig, FormikHelpers } from 'formik'
+import { Form, Formik, FormikHelpers } from 'formik'
 import {
   ICreateUserFormValues,
   userInitialFormData,
@@ -39,6 +39,7 @@ import { IFERole } from '@/common/interfaces/role.ts'
 import { ReactElement, useCallback } from 'react'
 import CreateOperator from '@/pages/Protected/Users/components/CreateOperator.tsx'
 import { AccordionRoleList } from './AccordionRoleList'
+import { IFormProps } from '@/common/interfaces'
 
 const ROLES_WITH_TEAMS: TRole[] = [HEAD_COACH_ROLE, COACH_ROLE, PLAYER_ROLE, TEAM_ADMIN_ROLE]
 const GENDER_OPTIONS: DefaultOptionType[] = [
@@ -47,23 +48,13 @@ const GENDER_OPTIONS: DefaultOptionType[] = [
   { label: 'Other', value: 3 }
 ]
 
-interface IUserFormProps {
-  validationSchema?: FormikConfig<ICreateUserFormValues>['validationSchema']
-  initialValues?: ICreateUserFormValues
-  isLoading?: boolean
-
-  onSubmit(body: ICreateUserAsAdmin): void
-
-  goBack(): void
-}
-
 /**
  * UserForm Component
  *
  * Renders a user form for creating or editing a user with fields for main info, contact info, and role.
  * Supports both standard user creation and operator creation depending on the user context.
  *
- * @param {IUserFormProps} props - The component props.
+ * @param {IFormProps} props - The component props.
  * @param {function} props.validationSchema - A custom schema to validate the form. if undefined, schema for creating
  *   users will be used instead.
  * @param {function} props.initialValues - Values to fill the form. If undefined, the form will be considered new.
@@ -87,7 +78,7 @@ interface IUserFormProps {
  * - On form submission, calls the `onSubmit` prop with the form data.
  * - Provides "Cancel" and "Create User" buttons for user action.
  */
-const UserForm = (props: IUserFormProps): ReactElement => {
+const UserForm = (props: IFormProps<ICreateUserAsAdmin, ICreateUserFormValues>): ReactElement => {
   const {
     validationSchema,
     initialValues,

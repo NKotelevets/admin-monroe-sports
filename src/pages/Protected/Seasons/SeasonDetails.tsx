@@ -128,9 +128,9 @@ const SeasonDetails = () => {
                         {division.name}:
                       </MonroeLinkText>
                       <MonroeBlueText>
-                        {division.sub_division.map(
+                        {division.subdivisions.map(
                           (subdivision, idx) =>
-                            ` ${subdivision.name}${division.sub_division.length - 1 === idx ? '' : ','}`,
+                            ` ${subdivision.name}${division.subdivisions.length - 1 === idx ? '' : ','}`,
                         )}
                       </MonroeBlueText>
                     </Flex>

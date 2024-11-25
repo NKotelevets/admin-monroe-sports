@@ -13,6 +13,7 @@ import {
   IGetSeasonsResponse,
   IImportSeasonsResponse,
 } from '@/common/interfaces/season'
+import { transformKeysToCamelCase } from '@/utils'
 
 const SEASON_TAG = 'SEASON_TAG'
 
@@ -29,16 +30,23 @@ export const seasonsApi = createApi({
       providesTags: [SEASON_TAG],
       transformResponse: (data: IPaginationResponse<IBESeason[]>) => ({
         count: data.count,
-        seasons: data.results.map((season) => ({
-          divisions: season.divisions,
-          expectedEndDate: season.expected_end_date,
-          id: season.id,
-          league: season.league,
-          name: season.name,
-          startDate: season.start_date,
-          createdAt: season!.created_at as string,
-          updatedAt: season!.updated_at as string,
-        })),
+        seasons: data.results.map((season) => {
+          const divisions = season.divisions.map(({ sub_division, ...rest }) => ({
+            ...rest,
+            subdivisions: sub_division
+          }))
+
+          return ({
+            divisions: transformKeysToCamelCase(divisions),
+            expectedEndDate: season.expected_end_date,
+            id: season.id,
+            league: season.league,
+            name: season.name,
+            startDate: season.start_date,
+            createdAt: season!.created_at as string,
+            updatedAt: season!.updated_at as string,
+          })
+        }),
       }),
     }),
     deleteSeason: builder.mutation<void, { id: string }>({
@@ -92,16 +100,23 @@ export const seasonsApi = createApi({
       }),
       keepUnusedDataFor: 0.0001,
 
-      transformResponse: (response: IBESeason): IFESeason => ({
-        createdAt: response.created_at as string,
-        divisions: response.divisions,
-        expectedEndDate: response.expected_end_date,
-        id: response.id,
-        league: response.league,
-        name: response.name,
-        startDate: response.start_date,
-        updatedAt: response.updated_at as string,
-      }),
+      transformResponse: (response: IBESeason): IFESeason => {
+        const divisions = response.divisions.map(({ sub_division, ...rest }) => ({
+          ...rest,
+          subdivisions: sub_division
+        }))
+
+        return ({
+          createdAt: response.created_at as string,
+          divisions: transformKeysToCamelCase(divisions),
+          expectedEndDate: response.expected_end_date,
+          id: response.id,
+          league: response.league,
+          name: response.name,
+          startDate: response.start_date,
+          updatedAt: response.updated_at as string
+        })
+      },
     }),
     getSeasonBEDetails: builder.query<IBESeason, string>({
       query: (id) => ({
@@ -135,6 +150,7 @@ export const {
   useImportSeasonsCSVMutation,
   useUpdateSeasonMutation,
   useGetSeasonDetailsQuery,
+  useLazyGetSeasonDetailsQuery,
   useCreateSeasonMutation,
   useGetSeasonBEDetailsQuery,
   useLazyGetSeasonBEDetailsQuery,

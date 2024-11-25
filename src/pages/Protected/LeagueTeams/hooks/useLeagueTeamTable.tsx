@@ -266,6 +266,7 @@ const useLeagueTeamTableRenderers = () => {
   return {
     renderTeamName,
     renderLeague,
+    renderSubdivision,
     renderDivision,
     renderSubdivision,
     renderMasterTeam,

@@ -12,7 +12,7 @@ import { MasterTeamForm } from '@/pages/Protected/MasterTeams/components/MaterTe
 import { IPopulateMTRequest } from '@/common/interfaces/masterTeams.ts'
 import { useNotification } from '@/hooks/useNotification.ts'
 
-const DEFAULT_ERROR_MESSAGE = 'Master Team could not be created. Please, try again!'
+export const DEFAULT_ERROR_MESSAGE = 'Master Team could not be created. Please, try again!'
 const BREAD_CRUMB_ITEMS = [
   { title: <a href={PATH_TO_MASTER_TEAMS}>Master Teams</a> },
   { title: <MonroeBlueText>Create master team</MonroeBlueText> }
