@@ -41,14 +41,16 @@ const LeagueTeamCreate = (): ReactElement => {
   const navigate = useNavigate()
   const { notify } = useNotification()
 
-  const [createLeagueTeam] = useCreateLeagueTeamMutation()
+  const [createLeagueTeam, {isLoading}] = useCreateLeagueTeamMutation()
+
+  const goBack = () => navigate(PATH_TO_LEAGUE_TEAMS)
 
   const onSubmit = (body: ILeagueForm) => {
     createLeagueTeam(body as ICreateLeagueTeamRequest)
       .unwrap()
       .then(() => {
         notify('League team was successfully created', 'success')
-        navigate(PATH_TO_LEAGUE_TEAMS)
+        goBack()
       })
       .catch((error) => {
         notify(error?.data?.error || error?.data?.details || DEFAULT_ERROR_MESSAGE, 'error')
@@ -58,10 +60,9 @@ const LeagueTeamCreate = (): ReactElement => {
   return (
     <Page title="Create league team">
       <LeagueTeamForm
-        initialValues={undefined}
-        validationSchema={undefined}
+        isLoading={isLoading}
         onSubmit={onSubmit}
-        goBack={() => undefined}
+        goBack={goBack}
       />
     </Page>
   )
