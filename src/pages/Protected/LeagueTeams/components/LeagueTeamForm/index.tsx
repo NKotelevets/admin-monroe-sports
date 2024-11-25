@@ -30,7 +30,7 @@ const leagueTeamInitialValues: ILeagueForm = {
   league: undefined,
   division: undefined,
   subdivision: undefined,
-  masterTeamAdminEmail: ''
+  masterTeamAdminEmail: undefined
 }
 
 /**

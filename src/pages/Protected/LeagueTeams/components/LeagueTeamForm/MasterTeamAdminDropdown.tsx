@@ -41,7 +41,7 @@ export const MasterTeamAdminDropdown = React.memo(() => {
   useEffect(() => {
     if (values.masterTeamAdmin) {
       const mt = masterTeamAdminItems.findIndex(mt => mt.id === values.masterTeamAdmin)
-      setFieldValue('masterTeamAdminEmail', mt ? masterTeamAdminItems[mt]?.email : '')
+      setFieldValue('masterTeamAdminEmail', mt >= 0 ? masterTeamAdminItems[mt]?.email : '')
     }
   }, [values.masterTeamAdmin, masterTeamAdminItems])
 
@@ -61,7 +61,7 @@ export const MasterTeamAdminDropdown = React.memo(() => {
     teamAdminList(leagueTeamsRequestParams)
     setPaginationParams({
       offset: leagueTeamsRequestParams.offset,
-      limit: leagueTeamsRequestParams.limit,
+      limit: leagueTeamsRequestParams.limit
     })
   }, [endReached, offset, limit])
 
@@ -88,7 +88,7 @@ export const MasterTeamAdminDropdown = React.memo(() => {
       <TextInput
         label="League Team Admin Email *"
         name="masterTeamAdminEmail"
-        value={values.masterTeamAdminEmail}
+        value={values?.masterTeamAdminEmail || ''}
         onChange={handleChange}
         placeholder="Master team admin email"
         className="h-32"
