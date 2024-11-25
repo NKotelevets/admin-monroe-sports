@@ -339,7 +339,7 @@ const EditSeason = () => {
           playoffFormat: subdivision.playoffFormat === 0 ? BEST_RECORD_WINS : SINGLE_ELIMINATION_BRACKET,
           standingsFormat: subdivision.standingsFormat === 0 ? WINNING : POINTS,
           tiebreakersFormat: subdivision.tiebreakersFormat === 0 ? WINNING : POINTS,
-          changed: subdivision.changed,
+          changed: subdivision.changed || false,
           brackets: subdivision!.brackets!.map((bracket) => ({
             id: bracket.id,
             name: bracket.name,

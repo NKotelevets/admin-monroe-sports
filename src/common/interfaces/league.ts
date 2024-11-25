@@ -103,7 +103,7 @@ export interface IGetLeaguesRequestParams {
   standings_format?: string | undefined
   tiebreakers_format?: string | undefined
   type?: string | undefined
-  order_by: string | null
+  order_by?: string | null
 }
 
 export interface IGetLeaguesResponse {

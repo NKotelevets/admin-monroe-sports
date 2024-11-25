@@ -69,7 +69,7 @@ export interface IFESubdivision {
   standingsFormat: number | string
   tiebreakersFormat: number | string
   brackets: IFEBracket[]
-  changed: boolean
+  changed?: boolean
 }
 
 export interface IBEDivision {
