@@ -1,6 +1,6 @@
 import { IIdName } from '@/common/interfaces'
 import { IBESeason } from '@/common/interfaces/season'
-import { TDeletionStatus } from '@/common/types'
+import { TDeleteStatus, TErrorDuplicate } from '@/common/types'
 import { TLeagueTourn, TPlayOffFormat, TWinningPoints } from '@/common/types/league'
 
 interface ICommonLeagueFields {
@@ -89,7 +89,7 @@ export interface IImportLeagueDuplicates {
 }
 
 export interface IImportLeagueResponse {
-  status: TDeletionStatus
+  status: TDeleteStatus
   success: IImportLeagueSuccess[]
   errors?: IImportLeagueError[]
   duplicates?: IImportLeagueDuplicates[]
@@ -103,7 +103,7 @@ export interface IGetLeaguesRequestParams {
   standings_format?: string | undefined
   tiebreakers_format?: string | undefined
   type?: string | undefined
-  order_by?: string
+  order_by: string | null
 }
 
 export interface IGetLeaguesResponse {
@@ -124,7 +124,7 @@ export interface ILeagueDeletionItemError {
 }
 
 export interface ILeagueBulkDeleteResponse {
-  status: TDeletionStatus
+  status: TDeleteStatus
   total: number
   success: number
   items: ILeagueDeletionItemError[]
@@ -133,6 +133,17 @@ export interface ILeagueBulkDeleteResponse {
 export interface ILeagueImportInfoTableRecord {
   name: string
   message: string
-  type: 'Error' | 'Duplicate'
+  type: TErrorDuplicate
   idx: number
+}
+
+export interface ILeagueForm {
+  name: string
+  masterTeam: string | undefined
+  masterTeamAdmin: string | undefined
+  masterTeamAdminName: string
+  masterTeamAdminEmail: string
+  league: string | undefined
+  division: string | undefined
+  subdivision: string | undefined
 }

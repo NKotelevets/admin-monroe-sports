@@ -1,7 +1,6 @@
-import TextArea from 'antd/es/input/TextArea'
 import { ChangeEventHandler, FC } from 'react'
 
-import './monroe-input.style.css'
+import { StyledTextArea } from '@/components/Inputs/InputElements'
 
 interface IMonroeTextareaProps {
   onChange: ChangeEventHandler<HTMLTextAreaElement>
@@ -13,8 +12,7 @@ interface IMonroeTextareaProps {
 }
 
 const MonroeTextarea: FC<IMonroeTextareaProps> = ({ resize, initialHeight = 120, ...rest }) => (
-  <TextArea className="input" {...rest} style={{ height: initialHeight, resize }} />
+  <StyledTextArea {...rest} style={{ height: initialHeight, resize }} />
 )
 
 export default MonroeTextarea
-

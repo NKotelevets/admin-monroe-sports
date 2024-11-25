@@ -1,32 +1,32 @@
+import styled from '@emotion/styled'
 import { Layout } from 'antd'
 import { Content } from 'antd/es/layout/layout'
-import { CSSProperties, FC, ReactNode } from 'react'
+import { FC, ReactNode } from 'react'
 
 import MonroeHeader from '@/layouts/BaseLayout/components/MonroeHeader'
 import MonroeSidebar from '@/layouts/BaseLayout/components/MonroeSidebar'
 
 import './styles.css'
 
-const layoutStyle: CSSProperties = {
-  overflow: 'hidden',
-  width: '100vw',
-  height: '100vh',
-}
+const StyledLayout = styled(Layout)`
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+`
 
-const contentStyle: CSSProperties = {
-  minHeight: 120,
-  backgroundColor: '#F4F4F5',
-}
+const StyledContent = styled(Content)`
+  min-height: 120px;
+  background-color: #f4f4f5;
+`
 
 const BaseLayout: FC<{ children: ReactNode }> = ({ children }) => (
-  <Layout style={layoutStyle}>
+  <StyledLayout>
     <MonroeHeader />
     <Layout>
       <MonroeSidebar />
-      <Content style={contentStyle}>{children}</Content>
+      <StyledContent>{children}</StyledContent>
     </Layout>
-  </Layout>
+  </StyledLayout>
 )
 
 export default BaseLayout
-

@@ -24,6 +24,7 @@ interface ILeaguesSliceState {
   createdRecordsNames: string[]
   duplicates: ILeagueDuplicate[]
   tableRecords: ILeagueImportInfoTableRecord[]
+  selectedRecords: IFELeague[]
 }
 
 const leaguesSliceState: ILeaguesSliceState = {
@@ -36,6 +37,7 @@ const leaguesSliceState: ILeaguesSliceState = {
   createdRecordsNames: [],
   duplicates: [],
   tableRecords: [],
+  selectedRecords: []
 }
 
 export const leaguesSlice = createSlice({
@@ -47,7 +49,7 @@ export const leaguesSlice = createSlice({
       action: PayloadAction<{
         limit: number
         offset: number
-        order_by: string | null
+        order_by: 'asc' | 'desc' | null
       }>,
     ) => {
       state.limit = action.payload.limit
@@ -57,12 +59,17 @@ export const leaguesSlice = createSlice({
     removeDuplicate: (state, action: PayloadAction<number>) => {
       const remainingDuplicates = state.duplicates.filter((duplicate) => duplicate.index !== action.payload)
       const remainingTableRecords = state.tableRecords.filter((tableRecord) => tableRecord.idx !== action.payload)
+      const updatedDuplicates = remainingDuplicates.map((tR, idx) => ({ ...tR, index: idx }))
+      const updatedTableRecords = remainingTableRecords.map((tR, idx) => ({ ...tR, idx }))
 
-      state.duplicates = remainingDuplicates
-      state.tableRecords = remainingTableRecords
+      state.duplicates = updatedDuplicates
+      state.tableRecords = updatedTableRecords
     },
     removeCreatedRecordsNames: (state) => {
       state.createdRecordsNames = []
+    },
+    setRecords: (state, action: PayloadAction<IFELeague[]>) => {
+      state.selectedRecords = action.payload
     },
   },
   extraReducers: (builder) =>

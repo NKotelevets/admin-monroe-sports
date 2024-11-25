@@ -1,20 +1,25 @@
+import styled from '@emotion/styled'
 import Tooltip from 'antd/es/tooltip'
 import Typography from 'antd/es/typography'
-import { CSSProperties, FC } from 'react'
+import { FC } from 'react'
 
-const textStyles: CSSProperties = {
-  color: '#3E34CA',
-  cursor: 'pointer',
-  zIndex: 9999,
-}
+const StyledTypography = styled(Typography)<{ is_regular_text: string }>`
+  color: ${(props) => (props.is_regular_text === 'true' ? 'rgba(26, 22, 87, 0.85)' : '#3E34CA')};
+  cursor: ${(props) => (props.is_regular_text === 'true' ? 'default' : 'pointer')};
+
+  @media (width > 1660px) {
+    font-size: 16px;
+  }
+`
 
 interface ITitleWithTooltipProps {
   maxLength: number
   text: string
   onClick?: () => void
+  isRegularText?: boolean
 }
 
-const TextWithTooltip: FC<ITitleWithTooltipProps> = ({ maxLength, text, onClick }) => (
+const TextWithTooltip: FC<ITitleWithTooltipProps> = ({ maxLength, text, onClick, isRegularText }) => (
   <>
     {text?.length > maxLength ? (
       <Tooltip
@@ -25,17 +30,16 @@ const TextWithTooltip: FC<ITitleWithTooltipProps> = ({ maxLength, text, onClick 
           width: '250px',
         }}
       >
-        <Typography.Text style={textStyles} onClick={onClick}>
+        <StyledTypography is_regular_text={`${isRegularText}`} onClick={onClick}>
           {text.substring(0, maxLength - 3).trim() + '...'}
-        </Typography.Text>
+        </StyledTypography>
       </Tooltip>
     ) : (
-      <Typography.Text style={textStyles} onClick={onClick}>
+      <StyledTypography is_regular_text={`${isRegularText}`} onClick={onClick}>
         {text}
-      </Typography.Text>
+      </StyledTypography>
     )}
   </>
 )
 
 export default TextWithTooltip
-

@@ -2,11 +2,11 @@ import { GetProp } from 'antd'
 import Table from 'antd/es/table'
 import { TableProps } from 'antd/es/table/InternalTable'
 import { SorterResult } from 'antd/es/table/interface'
-import Typography from 'antd/es/typography'
 import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 
 import { useSeasonTableParams } from '@/pages/Protected/Seasons/hooks/useSeasonTableParams'
 
+import { ExpandedHeaderLeftText, ExpandedTableHeader, MonroeBlueText, MonroeLightBlueText } from '@/components/Elements'
 import MonroeModal from '@/components/MonroeModal'
 
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
@@ -23,6 +23,17 @@ interface ITableParams {
   filters?: Parameters<GetProp<TableProps, 'onChange'>>[1]
 }
 
+const showTotal = (total: number) => <MonroeBlueText>Total {total} items</MonroeBlueText>
+
+type TTableKeys = 'name' | 'league' | 'startDate' | 'expectedEndDate'
+
+const BE_SORTING_FIELDS: Record<TTableKeys, string> = {
+  expectedEndDate: 'expected_end_date',
+  league: 'league',
+  name: 'name',
+  startDate: 'start_date',
+}
+
 interface ISeasonsTableTableProps {
   setSelectedRecordsIds: Dispatch<SetStateAction<string[]>>
   selectedRecordIds: string[]
@@ -33,18 +44,6 @@ interface ISeasonsTableTableProps {
   showCreatedRecords: boolean
 }
 
-const showTotal = (total: number) => (
-  <Typography.Text
-    style={{
-      color: 'rgba(26, 22, 87)',
-    }}
-  >
-    Total {total} items
-  </Typography.Text>
-)
-
-type TTableKeys = 'name' | 'league' | 'startDate' | 'expectedEndDate'
-
 const SeasonsTable: FC<ISeasonsTableTableProps> = ({
   isDeleteAllRecords,
   selectedRecordIds,
@@ -54,7 +53,17 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
   showAdditionalHeader,
   showCreatedRecords,
 }) => {
-  const { seasons, limit, offset, ordering, total, createdRecordsNames, setPaginationParams } = useSeasonSlice()
+  const {
+    seasons,
+    limit,
+    offset,
+    ordering,
+    total,
+    createdRecordsNames,
+    setPaginationParams,
+    isShowImportWarningModal,
+    hideImportWarningModal,
+  } = useSeasonSlice()
   const [getSeasons, { isLoading, isFetching, data }] = useLazyGetSeasonsQuery()
   const [tableParams, setTableParams] = useState<ITableParams>({
     pagination: {
@@ -77,12 +86,6 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
   })
 
   useEffect(() => {
-    setPaginationParams({
-      offset,
-      limit,
-      ordering: null,
-    })
-
     getSeasons({
       limit,
       offset,
@@ -106,7 +109,7 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
     }
   }, [data])
 
-  const handleTableChange: TableProps['onChange'] = (pagination, filters, sorter) => {
+  const handleTableChange: TableProps<IFESeason>['onChange'] = (pagination, filters, sorter) => {
     const newOffset = (pagination?.current && (pagination?.current - 1) * (pagination?.pageSize || 10)) || 0
     const newLimit = pagination?.pageSize || 10
     setTableParams({
@@ -119,13 +122,6 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
     if (!isDeleteAllRecords) {
       setSelectedRecordsIds([])
       setShowAdditionalHeader(false)
-    }
-
-    const BE_SORTING_FIELDS: Record<TTableKeys, string> = {
-      expectedEndDate: 'expected_end_date',
-      league: 'league',
-      name: 'name',
-      startDate: 'start_date',
     }
 
     const orderingValue = Array.isArray(sorter)
@@ -141,7 +137,13 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
       limit: newLimit,
       name: (filters?.['name']?.[0] as string) ?? undefined,
       league_name: (filters?.['league']?.[0] as string) ?? undefined,
-      ordering: orderingValue,
+      ordering: orderingValue?.includes('league')
+        ? Array.isArray(sorter)
+          ? null
+          : sorter.order === 'ascend'
+            ? 'league__name'
+            : '-league__name'
+        : orderingValue,
     }
 
     getSeasons(getSeasonsRequestParams)
@@ -173,44 +175,53 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
           onOk={handleDelete}
           title="Delete season?"
           type="warn"
+          content={<p>Are you sure you want to delete this season?</p>}
+        />
+      )}
+
+      {isShowImportWarningModal && (
+        <MonroeModal
+          okText="Confirm"
+          onOk={() => hideImportWarningModal()}
+          title="Further Bracket editing required"
+          type="warn"
+          closable={false}
           content={
-            <>
-              <p>Are you sure you want to delete this season?</p>
-            </>
+            <div>
+              <p>
+                You are importing a file that contains at least one Subdivision with Playoff Format set as “Single
+                Elimination Bracket”.
+              </p>
+
+              <p>
+                If you’re <span className="fw-600 mg-v20">updating a record</span>, only the Playoff change will be
+                discarded and will have to be done manually through the Edit Season screen.
+              </p>
+
+              <p>
+                If you’re <span className="fw-600">adding a new record</span>, it will be created with the Playoff
+                Format set as “Best Record Win“. Changing and adding brackets can be done through the corresponding Edit
+                Season screen.
+              </p>
+            </div>
           }
         />
       )}
 
-      {showAdditionalHeader && selectedRecordIds.length !== total && (
-        <div className="leagues-table-header">
-          <p
-            style={{
-              fontSize: '14px',
-              color: 'rgba(0, 0, 0, 0.85)',
-              marginRight: '10px',
-            }}
-          >
+      {showAdditionalHeader && (
+        <ExpandedTableHeader>
+          <ExpandedHeaderLeftText>
             {isDeleteAllRecords
               ? `All ${total} records are selected.`
               : `All ${tableParams.pagination?.pageSize} records on this page are selected.`}
-          </p>
+          </ExpandedHeaderLeftText>
 
           {!isDeleteAllRecords ? (
-            <p
-              style={{
-                color: '#3E34CA',
-                fontSize: '14px',
-              }}
-              onClick={() => setIsDeleteAllRecords(true)}
-            >
+            <MonroeLightBlueText onClick={() => setIsDeleteAllRecords(true)}>
               Select all {total} records in seasons instead.
-            </p>
+            </MonroeLightBlueText>
           ) : (
-            <p
-              style={{
-                color: '#3E34CA',
-                fontSize: '14px',
-              }}
+            <MonroeLightBlueText
               onClick={() => {
                 setIsDeleteAllRecords(false)
                 setSelectedRecordsIds([])
@@ -218,9 +229,9 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
               }}
             >
               Unselect all records
-            </p>
+            </MonroeLightBlueText>
           )}
-        </div>
+        </ExpandedTableHeader>
       )}
 
       <Table
@@ -231,7 +242,7 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
         loading={isLoading || isFetching}
         onChange={handleTableChange}
         rowClassName={(record) =>
-          showCreatedRecords && createdRecordsNames.includes(record.name) ? 'highlighted-row' : ''
+          showCreatedRecords && createdRecordsNames.find((cRN) => cRN.name === record.name) ? 'highlighted-row' : ''
         }
         rowSelection={{
           type: 'checkbox',

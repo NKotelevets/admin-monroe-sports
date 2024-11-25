@@ -5,9 +5,9 @@ type TCookieName = 'accessToken' | 'refreshToken'
 const MONTH_MILLISECONDS = 2592000
 
 const COOKIE_SETTINGS = {
-  domain: import.meta.env.VITE_WEBSITE_DOMAIN, // TODO: update when will be available new env
+  domain: import.meta.env.VITE_WEBSITE_DOMAIN,
   path: '/',
-  secure: false,
+  secure: true,
   maxAge: MONTH_MILLISECONDS,
 }
 

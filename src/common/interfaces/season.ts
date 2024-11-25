@@ -1,17 +1,34 @@
-import { IBEDivision, IFEDivision } from '@/common/interfaces/division'
-import { IBELeague } from '@/common/interfaces/league'
-import { TDeletionStatus, TErrorDuplicate } from '@/common/types'
+import { IIdName } from '.'
 
-interface ISeasonCommonFields {
+import { IBEDivision, IBESubdivision, IFEDivision } from '@/common/interfaces/division'
+import { IBELeague } from '@/common/interfaces/league'
+import { TDeleteStatus, TErrorDuplicate } from '@/common/types'
+
+interface IBESeasonCommonFields {
   id: string
   name: string
   league: IBELeague
   divisions: IBEDivision[]
 }
 
-export interface IBESeason extends ISeasonCommonFields {
-  updated_at: string
-  created_at: string
+interface ISeasonCommonFields {
+  id: string
+  name: string
+  league: IBELeague
+  divisions: IFEDivision[]
+}
+
+export interface IBESeason extends IBESeasonCommonFields {
+  updated_at?: string
+  created_at?: string
+  start_date: string
+  expected_end_date: string
+}
+
+export interface ICreateBESeason {
+  name: string
+  league_id: string
+  divisions: IBEDivision[]
   start_date: string
   expected_end_date: string
 }
@@ -24,12 +41,12 @@ export interface IFECreateSeason {
   divisions: IFEDivision[]
 }
 
-export interface ICreateBESeason {
+export interface IUpdateSeasonBody {
   name: string
+  league: string
+  divisions: IBEDivision[]
   start_date: string
   expected_end_date: string
-  league: string
-  divisions: string[]
 }
 
 export interface IFESeason extends ISeasonCommonFields {
@@ -54,27 +71,30 @@ export interface IGetSeasonsResponse {
 }
 
 interface IImportSeasonSuccess {
+  id: string
   name: string
+  description: string
+  divisions: IBEDivision[]
 }
 
 interface IImportSeasonError {
   index: number
   error: string
   league?: IBELeague
-  'season Name': string
+  season_name: string
 }
 
-export interface IImportSeasonDuplicate {
+interface IImportSeasonDuplicate {
   index: number
   existing: IBESeason
   new: INewSeasonCSVFormat
 }
 
 export interface IImportSeasonsResponse {
-  status: TDeletionStatus
-  success: IImportSeasonSuccess[]
-  errors: IImportSeasonError[]
-  duplicates: IImportSeasonDuplicate[]
+  status: TDeleteStatus
+  success?: IImportSeasonSuccess[]
+  errors?: IImportSeasonError[]
+  duplicates?: IImportSeasonDuplicate[]
 }
 
 export interface IDeletionSeasonItemError {
@@ -85,7 +105,7 @@ export interface IDeletionSeasonItemError {
 }
 
 export interface IDeleteSeasonsResponse {
-  status: TDeletionStatus
+  status: TDeleteStatus
   total: number
   success: number
   items: IDeletionSeasonItemError[]
@@ -143,7 +163,34 @@ export interface ISeasonReviewUpdateData {
   linkedLeagueName: string
   startDate: string
   expectedEndDate: string
-  playoffFormat: string
-  standingsFormat: string
-  tiebreakersFormat: string
+  divisions: IBEDivision[]
+}
+
+interface ICreateSeasonDivision {
+  name: string
+  description: string | null
+  sub_division: Omit<IBESubdivision, 'brackets' | 'changed'>[]
+}
+
+export interface IBECreateSeasonBody {
+  name: string
+  start_date: string
+  expected_end_date: string
+  league_id: string
+  divisions: ICreateSeasonDivision[]
+}
+
+interface ICreateSeasonErrorDetailsDivisions {
+  name?: string
+  sub_division?: Pick<IIdName, 'name'>[]
+}
+
+interface ICreateSeasonErrorDetails {
+  name?: string
+  divisions?: ICreateSeasonErrorDetailsDivisions[]
+}
+
+export interface ICreateSeasonError {
+  code: string
+  details: ICreateSeasonErrorDetails
 }

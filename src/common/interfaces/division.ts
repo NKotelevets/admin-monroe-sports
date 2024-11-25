@@ -1,25 +1,108 @@
-export interface IBEDivision {
-  created_at: string
-  description: string
-  id: string
-  name: string
-  sub_division: {
-    name: string
-    description: string
-  }
-  updated_at: string
+import { IMatch } from '@/common/interfaces/bracket'
+
+interface IBEMatchParticipant {
+  created_at?: string
+  updated_at?: string
+  sub_division: string | null
+  seed: number | null
+  id?: string
+  is_empty: boolean
+  match?: string
 }
 
-export interface IFEDivision {
+interface IBEMatch {
+  id?: string
+  bottom_team: string
+  top_team: string
+  bracket?: number
+  created_at?: string
+  updated_at?: string
+  game_number: number | string | null
+  match_integer_id: number
+  is_not_first_round: boolean
+  stage?: string | null
+  state?: null
+  start_time?: string | null
+  tournament_round_text: string
+  next_match_id: number | null
+  match_participants: IBEMatchParticipant[]
+}
+
+interface IBEBracket {
+  created_at?: string
+  name: string
+  number_of_teams: number
+  published?: boolean
+  subdivision: string[]
+  updated_at?: string
+  matches: IBEMatch[]
+  id: number
+}
+
+export interface IBESubdivision {
+  id?: string
   name: string
   description: string
-  subDivision: IFESubdivision[]
+  playoff_format: number | string
+  standings_format: number | string
+  tiebreakers_format: number | string
+  brackets: IBEBracket[]
+  changed: boolean
+}
+
+interface IFEBracket {
+  createdAt: string
+  name: string
+  numberOfTeams: number
+  published: boolean
+  subdivision: string[]
+  updatedAt: string
+  matches: IMatch[]
+  id?: number
 }
 
 export interface IFESubdivision {
+  id: string
   name: string
   description: string
-  playoffFormat: string
-  standingsFormat: string
-  tiebreakersFormat: string
+  playoffFormat: number | string
+  standingsFormat: number | string
+  tiebreakersFormat: number | string
+  brackets: IFEBracket[]
+  changed: boolean
+}
+
+export interface IBEDivision {
+  id?: string
+  name: string
+  description: string
+  sub_division: IBESubdivision[]
+  created_at?: string
+  updated_at?: string
+}
+
+export interface IFEDivision {
+  id: string
+  name: string
+  description: string
+  subdivisions: IFESubdivision[]
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface IImportedSubdivision {
+  id?: string
+  name: string
+  description: string
+  playoff_format: number | string
+  standings_format: number | string
+  tiebreakers_format: number | string
+  changed: boolean
+  brackets: IBEBracket[]
+}
+
+export interface IUpdateDivision {
+  name: string
+  description: string
+  sub_division: IImportedSubdivision[]
 }

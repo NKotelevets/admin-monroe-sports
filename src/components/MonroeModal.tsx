@@ -1,0 +1,71 @@
+import styled from '@emotion/styled'
+import { Flex, Modal, Typography } from 'antd'
+import { FC, ReactNode } from 'react'
+import { createPortal } from 'react-dom'
+import { ReactSVG } from 'react-svg'
+
+import WarningIcon from '@/assets/icons/warn.svg'
+
+type TMonroeModalType = 'warn'
+
+const Title = styled.h3`
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(26, 22, 87, 0.85);
+`
+
+const Subtitle = styled(Typography)`
+  font-size: 14px;
+  color: rgba(26, 22, 87, 0.85);
+`
+
+const MonroeModalOverlay = styled.div`
+  position: fixed;
+  background-color: rgba(41, 41, 48, 0.7);
+  height: 100vh;
+  width: 100vw;
+  z-index: 999;
+`
+
+interface IMonroeModalProps {
+  onOk: () => void
+  onCancel?: () => void
+  type: TMonroeModalType
+  title: string
+  content?: ReactNode
+  okText: string
+  closable?: boolean
+}
+
+const MonroeModal: FC<IMonroeModalProps> = ({ onCancel, onOk, title, content, okText, closable = true }) =>
+  createPortal(
+    <MonroeModalOverlay>
+      <Modal
+        centered
+        open
+        onOk={onOk}
+        onCancel={onCancel}
+        okText={okText}
+        closable={closable}
+        cancelButtonProps={{
+          style: {
+            display: onCancel ? 'inline-flex' : 'none',
+          },
+        }}
+      >
+        <Flex className="w-416">
+          <div className="mg-r16">
+            <ReactSVG src={WarningIcon} />
+          </div>
+
+          <div>
+            <Title>{title}</Title>
+            <Subtitle>{content}</Subtitle>
+          </div>
+        </Flex>
+      </Modal>
+    </MonroeModalOverlay>,
+    document.body,
+  )
+
+export default MonroeModal

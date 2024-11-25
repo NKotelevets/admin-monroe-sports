@@ -1,24 +1,24 @@
 import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined'
-import { Button, Flex, TableColumnType, TableProps } from 'antd'
+import { Flex, TableColumnType, TableProps } from 'antd'
 import { InputRef } from 'antd/es/input'
-import Input from 'antd/es/input/Input'
 import { FilterDropdownProps } from 'antd/es/table/interface'
-import Typography from 'antd/es/typography'
 import { format } from 'date-fns'
 import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
 import MonroeTooltip from '@/components/MonroeTooltip'
+import CellText from '@/components/Table/CellText'
+import FilterDropDown from '@/components/Table/FilterDropDown'
 import TextWithTooltip from '@/components/TextWithTooltip'
 
-import { PATH_TO_LEAGUE_TOURNAMENT_PAGE, PATH_TO_SEASONS_DETAILS } from '@/constants/paths'
-
+import { PATH_TO_EDIT_SEASON, PATH_TO_LEAGUE_PAGE, PATH_TO_SEASON_DETAILS } from '@/common/constants/paths'
 import { IBEDivision } from '@/common/interfaces/division'
 import { IFESeason } from '@/common/interfaces/season'
 
 import DeleteIcon from '@/assets/icons/delete.svg'
 import EditIcon from '@/assets/icons/edit.svg'
+import WarningIcon from '@/assets/icons/small-warn.svg'
 
 type TDataIndex = keyof IFESeason
 type TColumns<T> = TableProps<T>['columns']
@@ -36,43 +36,8 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
   const navigate = useNavigate()
 
   const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IFESeason> => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-        <Input
-          ref={searchInput}
-          placeholder="Search name"
-          value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(confirm)}
-          style={{ marginBottom: 8, display: 'block' }}
-        />
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Button
-            type="primary"
-            onClick={() => handleSearch(confirm)}
-            style={{
-              marginRight: '8px',
-              flex: '1 1 auto',
-            }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => clearFilters && handleReset(clearFilters)}
-            style={{
-              flex: '1 1 auto',
-              color: selectedKeys.length ? 'rgba(188, 38, 27, 1)' : 'rgba(189, 188, 194, 1)',
-            }}
-          >
-            Reset
-          </Button>
-        </div>
-      </div>
+    filterDropdown: (props) => (
+      <FilterDropDown {...props} handleReset={handleReset} handleSearch={handleSearch} searchInput={searchInput} />
     ),
     filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1A1657' : '#BDBCC2' }} />,
     onFilter: (value, record) =>
@@ -94,24 +59,40 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
 
   const columns: TColumns<IFESeason> = [
     {
-      title: 'Season Name',
+      title: 'Season name',
       dataIndex: 'name',
       fixed: 'left',
+      width: '240px',
       sorter: true,
       ...getColumnSearchProps('name'),
       sortOrder: ordering?.includes('name') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
-      render: (value, record) => (
-        <TextWithTooltip
-          onClick={() => navigate(`${PATH_TO_SEASONS_DETAILS}/${record.id}`)}
-          text={value}
-          maxLength={25}
-        />
-      ),
+      render: (value, record) => {
+        const showIcon = record.divisions.flatMap((d) => d.subdivisions.filter((s) => !!s.changed)).length
+
+        return (
+          <Flex align="center" justify="flex-start">
+            {!!showIcon && (
+              <div className="mg-r8">
+                <MonroeTooltip text="Season requires brackets setting." width="130px" containerWidth="auto">
+                  <ReactSVG src={WarningIcon} />
+                </MonroeTooltip>
+              </div>
+            )}
+
+            <TextWithTooltip
+              onClick={() => navigate(`${PATH_TO_SEASON_DETAILS}/${record.id}`)}
+              text={value}
+              maxLength={25}
+            />
+          </Flex>
+        )
+      },
     },
     {
       title: 'Linked League/Tourn',
       dataIndex: 'league',
       onFilter: (value, record) => record.name.startsWith(value as string),
+      width: '240px',
       sorter: true,
       sortOrder: ordering?.includes('league') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
       ...getColumnSearchProps('league'),
@@ -119,7 +100,7 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
         <>
           {record.league ? (
             <TextWithTooltip
-              onClick={() => navigate(PATH_TO_LEAGUE_TOURNAMENT_PAGE + '/' + record.league.id)}
+              onClick={() => navigate(PATH_TO_LEAGUE_PAGE + '/' + record.league.id)}
               text={record.league.name}
               maxLength={25}
             />
@@ -132,46 +113,34 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
     {
       title: 'Start Date',
       dataIndex: 'startDate',
+      width: '192px',
       sorter: true,
       sortOrder: ordering?.includes('start_date') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
-      render: (value) => (
-        <Typography.Text
-          style={{
-            color: 'rgba(26, 22, 87, 0.85)',
-          }}
-        >
-          {format(new Date(value), 'MMMM dd, yyyy')}
-        </Typography.Text>
-      ),
+      render: (value) => <CellText> {format(new Date(value), 'MMMM dd, yyyy')}</CellText>,
     },
     {
       title: 'Expected End Date',
       dataIndex: 'expectedEndDate',
+      width: '192px',
       sorter: true,
       sortOrder: ordering?.includes('expected_end_date') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
-      render: (value) => (
-        <Typography.Text
-          style={{
-            color: 'rgba(26, 22, 87, 0.85)',
-          }}
-        >
-          {format(new Date(value), 'MMMM dd, yyyy')}
-        </Typography.Text>
-      ),
+      render: (value) => <CellText>{format(new Date(value), 'MMMM dd, yyyy')}</CellText>,
     },
     {
       title: 'Division/Pool',
       dataIndex: 'divisions',
-      render: (divisions: IBEDivision[]) => {
+      width: '200px',
+      render: (divisions: IBEDivision[], record) => {
         const divisionsNames = divisions.map((division) => division.name).join(', ')
         const divisionsLength = divisionsNames.length
 
         return (
-          <>
-            {divisionsLength > 28 ? (
+          <div onClick={() => navigate(`${PATH_TO_SEASON_DETAILS}/${record.id}`)}>
+            {divisionsLength > 20 ? (
               <MonroeTooltip
-                width="auto"
-                arrowPosition={divisions.length < 10 ? 'bottom' : 'top'}
+                width="150px"
+                containerWidth="auto"
+                height="140px"
                 text={
                   <Flex vertical>
                     {divisions.map((division) => (
@@ -180,26 +149,12 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
                   </Flex>
                 }
               >
-                <Typography.Text
-                  style={{
-                    color: 'rgba(62, 52, 202, 1)',
-                    fontSize: '14px',
-                  }}
-                >
-                  {divisionsNames.substring(0, 27) + '...'}
-                </Typography.Text>
+                <CellText isLink>{divisionsNames.substring(0, 16).trim() + '...'}</CellText>
               </MonroeTooltip>
             ) : (
-              <Typography.Text
-                style={{
-                  color: 'rgba(62, 52, 202, 1)',
-                  fontSize: '14px',
-                }}
-              >
-                {divisionsNames}
-              </Typography.Text>
+              <CellText isLink>{divisionsNames}</CellText>
             )}
-          </>
+          </div>
         )
       },
     },
@@ -210,21 +165,15 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
       fixed: 'right',
       render: (_, record) => {
         return (
-          <Flex
-            justify="center"
-            align="center"
-            style={{
-              cursor: 'pointer',
-            }}
-          >
-            <ReactSVG src={EditIcon} />
+          <Flex vertical={false} justify="center" align="center">
+            <ReactSVG src={EditIcon} onClick={() => navigate(`${PATH_TO_EDIT_SEASON}/${record.id}`)} className="c-p" />
             <ReactSVG
               onClick={() => {
                 setSelectedRecordId(record.id)
                 setShowDeleteSingleRecordModal(true)
               }}
               src={DeleteIcon}
-              style={{ marginLeft: '8px' }}
+              className="c-p mg-l8"
             />
           </Flex>
         )

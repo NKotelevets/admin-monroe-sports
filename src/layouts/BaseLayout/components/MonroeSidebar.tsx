@@ -1,4 +1,4 @@
-import { Divider, Flex } from 'antd'
+import { Flex } from 'antd'
 import type { MenuProps } from 'antd'
 import { Menu } from 'antd'
 import Sider from 'antd/es/layout/Sider'
@@ -6,28 +6,31 @@ import { CSSProperties, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
+import { MonroeDivider } from '@/components/Elements'
+
+import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
+import { useUserSlice } from '@/redux/hooks/useUserSlice'
+
 import {
-  PATH_TO_CREATE_LEAGUE_TOURNAMENT,
-  PATH_TO_EDIT_LEAGUE_TOURNAMENT,
-  PATH_TO_GROUPS_PAGE,
-  PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE,
-  PATH_TO_LEAGUE_TEAMS_PAGE,
-  PATH_TO_LEAGUE_TOURNAMENT_DELETING_INFO,
-  PATH_TO_LEAGUE_TOURNAMENT_IMPORT_INFO,
-  PATH_TO_LEAGUE_TOURNAMENT_PAGE,
-  PATH_TO_MASTER_TEAMS_PAGE,
-  PATH_TO_PLAYOFF_FORMAT_PAGE,
-  PATH_TO_SCHEDULE_PAGE,
-  PATH_TO_SEASONS_CREATE,
-  PATH_TO_SEASONS_DELETING_INFO,
-  PATH_TO_SEASONS_DETAILS,
-  PATH_TO_SEASONS_EDIT_DETAILS,
-  PATH_TO_SEASONS_IMPORT_INFO,
-  PATH_TO_SEASONS_PAGE,
-  PATH_TO_STANDINGS_FORMAT_PAGE,
-  PATH_TO_TIEBREAKERS_PAGE,
-  PATH_TO_USERS_PAGE,
-} from '@/constants/paths'
+  PATH_TO_CREATE_LEAGUE,
+  PATH_TO_CREATE_MASTER_TEAM,
+  PATH_TO_CREATE_SEASON,
+  PATH_TO_CREATE_USER,
+  PATH_TO_EDIT_LEAGUE,
+  PATH_TO_EDIT_MASTER_TEAM,
+  PATH_TO_EDIT_SEASON,
+  PATH_TO_EDIT_USER,
+  PATH_TO_EVENTS,
+  PATH_TO_GROUPS,
+  PATH_TO_LEAGUES,
+  PATH_TO_LEAGUE_TEAMS,
+  PATH_TO_MASTER_TEAMS,
+  PATH_TO_PLAYOFF_FORMAT,
+  PATH_TO_SEASONS,
+  PATH_TO_STANDINGS_FORMAT,
+  PATH_TO_TIEBREAKERS,
+  PATH_TO_USERS, PATH_TO_EDIT_LEAGUE_TEAM, PATH_TO_CREATE_LEAGUE_TEAM
+} from '@/common/constants/paths'
 
 import UserIcon from '@/assets/icons/header/user.svg'
 import MonroeIcon from '@/assets/icons/monroe.svg'
@@ -56,46 +59,56 @@ const COMPANY_MENU_ITEMS: TMenuItem[] = [
 const LEAGUE_AND_TOURN_KEY = 'league-and-tourn-key'
 const STANDINGS_DISPLAY_KEY = 'standings-display-key'
 const TEAMS_KEY = 'teams-key'
+const USERS_KEY = 'users'
 
 const MonroeSidebar = () => {
   const location = useLocation()
   const pathname = location.pathname
+  const { setShowOperatorScreen } = useUserSlice()
   const isPageThatWillHaveChanges =
-    [PATH_TO_CREATE_LEAGUE_TOURNAMENT].includes(pathname) ||
-    pathname.includes(PATH_TO_EDIT_LEAGUE_TOURNAMENT) ||
-    pathname.includes(PATH_TO_SEASONS_CREATE) ||
-    pathname.includes(PATH_TO_SEASONS_EDIT_DETAILS)
-  const isLeagueTournamentPage =
-    [
-      PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE,
-      PATH_TO_CREATE_LEAGUE_TOURNAMENT,
-      PATH_TO_LEAGUE_TOURNAMENT_DELETING_INFO,
-      PATH_TO_LEAGUE_TOURNAMENT_IMPORT_INFO,
-    ].includes(pathname) ||
-    pathname.includes(PATH_TO_EDIT_LEAGUE_TOURNAMENT) ||
-    pathname.includes(PATH_TO_LEAGUE_TOURNAMENT_PAGE)
-  const isSeasonsPage =
-    [PATH_TO_SEASONS_PAGE, PATH_TO_SEASONS_CREATE, PATH_TO_SEASONS_DELETING_INFO, PATH_TO_SEASONS_IMPORT_INFO].includes(
-      pathname,
-    ) ||
-    pathname.includes(PATH_TO_SEASONS_DETAILS) ||
-    pathname.includes(PATH_TO_SEASONS_EDIT_DETAILS)
+    [PATH_TO_CREATE_LEAGUE].includes(pathname) ||
+    pathname.includes(PATH_TO_EDIT_LEAGUE) ||
+    pathname.includes(PATH_TO_CREATE_SEASON) ||
+    pathname.includes(PATH_TO_EDIT_SEASON) ||
+    pathname.includes(PATH_TO_CREATE_USER) ||
+    pathname.includes(PATH_TO_EDIT_USER) ||
+    pathname.includes(PATH_TO_EDIT_MASTER_TEAM) ||
+    pathname.includes(PATH_TO_CREATE_MASTER_TEAM) ||
+    pathname.includes(PATH_TO_CREATE_LEAGUE_TEAM) ||
+    pathname.includes(PATH_TO_EDIT_LEAGUE_TEAM)
+  const isLeagueTournamentPage = pathname.includes(PATH_TO_LEAGUES)
+  const isSeasonsPage = pathname.includes(PATH_TO_SEASONS)
+  const isUsersPage = pathname.includes(PATH_TO_USERS)
+  const isMasterTeamsPage = pathname.includes(PATH_TO_MASTER_TEAMS)
+  const isLeagueTeamsPage = pathname.includes(PATH_TO_LEAGUE_TEAMS)
+
+  const { setIsCreateBracketPage, setSelectedBracketId } = useSeasonSlice()
 
   const getSelectedSubMenu = () => {
-    if ([PATH_TO_MASTER_TEAMS_PAGE, PATH_TO_LEAGUE_TEAMS_PAGE].includes(pathname)) return TEAMS_KEY
+    if ([PATH_TO_MASTER_TEAMS, PATH_TO_LEAGUE_TEAMS].includes(pathname)) return TEAMS_KEY
 
     if (isLeagueTournamentPage || isSeasonsPage) return LEAGUE_AND_TOURN_KEY
 
-    if ([PATH_TO_PLAYOFF_FORMAT_PAGE, PATH_TO_STANDINGS_FORMAT_PAGE, PATH_TO_TIEBREAKERS_PAGE].includes(pathname))
+    if (isUsersPage) return USERS_KEY
+
+    if (isMasterTeamsPage) return TEAMS_KEY
+
+    if (isLeagueTeamsPage) return TEAMS_KEY
+
+    if ([PATH_TO_PLAYOFF_FORMAT, PATH_TO_STANDINGS_FORMAT, PATH_TO_TIEBREAKERS].includes(pathname))
       return STANDINGS_DISPLAY_KEY
 
     return ''
   }
 
   const getDefaultSelectedKeys = () => {
-    if (isLeagueTournamentPage) return PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE
+    if (isLeagueTournamentPage) return PATH_TO_LEAGUES
 
-    if (isSeasonsPage) return PATH_TO_SEASONS_PAGE
+    if (isSeasonsPage) return PATH_TO_SEASONS
+
+    if (isMasterTeamsPage) return PATH_TO_MASTER_TEAMS
+
+    if (isLeagueTeamsPage) return PATH_TO_LEAGUE_TEAMS
 
     return ''
   }
@@ -106,16 +119,17 @@ const MonroeSidebar = () => {
 
   const MENU_ITEMS: TMenuItem[] = [
     {
-      key: PATH_TO_USERS_PAGE,
+      key: USERS_KEY,
       label: 'Users',
-      icon: (
-        <ReactSVG
-          className={location.pathname === PATH_TO_USERS_PAGE ? 'red-icon' : ''}
-          src={UserIcon}
-          style={{ marginLeft: '5px' }}
-        />
-      ),
-      onClick: () => navigateTo(PATH_TO_USERS_PAGE),
+      icon: <ReactSVG className={isUsersPage ? 'red-icon' : ''} src={UserIcon} style={{ marginLeft: '5px' }} />,
+      onClick: () => navigateTo(PATH_TO_USERS),
+      className: isUsersPage ? 'red-text' : '',
+      style: isUsersPage
+        ? {
+            backgroundColor: '#fcf1ed',
+            borderRight: '3px solid #BC261B',
+          }
+        : {},
     },
     {
       key: TEAMS_KEY,
@@ -123,11 +137,11 @@ const MonroeSidebar = () => {
       icon: <ReactSVG src={TeamsIcon} style={{ marginLeft: '5px' }} />,
       children: [
         {
-          key: PATH_TO_MASTER_TEAMS_PAGE,
+          key: PATH_TO_MASTER_TEAMS,
           label: 'Master Teams',
-          onClick: () => navigateTo(PATH_TO_MASTER_TEAMS_PAGE),
+          onClick: () => navigateTo(PATH_TO_MASTER_TEAMS),
         },
-        { key: 'league-teams', label: 'League Teams', onClick: () => navigateTo(PATH_TO_LEAGUE_TEAMS_PAGE) },
+        { key: PATH_TO_LEAGUE_TEAMS, label: 'League Teams', onClick: () => navigateTo(PATH_TO_LEAGUE_TEAMS) },
       ],
     },
     {
@@ -136,11 +150,11 @@ const MonroeSidebar = () => {
       icon: <ReactSVG src={LeagueIcon} style={{ marginLeft: '5px' }} />,
       children: [
         {
-          key: PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE,
+          key: PATH_TO_LEAGUES,
           label: 'League & Tourn',
-          onClick: () => navigateTo(PATH_TO_LEAGUES_AND_TOURNAMENTS_PAGE),
+          onClick: () => navigateTo(PATH_TO_LEAGUES),
         },
-        { key: PATH_TO_SEASONS_PAGE, label: 'Seasons', onClick: () => navigateTo(PATH_TO_SEASONS_PAGE) },
+        { key: PATH_TO_SEASONS, label: 'Seasons', onClick: () => navigateTo(PATH_TO_SEASONS) },
       ],
     },
     {
@@ -149,46 +163,50 @@ const MonroeSidebar = () => {
       icon: <ReactSVG src={StandingsIcon} style={{ marginLeft: '5px' }} />,
       children: [
         {
-          key: PATH_TO_PLAYOFF_FORMAT_PAGE,
+          key: PATH_TO_PLAYOFF_FORMAT,
           label: 'Playoff Format',
-          onClick: () => navigateTo(PATH_TO_PLAYOFF_FORMAT_PAGE),
+          onClick: () => navigateTo(PATH_TO_PLAYOFF_FORMAT),
         },
         {
-          key: PATH_TO_STANDINGS_FORMAT_PAGE,
+          key: PATH_TO_STANDINGS_FORMAT,
           label: 'Standings Format',
-          onClick: () => navigateTo(PATH_TO_STANDINGS_FORMAT_PAGE),
+          onClick: () => navigateTo(PATH_TO_STANDINGS_FORMAT),
         },
-        { key: PATH_TO_TIEBREAKERS_PAGE, label: 'Tiebreakers', onClick: () => navigateTo(PATH_TO_TIEBREAKERS_PAGE) },
+        { key: PATH_TO_TIEBREAKERS, label: 'Tiebreakers', onClick: () => navigateTo(PATH_TO_TIEBREAKERS) },
       ],
     },
     {
-      key: PATH_TO_SCHEDULE_PAGE,
-      label: 'Schedule',
+      key: PATH_TO_EVENTS,
+      label: 'Events',
       icon: (
         <ReactSVG
-          className={location.pathname === PATH_TO_SCHEDULE_PAGE ? 'red-icon' : ''}
+          className={location.pathname === PATH_TO_EVENTS ? 'red-icon' : ''}
           src={ScheduleIcon}
           style={{ marginLeft: '5px' }}
         />
       ),
-      onClick: () => navigateTo(PATH_TO_SCHEDULE_PAGE),
+      onClick: () => navigateTo(PATH_TO_EVENTS),
     },
     {
-      key: PATH_TO_GROUPS_PAGE,
+      key: PATH_TO_GROUPS,
       label: 'Groups',
       icon: (
         <ReactSVG
-          className={location.pathname === PATH_TO_GROUPS_PAGE ? 'red-icon' : ''}
+          className={location.pathname === PATH_TO_GROUPS ? 'red-icon' : ''}
           src={GroupsIcon}
           style={{ marginLeft: '5px' }}
         />
       ),
-      onClick: () => navigateTo(PATH_TO_GROUPS_PAGE),
+      onClick: () => navigateTo(PATH_TO_GROUPS),
     },
   ]
 
   const handleBeforeUnloadEvent = (e: BeforeUnloadEvent) => {
     if (isPageThatWillHaveChanges) e.preventDefault()
+
+    setIsCreateBracketPage(false)
+    setSelectedBracketId(null)
+    setShowOperatorScreen(false)
   }
 
   useEffect(() => {
@@ -211,7 +229,7 @@ const MonroeSidebar = () => {
         />
       </Flex>
 
-      <Divider style={{ margin: '8px 0' }} />
+      <MonroeDivider style={{ margin: '8px 0' }} />
 
       <Menu
         defaultSelectedKeys={[location.pathname, getDefaultSelectedKeys()]}

@@ -5,12 +5,17 @@ import createWebStorage from 'redux-persist/lib/storage/createWebStorage'
 import { appSlice } from '@/redux/app/app.slice'
 import { authApi } from '@/redux/auth/auth.api'
 import { authReducer } from '@/redux/auth/auth.reducer'
+import { gamesApi } from '@/redux/games/games.api'
 import { leaguesApi } from '@/redux/leagues/leagues.api'
 import { leaguesReducer } from '@/redux/leagues/leagues.reducer'
+import { masterTeamsApi } from '@/redux/masterTeams/masterTeams.api'
+import { masterTeamsReducer } from '@/redux/masterTeams/masterTeams.reducer'
 import { seasonsApi } from '@/redux/seasons/seasons.api'
 import { seasonsReducer } from '@/redux/seasons/seasons.reducer'
 import { userApi } from '@/redux/user/user.api'
 import { userReducer } from '@/redux/user/user.reducer'
+import { leagueTeamsReducer } from '@/redux/leagueTeams/leagueTeams.reducer.ts'
+import { leagueTeamsApi } from '@/redux/leagueTeams/leagueTeams.api.ts'
 
 const createNoopStorage = () => {
   return {
@@ -32,7 +37,7 @@ const persistConfig = {
   key: 'root',
   version: 1,
   storage,
-  whitelist: ['authSlice', 'appSlice', 'userSlice', 'leaguesSlice', 'seasonsSlice'],
+  whitelist: ['authSlice', 'userSlice', 'leaguesSlice', 'seasonsSlice', 'appSlice'],
 }
 
 const rootReducer = combineReducers({
@@ -40,7 +45,10 @@ const rootReducer = combineReducers({
   ...userReducer,
   ...leaguesReducer,
   ...seasonsReducer,
-  [appSlice.reducerPath]: appSlice.reducer,
+  ...masterTeamsReducer,
+  ...leagueTeamsReducer,
+  [gamesApi.reducerPath]: gamesApi.reducer,
+  [appSlice.name]: appSlice.reducer,
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer)
@@ -53,7 +61,15 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, REGISTER],
       },
-    }).concat([authApi.middleware, userApi.middleware, leaguesApi.middleware, seasonsApi.middleware]),
+    }).concat([
+      authApi.middleware,
+      userApi.middleware,
+      leaguesApi.middleware,
+      seasonsApi.middleware,
+      masterTeamsApi.middleware,
+      leagueTeamsApi.middleware,
+      gamesApi.middleware,
+    ]),
 })
 
 export type TRootState = ReturnType<typeof store.getState>
