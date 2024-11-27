@@ -1,6 +1,7 @@
 import { TImportStatus } from '@/common/types'
 import type { SorterResult } from 'antd/es/table/interface'
 import type { GetProp, TableProps } from 'antd'
+import { FormikConfig } from 'formik'
 
 export interface IDetailedError {
   code: string
@@ -47,4 +48,14 @@ export interface ITableParams<T> {
   sortField?: SorterResult<T>['field']
   sortOrder?: SorterResult<T>['order']
   filters?: Parameters<GetProp<TableProps, 'onChange'>>[1]
+}
+
+export interface IFormProps<Body, FormValues> {
+  validationSchema?: FormikConfig<FormValues>['validationSchema']
+  initialValues?: FormValues
+  isLoading?: boolean
+
+  onSubmit(body: Body): void
+
+  goBack(): void
 }

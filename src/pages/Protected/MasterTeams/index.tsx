@@ -34,7 +34,7 @@ const MasterTeams = () => {
   const inputRef = useRef<HTMLInputElement | null>()
   const deleteModalRef = useRef<DeleteModalRef>()
 
-  const [importSeasons] = useMasterTeamsImportCSVMutation()
+  const [importMasterTeamCSV] = useMasterTeamsImportCSVMutation()
 
   const [selectedRecordsIds, setSelectedRecordsIds] = useState<string[]>([])
   const [showAdditionalHeader, setShowAdditionalHeader] = useState(false)
@@ -44,7 +44,7 @@ const MasterTeams = () => {
 
   const [fileKey, setFileKey] = useState('')
 
-  const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
+  const onCSVInputChange = async (event: ChangeEvent<HTMLInputElement>) => {
     setImportModalOptions(DEFAULT_IMPORT_MODAL_OPTIONS)
     const file = event.target.files?.[0]
 
@@ -59,7 +59,7 @@ const MasterTeams = () => {
       const body = new FormData()
       body.set('file', file)
 
-      await importSeasons(body)
+      await importMasterTeamCSV(body)
         .unwrap()
         .then(() => {
           setImportModalOptions({
@@ -160,7 +160,7 @@ const MasterTeams = () => {
             type="file"
             name="seasons"
             accept=".csv"
-            onChange={handleChange}
+            onChange={onCSVInputChange}
             className="d-n"
             key={fileKey}
           />

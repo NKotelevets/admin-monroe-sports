@@ -1,4 +1,4 @@
-import { Page } from '@/layouts/Page.tsx'
+import { Page } from '@/layouts/Page/index.tsx'
 // import { PATH_TO_MASTER_TEAMS } from '@/common/constants/paths.ts'
 // import { MonroeBlueText } from '@/components/Elements'
 

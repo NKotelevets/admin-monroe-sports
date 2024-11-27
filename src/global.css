@@ -324,7 +324,7 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
 }
 
 .ant-select-selector {
-  padding: 1px 8px !important;
+  padding: 8px 12px !important;
   border-radius: 2px !important;
 }
 
@@ -351,7 +351,7 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
 }
 
 .ant-select-selection-item {
-  padding-inline-end: 0px;
+  padding-inline-end: 0;
   display: flex;
   justify-content: center;
 }
@@ -545,7 +545,7 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
 }
 
 .mg-v8 {
-  margin: 8px 0px !important;
+  margin: 8px 0 !important;
 }
 
 .mg-v16 {
@@ -553,11 +553,11 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
 }
 
 .mg-v20 {
-  margin: 20px 0px !important;
+  margin: 20px 0 !important;
 }
 
 .mg-v24 {
-  margin: 24px 0px !important;
+  margin: 24px 0 !important;
 }
 
 .mg-32-0-24 {
@@ -752,4 +752,47 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
 }
 .ant-dropdown-menu {
   border-radius: 2px !important
+}
+
+/* AntD Tabs */
+.league-teams .ant-tabs-nav-list {
+  width: 100% !important;
+  display: flex;
+}
+.league-teams .ant-tabs-tab, .ant-tabs-tab-btn{
+  flex: 1;
+  width: 100%;
+  text-align: center;
+}
+.league-teams .ant-tabs-top >.ant-tabs-nav::before {
+  border-bottom: 1px solid #BDBCC2 !important;
+}
+.league-teams .ant-select-arrow span svg,
+.league-teams .ant-select-selection-search {
+  display: inline-block !important;
+}
+
+.ant-select .ant-menu-submenu-arrow::before, .ant-select .ant-menu-submenu-arrow::after {
+  position: absolute;
+  right: 2px;
+  top: 7px;
+  width: 6px;
+  height: 1.5px;
+  background-color: #3E34CA;
+  border-radius: 0;
+  transition: background 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), transform 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), top 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  content: "";
+  transform: rotate(-45deg) translateX(2.5px);
+}
+.ant-select .ant-menu-submenu-arrow::after {
+  transform: rotate(45deg) translateX(-2.5px);
+}
+
+.ant-select-open .ant-menu-submenu-arrow::before {
+  transform: rotate(45deg) translateX(2.5px);
+  top: 3px;
+}
+.ant-select-open .ant-menu-submenu-arrow::after {
+  transform: rotate(-45deg) translateX(-2.5px);
+  top: 3px;
 }

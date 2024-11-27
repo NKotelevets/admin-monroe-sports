@@ -62,12 +62,14 @@ interface IFEBracket {
 }
 
 export interface IFESubdivision {
+  id: string
   name: string
   description: string
-  playoffFormat: string
-  standingsFormat: string
-  tiebreakersFormat: string
+  playoffFormat: number | string
+  standingsFormat: number | string
+  tiebreakersFormat: number | string
   brackets: IFEBracket[]
+  changed?: boolean
 }
 
 export interface IBEDivision {
@@ -80,9 +82,12 @@ export interface IBEDivision {
 }
 
 export interface IFEDivision {
+  id: string
   name: string
   description: string
   subdivisions: IFESubdivision[]
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface IImportedSubdivision {

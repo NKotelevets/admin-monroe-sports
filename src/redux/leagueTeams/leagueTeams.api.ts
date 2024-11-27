@@ -5,15 +5,14 @@ import baseQueryWithReAuth from '@/redux/reauthBaseQuery'
 import { IPaginationResponse } from '@/common/interfaces/api'
 import {
   IBELeagueTeam,
-  IBELeagueTeamDetails,
+  IBELeagueTeamDetails, ICreateLeagueTeamRequest,
   IFELeagueTeamDetails,
   IGetLeagueTeamsRequest,
   IGetLeagueTeamsResponse,
   ILeagueTeamError,
-  IPopulateMTRequest,
 } from '@/common/interfaces/leagueTeams'
 import { TDeleteStatus } from '@/common/types'
-import { transformKeysToCamelCase } from '@/utils'
+import { transformKeysToCamelCase, transformKeysToSnakeCase } from '@/utils'
 
 const LEAGUE_TEAMS_TAG = 'LEAGUE_TEAMS'
 
@@ -99,17 +98,17 @@ export const leagueTeamsApi = createApi({
         divisions: (
           transformKeysToCamelCase<IFELeagueTeamDetails['divisions'], IBELeagueTeamDetails['divisions']>(response.divisions)
         ),
-        subDivisions: (
-          transformKeysToCamelCase<IFELeagueTeamDetails['subDivisions'], IBELeagueTeamDetails['subdivisions']>(response.subdivisions)
+        subdivisions: (
+          transformKeysToCamelCase<IFELeagueTeamDetails['subdivisions'], IBELeagueTeamDetails['subdivisions']>(response.subdivisions)
         ),
       }),
     }),
 
-    createLeagueTeam: builder.mutation<void, IPopulateMTRequest>({
+    createLeagueTeam: builder.mutation<void, ICreateLeagueTeamRequest>({
       query: (body) => ({
-        url: 'teams/teams/create-team-as-admin',
+        url: 'teams/league-teams/create-league-team-as-admin',
         method: 'POST',
-        body,
+        body: transformKeysToSnakeCase(body),
       }),
       invalidatesTags: [LEAGUE_TEAMS_TAG],
     }),
@@ -118,7 +117,7 @@ export const leagueTeamsApi = createApi({
       void,
       {
         id: string
-        body: IPopulateMTRequest
+        body: ICreateLeagueTeamRequest
       }
     >({
       query: ({ body, id }) => ({

@@ -2,8 +2,9 @@ import { Helmet } from 'react-helmet'
 import { PageContainer, ProtectedPageTitle } from '@/components/Elements'
 import { Flex } from 'antd'
 import BaseLayout from '@/layouts/BaseLayout'
-import { FC, ReactElement } from 'react'
+import { FC, ReactElement, useState } from 'react'
 import styled from '@emotion/styled'
+import { PageContext } from './context'
 
 /**
  * Interface representing the props for the Page component.
@@ -16,6 +17,7 @@ import styled from '@emotion/styled'
 export interface IPageProps {
   title: string
   children: ReactElement
+
   controls?(): ReactElement
 }
 
@@ -33,29 +35,35 @@ export interface IPageProps {
  */
 export const Page: FC<IPageProps> = (props: IPageProps): ReactElement => {
   const { title, children, controls } = props
+  const [pageTitle, setPageTitle] = useState(title)
 
   return (
-    <BaseLayout>
-      <>
-        <Helmet>
-          <title>Admin Panel | {title}</title>
-        </Helmet>
+    <PageContext.Provider value={{
+      setPageTitle,
+      pageTitle
+    }}>
+      <BaseLayout>
+        <>
+          <Helmet>
+            <title>Admin Panel | {pageTitle}</title>
+          </Helmet>
 
-        <PageContainer>
-          <Header justify="space-between" align="center" vertical={false}>
-            <ProtectedPageTitle>{title}</ProtectedPageTitle>
+          <PageContainer>
+            <Header justify="space-between" align="center" vertical={false}>
+              <ProtectedPageTitle>{pageTitle}</ProtectedPageTitle>
 
-            <Controls>
-              {!!controls && controls()}
-            </Controls>
-          </Header>
+              <Controls>
+                {!!controls && controls()}
+              </Controls>
+            </Header>
 
-          <Flex flex="1 1 auto" vertical>
-            {children}
-          </Flex>
-        </PageContainer>
-      </>
-    </BaseLayout>
+            <Flex flex="1 1 auto" vertical>
+              {children}
+            </Flex>
+          </PageContainer>
+        </>
+      </BaseLayout>
+    </PageContext.Provider>
   )
 }
 

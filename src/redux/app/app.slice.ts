@@ -98,7 +98,7 @@ export const appSlice = createSlice({
         state.notification.timestamp = new Date().getTime()
       })
       .addMatcher(userApi.endpoints.createUserAsAdmin.matchFulfilled, (state) => {
-        state.notification.message = 'User have been successfully removed.'
+        state.notification.message = 'User have been successfully created.'
         state.notification.timestamp = new Date().getTime()
         state.notification.type = 'success'
       })

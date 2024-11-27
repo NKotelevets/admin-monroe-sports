@@ -24,6 +24,7 @@ interface ILeaguesSliceState {
   createdRecordsNames: string[]
   duplicates: ILeagueDuplicate[]
   tableRecords: ILeagueImportInfoTableRecord[]
+  selectedRecords: IFELeague[]
 }
 
 const leaguesSliceState: ILeaguesSliceState = {
@@ -36,6 +37,7 @@ const leaguesSliceState: ILeaguesSliceState = {
   createdRecordsNames: [],
   duplicates: [],
   tableRecords: [],
+  selectedRecords: []
 }
 
 export const leaguesSlice = createSlice({
@@ -47,7 +49,7 @@ export const leaguesSlice = createSlice({
       action: PayloadAction<{
         limit: number
         offset: number
-        order_by: string | null
+        order_by: 'asc' | 'desc' | null
       }>,
     ) => {
       state.limit = action.payload.limit
@@ -65,6 +67,9 @@ export const leaguesSlice = createSlice({
     },
     removeCreatedRecordsNames: (state) => {
       state.createdRecordsNames = []
+    },
+    setRecords: (state, action: PayloadAction<IFELeague[]>) => {
+      state.selectedRecords = action.payload
     },
   },
   extraReducers: (builder) =>

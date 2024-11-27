@@ -29,9 +29,9 @@ export const StyledTextArea = styled(TextArea)`
   }
 `
 
-export const StyledInput = styled(Input)<{ is_error?: string }>`
+export const StyledInput = styled(Input)<{ isError?: boolean }>`
   background-color: #ffffff !important;
-  border-color: ${(props) => (props.is_error === 'true' ? '#BC261B' : '#d8d7db')};
+  border-color: ${({ isError }) => (isError === true ? '#BC261B' : '#d8d7db')};
   border-radius: 2px;
   box-shadow: none;
   color: rgba(26, 22, 87, 0.85) !important;

@@ -5,7 +5,7 @@ export const useCopyContent = () => {
 
   const copy = async (content: string, successMessage?: string) => {
     await navigator.clipboard.writeText(content)
-    !!successMessage && notify(successMessage)
+    !!successMessage && notify(successMessage, 'success')
   }
 
   return {

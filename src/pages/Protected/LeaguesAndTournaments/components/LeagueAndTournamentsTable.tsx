@@ -96,7 +96,7 @@ const LeagueAndTournamentsTable: FC<ILeagueAndTournamentsTableProps> = ({
     getLeagues({
       limit,
       offset,
-      order_by: order_by || undefined,
+      order_by: order_by || null,
     })
 
     return () => {
@@ -155,7 +155,7 @@ const LeagueAndTournamentsTable: FC<ILeagueAndTournamentsTableProps> = ({
           ? undefined
           : (filters?.['tiebreakersFormat']?.[0] as string) ?? undefined,
       type: filters?.['type']?.length === 2 ? undefined : (filters?.['type']?.[0] as string) ?? undefined,
-      order_by: !Array.isArray(sorter) && sorter.order ? (sorter.order === 'descend' ? 'desc' : 'asc') : undefined,
+      order_by: !Array.isArray(sorter) && sorter.order ? (sorter.order === 'descend' ? 'desc' : 'asc') : null,
     }
 
     getLeagues(getLeaguesParams)

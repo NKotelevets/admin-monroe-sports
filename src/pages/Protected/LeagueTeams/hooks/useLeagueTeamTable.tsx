@@ -40,6 +40,7 @@ export const useLeagueTeamTable = () => {
     renderTeamName,
     renderLeague,
     renderDivision,
+    renderSubdivision,
     renderMasterTeam,
     renderCoachName,
     renderCoachEmail,
@@ -95,13 +96,13 @@ export const useLeagueTeamTable = () => {
       render: renderDivision
     },
     {
-      title: 'Sub Division',
+      title: 'Subdivision / Pool',
       dataIndex: 'subdivision',
       sorter: true,
       width: '240px',
       sortOrder: getColumnSort('subdivision_name', ordering),
       ...getColumnSearchProps('subdivision', onFilter('subdivision')),
-      render: renderDivision
+      render: renderSubdivision
     },
     {
       title: 'Master Team',
@@ -190,6 +191,10 @@ const useLeagueTeamTableRenderers = () => {
     division?.name ? division.name : '-'
   ), [])
 
+  const renderSubdivision = useCallback((_: unknown, { subdivision }: IFELeagueTeam) => (
+    subdivision?.name ? subdivision.name : '-'
+  ), [])
+
   const renderMasterTeam = useCallback((_: unknown, { masterTeam }: IFELeagueTeam) => (
     <MonroeLinkText
       inline={true}
@@ -261,6 +266,7 @@ const useLeagueTeamTableRenderers = () => {
   return {
     renderTeamName,
     renderLeague,
+    renderSubdivision,
     renderDivision,
     renderMasterTeam,
     renderCoachName,

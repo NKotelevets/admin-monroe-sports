@@ -69,6 +69,7 @@ export const seasonValidationSchema = Yup.object<ICreateSeasonFormValues>().shap
 })
 
 export const INITIAL_SUBDIVISION_DATA = {
+  id: '',
   name: '',
   description: '',
   playoffFormat: BEST_RECORD_WINS,
@@ -78,6 +79,7 @@ export const INITIAL_SUBDIVISION_DATA = {
 }
 
 export const INITIAL_DIVISION_DATA = {
+  id: '',
   name: '',
   description: '',
   subdivisions: [INITIAL_SUBDIVISION_DATA],
