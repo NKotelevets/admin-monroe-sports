@@ -61,8 +61,9 @@ import {
   PATH_TO_USERS,
   PATH_TO_USERS_BLOCKING_INFO,
   PATH_TO_USERS_BULK_EDIT,
-  PATH_TO_USERS_IMPORT_INFO, PATH_TO_LEAGUE_TEAMS
+  PATH_TO_USERS_IMPORT_INFO, PATH_TO_LEAGUE_TEAMS, PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST
 } from '@/common/constants/paths'
+import { MasterTeamScheduleRequest } from '@/pages/Protected/MasterTeams/MasterTeamScheduleRequest.tsx'
 
 
 const Root = () => (
@@ -106,6 +107,7 @@ const Root = () => (
       <Route path={PATH_TO_DELETING_INFO_MASTER_TEAMS} element={<MasterTeamsDeletingInfo />} />
       <Route path={PATH_TO_CREATE_MASTER_TEAM} element={<CreateMasterTeam />} />
       <Route path={`${PATH_TO_EDIT_MASTER_TEAM}/:id`} element={<EditMasterTeam />} />
+      <Route path={`${PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST}`} element={<MasterTeamScheduleRequest />} />
 
       {/* League Teams */}
       <Route path={PATH_TO_LEAGUE_TEAMS} element={<LeagueTeams />} />

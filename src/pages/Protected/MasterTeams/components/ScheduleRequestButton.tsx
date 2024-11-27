@@ -7,8 +7,10 @@ import { useDownloadFile } from '@/hooks/useDownloadFile.ts'
 import { useNotification } from '@/hooks/useNotification.ts'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import DatePickerRange, { IDateRangePickerRef } from '@/components/DatePickerRange.tsx'
-import { Dayjs } from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import { transformKeysToSnakeCase } from '@/utils'
+import { Button } from '@/components/Button'
+
 export const ScheduleRequestButton = (props: IExportInfoProps) => {
   const { selectedMasterTeamIds } = props
 
@@ -27,9 +29,9 @@ export const ScheduleRequestButton = (props: IExportInfoProps) => {
       placement="bottomRight"
       overlayClassName="dropdown"
     >
-      <Button icon={<ScheduleOutlined />} iconPosition="start">
+      <MButton icon={<ScheduleOutlined />} iconPosition="start">
         Schedule Request
-      </Button>
+      </MButton>
     </Dropdown>
   )
 }
@@ -61,7 +63,7 @@ const DropdownContent = (props: { masterTeamIds: string[] }) => {
   /**
    * Downloads the file
    */
-  const onExport = useCallback(() => {
+  const onExportAvailability = useCallback(() => {
     if (!startDate || !endDate || !masterTeamIds) return
     const params = transformKeysToSnakeCase({
       startDate: startDate.format('YYYY-MM-DD'),
@@ -76,6 +78,8 @@ const DropdownContent = (props: { masterTeamIds: string[] }) => {
     )
   }, [startDate, endDate, masterTeamIds])
 
+  const onShowAvailability = alert
+
   return (
     <View
       className="ant-dropdown-menu ant-dropdown-menu-root"
@@ -84,47 +88,43 @@ const DropdownContent = (props: { masterTeamIds: string[] }) => {
       <PickerWrapper>
         <DatePickerRange
           ref={datePickerRef}
+          initialEndDate={dayjs().add(1, 'month')}
           onStartChange={setStartDate}
           onEndChange={setEndDate}
         />
       </PickerWrapper>
       <Flex>
-        <MButton
+        <Button
           type="text"
           disabled={!isValid || isLoading}
           onClick={datePickerRef?.current?.reset}
         >
           Reset
-        </MButton>
+        </Button>
         <Spacer />
-        <MButton
+        <Button
           type="default"
+          loading={isLoading}
           disabled={!isValid || isLoading}
-          onClick={datePickerRef?.current?.reset}
+          onClick={onExportAvailability}
         >
           Export CSV
-        </MButton>
+        </Button>
         <Spacer />
-        <MButton
+        <Button
           type="primary"
-          loading={isLoading}
           disabled={!isValid}
-          onClick={onExport}
+          onClick={onShowAvailability}
         >
           Show in app
-        </MButton>
+        </Button>
       </Flex>
     </View>
   )
 }
 
-const Button = styled(Btn)`
-    margin-right: 8px
-`
 const MButton = styled(Btn)`
-    font-size: 14px;
-    display: flex;
-    flex: 1
+    margin-right: 8px
 `
 const View = styled(Flex)`
     margin-top: 0 !important;
