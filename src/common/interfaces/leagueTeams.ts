@@ -117,14 +117,21 @@ export interface IBESimpleEntity {
 }
 
 export interface IBELeagueTeamDetails {
+  id: string
   name: string
+  master_team: IBEMasterTeam
   head_coach: IBESimpleEntity
-  team_admins: IBESimpleEntity[]
-  players: IBESimpleEntity[]
-  coaches: IBESimpleEntity[]
-  leagues: IBELeague[]
-  divisions: IBEDivision[]
-  subdivisions: IBESubdivision[]
+  operator: IBESimpleEntity | null
+
+  master_team_admin: IBESimpleEntity | null
+  master_team_admins: IBESimpleEntity[] | null
+
+  league: IBELeague
+  division: IBEDivision | null
+
+  subdivision: IBESubdivision | null
+  created_at: string
+  updated_at: string
 }
 
 export interface IFESimpleEntity {
@@ -135,14 +142,17 @@ export interface IFESimpleEntity {
 }
 
 export interface IFELeagueTeamDetails {
+  id: string
   name: string
+  masterTeam: IFEMasterTeam
   headCoach: IFESimpleEntity
-  teamsAdmins: IFESimpleEntity[]
-  players: IFESimpleEntity[]
-  coaches: IFESimpleEntity[]
-  leagues: IFELeague[]
-  divisions: IFEDivision[]
-  subdivisions: IFESubdivision[]
+  masterTeamAdmin: IFESimpleEntity | null
+  masterTeamAdmins: IFESimpleEntity[] | null
+  league: IFELeague | null
+  division: IFEDivision | null
+  subdivision: IFESubdivision | null
+  createdAt: string
+  updatedAt: string
 }
 
 export interface ILeagueTeamError {

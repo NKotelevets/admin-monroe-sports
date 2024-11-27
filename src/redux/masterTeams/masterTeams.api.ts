@@ -85,42 +85,50 @@ export const masterTeamsApi = createApi({
         url: `teams/teams/${id}/details`,
       }),
       keepUnusedDataFor: 0.0001,
-      transformResponse: (response: IBEMasterTeamDetails) => ({
-        name: response.name,
-        coaches: response.coaches.map((coach) => ({
-          id: coach.id,
-          email: coach.email,
-          fullName: coach.first_name + ' ' + coach.last_name,
-          phone: coach.phone_number,
-        })),
-        players: response.players.map((player) => ({
-          id: player.id,
-          email: player.email,
-          fullName: player.first_name + ' ' + player.last_name,
-          phone: player.phone_number,
-        })),
-        teamsAdmins: response.team_admins.map((teamAdmin) => ({
-          id: teamAdmin.id,
-          email: teamAdmin.email,
-          fullName: teamAdmin.first_name + ' ' + teamAdmin.last_name,
-          phone: teamAdmin.phone_number,
-        })),
-        headCoach: {
-          id: response.head_coach.id,
-          email: response.head_coach.email,
-          fullName: response.head_coach.first_name + ' ' + response.head_coach.last_name,
-          phone: response.head_coach.phone_number,
-        },
-        leagues: (
-          transformKeysToCamelCase<IFEMasterTeamDetails['leagues'], IBEMasterTeamDetails['leagues']>(response.leagues)
-        ),
-        divisions: (
-          transformKeysToCamelCase<IFEMasterTeamDetails['divisions'], IBEMasterTeamDetails['divisions']>(response.divisions)
-        ),
-        subdivisions: (
-          transformKeysToCamelCase<IFEMasterTeamDetails['subdivisions'], IBEMasterTeamDetails['subdivisions']>(response.subdivisions)
-        ),
-      }),
+      transformResponse: (response: IBEMasterTeamDetails) => {
+        const teamAdmin = response.team_admin ? ({
+          ...response.team_admin,
+          full_name: `${response.team_admin.first_name} ${response.team_admin.last_name}`
+        }) : undefined
+
+        return ({
+          name: response.name,
+          coaches: response.coaches.map((coach) => ({
+            id: coach.id,
+            email: coach.email,
+            fullName: coach.first_name + ' ' + coach.last_name,
+            phone: coach.phone_number,
+          })),
+          players: response.players.map((player) => ({
+            id: player.id,
+            email: player.email,
+            fullName: player.first_name + ' ' + player.last_name,
+            phone: player.phone_number,
+          })),
+          teamAdmin: transformKeysToCamelCase(teamAdmin),
+          teamsAdmins: response.team_admins?.map((teamAdmin) => ({
+            id: teamAdmin.id,
+            email: teamAdmin.email,
+            fullName: teamAdmin.first_name + ' ' + teamAdmin.last_name,
+            phone: teamAdmin.phone_number,
+          })),
+          headCoach: {
+            id: response.head_coach.id,
+            email: response.head_coach.email,
+            fullName: response.head_coach.first_name + ' ' + response.head_coach.last_name,
+            phone: response.head_coach.phone_number,
+          },
+          leagues: (
+            transformKeysToCamelCase<IFEMasterTeamDetails['leagues'], IBEMasterTeamDetails['leagues']>(response.leagues)
+          ),
+          divisions: (
+            transformKeysToCamelCase<IFEMasterTeamDetails['divisions'], IBEMasterTeamDetails['divisions']>(response.divisions)
+          ),
+          subdivisions: (
+            transformKeysToCamelCase<IFEMasterTeamDetails['subdivisions'], IBEMasterTeamDetails['subdivisions']>(response.subdivisions)
+          ),
+        })
+      },
     }),
 
     createMasterTeam: builder.mutation<{ team_id: string }, IPopulateMTRequest>({

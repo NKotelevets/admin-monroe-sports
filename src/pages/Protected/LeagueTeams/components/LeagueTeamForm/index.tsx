@@ -78,7 +78,7 @@ export const LeagueTeamForm = (props: IFormProps<ILeagueForm, ILeagueForm>): Rea
       setFieldValue('masterTeamAdminName', undefined)
       setFieldValue('masterTeamAdminEmail', undefined)
     }
-  }, [])
+  }, [isNew])
 
   const onAddMasterTeam = () => {
     setAddingMasterTeam(true)
@@ -145,7 +145,6 @@ export const LeagueTeamForm = (props: IFormProps<ILeagueForm, ILeagueForm>): Rea
                     className="h-32"
                     error={touched.name ? errors.name as string : undefined}
                     onBlur={handleBlur}
-                    disabled={!isNew}
                   />
                 </MainContainer>
               </Flex>

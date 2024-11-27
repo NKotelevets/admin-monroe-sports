@@ -103,6 +103,22 @@ export const MasterTeamDropdown = React.memo((props: {
     }
 
     if (mt < 0 && masterTeamAdded) {
+      const teamAdminFullName = () => {
+        if (masterTeamAdded.teamsAdmins?.length) {
+          return masterTeamAdded.teamsAdmins[0].fullName
+        }
+
+        return masterTeamAdded.teamAdmin?.fullName || ''
+      }
+
+      const teamAdminEmail = () => {
+        if (masterTeamAdded.teamsAdmins?.length) {
+          return masterTeamAdded.teamsAdmins[0].fullName
+        }
+
+        return `${masterTeamAdded.teamAdmin?.email} ${masterTeamAdded.teamAdmin?.email}` || ''
+      }
+
       setMasterTeamItems(mt => ([...new Set([
         ...mt,
         {
@@ -114,8 +130,8 @@ export const MasterTeamDropdown = React.memo((props: {
           headCoachId: masterTeamAdded.headCoach.id,
           headCoachFullName: masterTeamAdded.headCoach.fullName,
           headCoachEmail: masterTeamAdded.headCoach.email,
-          teamAdminFullName: masterTeamAdded.teamsAdmins.length ? masterTeamAdded.teamsAdmins[0].fullName : '',
-          teamAdminEmail: masterTeamAdded.teamsAdmins.length ? masterTeamAdded.teamsAdmins[0].email : ''
+          teamAdminFullName: teamAdminFullName(),
+          teamAdminEmail: teamAdminEmail()
         } as IFEMasterTeam
       ])]))
     }

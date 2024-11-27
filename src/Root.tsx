@@ -29,6 +29,8 @@ import UserDetails from '@/pages/Protected/Users/UserDetails'
 import UsersBulkEdit from '@/pages/Protected/Users/UsersBulkEdit'
 import UsersImportInfo from '@/pages/Protected/Users/UsersImportInfo'
 import LeagueTeams from '@/pages/Protected/LeagueTeams'
+import LeagueTeamCreate from '@/pages/Protected/LeagueTeams/LeagueTeamCreate.tsx'
+import LeagueTeamEdit from '@/pages/Protected/LeagueTeams/LeagueTeamEdit.tsx'
 
 import InfoAlert from '@/components/InfoAlert'
 import Notification from '@/components/Notification'
@@ -61,9 +63,11 @@ import {
   PATH_TO_USERS,
   PATH_TO_USERS_BLOCKING_INFO,
   PATH_TO_USERS_BULK_EDIT,
-  PATH_TO_USERS_IMPORT_INFO, PATH_TO_LEAGUE_TEAMS, PATH_TO_CREATE_LEAGUE_TEAM
+  PATH_TO_USERS_IMPORT_INFO,
+  PATH_TO_LEAGUE_TEAMS,
+  PATH_TO_CREATE_LEAGUE_TEAM,
+  PATH_TO_EDIT_LEAGUE_TEAM
 } from '@/common/constants/paths'
-import LeagueTeamCreate from '@/pages/Protected/LeagueTeams/LeagueTeamCreate.tsx'
 
 
 const Root = () => (
@@ -111,6 +115,7 @@ const Root = () => (
       {/* League Teams */}
       <Route path={PATH_TO_LEAGUE_TEAMS} element={<LeagueTeams />} />
       <Route path={PATH_TO_CREATE_LEAGUE_TEAM} element={<LeagueTeamCreate />} />
+      <Route path={`${PATH_TO_EDIT_LEAGUE_TEAM}/:id`} element={<LeagueTeamEdit />} />
 
       {/* Events */}
       <Route path={PATH_TO_EVENTS} element={<Events />} />
