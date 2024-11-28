@@ -1,6 +1,7 @@
 import { TImportStatus } from '@/common/types'
 import type { SorterResult } from 'antd/es/table/interface'
 import type { GetProp, TableProps } from 'antd'
+import { FormikConfig } from 'formik'
 
 export interface IDetailedError {
   code: string
@@ -54,4 +55,14 @@ export interface IDuplicate<T, Y> {
   new: T
   existing: Y
   differences?: { [key: string]: unknown } | object
+}
+
+export interface IFormProps<Body, FormValues> {
+  validationSchema?: FormikConfig<FormValues>['validationSchema']
+  initialValues?: FormValues
+  isLoading?: boolean
+
+  onSubmit(body: Body): void
+
+  goBack(): void
 }

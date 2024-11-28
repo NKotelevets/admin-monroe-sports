@@ -61,8 +61,9 @@ import {
   PATH_TO_USERS,
   PATH_TO_USERS_BLOCKING_INFO,
   PATH_TO_USERS_BULK_EDIT,
-  PATH_TO_USERS_IMPORT_INFO, PATH_TO_LEAGUE_TEAMS, PATH_TO_MASTER_TEAMS_IMPORT_INFO
+  PATH_TO_USERS_IMPORT_INFO, PATH_TO_LEAGUE_TEAMS, PATH_TO_MASTER_TEAMS_IMPORT_INFO, PATH_TO_CREATE_LEAGUE_TEAM
 } from '@/common/constants/paths'
+import LeagueTeamCreate from '@/pages/Protected/LeagueTeams/LeagueTeamCreate.tsx'
 import MasterTeamImportInfo from '@/pages/Protected/MasterTeams/MasterTeamImportInfo.tsx'
 
 
@@ -111,6 +112,7 @@ const Root = () => (
 
       {/* League Teams */}
       <Route path={PATH_TO_LEAGUE_TEAMS} element={<LeagueTeams />} />
+      <Route path={PATH_TO_CREATE_LEAGUE_TEAM} element={<LeagueTeamCreate />} />
 
       {/* Events */}
       <Route path={PATH_TO_EVENTS} element={<Events />} />
