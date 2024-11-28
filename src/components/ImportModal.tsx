@@ -23,9 +23,9 @@ const ImportModalWrapper = styled(Flex)`
   border-radius: 2px;
   background-color: #ffffff;
   box-shadow:
-    0px 3px 6px -4px rgba(0, 0, 0, 0.12),
-    0px 6px 16px 0px rgba(0, 0, 0, 0.08),
-    0px 9px 28px 8px rgba(0, 0, 0, 0.05);
+    0 3px 6px -4px rgba(0, 0, 0, 0.12),
+    0 6px 16px 0 rgba(0, 0, 0, 0.08),
+    0 9px 28px 8px rgba(0, 0, 0, 0.05);
   z-index: 500;
   width: 500px;
   flex-direction: column;

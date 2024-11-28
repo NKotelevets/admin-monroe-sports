@@ -1,28 +1,25 @@
 import { useTableSearch } from '@/hooks/useTableSearch.tsx'
-import { IImportUsersCSVTableData } from '@/common/interfaces/user.ts'
 import CellText from '@/components/Table/CellText.tsx'
-import { SHORT_GENDER_NAMES } from '@/common/constants'
-import { TGender } from '@/common/types'
-import MonroeFilter from '@/components/Table/MonroeFilter.tsx'
 import { FilterFilled } from '@ant-design/icons'
 import { getIconColor } from '@/utils'
 import TagType from '@/components/Table/TagType.tsx'
-import TextWithTooltip from '@/components/TextWithTooltip.tsx'
 import { ReactSVG } from 'react-svg'
 import SyncIcon from '@/assets/icons/sync.svg'
 import { GetProp, TableProps } from 'antd'
 import { useEffect, useState } from 'react'
 import { SorterResult } from 'antd/es/table/interface'
+import { IImportMasterTeamCSVTableData } from '@/common/interfaces/masterTeams.ts'
+import { IFEDuplicate } from '@/common/interfaces/masterTeams.ts'
 
 interface IParams {
-  setSelectedIndex(idx: number): void
-  records: IImportUsersCSVTableData[]
+  setSelectedIndex(index: number): void
+  records: IFEDuplicate[]
 }
 
 interface ITableParams {
   pagination?: TTablePaginationConfig
-  sortField?: SorterResult<IImportUsersCSVTableData>['field']
-  sortOrder?: SorterResult<IImportUsersCSVTableData>['order']
+  sortField?: SorterResult<IImportMasterTeamCSVTableData>['field']
+  sortOrder?: SorterResult<IImportMasterTeamCSVTableData>['order']
   filters?: Parameters<GetProp<TableProps, 'onChange'>>[1]
 }
 
@@ -35,7 +32,7 @@ type TColumns<T> = TableProps<T>['columns']
 
  * @param {Object} params - The parameters for configuring the table.
  * @param {function} params.setSelectedIndex - A function to set the selected index of the record.
- * @param {IImportUsersCSVTableData[]} params.records - An array of records to be displayed in the table.
+ * @param {IImportMasterTeamCSVTableData[]} params.records - An array of records to be displayed in the table.
  *
  * @returns An object containing the following properties:
  *  - {Array} columns - An array of column definitions for the Ant Design table.
@@ -43,13 +40,13 @@ type TColumns<T> = TableProps<T>['columns']
  *  - {Object} tableParams - The current table parameters used for managing table state.
  *
  * @example
- * const { columns, setTableParams, tableParams } = useUsersImportInfoTableParams<TObjectShape>({
- *   setSelectedIdx: (idx) => console.log(`Selected index: ${idx}`),
+ * const { columns, setTableParams, tableParams } = useMasterTeamImportInfoTableParams<TObjectShape>({
+ *   setSelectedIndex: (index) => console.log(`Selected index: ${index}`),
  *   records: userData,
  * });
  *
  */
-export const useUsersImportInfoTableParams = ({
+export const useMasterTeamImportInfoTableParams = ({
   setSelectedIndex,
   records,
 }: IParams) => {
@@ -76,7 +73,7 @@ export const useUsersImportInfoTableParams = ({
     })
   }, [records])
 
-  const handleTableChange: TableProps<IImportUsersCSVTableData>['onChange'] = (pagination) => {
+  const handleTableChange: TableProps<IImportMasterTeamCSVTableData>['onChange'] = (pagination) => {
     setTableParams({
       pagination: {
         ...pagination,
@@ -84,14 +81,14 @@ export const useUsersImportInfoTableParams = ({
     })
   }
 
-  const columns: TColumns<IImportUsersCSVTableData> = [
+  const columns: TColumns<IImportMasterTeamCSVTableData> = [
     {
-      title: 'First Name',
-      dataIndex: 'firstName',
+      title: 'Team Name',
+      dataIndex: 'masterTeamName',
       width: '240px',
-      sorter: (s1, s2) => s1.firstName.localeCompare(s2.firstName),
+      sorter: (s1, s2) => s1.masterTeamName.localeCompare(s2.masterTeamName),
       // sortOrder: sortFirstNameOrder,
-      ...getColumnSearchProps<IImportUsersCSVTableData>('firstName'),
+      ...getColumnSearchProps<IImportMasterTeamCSVTableData>('masterTeamName'),
       render: (value, record) => (
         <CellText
           isLink
@@ -101,44 +98,6 @@ export const useUsersImportInfoTableParams = ({
         >
           {value}
         </CellText>
-      )
-    },
-    {
-      title: 'Last Name',
-      dataIndex: 'lastName',
-      width: '240px',
-      // sortOrder: sortLastNameOrder,
-      sorter: (s1, s2) => s1.lastName.localeCompare(s2.lastName),
-      ...getColumnSearchProps('lastName'),
-      render: (value, record) => (
-        <CellText
-          isLink
-          onClick={() => {
-            record.status === 'Duplicate' && setSelectedIndex(record.idx)
-          }}
-        >
-          {value}
-        </CellText>
-      )
-    },
-    {
-      title: '',
-      dataIndex: 'gender',
-      width: '80px',
-      onFilter: (value, record) => value === record.gender,
-      render: (value) => <CellText> {SHORT_GENDER_NAMES[value as TGender]}</CellText>,
-      filters: [
-        { text: 'Female', value: 0 },
-        { text: 'Male', value: 1 },
-        { text: 'Other', value: 2 },
-      ],
-      filterDropdown: MonroeFilter,
-      filterIcon: (filtered) => (
-        <FilterFilled
-          style={{
-            color: getIconColor(filtered)
-          }}
-        />
       )
     },
     {
@@ -162,7 +121,6 @@ export const useUsersImportInfoTableParams = ({
     {
       title: 'Error info',
       dataIndex: 'message',
-      render: (value) => <TextWithTooltip maxLength={100} text={value} />
     },
     {
       title: '',
@@ -170,7 +128,7 @@ export const useUsersImportInfoTableParams = ({
       width: '80px',
       render: (_, record) =>
         record.status === 'Duplicate' && (
-          <ReactSVG className="c-p" src={SyncIcon} onClick={() => setSelectedIndex(record.idx)} />
+          <ReactSVG className="c-p" src={SyncIcon} onClick={() => setSelectedIndex(record.index)} />
         )
     }
   ]

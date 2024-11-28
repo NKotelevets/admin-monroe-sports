@@ -5,6 +5,9 @@ import BaseLayout from '@/layouts/BaseLayout'
 import { FC, ReactElement, useState } from 'react'
 import styled from '@emotion/styled'
 import { PageContext } from './context'
+import Breadcrumb from 'antd/es/breadcrumb'
+import { Description } from '@/components/Elements/deletingBlockingInfoElements.tsx'
+
 
 /**
  * Interface representing the props for the Page component.
@@ -18,6 +21,8 @@ export interface IPageProps {
   title: string
   children: ReactElement
 
+  subtitle?: string
+  breadcrumbs?: { title: ReactElement }[]
   controls?(): ReactElement
 }
 
@@ -34,7 +39,7 @@ export interface IPageProps {
  * </Page>
  */
 export const Page: FC<IPageProps> = (props: IPageProps): ReactElement => {
-  const { title, children, controls } = props
+  const { title, children, subtitle, breadcrumbs, controls } = props
   const [pageTitle, setPageTitle] = useState(title)
 
   return (
@@ -42,6 +47,8 @@ export const Page: FC<IPageProps> = (props: IPageProps): ReactElement => {
       setPageTitle,
       pageTitle
     }}>
+    <>
+      <div id="page-portal"></div>
       <BaseLayout>
         <>
           <Helmet>
@@ -49,20 +56,26 @@ export const Page: FC<IPageProps> = (props: IPageProps): ReactElement => {
           </Helmet>
 
           <PageContainer>
+            {!!breadcrumbs && <Breadcrumb items={breadcrumbs} />}
+
             <Header justify="space-between" align="center" vertical={false}>
-              <ProtectedPageTitle>{pageTitle}</ProtectedPageTitle>
+              <PageInfo vertical>
+                <Title>{pageTitle}</Title>
+                {!!subtitle && <Subtitle>{subtitle}</Subtitle>}
+              </PageInfo>
 
               <Controls>
                 {!!controls && controls()}
               </Controls>
             </Header>
 
-            <Flex flex="1 1 auto" vertical>
-              {children}
-            </Flex>
-          </PageContainer>
-        </>
-      </BaseLayout>
+          <Flex flex="1 1 auto" vertical>
+            {children}
+          </Flex>
+        </PageContainer>
+      </>
+    </BaseLayout>
+    </>
     </PageContext.Provider>
   )
 }
@@ -70,4 +83,14 @@ export const Page: FC<IPageProps> = (props: IPageProps): ReactElement => {
 const Header = styled(Flex)`
 `
 const Controls = styled(Flex)`
+`
+const PageInfo = styled(Flex)`
+    margin: 8px 0 24px;
+`
+const Title = styled(ProtectedPageTitle)`
+    margin: 0;
+`
+const Subtitle = styled(Description)`
+    margin: 0;
+    margin-top: 8px
 `

@@ -103,8 +103,8 @@ export const userSlice = createSlice({
 
         state.duplicates = action.payload?.duplicates
           ? action.payload.duplicates.map((duplicate, idx) => ({
-              idx,
               ...duplicate,
+              idx,
             }))
           : []
 
