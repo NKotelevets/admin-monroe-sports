@@ -76,7 +76,7 @@ const MasterTeams = () => {
             errorMessage: (error.data as {
               code: string;
               error: string
-            })?.error || 'Something went wrong. Please, try again'
+            })?.error || error.data?.detail || 'Something went wrong. Please, try again'
           })
         })
 
