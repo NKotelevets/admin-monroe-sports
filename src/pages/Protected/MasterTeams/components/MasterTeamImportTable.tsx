@@ -46,6 +46,7 @@ export const MasterTeamImportTable = (): ReactElement => {
 
   // remove current duplicate and goes to next
   const onSkip = (index: number) => {
+    reset()
     removeDuplicate(index)
   }
 
