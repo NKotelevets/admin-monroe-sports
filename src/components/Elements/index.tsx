@@ -85,7 +85,6 @@ export const CancelButton = styled(Button)`
   border-radius: 2px;
   border: 1px solid #626169 !important;
   box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.02);
-  border: 0;
   height: 40px;
   width: 100%;
 

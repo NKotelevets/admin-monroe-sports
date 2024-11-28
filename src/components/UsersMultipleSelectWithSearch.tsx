@@ -29,10 +29,8 @@ const PageContainer = styled(Flex)`
 
 const Wrapper = styled(Flex)<{ is_error: string }>`
   position: relative;
-
   border-radius: 2px;
-  border: 1px solid #d8d7db;
-  border-color: ${(props) => (props.is_error === 'true' ? '#BC261B' : '#d8d7db')};
+  border: 1px solid ${(props) => (props.is_error === 'true' ? '#BC261B' : '#d8d7db')};
   background: #fff;
   box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.02);
   min-height: 32px;
@@ -63,7 +61,7 @@ const List = styled.ul`
   box-shadow:
     0 3px 6px -4px rgba(0, 0, 0, 0.12),
     0 6px 16px 0 rgba(0, 0, 0, 0.08),
-    0 9px 28px 8px rgba(0, 0, 0, 0.05);
+    0px 9px 28px 8px rgba(0, 0, 0, 0.05);
   padding-right: 4px;
   z-index: 20;
   overflow: scroll;

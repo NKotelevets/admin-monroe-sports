@@ -25,8 +25,7 @@ const Wrapper = styled(Flex)<{ is_error: string }>`
   position: relative;
 
   border-radius: 2px;
-  border: 1px solid #d8d7db;
-  border-color: ${(props) => (props.is_error === 'true' ? '#BC261B' : '#d8d7db')};
+  border: 1px solid ${(props) => (props.is_error === 'true' ? '#BC261B' : '#d8d7db')};
   background: #fff;
   box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.02);
   min-height: 32px;
