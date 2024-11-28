@@ -23,13 +23,13 @@ import { compareObjects } from '@/utils/compareObjects.ts'
 const SUCCESS_MESSAGE = 'Record Updated'
 const ERROR_MESSAGE = `Record can't be updated. Please try again.`
 
-interface IDuplicateReviewModalProps<T, Y> {
+interface IDuplicateReviewModalProps<NewData, ExistingData> {
   idx?: number
-  duplicates: IDuplicate<T, Y>[]
+  duplicates: IDuplicate<NewData, ExistingData>[]
   isLoading: boolean
   error: boolean
   success: boolean
-  removeDuplicateByIndex?: IDuplicateModalControlsProps<T>['removeDuplicateByIndex']
+  removeDuplicateByIndex?: IDuplicateModalControlsProps<NewData>['removeDuplicateByIndex']
   hideSkipButton?: boolean
   mainButtonText?: string
   buttonSize?: number
@@ -45,7 +45,32 @@ interface IDuplicateReviewModalProps<T, Y> {
   onClose?(): void
 }
 
-export const DuplicateReviewModal = <T, Y>(props: IDuplicateReviewModalProps<T, Y>) => {
+/**
+ * A generic modal component for reviewing and resolving duplicate objects.
+ * This component is flexible and can be used with various entities in the project.
+ *
+ * @template NewData - Type of the `new` object in the duplicates array.
+ * @template ExistingData - Type of the `existing` object in the duplicates array.
+ *
+ * @param {IDuplicateReviewModalProps<NewData, ExistingData>} props - The props for the component.
+ * @param {number} [props.idx=1] - Initial index of the duplicate to review.
+ * @param {IDuplicate<NewData, ExistingData>[]} props.duplicates - Array of duplicate objects to review.
+ * @param {boolean} [props.isLoading=false] - Indicates if an update operation is in progress.
+ * @param {boolean} [props.success=false] - Indicates if the last update operation was successful.
+ * @param {boolean} [props.error=false] - Indicates if the last update operation resulted in an error.
+ * @param {boolean} [props.hideSkipButton=false] - Determines whether the "Skip" button should be hidden.
+ * @param {string} [props.mainButtonText='Replace'] - Text for the primary action button.
+ * @param {number} [props.buttonSize] - Custom size for the primary button.
+ * @param {Function} [props.removeDuplicateByIndex] - Callback to remove a duplicate by its index.
+ * @param {Function} props.children - Render prop to display content for the current duplicate.
+ * @param {Function} [props.customButton] - Optional callback to render a custom button in the modal footer.
+ * @param {Function} props.handleUpdate - Callback to handle the update action for the current duplicate.
+ * @param {Function} [props.onChange] - Optional callback triggered when the index of the current duplicate changes.
+ * @param {Function} [props.onClose] - Optional callback triggered when the modal is closed.
+ *
+ * @returns {ReactElement} The rendered modal for duplicate review.
+ */
+export const DuplicateReviewModal = <T, Y>(props: IDuplicateReviewModalProps<T, Y>): ReactElement => {
   const {
     idx = 1,
     duplicates,
@@ -101,15 +126,14 @@ export const DuplicateReviewModal = <T, Y>(props: IDuplicateReviewModalProps<T, 
 
         <Footer>
           <Flex align="center">
-            <ArrowButton disabled={actualIndex === 0 || isLoading} onClick={handlePrev}>
-              <LeftOutlined />
-            </ArrowButton>
-            <ArrowButton
-              disabled={actualIndex + 1 === total || isLoading}
-              onClick={handleNext}
-            >
-              <RightOutlined />
-            </ArrowButton>
+            <ModalNavigation>
+              <ArrowButton disabled={actualIndex === 0 || isLoading} onClick={handlePrev}>
+                <LeftOutlined />
+              </ArrowButton>
+              <ArrowButton disabled={actualIndex + 1 === total || isLoading} onClick={handleNext}>
+                <RightOutlined />
+              </ArrowButton>
+            </ModalNavigation>
 
             <MonroeDarkBlueText>
               {actualIndex + 1} of {total} duplicate
@@ -154,10 +178,14 @@ export const DuplicateReviewModal = <T, Y>(props: IDuplicateReviewModalProps<T, 
   )
 }
 
+// Styled Components
 const Indicator = styled(LoadingOutlined)`
     font-size: 24px;
     color: white;
 `
 const ButtonSized = styled(Button)<{ width?: number }>`
     width: ${({ width }) => width ?? 90}px;
+`
+const ModalNavigation = styled.div`
+    margin-right: 8px
 `

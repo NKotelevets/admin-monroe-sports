@@ -90,6 +90,8 @@ export const masterTeamsApi = createApi({
             masterTeamName: duplicate.new['Master Team Name'],
             teamAdminEmail: duplicate.new['Team Admin Email'],
             teamAdminName: duplicate.new['Team Admin First and Last Name'],
+            adminData: duplicate.new.admin_data,
+            headCoachData: duplicate.new.head_coach_data
           },
           existing: transformKeysToCamelCase(duplicate.existing)
         })) as IFEImportMasterTeamCSVResponse['duplicates']
@@ -152,7 +154,7 @@ export const masterTeamsApi = createApi({
       void,
       {
         id: string
-        body: IPopulateMTRequest
+        body: Partial<IPopulateMTRequest>
       }
     >({
       query: ({ body, id }) => ({

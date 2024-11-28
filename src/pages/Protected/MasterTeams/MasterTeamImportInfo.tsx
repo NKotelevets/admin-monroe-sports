@@ -15,7 +15,7 @@ const PAGE_SUBTITLE = `This panel provides a summary of your CSV import, listing
   entries. This helps ensure your data is accurate and up-to-date.`
 
 /**
- * MasterTeamImportInfo Component
+ * Master Team Import Info Page
  *
  * This component renders the "League Teams" page, which provides an overview of the CSV import process,
  * highlighting rows with errors and duplicates for review and action.
@@ -29,7 +29,6 @@ const PAGE_SUBTITLE = `This panel provides a summary of your CSV import, listing
  *   - `breadcrumbs`: Navigation breadcrumbs defined by `BREADCRUMB_ITEMS` to help users track their location.
  * - The `MasterTeamImportTable` component is rendered within the page to display the team import information.
  */
-
 const MasterTeamImportInfo = (): ReactElement => {
   return (
     <TableProvider>

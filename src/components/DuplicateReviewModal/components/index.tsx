@@ -30,7 +30,7 @@ export const Title = styled.h1`
 `
 
 export const ArrowButton = styled(Button)`
-  background: transparent;
+  background: white !important;
   border: 0;
   padding: 6px;
 `

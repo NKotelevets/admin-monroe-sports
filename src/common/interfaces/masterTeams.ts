@@ -170,12 +170,20 @@ export interface IImportMasterTeamCSVTableData {
   message: string
 }
 
+interface IBEDuplicateExtraData {
+  id: string
+  full_name: string
+  email: string
+}
+
 export interface IBENewMasterTeamDuplicate {
   'Head Coach Email': string
   'Head Coach First and Last Name': string
   'Master Team Name': string
   'Team Admin Email': string
   'Team Admin First and Last Name': string
+  head_coach_data?: IBEDuplicateExtraData
+  admin_data?: IBEDuplicateExtraData[]
 }
 
 export interface IBEExistingMasterTeamDuplicate {
@@ -184,21 +192,32 @@ export interface IBEExistingMasterTeamDuplicate {
   name: string
   team_admins: string[]
   team_admins_emails: string[]
+  head_coach_data: IBEDuplicateExtraData
+  admin_data: IBEDuplicateExtraData[]
 }
 
 interface IBEDuplicate {
+  id: string
   index: number
   new: IBENewMasterTeamDuplicate
   existing: IBEExistingMasterTeamDuplicate
   differences: { [key: string]: unknown }
 }
 
+export interface IDuplicateExtraData {
+  id: string
+  fullName: string
+  email: string
+}
+
 export interface IFENewMasterTeamDuplicate {
   headCoachName: string
   headCoachEmail: string
-  masterTeamName: string
+  headCoachData?: IDuplicateExtraData
   teamAdminEmail: string
   teamAdminName: string
+  adminData?: IDuplicateExtraData[]
+  masterTeamName: string
 }
 
 export interface IImportMasterTeamCSVError {
@@ -215,11 +234,15 @@ export interface IBEImportMasterTeamCSVResponse {
 }
 
 export interface IFEExistingMasterTeamDuplicate {
+  id: string
   headCoach: string
   headCoachEmail: string
   name: string
   teamAdmins: string[]
   teamAdminsEmails: string[]
+
+  headCoachData: IDuplicateExtraData
+  adminData: IDuplicateExtraData[]
 }
 
 export interface IFEDuplicate {
