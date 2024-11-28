@@ -1,4 +1,10 @@
 import { Page } from '@/layouts/Page/index.tsx'
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { PATH_TO_MASTER_TEAMS } from '@/common/constants/paths.ts'
+import Loader from '@/components/Loader.tsx'
+import { MasterTeamScheduleRequestTable } from './components/MasterTeamScheduleRequestTable'
+
 // import { PATH_TO_MASTER_TEAMS } from '@/common/constants/paths.ts'
 // import { MonroeBlueText } from '@/components/Elements'
 
@@ -8,13 +14,40 @@ import { Page } from '@/layouts/Page/index.tsx'
 // ]
 
 export const MasterTeamScheduleRequest = () => {
+  const params = useParams<{ range: string, selectedIds: string }>()
+  const navigate = useNavigate()
+  const [dates, setDates] = useState<{ start: string, end: string } | null>(null)
+  const [selectedIds, setSelectedIds] = useState<string[] | null>(null)
+
+  // Sets selected ids and dates based on url params
+  useEffect(() => {
+    if (!params) return
+
+    setSelectedIds(params.selectedIds?.split(',') || null)
+
+    const range = params.range?.split(',')
+    if (range && range.length > 1) {
+      setDates({ start: range[0], end: range[1] } || null)
+    }
+  }, [params])
+
+  // cant continue without params
+  if (!params) {
+    navigate(PATH_TO_MASTER_TEAMS)
+    return
+  }
+
+  if (!selectedIds || !dates) return <Loader />
 
   return (
     <Page
       title="Schedule Request"
       // breadcrumbs={BREAD_CRUMB_ITEMS}
     >
-      <>Lol</>
+      <MasterTeamScheduleRequestTable
+        dates={dates}
+        selectedIds={selectedIds}
+      />
     </Page>
   )
 }

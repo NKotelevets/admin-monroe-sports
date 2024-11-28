@@ -197,21 +197,25 @@ export interface IScheduleRequestResponse {
   end_date: string
 }
 
+// export interface IScheduleRequest {
+//   id: string
+//   isGroup: boolean
+//   userId: string
+//   weekdays: IScheduleRequestWeekdays
+//   timeBefore: string
+//   timeAfter: string
+//   timeRanges: string[][]
+//   typedTimeRanges: { timeRange: string[], availabilityType: number }[]
+//   isOneDay: boolean,
+//   updatedAt: string
+//   createdAt: string
+//   availabilityType: number
+//   scheduleType: number
+//   timeRangeType: number
+//   startDate: string
+//   endDate: string
+// }
+
 export interface IScheduleRequest {
-  id: string
-  isGroup: boolean
-  userId: string
-  weekdays: IScheduleRequestWeekdays
-  timeBefore: string
-  timeAfter: string
-  timeRanges: string[][]
-  typedTimeRanges: { timeRange: string[], availabilityType: number }[]
-  isOneDay: boolean,
-  updatedAt: string
-  createdAt: string
-  availabilityType: number
-  scheduleType: number
-  timeRangeType: number
-  startDate: string
-  endDate: string
+  [key: string]: {[key: string]: { time: string, availability: number }}[]
 }

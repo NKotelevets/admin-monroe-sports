@@ -10,6 +10,8 @@ import DatePickerRange, { IDateRangePickerRef } from '@/components/DatePickerRan
 import dayjs, { Dayjs } from 'dayjs'
 import { transformKeysToSnakeCase } from '@/utils'
 import { Button } from '@/components/Button'
+import { PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST } from '@/common/constants/paths.ts'
+import { useNavigate } from 'react-router-dom'
 
 export const ScheduleRequestButton = (props: IExportInfoProps) => {
   const { selectedMasterTeamIds } = props
@@ -41,6 +43,7 @@ const DropdownContent = (props: { masterTeamIds: string[] }) => {
   const { download, isLoading, status } = useDownloadFile()
   const { notify } = useNotification()
 
+  const navigate = useNavigate()
   const datePickerRef = useRef<IDateRangePickerRef>()
 
   const [startDate, setStartDate] = useState<Dayjs | null>(null)
@@ -78,7 +81,10 @@ const DropdownContent = (props: { masterTeamIds: string[] }) => {
     )
   }, [startDate, endDate, masterTeamIds])
 
-  const onShowAvailability = alert
+  const onShowAvailability = () => {
+    if (!startDate || !endDate || !masterTeamIds) return
+    navigate(`${PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST}/${startDate.format('YYYY-MM-DD')},${endDate.format('YYYY-MM-DD')}/${masterTeamIds.join(',')}`)
+  }
 
   return (
     <View

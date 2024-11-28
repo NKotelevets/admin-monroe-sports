@@ -2,6 +2,7 @@ import Btn, { ButtonProps } from 'antd/es/button/button'
 import styled from '@emotion/styled'
 import { LoadingOutlined } from '@ant-design/icons'
 import { Spin } from 'antd'
+import { colors } from '@/utils/colors.tsx'
 
 /**
  * Extended Ant.Design button with different loading animation
@@ -24,7 +25,7 @@ export const Button = (props: ButtonProps & { spinnerColor?: string }) => {
       <Loading
         size="small"
         hide={!loading}
-        indicator={<Spinner color={spinnerColor || '#BC261B'} spin />}
+        indicator={<Spinner color={spinnerColor || colors.primary} spin />}
       />
     </MButton>
   )
