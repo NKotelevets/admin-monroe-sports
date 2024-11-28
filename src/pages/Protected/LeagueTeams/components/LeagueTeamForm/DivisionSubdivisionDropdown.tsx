@@ -25,8 +25,8 @@ export const DivisionSubdivisionDropdown = React.memo((props: { selectedLeague: 
     if (!divisionList.length) return
 
     const currentDivision = divisionList.find(div => div.id === values.division)
-    const subdivisions = currentDivision?.subdivisions?.map(sub => ({
-      value: sub.id,
+    const subdivisions = currentDivision?.sub_division?.map(sub => ({
+      value: sub.id || '',
       label: sub.name
     }))
 
