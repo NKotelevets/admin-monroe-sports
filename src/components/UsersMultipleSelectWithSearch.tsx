@@ -34,7 +34,7 @@ const Wrapper = styled(Flex)<{ is_error: string }>`
   border: 1px solid #d8d7db;
   border-color: ${(props) => (props.is_error === 'true' ? '#BC261B' : '#d8d7db')};
   background: #fff;
-  box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.02);
   min-height: 32px;
 
   padding: 1px 4px;
@@ -61,9 +61,9 @@ const List = styled.ul`
   max-height: 120px;
   width: 100%;
   box-shadow:
-    0px 3px 6px -4px rgba(0, 0, 0, 0.12),
-    0px 6px 16px 0px rgba(0, 0, 0, 0.08),
-    0px 9px 28px 8px rgba(0, 0, 0, 0.05);
+    0 3px 6px -4px rgba(0, 0, 0, 0.12),
+    0 6px 16px 0 rgba(0, 0, 0, 0.08),
+    0 9px 28px 8px rgba(0, 0, 0, 0.05);
   padding-right: 4px;
   z-index: 20;
   overflow: scroll;
