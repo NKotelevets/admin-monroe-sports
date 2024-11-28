@@ -3,7 +3,7 @@ import { ReactElement } from 'react'
 import { MonroeBlueText } from '@/components/Elements'
 
 import { PATH_TO_USERS } from '@/common/constants/paths'
-import { Page } from '@/layouts/Page.tsx'
+import { Page } from '@/layouts/Page'
 import { UserImportTable } from '@/pages/Protected/Users/components/UserImportTable.tsx'
 
 const PAGE_SUBTITLE = `This panel provides a summary of your CSV import, listing rows with errors and duplicates. Click on any

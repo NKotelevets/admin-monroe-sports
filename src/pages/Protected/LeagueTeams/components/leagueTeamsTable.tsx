@@ -21,7 +21,7 @@ type TFilterValueKey = 'name' | 'division' | 'subdivision' | 'league'
  * It utilizes the `MonroeTable` component to display data and hooks for fetching league team data
  * and managing the table state.
  *
- * @returns {ReactElement} The rendered LeagueTeamsTable component.
+ * @returns {ReactElement} The rendered Index component.
  */
 export const LeagueTeamsTable = (): ReactElement => {
   const [listLeagueTeam] = useLazyGetLeagueTeamsQuery()

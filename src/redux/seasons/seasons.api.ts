@@ -135,6 +135,7 @@ export const {
   useImportSeasonsCSVMutation,
   useUpdateSeasonMutation,
   useGetSeasonDetailsQuery,
+  useLazyGetSeasonDetailsQuery,
   useCreateSeasonMutation,
   useGetSeasonBEDetailsQuery,
   useLazyGetSeasonBEDetailsQuery,

@@ -92,7 +92,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
       dataIndex: 'teamAdmins',
       width: '240px',
       ...getColumnSearchProps('teamAdmins'),
-      sortOrder: getColumnSort('team_admin', ordering),
+      sortOrder: getColumnSort('team_admins', ordering),
       sorter: true,
       render: renderTeamAdmins
     },

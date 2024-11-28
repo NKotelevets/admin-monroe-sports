@@ -98,7 +98,7 @@ export const appSlice = createSlice({
         state.notification.timestamp = new Date().getTime()
       })
       .addMatcher(userApi.endpoints.createUserAsAdmin.matchFulfilled, (state) => {
-        state.notification.message = 'User have been successfully removed.'
+        state.notification.message = 'User have been successfully created.'
         state.notification.timestamp = new Date().getTime()
         state.notification.type = 'success'
       })
@@ -108,6 +108,16 @@ export const appSlice = createSlice({
       })
       .addMatcher(userApi.endpoints.createOperator.matchFulfilled, (state) => {
         state.notification.message = 'Operator successfully created'
+        state.notification.timestamp = new Date().getTime()
+        state.notification.type = 'success'
+      })
+      .addMatcher(seasonsApi.endpoints.createSeason.matchFulfilled, (state) => {
+        state.notification.message = 'Season successfully created'
+        state.notification.timestamp = new Date().getTime()
+        state.notification.type = 'success'
+      })
+      .addMatcher(seasonsApi.endpoints.updateSeason.matchFulfilled, (state) => {
+        state.notification.message = 'Season successfully updated'
         state.notification.timestamp = new Date().getTime()
         state.notification.type = 'success'
       })

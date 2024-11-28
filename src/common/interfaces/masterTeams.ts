@@ -98,7 +98,7 @@ export interface IGetMasterTeamsRequest {
   head_coach?: string | null
   league_name?: string | null
   league_teams?: string | null
-  team_admin?: string | null
+  team_admins?: string | null
 }
 
 export interface IGetMasterTeamsResponse {
@@ -148,7 +148,7 @@ export interface IFEMasterTeamDetails {
   coaches: IFESimpleEntity[]
   leagues: IFELeague[]
   divisions: IFEDivision[]
-  subDivisions: IFESubdivision[]
+  subdivisions: IFESubdivision[]
 }
 
 export interface IMasterTeamError {

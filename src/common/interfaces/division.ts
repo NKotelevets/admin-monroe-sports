@@ -62,6 +62,7 @@ interface IFEBracket {
 }
 
 export interface IFESubdivision {
+  id: string
   name: string
   description: string
   playoffFormat: string
@@ -80,9 +81,10 @@ export interface IBEDivision {
 }
 
 export interface IFEDivision {
+  id?: string
   name: string
   description: string
-  subdivisions: IFESubdivision[]
+  sub_division: IBESubdivision[]
 }
 
 export interface IImportedSubdivision {

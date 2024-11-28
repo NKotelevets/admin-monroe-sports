@@ -133,13 +133,13 @@ export const masterTeamsApi = createApi({
         divisions: (
           transformKeysToCamelCase<IFEMasterTeamDetails['divisions'], IBEMasterTeamDetails['divisions']>(response.divisions)
         ),
-        subDivisions: (
-          transformKeysToCamelCase<IFEMasterTeamDetails['subDivisions'], IBEMasterTeamDetails['subdivisions']>(response.subdivisions)
+        subdivisions: (
+          transformKeysToCamelCase<IFEMasterTeamDetails['subdivisions'], IBEMasterTeamDetails['subdivisions']>(response.subdivisions)
         ),
       }),
     }),
 
-    createMasterTeam: builder.mutation<void, IPopulateMTRequest>({
+    createMasterTeam: builder.mutation<{ team_id: string }, IPopulateMTRequest>({
       query: (body) => ({
         url: 'teams/teams/create-team-as-admin',
         method: 'POST',
@@ -199,6 +199,7 @@ export const {
   useLazyGetMasterTeamsQuery,
   useCreateMasterTeamMutation,
   useGetMasterTeamQuery,
+  useLazyGetMasterTeamQuery,
   useDeleteMasterTeamMutation,
   useBulkDeleteMasterTeamsMutation,
   useEditMasterTeamMutation,

@@ -3,7 +3,7 @@ import { MonroeBlueText } from '@/components/Elements'
 import { PATH_TO_MASTER_TEAMS } from '@/common/constants/paths'
 import { TableProvider } from '@/components/Table/MonroeTable/TableProvider.tsx'
 import { MasterTeamImportTable } from './components/MasterTeamImportTable'
-import { Page } from '@/layouts/Page.tsx'
+import { Page } from '@/layouts/Page'
 
 const BREADCRUMB_ITEMS = [
   { title: <a href={PATH_TO_MASTER_TEAMS}>Master Teams</a> },

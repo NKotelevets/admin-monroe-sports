@@ -95,7 +95,7 @@ const CreateSubdivision: FC<ICreateSubdivisionProps> = ({
   const { isComponentVisible, ref } = useIsActiveComponent(index === 0 ? true : false)
   const subdivisionError =
     touched.divisions?.[+divisionIndex].subdivisions?.[+index] &&
-    (errors?.divisions?.[divisionIndex] as FormikErrors<IFEDivision>)?.subdivisions?.[index]
+    (errors?.divisions?.[divisionIndex] as FormikErrors<IFEDivision>)?.sub_division?.[index]
   const isBlockAddBracketButton =
     !!(subdivisionError as FormikErrors<IFESubdivision>)?.name ||
     (subdivision.playoffFormat === SINGLE_ELIMINATION_BRACKET && !subdivision.name)

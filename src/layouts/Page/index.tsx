@@ -2,8 +2,9 @@ import { Helmet } from 'react-helmet'
 import { PageContainer, ProtectedPageTitle } from '@/components/Elements'
 import { Flex } from 'antd'
 import BaseLayout from '@/layouts/BaseLayout'
-import { FC, ReactElement } from 'react'
+import { FC, ReactElement, useState } from 'react'
 import styled from '@emotion/styled'
+import { PageContext } from './context'
 import Breadcrumb from 'antd/es/breadcrumb'
 import { Description } from '@/components/Elements/deletingBlockingInfoElements.tsx'
 
@@ -19,6 +20,7 @@ import { Description } from '@/components/Elements/deletingBlockingInfoElements.
 export interface IPageProps {
   title: string
   children: ReactElement
+
   subtitle?: string
   breadcrumbs?: { title: ReactElement }[]
   controls?(): ReactElement
@@ -38,14 +40,19 @@ export interface IPageProps {
  */
 export const Page: FC<IPageProps> = (props: IPageProps): ReactElement => {
   const { title, children, subtitle, breadcrumbs, controls } = props
+  const [pageTitle, setPageTitle] = useState(title)
 
   return (
+    <PageContext.Provider value={{
+      setPageTitle,
+      pageTitle
+    }}>
     <>
       <div id="page-portal"></div>
       <BaseLayout>
         <>
           <Helmet>
-            <title>Admin Panel | {title}</title>
+            <title>Admin Panel | {pageTitle}</title>
           </Helmet>
 
           <PageContainer>
@@ -53,7 +60,7 @@ export const Page: FC<IPageProps> = (props: IPageProps): ReactElement => {
 
             <Header justify="space-between" align="center" vertical={false}>
               <PageInfo vertical>
-                <Title>{title}</Title>
+                <Title>{pageTitle}</Title>
                 {!!subtitle && <Subtitle>{subtitle}</Subtitle>}
               </PageInfo>
 
@@ -62,13 +69,14 @@ export const Page: FC<IPageProps> = (props: IPageProps): ReactElement => {
               </Controls>
             </Header>
 
-            <Flex flex="1 1 auto" vertical>
-              {children}
-            </Flex>
-          </PageContainer>
-        </>
-      </BaseLayout>
+          <Flex flex="1 1 auto" vertical>
+            {children}
+          </Flex>
+        </PageContainer>
+      </>
+    </BaseLayout>
     </>
+    </PageContext.Provider>
   )
 }
 

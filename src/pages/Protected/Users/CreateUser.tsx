@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom'
 import { PATH_TO_USERS } from '@/common/constants/paths.ts'
 import { isFetchBaseQueryError } from '@/utils'
 import { MonroeBlueText } from '@/components/Elements'
-import { Page } from '@/layouts/Page.tsx'
+import { Page } from '@/layouts/Page'
 
 const BREAD_CRUMB_ITEMS = [
   { title: <a href={PATH_TO_USERS}>Users</a> },

@@ -37,6 +37,7 @@ import {
 import { IIdName } from '@/common/interfaces'
 
 import WhiteTShirtIcon from '@/assets/icons/white-team.svg'
+import styled from '@emotion/styled'
 
 const STANDING_FORMAT_WINNING_INFO = 'Wins (info only), Losses (info only), Winning %'
 const STANDING_FORMAT_POINTS_INFO =
@@ -161,18 +162,18 @@ const LeagueDetails = () => {
 
               <Flex className="mb-16">
                 <ViewText>Playoff format:</ViewText>
-                <ViewText className="w-180">{data?.playoffFormat}</ViewText>
+                <Text className="w-180">{data?.playoffFormat}</Text>
               </Flex>
 
               <Flex className="mb-16">
                 <ViewText>Standings format:</ViewText>
 
                 <Flex vertical>
-                  <ViewText>{data?.standingsFormat}</ViewText>
+                  <Text>{data?.standingsFormat}</Text>
 
-                  <ViewText className="w-400">
+                  <Info>
                     {data?.standingsFormat === WINNING ? STANDING_FORMAT_WINNING_INFO : STANDING_FORMAT_POINTS_INFO}
-                  </ViewText>
+                  </Info>
                 </Flex>
               </Flex>
 
@@ -180,30 +181,30 @@ const LeagueDetails = () => {
                 <ViewText>Tiebreakers format:</ViewText>
 
                 <Flex vertical>
-                  <ViewText>{data?.tiebreakersFormat}</ViewText>
+                  <Text>{data?.tiebreakersFormat}</Text>
 
-                  <ViewTextInfo className="w-400">
+                  <Info>
                     {data?.tiebreakersFormat === WINNING
                       ? TIEBREAKERS_FORMAT_WINNING_INFO
                       : TIEBREAKERS_FORMAT_POINTS_INFO}
-                  </ViewTextInfo>
+                  </Info>
                 </Flex>
               </Flex>
 
               <Flex className="mb-16">
                 <ViewText>Description:</ViewText>
-                <ViewText className="w-400">{data?.description || '-'}</ViewText>
+                <Text>{data?.description || '-'}</Text>
               </Flex>
 
               <Flex className="mb-16">
                 <ViewText>Welcome Note:</ViewText>
-                <ViewText className="w-400">{data?.welcomeNote || '-'}</ViewText>
+                <Text>{data?.welcomeNote || '-'}</Text>
               </Flex>
 
               <Flex className="mb-16">
                 <ViewText>Connected seasons:</ViewText>
 
-                <Flex className="w-400" wrap="wrap">
+                <Flex wrap="wrap">
                   {data?.seasons.length
                     ? (data?.seasons as IIdName[]).map((season, idx) => (
                         <Flex key={season.id}>
@@ -225,3 +226,10 @@ const LeagueDetails = () => {
 }
 
 export default LeagueDetails
+
+const Info = styled(ViewTextInfo)`
+  width: 400px !important;
+`
+const Text = styled(ViewText)`
+  width: 400px !important;
+`
