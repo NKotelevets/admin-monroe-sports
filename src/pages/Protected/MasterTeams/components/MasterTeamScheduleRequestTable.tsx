@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import styled from '@emotion/styled'
-import { Table, Tabs } from 'antd'
+import { Table, Tabs, Tooltip } from 'antd'
 import {
   useMasterTeamScheduleRequestTable
 } from '@/pages/Protected/MasterTeams/hooks/useMasterTeamScheduleRequestTable.tsx'
@@ -11,6 +11,7 @@ import { Button } from '@/components/Button.tsx'
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import {  LinkOutlined } from '@ant-design/icons'
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined'
+import { colors } from '@/utils/colors.tsx'
 
 interface IMasterTeamScheduleRequestTableProps {
   dates: { start: string, end: string } | null
@@ -71,28 +72,31 @@ interface IMasterTeamTabListProps {
 const MasterTeamTabList = (props: IMasterTeamTabListProps) => {
   const { data, selectedIndex, setSelectedIndex } = props
 
-  const renderTabWithIcon = (title: string, url: string) => (
-    <CustomTab>
-      <TabText className='tab-textx'>{title}</TabText>
-      <HoverIcon
-        onClick={() => alert('Delete clicked!')}
-        className="hover-icon"
-        title="Delete this tab"
-      >
-        <DeleteOutlined />
-      </HoverIcon>
-      <StaticIcon href={url} target="_blank" rel="noopener noreferrer">
-        <LinkOutlined />
-      </StaticIcon>
+  const renderTabWithIcon = (title: string, index: number, url: string) => (
+    <CustomTab className={`${index === selectedIndex ? 'selected-tab' : ''}`}>
+      <TabText className='tab-text'>{title}</TabText>
+      <Tooltip title='Remove team from the list'>
+        <HoverIcon
+          onClick={() => alert('Delete clicked!')}
+          className="hover-icon"
+          title="Delete this tab"
+        >
+          <DeleteOutlined />
+        </HoverIcon>
+      </Tooltip>
+      <Tooltip title='Go to team info page'>
+        <StaticIcon href={url} target="_blank" rel="noopener noreferrer">
+          <LinkOutlined />
+        </StaticIcon>
+      </Tooltip>
     </CustomTab>
   )
 
   const tabItems = useMemo(() => (
     data ? Object.keys(data).map((mt, i) => {
       return {
-        label: renderTabWithIcon(mt, 'xxx'),
+        label: renderTabWithIcon(mt, i,'xxx'),
         key: `${i}`,
-        disabled: i === 28,
         children: ``
       }
     }) : []
@@ -100,7 +104,7 @@ const MasterTeamTabList = (props: IMasterTeamTabListProps) => {
 
   if (!data) return <></>
 
-  const tabs = (
+  return (
     <Tabs
       defaultActiveKey={`tab-${selectedIndex}`}
       tabBarStyle={{ marginBottom: 0 }}
@@ -109,10 +113,9 @@ const MasterTeamTabList = (props: IMasterTeamTabListProps) => {
       onChange={index => setSelectedIndex(parseInt(index))}
     />
   )
-  return tabs
-  // return Object.keys(data).map((mt: any, index: number) => <div onClick={() => setSelectedIndex(index)}> { mt }</div>)
 }
 
+// Styled Components
 const TableStyled = styled(Table)`
     & .ant-table-thead > tr > th {
         height: 48px; /* Set your desired height */
@@ -134,10 +137,10 @@ const TableStyled = styled(Table)`
         background-color: #ece9ff; /* Same as base to prevent override */
     }
 `
-// Styled Components
 const CustomTab = styled.span`
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 8px;
     max-width: 200px; /* Adjust to fit your tab width */
     white-space: nowrap;
@@ -145,12 +148,13 @@ const CustomTab = styled.span`
     text-overflow: ellipsis;
     position: relative;
 
-    &:hover .hover-icon {
-        opacity: 1; /* Show hover icon */
+    .ant-tabs-tab-active &:hover .hover-icon {
+        display: inline-block;
     }
-    
-    &:hover .tab-text {
-        max-width: 80%;
+
+    .ant-tabs-tab-active &:hover .tab-text {
+        max-width: calc(80% - 24px);
+        overflow: hidden;
     }
 `
 
@@ -162,16 +166,18 @@ const TabText = styled.span`
 `
 
 const StaticIcon = styled.a`
-    color: #1890ff; /* Link icon color */
+    color: ${colors.secondaryText}; /* Link icon color */
     margin-left: 8px;
     flex-shrink: 0;
 `
 
 const HoverIcon = styled.a`
     position: absolute;
-    right: 32px; /* Align near the right edge of the text */
-    color: #ff4d4f; /* Trash icon color */
-    opacity: 0; /* Hidden by default */
-    transition: opacity 0.3s ease;
+    right: 18px;
+    color: ${colors.primary};
+    display: none;
     cursor: pointer;
+    &:hover {
+        color: ${colors.primary}
+    }
 `

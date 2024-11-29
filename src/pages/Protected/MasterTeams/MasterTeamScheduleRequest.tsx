@@ -4,14 +4,12 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { PATH_TO_MASTER_TEAMS } from '@/common/constants/paths.ts'
 import Loader from '@/components/Loader.tsx'
 import { MasterTeamScheduleRequestTable } from './components/MasterTeamScheduleRequestTable'
+import { MonroeBlueText } from '@/components/Elements'
 
-// import { PATH_TO_MASTER_TEAMS } from '@/common/constants/paths.ts'
-// import { MonroeBlueText } from '@/components/Elements'
-
-// const BREAD_CRUMB_ITEMS = [
-//   { title: <a href={PATH_TO_MASTER_TEAMS}>Master Teams</a> },
-//   { title: <MonroeBlueText>Schedule Request</MonroeBlueText> }
-// ]
+const BREAD_CRUMB_ITEMS = [
+  { title: <a href={PATH_TO_MASTER_TEAMS}>Master Teams</a> },
+  { title: <MonroeBlueText>Schedule Request</MonroeBlueText> }
+]
 
 export const MasterTeamScheduleRequest = () => {
   const params = useParams<{ range: string, selectedIds: string }>()
@@ -39,10 +37,15 @@ export const MasterTeamScheduleRequest = () => {
 
   if (!selectedIds || !dates) return <Loader />
 
+  const renderControls = () => {
+    return <>oi</>
+  }
+
   return (
     <Page
       title="Schedule Request"
-      // breadcrumbs={BREAD_CRUMB_ITEMS}
+      breadcrumbs={BREAD_CRUMB_ITEMS}
+      controls={renderControls}
     >
       <MasterTeamScheduleRequestTable
         dates={dates}

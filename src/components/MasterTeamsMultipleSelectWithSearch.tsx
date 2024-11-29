@@ -163,7 +163,7 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
       const response = await getMasterTeams({
         limit: DEFAULT_LIMIT_RECORDS,
         offset,
-        team_name: searchTerm,
+        name: searchTerm,
       }).unwrap()
 
       if (response?.results) setMasterTeams((prev) => [...prev, ...response.results])
@@ -176,7 +176,7 @@ const MasterTeamsMultipleSelectWithSearch: FC<IMasterTeamsMultipleSelectWithSear
     const res = await getMasterTeams({
       limit: DEFAULT_LIMIT_RECORDS,
       offset: 0,
-      team_name: searchTerm,
+      name: searchTerm,
     }).unwrap()
 
     setMasterTeams(res?.results || [])
