@@ -1,5 +1,5 @@
 import { Table } from 'antd'
-import { ReactElement, useCallback, useState } from 'react'
+import { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
 import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice.tsx'
 import {
   useMasterTeamImportInfoTableParams
@@ -24,8 +24,9 @@ import { MasterTeamDuplicateReview } from './MasterTeamDuplicateReview'
  * @returns {ReactElement} The rendered table component with modal handling for duplicates.
  */
 export const MasterTeamImportTable = (): ReactElement => {
-  const [editMasterTeam, { isLoading: isUpdating, error, isSuccess, reset }] = useEditMasterTeamMutation()
+  const [editMasterTeam, { isLoading: isUpdating, isSuccess, reset, isError }] = useEditMasterTeamMutation()
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
+  const resetRef = useRef(reset)
 
   const {
     importCSVTableRecords: records,
@@ -42,11 +43,18 @@ export const MasterTeamImportTable = (): ReactElement => {
     records: duplicates
   })
 
-  const onClose = () => setSelectedIndex(null)
+  useEffect(() => {
+    resetRef.current = reset
+  },[reset])
+
+  const onClose = () => {
+    resetRef.current()
+    setSelectedIndex(null)
+  }
 
   // remove current duplicate and goes to next
   const onSkip = (index: number) => {
-    reset()
+    resetRef.current()
     removeDuplicate(index)
   }
 
@@ -79,7 +87,7 @@ export const MasterTeamImportTable = (): ReactElement => {
           <DuplicateReviewModal<IFENewMasterTeamDuplicate, IFEExistingMasterTeamDuplicate>
             duplicates={duplicates}
             isLoading={isUpdating}
-            error={!!error}
+            error={isError}
             success={isSuccess}
             idx={selectedIndex}
             onClose={onClose}
