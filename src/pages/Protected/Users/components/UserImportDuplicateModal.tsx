@@ -85,7 +85,7 @@ export const UserImportDuplicateModal = (props: IDuplicateReviewProps): ReactEle
     Promise.all(
       newRoles.map(async ({ role, teamName }) => {
         const teams = await getMasterTeams({
-          limit: 1, offset: 10, team_name: teamName
+          limit: 1, offset: 10, name: teamName
         }).unwrap()
 
         const team_id = teams.results.length > 0 ? teams.results[0].id : ''

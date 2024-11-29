@@ -94,7 +94,7 @@ export interface IGetMasterTeamsRequest {
   limit: number
   offset: number
   ordering?: string | null
-  team_name?: string | null
+  name?: string | null
   head_coach?: string | null
   league_name?: string | null
   league_teams?: string | null
