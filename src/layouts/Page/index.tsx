@@ -58,7 +58,7 @@ export const Page: FC<IPageProps> = (props: IPageProps): ReactElement => {
           <PageContainer>
             {!!breadcrumbs && <Breadcrumb items={breadcrumbs} />}
 
-            <Header justify="space-between" align="center" vertical={false}>
+            <Header justify="space-between" align="flex-start" vertical={false}>
               <PageInfo vertical>
                 <Title>{pageTitle}</Title>
                 {!!subtitle && <Subtitle>{subtitle}</Subtitle>}

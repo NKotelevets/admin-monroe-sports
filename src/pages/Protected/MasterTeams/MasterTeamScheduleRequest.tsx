@@ -1,10 +1,11 @@
 import { Page } from '@/layouts/Page/index.tsx'
-import { useEffect, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { PATH_TO_MASTER_TEAMS } from '@/common/constants/paths.ts'
+import { PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST, PATH_TO_MASTER_TEAMS } from '@/common/constants/paths.ts'
 import Loader from '@/components/Loader.tsx'
 import { MasterTeamScheduleRequestTable } from './components/MasterTeamScheduleRequestTable'
 import { MonroeBlueText } from '@/components/Elements'
+import { ScheduleRequestControls } from '@/components/ScheduleRequest/ScheduleRequestControls.tsx'
 
 const BREAD_CRUMB_ITEMS = [
   { title: <a href={PATH_TO_MASTER_TEAMS}>Master Teams</a> },
@@ -14,6 +15,7 @@ const BREAD_CRUMB_ITEMS = [
 export const MasterTeamScheduleRequest = () => {
   const params = useParams<{ range: string, selectedIds: string }>()
   const navigate = useNavigate()
+
   const [dates, setDates] = useState<{ start: string, end: string } | null>(null)
   const [selectedIds, setSelectedIds] = useState<string[] | null>(null)
 
@@ -37,8 +39,14 @@ export const MasterTeamScheduleRequest = () => {
 
   if (!selectedIds || !dates) return <Loader />
 
-  const renderControls = () => {
-    return <>oi</>
+  const renderControls = (): ReactElement => {
+    return (
+      <ScheduleRequestControls
+        dates={dates}
+        selectedIds={selectedIds.join(',')}
+        pathToNavigate={PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST}
+      />
+    )
   }
 
   return (
@@ -54,3 +62,4 @@ export const MasterTeamScheduleRequest = () => {
     </Page>
   )
 }
+
