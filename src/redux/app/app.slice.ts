@@ -111,6 +111,16 @@ export const appSlice = createSlice({
         state.notification.timestamp = new Date().getTime()
         state.notification.type = 'success'
       })
+      .addMatcher(seasonsApi.endpoints.createSeason.matchFulfilled, (state) => {
+        state.notification.message = 'Season successfully created'
+        state.notification.timestamp = new Date().getTime()
+        state.notification.type = 'success'
+      })
+      .addMatcher(seasonsApi.endpoints.updateSeason.matchFulfilled, (state) => {
+        state.notification.message = 'Season successfully updated'
+        state.notification.timestamp = new Date().getTime()
+        state.notification.type = 'success'
+      })
       .addMatcher(
         isAnyOf(
           masterTeamsApi.endpoints.createMasterTeam.matchRejected,

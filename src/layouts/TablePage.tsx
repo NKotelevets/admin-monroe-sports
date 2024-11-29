@@ -52,7 +52,15 @@ interface ITablePageProps extends IPageProps {
  * @returns {ReactElement} The rendered TablePage component.
  */
 export const TablePage: FC<ITablePageProps> = (props: ITablePageProps): ReactElement => {
-  const { title, children, deleteTerm, onCreate, onDelete, controls } = props
+  const {
+    title,
+    children,
+    deleteTerm,
+    onCreate,
+    onDelete,
+    controls ,
+    ...rest
+  } = props
   const { selectedIds, setSelectedIds, singleDeleting, setSingleDeleting } = useTableContext()
 
   const onDeleteModalClose = useCallback(() => {
@@ -91,6 +99,7 @@ export const TablePage: FC<ITablePageProps> = (props: ITablePageProps): ReactEle
     <Page
       title={title}
       controls={renderControls}
+      {...rest}
     >
       {children}
     </Page>

@@ -4,7 +4,7 @@ export const PATH_TO_HOME = '/'
 
 // LEAGUES & TOURNAMENTS PAGES
 export const PATH_TO_LEAGUES = '/leagues-and-tournaments'
-export const PATH_TO_LEAGUE_PAGE = '/league-tournament'
+export const PATH_TO_LEAGUE_PAGE = '/leagues-and-tournaments'
 export const PATH_TO_CREATE_LEAGUE = '/leagues-and-tournaments/create'
 export const PATH_TO_EDIT_LEAGUE = '/leagues-and-tournaments/edit'
 export const PATH_TO_LEAGUES_IMPORT_INFO = '/leagues-and-tournaments/import-info'

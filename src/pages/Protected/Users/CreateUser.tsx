@@ -1,8 +1,5 @@
-import { Helmet } from 'react-helmet'
-
 import UserForm from '@/pages/Protected/Users/components/UserForm'
 
-import BaseLayout from '@/layouts/BaseLayout'
 import { UserCreationDuplicateModal } from '@/pages/Protected/Users/components/UserCreationDuplicateModal.tsx'
 import { useCreateUserAsAdminMutation } from '@/redux/user/user.api.ts'
 import { useEffect, useState } from 'react'
@@ -15,8 +12,8 @@ import {
 import { useNavigate } from 'react-router-dom'
 import { PATH_TO_USERS } from '@/common/constants/paths.ts'
 import { isFetchBaseQueryError } from '@/utils'
-import Breadcrumb from 'antd/es/breadcrumb'
-import { MonroeBlueText, PageContainer, ProtectedPageTitle } from '@/components/Elements'
+import { MonroeBlueText } from '@/components/Elements'
+import { Page } from '@/layouts/Page'
 
 const BREAD_CRUMB_ITEMS = [
   { title: <a href={PATH_TO_USERS}>Users</a> },
@@ -85,10 +82,6 @@ const CreateUser = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Admin Panel | Create User</title>
-      </Helmet>
-
       {!!duplicate && (
         <UserCreationDuplicateModal
           existing={duplicate.existing}
@@ -99,18 +92,13 @@ const CreateUser = () => {
         />
       )}
 
-      <BaseLayout>
-        <PageContainer vertical>
-          <Breadcrumb items={BREAD_CRUMB_ITEMS} />
-
-          <ProtectedPageTitle>Create User</ProtectedPageTitle>
-          <UserForm
-            isLoading={isLoading}
-            onSubmit={createUser}
-            goBack={goBack}
-          />
-        </PageContainer>
-      </BaseLayout>
+      <Page title='Create User' breadcrumbs={BREAD_CRUMB_ITEMS}>
+        <UserForm
+          isLoading={isLoading}
+          onSubmit={createUser}
+          goBack={goBack}
+        />
+      </Page>
     </>
   )
 }

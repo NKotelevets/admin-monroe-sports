@@ -21,7 +21,7 @@ export const ContentWrapper = styled(Flex)`
   width: 790px;
   background-color: #fff;
   border-radius: 2px;
-  box-shadow: 0px 1px 0px 0px #f0f0f0 inset;
+  box-shadow: 0 1px 0 0 #f0f0f0 inset;
   flex-direction: column;
 `
 
@@ -41,7 +41,7 @@ export const ArrowButton = styled(Button)`
 export const DefaultButton = styled(Button)`
   border: 1px solid #5d5c6d;
   margin-right: 8px;
-  box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.04);
   color: rgba(26, 22, 87, 1);
   border-radius: 4px;
 `

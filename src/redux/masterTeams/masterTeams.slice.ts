@@ -1,8 +1,14 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { masterTeamsApi } from '@/redux/masterTeams/masterTeams.api'
 
-import { IFEMasterTeam, IMasterTeamError } from '@/common/interfaces/masterTeams'
+import {
+  IFEDuplicate,
+  IFEMasterTeam,
+  IImportMasterTeamCSVTableData,
+  IMasterTeamError
+} from '@/common/interfaces/masterTeams'
+import { duplicatesErrorMap, duplicatesMap, duplicatesTableMap } from '@/redux/masterTeams/mappers'
 
 interface IMasterTeamsSliceState {
   masterTeams: IFEMasterTeam[]
@@ -13,7 +19,8 @@ interface IMasterTeamsSliceState {
   createdRecordsNames: string[]
   deletedRecordsErrors: IMasterTeamError[]
   tableRecords: []
-  duplicates: []
+  importCSVTableRecords: IImportMasterTeamCSVTableData[]
+  duplicates: IFEDuplicate[]
 }
 
 const masterTeamsSliceState: IMasterTeamsSliceState = {
@@ -25,7 +32,8 @@ const masterTeamsSliceState: IMasterTeamsSliceState = {
   deletedRecordsErrors: [],
   tableRecords: [],
   createdRecordsNames: [],
-  duplicates: [],
+  importCSVTableRecords: [],
+  duplicates: []
 }
 
 export const masterTeamsSlice = createSlice({
@@ -38,7 +46,7 @@ export const masterTeamsSlice = createSlice({
         limit: number
         offset: number
         ordering: string | null
-      }>,
+      }>
     ) => {
       state.limit = action.payload.limit
       state.offset = action.payload.offset
@@ -47,6 +55,17 @@ export const masterTeamsSlice = createSlice({
     removeCreatedRecordsNames: (state) => {
       state.createdRecordsNames = []
     },
+    removeDuplicate: (state, action: PayloadAction<number>) => {
+      const remainingDuplicates = state.duplicates.filter((duplicate) => duplicate.idx !== action.payload)
+      const remainingTableRecords = state.importCSVTableRecords.filter(
+        (tableRecord) => tableRecord.idx !== action.payload
+      )
+      const updatedDuplicates = remainingDuplicates.map((tR, idx) => ({ ...tR, idx: idx }))
+      const updatedTableRecords = remainingTableRecords.map((tR, idx) => ({ ...tR, idx }))
+
+      state.duplicates = updatedDuplicates
+      state.importCSVTableRecords = updatedTableRecords
+    }
   },
   extraReducers: (builder) =>
     builder
@@ -56,6 +75,13 @@ export const masterTeamsSlice = createSlice({
       })
       .addMatcher(masterTeamsApi.endpoints.bulkDeleteMasterTeams.matchFulfilled, (state, action) => {
         state.deletedRecordsErrors = action.payload.items
-      }),
+      })
+      .addMatcher(masterTeamsApi.endpoints.masterTeamsImportCSV.matchFulfilled, (state, action) => {
+        state.createdRecordsNames = action.payload.success
+        state.duplicates = action.payload?.duplicates ? action.payload.duplicates.map(duplicatesMap) : []
+        state.importCSVTableRecords = [
+          ...(action.payload?.duplicates ? action.payload.duplicates.map(duplicatesTableMap) : []),
+          ...(action.payload?.errors ? action.payload.errors.map(duplicatesErrorMap) : [])
+        ]
+      })
 })
-

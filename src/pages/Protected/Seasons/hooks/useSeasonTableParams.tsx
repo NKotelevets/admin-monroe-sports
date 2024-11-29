@@ -67,7 +67,7 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
       ...getColumnSearchProps('name'),
       sortOrder: ordering?.includes('name') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
       render: (value, record) => {
-        const showIcon = record.divisions.flatMap((d) => d.subdivisions.filter((s) => !!s.changed)).length
+        const showIcon = record.divisions.flatMap((d) => d.sub_division?.filter((s) => s.changed)).length
 
         return (
           <Flex align="center" justify="flex-start">

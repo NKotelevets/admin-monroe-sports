@@ -57,15 +57,15 @@ const MasterTeams = () => {
       })
 
       const body = new FormData()
-      body.set('file', file)
+      body.set('csv_file', file)
 
       await importMasterTeamCSV(body)
         .unwrap()
-        .then(() => {
+        .then(response => {
           setImportModalOptions({
             filename: file.name,
             isOpen: true,
-            status: 'green', // TODO: fix this issue
+            status: response.status,
             errorMessage: ''
           })
         })
@@ -74,7 +74,10 @@ const MasterTeams = () => {
             filename: file.name,
             isOpen: true,
             status: 'red',
-            errorMessage: (error.data as { code: string; detail: string }).detail
+            errorMessage: (error.data as {
+              code: string;
+              error: string
+            })?.error || error.data?.detail || 'Something went wrong. Please, try again'
           })
         })
 
@@ -158,7 +161,7 @@ const MasterTeams = () => {
               inputRef.current = ref
             }}
             type="file"
-            name="seasons"
+            name="masterTeams"
             accept=".csv"
             onChange={onCSVInputChange}
             className="d-n"

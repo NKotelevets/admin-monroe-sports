@@ -7,7 +7,7 @@ import { Helmet } from 'react-helmet'
 import { useNavigate } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
-import UsersTable from '@/pages/Protected/Users/components/UsersTable'
+import UserTable from '@/pages/Protected/Users/components/UserTable.tsx'
 
 import {
   CreateNewEntityButton,
@@ -273,7 +273,7 @@ const Users = () => {
           />
 
           <Flex flex="1 1 auto" vertical>
-            <UsersTable
+            <UserTable
               isBlockAllUsers={isSelectedAllUsers}
               setSelectedRecordsIds={setSelectedRecordsIds}
               selectedRecordIds={selectedRecordsIds}
