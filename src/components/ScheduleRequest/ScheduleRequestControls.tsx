@@ -4,22 +4,23 @@ import dayjs, { Dayjs } from 'dayjs'
 import { Col, DatePicker, Row } from 'antd'
 import { Button } from '@/components/Button.tsx'
 import UploadOutlined from '@ant-design/icons/lib/icons/UploadOutlined'
-import React from 'react'
+import React, { useContext } from 'react'
+import { ScheduleContext } from '@/components/ScheduleRequest/ScheduleContext.ts'
 
 const { RangePicker } = DatePicker
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 
 interface IScheduleRequestControlsProps {
-  dates: { start: string, end: string }
-  selectedIds: string
   pathToNavigate: string
 }
 
 export const ScheduleRequestControls = React.memo((props: IScheduleRequestControlsProps) => {
-  const { dates, selectedIds, pathToNavigate } = props
+  const { pathToNavigate } = props
+  const { dates, selectedIds } = useContext(ScheduleContext)
+
   const navigate = useNavigate()
-  const pickerValue: TRangePickerValue = [dayjs(dates.start, DATE_FORMAT), dayjs(dates.end, DATE_FORMAT)]
+  const pickerValue: TRangePickerValue = [dayjs(dates?.start, DATE_FORMAT), dayjs(dates?.end, DATE_FORMAT)]
 
   const onDateRangeChange = (newDates: [Dayjs | null, Dayjs | null] | null) => {
     if (newDates && newDates.length > 0) {
@@ -51,6 +52,4 @@ export const ScheduleRequestControls = React.memo((props: IScheduleRequestContro
   )
 }, (prev, next) => (
   prev.pathToNavigate === next.pathToNavigate
-  && prev.selectedIds === next.selectedIds
-  && prev.dates === next.dates
 ))

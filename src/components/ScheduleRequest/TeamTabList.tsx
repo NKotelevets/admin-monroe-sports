@@ -1,7 +1,7 @@
 import { Tabs, Tooltip } from 'antd'
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined'
 import ArrowRightUpIcon from '@/assets/icons/arrow-right-up.svg'
-import { useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { Button } from '@/components/Button.tsx'
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import styled from '@emotion/styled'
@@ -9,16 +9,15 @@ import { colors } from '@/utils/colors.tsx'
 import { ReactSVG } from 'react-svg'
 import { useNavigate } from 'react-router-dom'
 import { PATH_TO_MASTER_TEAMS } from '@/common/constants/paths.ts'
+import { ScheduleContext } from '@/components/ScheduleRequest/ScheduleContext.ts'
 
 interface IMasterTeamTabListProps {
   data: unknown
-  selectedIndex: number
-
-  setSelectedIndex(index: number): void
 }
 
 export const TeamTabList = (props: IMasterTeamTabListProps) => {
-  const { data, selectedIndex, setSelectedIndex } = props
+  const { data } = props
+  const { selectedTabIndex, setSelectedTabIndex, removeTeamByIndex } = useContext(ScheduleContext)
   const navigate = useNavigate()
 
   const renderTabWithIcon = (title: string, index: number, id: string) => {
@@ -29,11 +28,11 @@ export const TeamTabList = (props: IMasterTeamTabListProps) => {
     }
 
     return (
-      <CustomTab className={`${index === selectedIndex ? 'selected-tab' : ''}`}>
+      <CustomTab className={`${index === selectedTabIndex ? 'selected-tab' : ''}`}>
         <TabText className='tab-text'>{title}</TabText>
         <Tooltip title='Remove team from the list'>
           <HoverIcon
-            onClick={() => alert('Delete clicked!')}
+            onClick={() => removeTeamByIndex(selectedTabIndex)}
             className="hover-icon"
             title="Delete this tab"
           >
@@ -65,11 +64,11 @@ export const TeamTabList = (props: IMasterTeamTabListProps) => {
 
   return (
     <Tabs
-      defaultActiveKey={`tab-${selectedIndex}`}
+      defaultActiveKey={`tab-${selectedTabIndex}`}
       tabBarStyle={{ marginBottom: 0 }}
       tabBarExtraContent={<Button icon={<PlusOutlined />}>Add team</Button>}
       items={tabItems}
-      onChange={index => setSelectedIndex(parseInt(index))}
+      onChange={index => setSelectedTabIndex(parseInt(index))}
     />
   )
 }

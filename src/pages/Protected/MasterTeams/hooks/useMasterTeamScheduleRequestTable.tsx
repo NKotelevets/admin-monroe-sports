@@ -1,15 +1,14 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-import { TColumns } from '@/common/types'
 import { useState } from 'react'
-import { IScheduleRequest } from '@/common/interfaces/masterTeams.ts'
+import { IScheduleRequest, IScheduleEntry } from '@/common/interfaces/masterTeams.ts'
 import { ScheduleStatus } from '@/pages/Protected/MasterTeams/ScheduleStatus.tsx'
+import { ColumnGroupType, ColumnType } from 'antd/es/table/interface'
+import { TColumns } from '@/common/types'
 
 export const useMasterTeamScheduleRequestTable = () => {
-  const [data, setData] = useState(null)
-  const [pureData, setPureData] = useState(null)
+  const [data, setData] = useState<IScheduleEntry[] | null>(null)
+  const [pureData, setPureData] = useState<IScheduleRequest[string] | null>(null)
 
-  const dynamicColumns = () => {
+  const dynamicColumns = (): (ColumnGroupType<IScheduleEntry> | ColumnType<IScheduleEntry>)[] | undefined => {
     if (!pureData) return []
 
     const entries = Object.keys(pureData) // Cache entries array once
@@ -21,14 +20,16 @@ export const useMasterTeamScheduleRequestTable = () => {
         dataIndex: key,
         key: `col${key}`,
         width: 45,
-        render: (val) => <ScheduleStatus availability={val as 1 | 2 | 0}/>
+        render: (val: number) => {
+          return <ScheduleStatus availability={val as 1 | 2 | 0}/>
+        }
       })
     }
 
     return dColumns
   }
 
-  const columns: TColumns<IScheduleRequest> = [
+  const columns: TColumns<IScheduleEntry> = [
     {
       title: '',
       dataIndex: 'time', // Fixed column for time
@@ -37,10 +38,10 @@ export const useMasterTeamScheduleRequestTable = () => {
       width: 172,
       className: 'date-column'
     },
-    ...dynamicColumns()
+    ...dynamicColumns() || []
   ]
 
-  const setTableData = (tableData: unknown) => {
+  const setTableData = (tableData: IScheduleRequest[string] | null) => {
     if (!tableData) return
 
     setPureData(tableData)
@@ -54,20 +55,17 @@ export const useMasterTeamScheduleRequestTable = () => {
   }
 }
 
-function transformData(data: { [key: string]: {time: string, availability: number}[] }) {
-  const grouped = new Map()
+function transformData(data: IScheduleRequest[string]): IScheduleEntry[] | null {
+  const grouped = new Map<string, IScheduleEntry>()
 
-  // Iterate through each date key
   for (const [dateKey, entries] of Object.entries(data)) {
     for (const { time, availability } of entries) {
-      // Check if the time already exists in the Map
       if (!grouped.has(time)) {
-        grouped.set(time, { time }) // Initialize the object with the time key
+        grouped.set(time, { time })
       }
-      grouped.get(time)[dateKey] = availability // Add the current date's value
+      grouped.get(time)![dateKey] = availability
     }
   }
 
-  // Convert the Map back to an array
   return Array.from(grouped.values())
 }

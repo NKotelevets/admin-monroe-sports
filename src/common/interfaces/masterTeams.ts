@@ -258,6 +258,7 @@ export interface IFEImportMasterTeamCSVResponse {
   success: string[]
   duplicates?: IFEDuplicate[]
 }
+
 export interface IExportInfoProps {
   selectedMasterTeamIds: string[]
 }
@@ -319,5 +320,11 @@ export interface IScheduleRequestResponse {
 // }
 
 export interface IScheduleRequest {
-  [key: string]: {[key: string]: { time: string, availability: number }}[]
+  [key: string]: { [key: string]: { time: string, availability: number }[] }
+}
+
+export interface IScheduleEntry {
+  time: string
+
+  [key: string]: number | string
 }

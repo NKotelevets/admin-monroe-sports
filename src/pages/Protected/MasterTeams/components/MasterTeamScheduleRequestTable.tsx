@@ -1,25 +1,20 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import styled from '@emotion/styled'
 import { Table } from 'antd'
 import {
   useMasterTeamScheduleRequestTable
 } from '@/pages/Protected/MasterTeams/hooks/useMasterTeamScheduleRequestTable.tsx'
 import { useLazyGetScheduleRequestQuery } from '@/redux/masterTeams/masterTeams.api.ts'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect } from 'react'
 import { TeamTabList } from '@/components/ScheduleRequest/TeamTabList.tsx'
+import { ScheduleContext } from '@/components/ScheduleRequest/ScheduleContext.ts'
+import Loader from '@/components/Loader.tsx'
+import { IScheduleEntry } from '@/common/interfaces/masterTeams.ts'
 
-interface IMasterTeamScheduleRequestTableProps {
-  dates: { start: string, end: string } | null
-  selectedIds: string[]
-}
-
-export const MasterTeamScheduleRequestTable = (props: IMasterTeamScheduleRequestTableProps) => {
-  const { dates, selectedIds } = props
+export const MasterTeamScheduleRequestTable = () => {
+  const { dates, selectedIds, selectedTabIndex } = useContext(ScheduleContext)
   const { columns, setTableData, data } = useMasterTeamScheduleRequestTable()
 
   const [listScheduleRequest, { data: scheduleRequests, isLoading, isFetching }] = useLazyGetScheduleRequestQuery()
-  const [selectedTabIndex, setSelectedTabIndex] = useState(4)
 
   // Fetches schedule for period and selected master team ids
   useEffect(() => {
@@ -40,11 +35,11 @@ export const MasterTeamScheduleRequestTable = (props: IMasterTeamScheduleRequest
     setTableData(scheduleRequests[key])
   }, [scheduleRequests, selectedTabIndex])
 
+  if (!selectedIds || !dates) return <Loader />
+
   return (
     <>
       <TeamTabList
-        selectedIndex={selectedTabIndex}
-        setSelectedIndex={setSelectedTabIndex}
         data={scheduleRequests}
       />
       <TableStyled
@@ -62,9 +57,8 @@ export const MasterTeamScheduleRequestTable = (props: IMasterTeamScheduleRequest
   )
 }
 
-
 // Styled Components
-const TableStyled = styled(Table)`
+const TableStyled = styled(Table<IScheduleEntry>)`
     & .ant-table-thead > tr > th {
         height: 48px; /* Set your desired height */
         border-bottom: 1px solid #BDBCC2;
