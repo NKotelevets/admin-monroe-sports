@@ -17,10 +17,26 @@ interface IMasterTeamTabListProps {
 
 export const TeamTabList = (props: IMasterTeamTabListProps) => {
   const { data } = props
-  const { selectedTabIndex, setSelectedTabIndex, removeTeamByIndex } = useContext(ScheduleContext)
+  const {
+    selectedTabIndex,
+    selectedIds,
+    setSelectedIds,
+    pathToNavigate,
+    dates,
+    setSelectedTabIndex
+  } = useContext(ScheduleContext)
   const navigate = useNavigate()
 
+  function removeTeamByIndex (index: number): void {
+    const newIds = selectedIds?.filter((_, idx) => idx !== index)
+    setSelectedIds(newIds || null)
+    navigate(`${pathToNavigate}/${dates?.start},${dates?.end}/${newIds?.join(',')}`)
+  }
+
   const renderTabWithIcon = (title: string, index: number, id: string) => {
+    const selectedClassName = index === selectedTabIndex ? 'selected-tab' : ''
+    const canDelete = selectedIds && selectedIds?.length > 1 || false
+
     const onInfoPress = (event: React.MouseEvent<HTMLSpanElement>) => {
       event.preventDefault()
       event.stopPropagation()
@@ -28,17 +44,20 @@ export const TeamTabList = (props: IMasterTeamTabListProps) => {
     }
 
     return (
-      <CustomTab className={`${index === selectedTabIndex ? 'selected-tab' : ''}`}>
+      <CustomTab
+        className={selectedClassName}
+        canDelete={canDelete}
+      >
         <TabText className='tab-text'>{title}</TabText>
         <Tooltip title='Remove team from the list'>
-          <HoverIcon
-            onClick={() => removeTeamByIndex(selectedTabIndex)}
-            className="hover-icon"
-            title="Delete this tab"
-          >
-            <DeleteOutlined />
-          </HoverIcon>
-        </Tooltip>
+            <HoverIcon
+              onClick={() => removeTeamByIndex(index)}
+              className="hover-icon"
+              title="Delete this tab"
+            >
+              <DeleteOutlined />
+            </HoverIcon>
+          </Tooltip>
         <Tooltip title='Go to team info page'>
           <StaticIcon onClick={onInfoPress}>
             <ArrowRightUpWrapper>
@@ -53,7 +72,7 @@ export const TeamTabList = (props: IMasterTeamTabListProps) => {
   const tabItems = useMemo(() => (
     data ? Object.keys(data).map((mt, i) => {
       return {
-        label: renderTabWithIcon(mt, i,'xxx'),
+        label: renderTabWithIcon(mt, i,'xxx'), // TODO: add team id
         key: `${i}`,
         children: ``
       }
@@ -74,7 +93,7 @@ export const TeamTabList = (props: IMasterTeamTabListProps) => {
 }
 
 // Styled Components
-const CustomTab = styled.span`
+const CustomTab = styled.span<{ canDelete: boolean}>`
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -86,11 +105,11 @@ const CustomTab = styled.span`
     position: relative;
 
     .ant-tabs-tab-active &:hover .hover-icon {
-        display: inline-block;
+        display: ${({ canDelete }) => canDelete ? 'inline-block' : 'none'};
     }
 
     .ant-tabs-tab-active &:hover .tab-text {
-        max-width: calc(80% - 24px);
+        max-width: ${({ canDelete }) => canDelete ? 'calc(80% - 24px)' : 'auto'};
         overflow: hidden;
     }
 `

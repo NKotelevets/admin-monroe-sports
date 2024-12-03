@@ -4,20 +4,15 @@ import dayjs, { Dayjs } from 'dayjs'
 import { Col, DatePicker, Row } from 'antd'
 import { Button } from '@/components/Button.tsx'
 import UploadOutlined from '@ant-design/icons/lib/icons/UploadOutlined'
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { ScheduleContext } from '@/components/ScheduleRequest/ScheduleContext.ts'
 
 const { RangePicker } = DatePicker
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 
-interface IScheduleRequestControlsProps {
-  pathToNavigate: string
-}
-
-export const ScheduleRequestControls = React.memo((props: IScheduleRequestControlsProps) => {
-  const { pathToNavigate } = props
-  const { dates, selectedIds } = useContext(ScheduleContext)
+export const ScheduleRequestControls = () => {
+  const { dates, selectedIds, pathToNavigate } = useContext(ScheduleContext)
 
   const navigate = useNavigate()
   const pickerValue: TRangePickerValue = [dayjs(dates?.start, DATE_FORMAT), dayjs(dates?.end, DATE_FORMAT)]
@@ -50,6 +45,4 @@ export const ScheduleRequestControls = React.memo((props: IScheduleRequestContro
       </Col>
     </Row>
   )
-}, (prev, next) => (
-  prev.pathToNavigate === next.pathToNavigate
-))
+}

@@ -18,7 +18,7 @@ export const useMasterTeamScheduleRequestTable = () => {
       dColumns.push({
         title: <div style={{ textAlign: 'center' }}>{key.slice(-2)}</div>,
         dataIndex: key,
-        key: `col${key}`,
+        key: `col${key}${Math.random()}`,
         width: 45,
         render: (val: number) => {
           return <ScheduleStatus availability={val as 1 | 2 | 0}/>

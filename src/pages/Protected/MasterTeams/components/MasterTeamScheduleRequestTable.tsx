@@ -44,6 +44,7 @@ export const MasterTeamScheduleRequestTable = () => {
       />
       <TableStyled
         size="small"
+        rowKey={(record) => record.time}
         loading={!data || isLoading || isFetching}
         virtual={false}
         columns={columns}

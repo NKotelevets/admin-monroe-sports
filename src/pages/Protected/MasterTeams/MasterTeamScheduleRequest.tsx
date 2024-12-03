@@ -24,9 +24,7 @@ export const MasterTeamScheduleRequest = () => {
 
   const renderControls = (): ReactElement => {
     return (
-      <ScheduleRequestControls
-        pathToNavigate={PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST}
-      />
+      <ScheduleRequestControls />
     )
   }
 
@@ -34,6 +32,7 @@ export const MasterTeamScheduleRequest = () => {
     <ScheduleProvider
       initialDates={params.range?.split(',') || null}
       initialSelectedIds={params.selectedIds?.split(',') || null}
+      pathToNavigate={PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST}
     >
       <Page
         title="Schedule Request"

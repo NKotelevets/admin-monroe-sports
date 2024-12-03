@@ -6,6 +6,7 @@ interface IScheduleProviderProps {
   initialSelectedIds: string[] | null
   initialIndex?: number
   children: ReactElement
+  pathToNavigate: string
 }
 
 export const ScheduleProvider = (props: IScheduleProviderProps) => {
@@ -13,7 +14,8 @@ export const ScheduleProvider = (props: IScheduleProviderProps) => {
     initialDates,
     initialSelectedIds,
     children,
-    initialIndex = 0
+    initialIndex = 0,
+    pathToNavigate
   } = props
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(initialIndex)
@@ -26,10 +28,12 @@ export const ScheduleProvider = (props: IScheduleProviderProps) => {
     setDates({ start: initialDates[0], end: initialDates[1] } || null)
   }, [initialDates])
 
-  function removeTeamByIndex (index: number): void {
-    const newIds = selectedIds?.filter((_, idx) => idx !== index)
-    setSelectedIds(newIds || null)
-  }
+  // update ids when initial values changes (url changed)
+  useEffect(() => {
+    if(initialSelectedIds !== selectedIds) {
+      setSelectedIds(initialSelectedIds)
+    }
+  }, [initialSelectedIds])
 
   return (
     <ScheduleContext.Provider value={{
@@ -39,7 +43,7 @@ export const ScheduleProvider = (props: IScheduleProviderProps) => {
       setSelectedTabIndex,
       setDates,
       setSelectedIds,
-      removeTeamByIndex
+      pathToNavigate
     }}>
       {children}
     </ScheduleContext.Provider>
