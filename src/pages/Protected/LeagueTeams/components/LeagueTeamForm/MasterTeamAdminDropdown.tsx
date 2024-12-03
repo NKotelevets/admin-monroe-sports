@@ -3,7 +3,7 @@ import { useFormikContext } from 'formik'
 import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 import { useLazyGetUsersQuery } from '@/redux/user/user.api.ts'
 import { IFEUser, IGetUsersRequestParams } from '@/common/interfaces/user.ts'
-import Dropdown from '@/components/Inputs/Dropdown.tsx'
+import Select from '@/components/Inputs/Select.tsx'
 import TextInput from '@/components/Inputs/TextInput.tsx'
 import { ILeagueForm } from '@/common/interfaces/league.ts'
 
@@ -72,7 +72,7 @@ export const MasterTeamAdminDropdown = React.memo(() => {
 
   return (
     <>
-      <Dropdown
+      <Select
         showSearch
         loading={isLoading || isFetching}
         label="Master Team Administrator *"

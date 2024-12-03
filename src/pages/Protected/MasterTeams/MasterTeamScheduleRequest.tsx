@@ -17,21 +17,17 @@ export const MasterTeamScheduleRequest = () => {
   const navigate = useNavigate()
 
   // cant continue without params
-  if (!params) {
+  if (!params || !params.range || !params.selectedIds) {
     navigate(PATH_TO_MASTER_TEAMS)
     return
   }
 
-  const renderControls = (): ReactElement => {
-    return (
-      <ScheduleRequestControls />
-    )
-  }
+  const renderControls = (): ReactElement => <ScheduleRequestControls />
 
   return (
     <ScheduleProvider
-      initialDates={params.range?.split(',') || null}
-      initialSelectedIds={params.selectedIds?.split(',') || null}
+      initialDates={params.range.split(',')}
+      initialSelectedIds={params.selectedIds.split(',')}
       pathToNavigate={PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST}
     >
       <Page

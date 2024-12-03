@@ -4,7 +4,7 @@ import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice.tsx'
 import { useLazyGetMasterTeamQuery, useLazyGetMasterTeamsQuery } from '@/redux/masterTeams/masterTeams.api.ts'
 import { IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
 import { IGetLeagueTeamsRequest } from '@/common/interfaces/leagueTeams.ts'
-import Dropdown from '@/components/Inputs/Dropdown.tsx'
+import Select from '@/components/Inputs/Select.tsx'
 import { ILeagueForm } from '@/common/interfaces/league.ts'
 
 /**
@@ -143,7 +143,7 @@ export const MasterTeamDropdown = React.memo((props: {
 
   return (
     <>
-      <Dropdown
+      <Select
         showSearch
         loading={isLoading || isFetching}
         label="Master Team *"
@@ -161,7 +161,7 @@ export const MasterTeamDropdown = React.memo((props: {
 
       {!!selectedMasterTeam && (
         <>
-          <Dropdown
+          <Select
             disabled
             label="Master Team Administrator *"
             placeholder="Select master team"
@@ -174,7 +174,7 @@ export const MasterTeamDropdown = React.memo((props: {
             ]}
             onBlur={handleBlur('masterTeamAdminName')}
           />
-          <Dropdown
+          <Select
             disabled
             label="Master Team Admin Email "
             placeholder="Select master team"

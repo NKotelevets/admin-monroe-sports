@@ -6,10 +6,9 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import MonroeButton from '@/components/MonroeButton.tsx'
 import DatePickerRange, { IDateRangePickerRef } from '@/components/DatePickerRange.tsx'
 import { Dayjs } from 'dayjs'
-import { transformKeysToSnakeCase } from '@/utils'
-import { useDownloadFile } from '@/hooks/useDownloadFile.ts'
 import { useNotification } from '@/hooks/useNotification.ts'
 import { IExportInfoProps } from '@/common/interfaces/masterTeams.ts'
+import { useMasterTeamExportCSV } from '@/pages/Protected/MasterTeams/hooks/useMasterTeamExportCSV.ts'
 
 export const ExportAvailability = (props: IExportInfoProps) => {
   const { selectedMasterTeamIds } = props
@@ -38,9 +37,9 @@ export const ExportAvailability = (props: IExportInfoProps) => {
   )
 }
 
-const DropdownContent = (props: {masterTeamIds: string[]}) => {
+const DropdownContent = (props: { masterTeamIds: string[] }) => {
   const { masterTeamIds } = props
-  const {download, isLoading, status} = useDownloadFile()
+  const { onExport, isLoading, status } = useMasterTeamExportCSV()
   const { notify } = useNotification()
 
   const datePickerRef = useRef<IDateRangePickerRef>()
@@ -65,20 +64,14 @@ const DropdownContent = (props: {masterTeamIds: string[]}) => {
   /**
    * Downloads the file
    */
-  const onExport = useCallback(() => {
+  const onClickExport = () => {
     if (!startDate || !endDate || !masterTeamIds) return
-    const params = transformKeysToSnakeCase({
-      startDate: startDate.format('YYYY-MM-DD'),
-      endDate: endDate.format('YYYY-MM-DD'),
-      teamIds: masterTeamIds.join(',')
-    }) as Record<string, string>
-
-    download(
-      `availability/export?${new URLSearchParams(params).toString()}`,
-      'master_team_availability',
-      'xlsx'
+    onExport(
+      startDate.format('YYYY-MM-DD'),
+      endDate.format('YYYY-MM-DD'),
+      masterTeamIds.join(',')
     )
-  }, [startDate, endDate, masterTeamIds])
+  }
 
   return (
     <View
@@ -105,7 +98,7 @@ const DropdownContent = (props: {masterTeamIds: string[]}) => {
           type="primary"
           isLoading={isLoading}
           isDisabled={!isValid}
-          onClick={onExport}
+          onClick={onClickExport}
         />
       </Flex>
     </View>

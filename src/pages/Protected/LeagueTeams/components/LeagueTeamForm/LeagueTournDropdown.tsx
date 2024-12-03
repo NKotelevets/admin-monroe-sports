@@ -3,7 +3,7 @@ import { IFELeague, IGetLeaguesRequestParams, ILeagueForm } from '@/common/inter
 import { useFormikContext } from 'formik'
 import { useLeagueSlice } from '@/redux/hooks/useLeagueSlice.ts'
 import { useLazyGetLeaguesQuery } from '@/redux/leagues/leagues.api.ts'
-import Dropdown from '@/components/Inputs/Dropdown.tsx'
+import Select from '@/components/Inputs/Select.tsx'
 
 export const LeagueTournDropdown = React.memo((props: { setSelectedLeague: (league: IFELeague) => void }) => {
   const { setSelectedLeague } = props
@@ -68,7 +68,7 @@ export const LeagueTournDropdown = React.memo((props: { setSelectedLeague: (leag
   ), [leagueItems, total])
 
   return (
-    <Dropdown
+    <Select
       showSearch
       loading={isLoading || isFetching}
       label="League/Tournment *"

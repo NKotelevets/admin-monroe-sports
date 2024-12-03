@@ -30,7 +30,7 @@ export const ScheduleProvider = (props: IScheduleProviderProps) => {
 
   // update ids when initial values changes (url changed)
   useEffect(() => {
-    if(initialSelectedIds !== selectedIds) {
+    if (initialSelectedIds !== selectedIds) {
       setSelectedIds(initialSelectedIds)
     }
   }, [initialSelectedIds])
@@ -40,10 +40,10 @@ export const ScheduleProvider = (props: IScheduleProviderProps) => {
       dates,
       selectedIds,
       selectedTabIndex,
+      pathToNavigate,
       setSelectedTabIndex,
       setDates,
-      setSelectedIds,
-      pathToNavigate
+      setSelectedIds
     }}>
       {children}
     </ScheduleContext.Provider>
