@@ -33,7 +33,7 @@ const MasterTeamImportInfo = (): ReactElement => {
   return (
     <TableProvider>
       <Page
-        title="League Teams"
+        title="Import Info"
         subtitle={PAGE_SUBTITLE}
         breadcrumbs={BREADCRUMB_ITEMS}
       >
