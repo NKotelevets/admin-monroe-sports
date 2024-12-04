@@ -149,7 +149,7 @@ export const appSlice = createSlice({
             return `${division.name}, ${division?.sub_division.map((subdivision) => subdivision.name)}`
 
           return ''
-        })}
+        }) || ''}
         `
           state.notification.timestamp = new Date().getTime()
         },
