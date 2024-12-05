@@ -180,7 +180,7 @@ interface ICreateSeasonErrorDetailsDivisions {
 
 interface ICreateSeasonErrorDetails {
   name?: string
-  divisions?: ICreateSeasonErrorDetailsDivisions[]
+  divisions?: (ICreateSeasonErrorDetailsDivisions | string)[]
 }
 
 export interface ICreateSeasonError {

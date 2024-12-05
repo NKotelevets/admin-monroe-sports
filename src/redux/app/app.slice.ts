@@ -1,5 +1,5 @@
 import { masterTeamsApi } from '../masterTeams/masterTeams.api'
-import { PayloadAction, createSlice, isAnyOf } from '@reduxjs/toolkit'
+import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
 import { authApi } from '@/redux/auth/auth.api'
 import { leaguesApi } from '@/redux/leagues/leagues.api'
@@ -29,18 +29,18 @@ interface IAppSliceState {
 const EMPTY_NOTIFICATION: IAppNotification = {
   message: '',
   timestamp: 0,
-  type: 'error',
+  type: 'error'
 }
 
 const EMPTY_INFO_NOTIFICATION: IInfoNotification = {
   message: '',
   actionLabel: '',
-  redirectedPageUrl: '',
+  redirectedPageUrl: ''
 }
 
 const appSliceState: IAppSliceState = {
   notification: EMPTY_NOTIFICATION,
-  infoNotification: EMPTY_INFO_NOTIFICATION,
+  infoNotification: EMPTY_INFO_NOTIFICATION
 }
 
 export const appSlice = createSlice({
@@ -60,7 +60,7 @@ export const appSlice = createSlice({
     },
     setInfoNotification: (state, action: PayloadAction<IInfoNotification>) => {
       state.infoNotification = action.payload
-    },
+    }
   },
   extraReducers: (builder) =>
     builder
@@ -77,7 +77,7 @@ export const appSlice = createSlice({
         (state) => {
           state.notification.message = 'Leagues/tournaments with this name already exists'
           state.notification.timestamp = new Date().getTime()
-        },
+        }
       )
       .addMatcher(leaguesApi.endpoints.deleteLeague.matchRejected, (state, action) => {
         state.notification.message = (action.payload?.data as IDetailedError).details
@@ -124,34 +124,39 @@ export const appSlice = createSlice({
       .addMatcher(
         isAnyOf(
           masterTeamsApi.endpoints.createMasterTeam.matchRejected,
-          masterTeamsApi.endpoints.editMasterTeam.matchRejected,
+          masterTeamsApi.endpoints.editMasterTeam.matchRejected
         ),
         (state, action) => {
           state.notification.message = (action.payload?.data as IDetailedError).details
           state.notification.timestamp = new Date().getTime()
-        },
+        }
       )
       .addMatcher(
         isAnyOf(seasonsApi.endpoints.createSeason.matchRejected, seasonsApi.endpoints.updateSeason.matchRejected),
         (state, action) => {
           const details = (action.payload?.data as ICreateSeasonError).details
 
+
           state.notification.message = `
-        ${details?.name ? `${details.name}` : ''} ${details.divisions?.map((division) => {
-          if (division?.name && !division?.sub_division) {
-            return division.name
-          }
+          ${details?.name ? `${details.name}` : ''} ${details.divisions?.map((division) => {
+            if (typeof division === 'string') {
+              return division
+            }
+            
+            if (division?.name && !division?.sub_division) {
+              return division.name
+            }
 
-          if (division?.sub_division && !division?.name)
-            return division.sub_division.map((subdivision) => subdivision.name)
+            if (division?.sub_division && !division?.name)
+              return division.sub_division.map((subdivision) => subdivision.name)
 
-          if (division?.name && division?.sub_division)
-            return `${division.name}, ${division?.sub_division.map((subdivision) => subdivision.name)}`
+            if (division?.name && division?.sub_division)
+              return `${division.name}, ${division?.sub_division.map((subdivision) => subdivision.name)}`
 
-          return ''
-        }) || ''}
+            return ''
+          }) || ''}
         `
           state.notification.timestamp = new Date().getTime()
-        },
-      ),
+        }
+      )
 })

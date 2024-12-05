@@ -250,7 +250,7 @@ const EditSeason = () => {
           tiebreakers_format: subdivision.tiebreakersFormat !== POINTS ? 0 : 1,
           changed: subdivision.changed ? subdivision.playoffFormat === BEST_RECORD_WINS : false,
           brackets: subdivision.brackets
-            .map((bracket) => ({
+            ?.map((bracket) => ({
               id: bracket.id as number,
               name: bracket.name,
               number_of_teams: bracket.playoffTeams,
