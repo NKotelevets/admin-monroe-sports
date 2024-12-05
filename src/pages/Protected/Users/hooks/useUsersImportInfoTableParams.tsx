@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react'
 import { SorterResult } from 'antd/es/table/interface'
 
 interface IParams {
-  setSelectedIdx(idx: number): void
+  setSelectedIndex(idx: number): void
   records: IImportUsersCSVTableData[]
 }
 
@@ -34,7 +34,7 @@ type TColumns<T> = TableProps<T>['columns']
  * including sorting, pagination, and selection of records.
 
  * @param {Object} params - The parameters for configuring the table.
- * @param {function} params.setSelectedIdx - A function to set the selected index of the record.
+ * @param {function} params.setSelectedIndex - A function to set the selected index of the record.
  * @param {IImportUsersCSVTableData[]} params.records - An array of records to be displayed in the table.
  *
  * @returns An object containing the following properties:
@@ -50,7 +50,7 @@ type TColumns<T> = TableProps<T>['columns']
  *
  */
 export const useUsersImportInfoTableParams = ({
-  setSelectedIdx,
+  setSelectedIndex,
   records,
 }: IParams) => {
   const { getColumnSearchProps } = useTableSearch()
@@ -96,7 +96,7 @@ export const useUsersImportInfoTableParams = ({
         <CellText
           isLink
           onClick={() => {
-            record.status === 'Duplicate' && setSelectedIdx(record.idx)
+            record.status === 'Duplicate' && setSelectedIndex(record.idx)
           }}
         >
           {value}
@@ -114,7 +114,7 @@ export const useUsersImportInfoTableParams = ({
         <CellText
           isLink
           onClick={() => {
-            record.status === 'Duplicate' && setSelectedIdx(record.idx)
+            record.status === 'Duplicate' && setSelectedIndex(record.idx)
           }}
         >
           {value}
@@ -170,7 +170,7 @@ export const useUsersImportInfoTableParams = ({
       width: '80px',
       render: (_, record) =>
         record.status === 'Duplicate' && (
-          <ReactSVG className="c-p" src={SyncIcon} onClick={() => setSelectedIdx(record.idx)} />
+          <ReactSVG className="c-p" src={SyncIcon} onClick={() => setSelectedIndex(record.idx)} />
         )
     }
   ]

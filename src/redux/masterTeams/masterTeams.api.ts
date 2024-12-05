@@ -4,13 +4,15 @@ import baseQueryWithReAuth from '@/redux/reauthBaseQuery'
 
 import { IPaginationResponse } from '@/common/interfaces/api'
 import {
+  IBEImportMasterTeamCSVResponse,
   IBEMasterTeam,
-  IBEMasterTeamDetails,
+  IBEMasterTeamDetails, IFEImportMasterTeamCSVResponse,
   IFEMasterTeamDetails,
   IGetMasterTeamsRequest,
-  IGetMasterTeamsResponse,
+  IGetMasterTeamsResponse, IGetScheduleRequestParams,
   IMasterTeamError,
-  IPopulateMTRequest,
+  IPopulateMTRequest, IScheduleRequest,
+  IScheduleRequestResponse,
   ITeamAdmin
 } from '@/common/interfaces/masterTeams'
 import { TDeleteStatus } from '@/common/types'
@@ -52,6 +54,16 @@ export const masterTeamsApi = createApi({
       providesTags: [MASTER_TEAMS_TAG],
     }),
 
+    getScheduleRequest: builder.query<IScheduleRequest[], IGetScheduleRequestParams>({
+      query: (params) => ({
+        url: 'availability/get-masterteam-availability',
+        params,
+      }),
+      transformResponse: (response: IScheduleRequestResponse) => (
+        transformKeysToCamelCase(response)
+      )
+    }),
+
     masterTeamsBulkDelete: builder.mutation<void, { ids: string[] }>({
       query: ({ ids }) => ({
         url: 'teams/seasons/bulk-seasons-delete',
@@ -71,13 +83,30 @@ export const masterTeamsApi = createApi({
       invalidatesTags: [MASTER_TEAMS_TAG],
     }),
 
-    masterTeamsImportCSV: builder.mutation<void, FormData>({
+    masterTeamsImportCSV: builder.mutation<IFEImportMasterTeamCSVResponse, FormData>({
       query: (body) => ({
+        method: 'POST',
         url: 'teams/teams/import-master-teams-from-csv',
         body,
-        method: 'POST',
       }),
       invalidatesTags: [MASTER_TEAMS_TAG],
+      transformResponse: ({ duplicates, ...rest }: IBEImportMasterTeamCSVResponse) => ({
+        ...rest,
+        duplicates: duplicates?.map(duplicate => ({
+          ...duplicate,
+          idx: duplicate.index,
+          new: {
+            headCoachName: duplicate.new['Head Coach First and Last Name'],
+            headCoachEmail: duplicate.new['Head Coach Email'],
+            masterTeamName: duplicate.new['Master Team Name'],
+            teamAdminEmail: duplicate.new['Team Admin Email'],
+            teamAdminName: duplicate.new['Team Admin First and Last Name'],
+            adminData: duplicate.new.admin_data,
+            headCoachData: duplicate.new.head_coach_data
+          },
+          existing: transformKeysToCamelCase(duplicate.existing)
+        })) as IFEImportMasterTeamCSVResponse['duplicates']
+      }),
     }),
 
     getMasterTeam: builder.query<IFEMasterTeamDetails, { id: string }>({
@@ -144,7 +173,7 @@ export const masterTeamsApi = createApi({
       void,
       {
         id: string
-        body: IPopulateMTRequest
+        body: Partial<IPopulateMTRequest>
       }
     >({
       query: ({ body, id }) => ({
@@ -195,5 +224,6 @@ export const {
   useDeleteMasterTeamMutation,
   useBulkDeleteMasterTeamsMutation,
   useEditMasterTeamMutation,
+  useLazyGetScheduleRequestQuery,
 } = masterTeamsApi
 

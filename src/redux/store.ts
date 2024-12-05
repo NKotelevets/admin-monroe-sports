@@ -37,7 +37,7 @@ const persistConfig = {
   key: 'root',
   version: 1,
   storage,
-  whitelist: ['authSlice', 'userSlice', 'leaguesSlice', 'seasonsSlice', 'appSlice'],
+  whitelist: ['authSlice', 'userSlice', 'leaguesSlice', 'seasonsSlice', 'appSlice', 'masterTeamsSlice'],
 }
 
 const rootReducer = combineReducers({

@@ -1,13 +1,18 @@
-import { UserReviewModal } from '@/pages/Protected/Users/components/UserReviewModal'
-import { IExtendedFEUser, IFENew, IRole } from '@/common/interfaces/user.ts'
+import { IExtendedFEUser, IFENew } from '@/common/interfaces/user.ts'
 import { useBulkEditMutation } from '@/redux/user/user.api.ts'
 import { transformKeysToSnakeCase } from '@/utils'
-import { calculateUserRoles } from '@/utils/user.ts'
-import { ReactElement, useCallback, useMemo } from 'react'
-import { IFERole } from '@/common/interfaces/role.ts'
+import { ReactElement, useCallback, useMemo, useState } from 'react'
 import { IUserBulkEditPayload } from '@/common/types'
 import { useNotification } from '@/hooks/useNotification.ts'
+import { createPortal } from 'react-dom'
+import { DuplicateReviewModal } from '@/components/DuplicateReviewModal'
+import UserDuplicateReview from '@/pages/Protected/Users/components/UserDuplicateReview.tsx'
+import { DefaultButton } from '@/components/DuplicateReviewModal/components'
+import MonroeTooltip from '@/components/MonroeTooltip.tsx'
+import { getCurrentRole } from '@/pages/Protected/Users/utils'
+import { TLinkedRole } from '@/common/types/users.ts'
 
+const MAIN_BUTTON_TEXT = `Update Current`
 const DUPLICATED_MESSAGE = `You cannot create this user as a new. Change the email and phone number to create`
 const USER_UPDATED_MESSAGE = `User was successfully updated`
 
@@ -52,26 +57,22 @@ export const UserCreationDuplicateModal = (props: IUserCreationDuplicateModalPro
   const { notify } = useNotification()
 
   const [bulkEdit, { isLoading, isError, status }] = useBulkEditMutation()
+  const [selectedIndex, setSelectedIndex] = useState<number>(0)
 
-  const current = existing[0]
-  const duplicate = Array.from({ length: existing.length }, () => (newUser))
+  const current = existing[selectedIndex]
+  const newData = Array.from({ length: existing.length }, () => (newUser))
+  const duplicates = existing.map((record, idx) => (
+    { idx, existing: record, new: newData[idx] }
+  ))
 
-  const currentUserRoles = useMemo((): IRole[] => {
-    const calculateEntities = (roleName: string, entities: IFERole['linkedEntities']) => (
-      entities?.map(entity => ({ role: roleName, team_id: entity.id })) || []
-    )
-    return calculateUserRoles(current).reduce(
-      (acc, value) => ([
-          ...acc,
-          ...(calculateEntities(value.name, value.linkedEntities) || [])] as IRole[]
-      ), [] as IRole[])
-  }, [current])
+  const currentRoles = useMemo(() => (
+    selectedIndex !== null ? getCurrentRole(duplicates[selectedIndex].existing) : []
+  ), [selectedIndex, duplicates])
 
-
-  const onSubmit = useCallback(async () => {
+  const onUpdate = useCallback(async () => {
     const updateUserAsAdminBody = {
       id: current.id,
-      roles: [...currentUserRoles, ...newUser.roles]
+      roles: [...currentRoles, ...newUser.roles]
     }
 
     await bulkEdit([transformKeysToSnakeCase(updateUserAsAdminBody)] as IUserBulkEditPayload[])
@@ -80,23 +81,47 @@ export const UserCreationDuplicateModal = (props: IUserCreationDuplicateModalPro
         goBack()
       })
       .catch(() => {
+        // error handled by modal
       })
-  }, [current, currentUserRoles, newUser])
+  }, [current, currentRoles, newUser])
+
+  const onChange = (index: number) => {
+    setSelectedIndex(index)
+  }
+
+  const renderCustomButton = () => (
+    <MonroeTooltip text={DUPLICATED_MESSAGE} width={`240px`}>
+      <DefaultButton type="default" disabled={true}>
+        Create New
+      </DefaultButton>
+    </MonroeTooltip>
+  )
 
   return (
-    <UserReviewModal
-      type="Created"
-      title="Review Matches"
-      existing={existing}
-      duplicates={duplicate}
-      hasError={isError && status === 'rejected'}
-      primaryButtonAction={onSubmit}
-      primaryButtonText="Update Current"
-      primaryButtonLoading={isLoading}
-      secondaryButtonText="Create New"
-      secondaryButtonDisabled={true}
-      secondaryButtonTooltip={DUPLICATED_MESSAGE}
-      onClose={onClose}
-    />
+    createPortal((
+      <DuplicateReviewModal<IFENew, IExtendedFEUser>
+        idx={0}
+        hideSkipButton
+        buttonSize={140}
+        isLoading={isLoading}
+        duplicates={duplicates}
+        success={status === 'fulfilled'}
+        error={isError || status === 'rejected'}
+        mainButtonText={MAIN_BUTTON_TEXT}
+        onClose={onClose}
+        onChange={onChange}
+        handleUpdate={onUpdate}
+        customButton={renderCustomButton}
+      >
+        {(index: number) => (
+          <UserDuplicateReview
+            index={index}
+            duplicates={duplicates}
+            linkedRoles={currentRoles}
+            newRoles={newUser.roles as TLinkedRole[]}
+          />
+        )}
+      </DuplicateReviewModal>
+    ), document.getElementById('page-portal')!)
   )
 }

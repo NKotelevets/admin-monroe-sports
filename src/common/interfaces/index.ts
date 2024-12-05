@@ -50,6 +50,13 @@ export interface ITableParams<T> {
   filters?: Parameters<GetProp<TableProps, 'onChange'>>[1]
 }
 
+export interface IDuplicate<T, Y> {
+  idx: number
+  new: T
+  existing: Y
+  differences?: { [key: string]: unknown } | object
+}
+
 export interface IFormProps<Body, FormValues> {
   validationSchema?: FormikConfig<FormValues>['validationSchema']
   initialValues?: FormValues
@@ -58,4 +65,9 @@ export interface IFormProps<Body, FormValues> {
   onSubmit(body: Body): void
 
   goBack(): void
+}
+
+export interface IDownloadStatus {
+  message: string
+  type: 'error' | 'info'
 }

@@ -1,5 +1,5 @@
 import { OptionTitle } from '@/components/Elements'
-import { Button, Flex, Select, Spin } from 'antd'
+import { Button, Flex, Select as SL, Spin } from 'antd'
 import { SelectProps } from 'antd/es/select'
 import { ReactElement, useCallback, useMemo } from 'react'
 import styled from '@emotion/styled'
@@ -19,7 +19,12 @@ interface IDropdownProps extends SelectProps {
   onLoadMore?(): void
 }
 
-const Dropdown = (props: IDropdownProps) => {
+/**
+ * Drop in replacement of Ant.D Select component
+ * @param props
+ * @constructor
+ */
+const Select = (props: IDropdownProps) => {
   const {
     label,
     error,
@@ -122,8 +127,8 @@ const Loading = styled(Spin)`
     padding: 12px;
     color: ${colors.secondary}
 `
-const SelectStyled = styled(Select)`
+const SelectStyled = styled(SL)`
     width: 100%
 `
 
-export default Dropdown
+export default Select

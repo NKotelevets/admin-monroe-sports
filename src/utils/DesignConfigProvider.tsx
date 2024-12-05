@@ -29,6 +29,13 @@ const DesignConfigProvider: FC<{ children: ReactNode }> = ({ children }) => (
         },
         Button: {
           borderRadius: 2
+        },
+        Tooltip: {
+          borderRadius: 2,
+          colorBgSpotlight: 'rgba(62, 62, 72, 0.75)'
+        },
+        DatePicker: {
+          borderRadius: 2
         }
       }
     }}

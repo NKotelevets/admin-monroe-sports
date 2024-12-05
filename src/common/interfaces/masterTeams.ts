@@ -2,6 +2,7 @@ import { IAdditionalEmail, IAdditionalPhone } from '@/common/interfaces'
 import { IBEDivision, IBESubdivision, IFEDivision, IFESubdivision } from '@/common/interfaces/division'
 import { IBELeague, IFELeague } from '@/common/interfaces/league'
 import { IBEOperator } from '@/common/interfaces/operator'
+import { TDeleteStatus, TErrorDuplicate } from '@/common/types'
 
 interface IBETeamAdmin {
   additional_emails: IAdditionalEmail[]
@@ -93,7 +94,7 @@ export interface IGetMasterTeamsRequest {
   limit: number
   offset: number
   ordering?: string | null
-  team_name?: string | null
+  name?: string | null
   head_coach?: string | null
   league_name?: string | null
   league_teams?: string | null
@@ -158,3 +159,138 @@ export interface IMasterTeamError {
   error: string
 }
 
+export interface IImportMasterTeamCSVTableData {
+  idx: number
+  index: number
+  type: string
+  headCoachName: string
+  headCoachEmail: string
+  masterTeamName: string
+  teamAdminEmail: string
+  teamAdminName: string
+  status: TErrorDuplicate
+  message: string
+}
+
+interface IBEDuplicateExtraData {
+  id: string
+  full_name: string
+  email: string
+}
+
+export interface IBENewMasterTeamDuplicate {
+  'Head Coach Email': string
+  'Head Coach First and Last Name': string
+  'Master Team Name': string
+  'Team Admin Email': string
+  'Team Admin First and Last Name': string
+  head_coach_data?: IBEDuplicateExtraData
+  admin_data?: IBEDuplicateExtraData[]
+}
+
+export interface IBEExistingMasterTeamDuplicate {
+  head_coach: string
+  head_coach_email: string
+  name: string
+  team_admins: string[]
+  team_admins_emails: string[]
+  head_coach_data: IBEDuplicateExtraData
+  admin_data: IBEDuplicateExtraData[]
+}
+
+interface IBEDuplicate {
+  id: string
+  index: number
+  new: IBENewMasterTeamDuplicate
+  existing: IBEExistingMasterTeamDuplicate
+  differences: { [key: string]: unknown }
+}
+
+export interface IDuplicateExtraData {
+  id: string
+  fullName: string
+  email: string
+}
+
+export interface IFENewMasterTeamDuplicate {
+  headCoachName: string
+  headCoachEmail: string
+  headCoachData?: IDuplicateExtraData
+  teamAdminEmail: string
+  teamAdminName: string
+  adminData?: IDuplicateExtraData[]
+  masterTeamName: string
+}
+
+export interface IImportMasterTeamCSVError {
+  idx: string
+  error: string
+  master_team_name: string
+}
+
+export interface IBEImportMasterTeamCSVResponse {
+  status: TDeleteStatus
+  errors: IImportMasterTeamCSVError[]
+  success: string[]
+  duplicates: IBEDuplicate[]
+}
+
+export interface IFEExistingMasterTeamDuplicate {
+  id: string
+  headCoach: string
+  headCoachEmail: string
+  name: string
+  teamAdmins: string[]
+  teamAdminsEmails: string[]
+
+  headCoachData: IDuplicateExtraData
+  adminData: IDuplicateExtraData[]
+}
+
+export interface IFEDuplicate {
+  idx: number
+  new: IFENewMasterTeamDuplicate
+  existing: IFEExistingMasterTeamDuplicate
+  differences: { [key: string]: unknown }
+}
+
+export interface IFEImportMasterTeamCSVResponse {
+  status: TDeleteStatus
+  errors?: IImportMasterTeamCSVError[]
+  success: string[]
+  duplicates?: IFEDuplicate[]
+}
+
+export interface IExportInfoProps {
+  selectedMasterTeamIds: string[]
+}
+
+// Schedule Request
+
+export interface IGetScheduleRequestParams {
+  start_date: string
+  end_date: string
+  team_ids: string
+}
+
+export interface IScheduleData {
+  [key: string]: { time: string, availability: number }[]
+}
+
+export interface IScheduleRequestResponse {
+  team_id: string
+  team_name: string
+  data: IScheduleData
+}
+
+export interface IScheduleRequest {
+  teamId: string
+  teamName: string
+  data: IScheduleData
+}
+
+export interface IScheduleEntry {
+  time: string
+
+  [key: string]: number | string
+}

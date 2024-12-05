@@ -4,7 +4,7 @@ import { useFormikContext } from 'formik'
 import { useLazyGetSeasonDetailsQuery } from '@/redux/seasons/seasons.api.ts'
 import { IFEDivision } from '@/common/interfaces/division.ts'
 import { IIdName } from '@/common/interfaces'
-import Dropdown from '@/components/Inputs/Dropdown.tsx'
+import Select from '@/components/Inputs/Select.tsx'
 
 export const DivisionSubdivisionDropdown = React.memo((props: { selectedLeague: IFELeague | null }) => {
   const { selectedLeague } = props
@@ -25,8 +25,8 @@ export const DivisionSubdivisionDropdown = React.memo((props: { selectedLeague: 
     if (!divisionList.length) return
 
     const currentDivision = divisionList.find(div => div.id === values.division)
-    const subdivisions = currentDivision?.subdivisions?.map(sub => ({
-      value: sub.id,
+    const subdivisions = currentDivision?.sub_division?.map(sub => ({
+      value: sub.id || '',
       label: sub.name
     }))
 
@@ -56,7 +56,7 @@ export const DivisionSubdivisionDropdown = React.memo((props: { selectedLeague: 
 
   return (
     <>
-      <Dropdown
+      <Select
         showSearch
         disabled={!selectedLeague || !divisionList.length}
         loading={isLoading || isFetching}
@@ -69,7 +69,7 @@ export const DivisionSubdivisionDropdown = React.memo((props: { selectedLeague: 
         error={touched.division ? errors.division as string : ''}
         onBlur={handleBlur('division')}
       />
-      <Dropdown
+      <Select
         showSearch
         disabled={!subdivisionList.length}
         label="Subivision/Pool *"

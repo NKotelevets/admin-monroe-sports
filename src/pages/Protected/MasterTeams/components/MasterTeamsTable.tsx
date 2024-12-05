@@ -154,7 +154,7 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
             ? `-${getBESortingField(sorter.field as string)}`
             : getBESortingField(sorter.field as string)
           : undefined,
-      team_name: (filters?.['name']?.[0] as string) ?? undefined,
+      name: (filters?.['name']?.[0] as string) ?? undefined,
       head_coach: (filters?.['headCoachFullName']?.[0] as string) ?? undefined,
       team_admins: (filters?.['teamAdminFullName']?.[0] as string) ?? undefined,
       league_name: (filters?.['league_name']?.[0] as string) ?? undefined,
@@ -212,7 +212,7 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
         columns={columns}
         rowKey={(record) => record.id}
         dataSource={masterTeams}
-        pagination={tableParams.pagination}
+        pagination={masterTeams.length ? tableParams.pagination : undefined}
         loading={isLoading || isFetching}
         onChange={handleTableChange}
         rowClassName={(record) =>

@@ -71,9 +71,9 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
   touched,
   handleBlur,
 }) => {
-  const [isOpenedDetails, setIsOpenedDetails] = useState(index === 0 ? true : false)
-  const { isComponentVisible, ref } = useIsActiveComponent(index === 0 ? true : false)
-  const isDisabled = !!(errors?.divisions?.[+index] as FormikErrors<IFEDivision>)?.subdivisions?.length
+  const [isOpenedDetails, setIsOpenedDetails] = useState(index === 0)
+  const { isComponentVisible, ref } = useIsActiveComponent(index === 0)
+  const isDisabled = !!(errors?.divisions?.[+index] as FormikErrors<IFEDivision>)?.sub_division?.length
   const allDivisionNames = values.divisions.map((d) => d.name)
   const { setIsDuplicateNames, isDuplicateNames } = useSeasonSlice()
   const listOfDuplicatedNames = allDivisionNames
@@ -165,7 +165,7 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
                       subdivision={subdivision}
                       namePrefix={namePrefix}
                       setFieldValue={setFieldValue}
-                      isMultipleSubdivisions={!!(division.subdivisions.length > 1)}
+                      isMultipleSubdivisions={division.subdivisions.length > 1}
                       removeFn={innerArrayHelpers.remove}
                       errors={errors}
                       division={division}

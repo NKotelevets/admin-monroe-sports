@@ -4,7 +4,7 @@ export const PATH_TO_HOME = '/'
 
 // LEAGUES & TOURNAMENTS PAGES
 export const PATH_TO_LEAGUES = '/leagues-and-tournaments'
-export const PATH_TO_LEAGUE_PAGE = '/league-tournament'
+export const PATH_TO_LEAGUE_PAGE = '/leagues-and-tournaments'
 export const PATH_TO_CREATE_LEAGUE = '/leagues-and-tournaments/create'
 export const PATH_TO_EDIT_LEAGUE = '/leagues-and-tournaments/edit'
 export const PATH_TO_LEAGUES_IMPORT_INFO = '/leagues-and-tournaments/import-info'
@@ -34,6 +34,7 @@ export const PATH_TO_CREATE_MASTER_TEAM = '/master-teams/create'
 export const PATH_TO_EDIT_MASTER_TEAM = '/master-teams/edit'
 export const PATH_TO_DELETING_INFO_MASTER_TEAMS = '/master-teams/deleting-info'
 export const PATH_TO_MASTER_TEAMS_IMPORT_INFO = '/master-teams/import-info'
+export const PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST = '/master-teams/schedule-request'
 
 // LEAGUE TEAMS
 export const PATH_TO_LEAGUE_TEAMS = '/league-teams'

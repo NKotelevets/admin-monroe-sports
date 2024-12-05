@@ -84,8 +84,7 @@ export const CancelButton = styled(Button)`
   font-size: 16px;
   border-radius: 2px;
   border: 1px solid #626169 !important;
-  box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.02);
-  border: 0;
+  box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.02);
   height: 40px;
   width: 100%;
 
@@ -108,7 +107,7 @@ export const ImportButton = styled(Button)`
   border-radius: 2px;
   border: 1px solid #626169;
   background: #ffffff;
-  box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.02);
   font-size: 14px;
   font-weight: 400;
   height: 32px;
@@ -137,7 +136,7 @@ export const RadioGroupLabelTooltip = styled.div`
 
   & div svg {
     display: block;
-    margin-left: 0px !important;
+    margin-left: 0 !important;
   }
 `
 
@@ -198,7 +197,7 @@ export const MonroeSecondaryButton = styled(Button)`
   border-radius: 2px;
   border: 1px solid #626169 !important;
   background: #fff !important;
-  box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.02) !important;
+  box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.02) !important;
   color: rgba(26, 22, 87, 1) !important;
   height: 32px !important;
   margin-right: 8px;
@@ -208,7 +207,7 @@ export const CreateNewEntityButton = styled(Button)`
   border-radius: 2px;
   border: 1px solid #bc261b;
   background: #bc261b;
-  box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.04);
   font-size: 14px;
   font-weight: 400;
   height: 32px;
@@ -218,7 +217,7 @@ export const MonroeDeleteButton = styled(Button)`
   border-radius: 2px;
   border: 1px solid #bc261b;
   background: #fff;
-  box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.02);
   color: #bc261b;
   line-height: 22px;
   height: 32px;
@@ -261,7 +260,7 @@ export const ExpandedHeaderLeftText = styled(Typography)`
 
 export const AddEntityButton = styled(MonroeSecondaryButton)`
   &:disabled {
-    box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.02) !important;
+    box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.02) !important;
     border-radius: 2px !important;
     border: 1px solid #d8d7db !important;
     background: #f4f4f5 !important;

@@ -64,10 +64,14 @@ import {
   PATH_TO_USERS_BLOCKING_INFO,
   PATH_TO_USERS_BULK_EDIT,
   PATH_TO_USERS_IMPORT_INFO,
+  PATH_TO_MASTER_TEAMS_IMPORT_INFO,
+  PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST,
   PATH_TO_LEAGUE_TEAMS,
   PATH_TO_CREATE_LEAGUE_TEAM,
   PATH_TO_EDIT_LEAGUE_TEAM
 } from '@/common/constants/paths'
+import MasterTeamImportInfo from '@/pages/Protected/MasterTeams/MasterTeamImportInfo.tsx'
+import { MasterTeamScheduleRequest } from '@/pages/Protected/MasterTeams/MasterTeamScheduleRequest.tsx'
 
 
 const Root = () => (
@@ -107,10 +111,12 @@ const Root = () => (
 
       {/* Master Teams */}
       <Route path={PATH_TO_MASTER_TEAMS} element={<MasterTeams />} />
+      <Route path={PATH_TO_MASTER_TEAMS_IMPORT_INFO} element={<MasterTeamImportInfo />} />
       <Route path={`${PATH_TO_MASTER_TEAMS}/:id`} element={<MasterTeamDetails />} />
       <Route path={PATH_TO_DELETING_INFO_MASTER_TEAMS} element={<MasterTeamsDeletingInfo />} />
       <Route path={PATH_TO_CREATE_MASTER_TEAM} element={<CreateMasterTeam />} />
       <Route path={`${PATH_TO_EDIT_MASTER_TEAM}/:id`} element={<EditMasterTeam />} />
+      <Route path={`${PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST}/:range/:selectedIds`} element={<MasterTeamScheduleRequest />} />
 
       {/* League Teams */}
       <Route path={PATH_TO_LEAGUE_TEAMS} element={<LeagueTeams />} />
