@@ -4,6 +4,8 @@ import dayjs, { Dayjs } from 'dayjs'
 import styled from '@emotion/styled'
 
 interface IDateRangePickerProps {
+  initialStartDate?: Dayjs
+  initialEndDate?: Dayjs
   onStartChange(value: Dayjs | null): void
 
   onEndChange(value: Dayjs | null): void
@@ -37,10 +39,10 @@ export type IDateRangePickerRef = {
  * @returns {ReactElement} A date range picker component with separate start and end date inputs.
  */
 const DateRangePicker = forwardRef<IDateRangePickerRef, IDateRangePickerProps>((props, ref) => {
-  const { onStartChange, onEndChange } = props
+  const { onStartChange, onEndChange, initialStartDate, initialEndDate } = props
 
-  const [startDate, setStartDate] = useState<Dayjs | null>(dayjs())
-  const [endDate, setEndDate] = useState<Dayjs | null>(null)
+  const [startDate, setStartDate] = useState<Dayjs | null>(initialStartDate || dayjs())
+  const [endDate, setEndDate] = useState<Dayjs | null>(initialEndDate || null)
 
   // update startDate for parent
   useEffect(() => {

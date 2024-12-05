@@ -1,23 +1,48 @@
 import { useState } from 'react'
 import { useAuthSlice } from '@/redux/hooks/useAuthSlice.ts'
+import { IDownloadStatus } from '@/common/interfaces'
 
 const DEFAULT_ERROR_MESSAGE = `Unable to export. Please, try again!`
 const DEFAULT_EMPTY_MESSAGE = `No content was found to export`
 
-interface IDownloadStatus {
-  message: string
-  type: 'error' | 'info'
+interface IUseDownloadFileReturn {
+  download(url: string, fileName: string, fileExtension: string): void
+  isLoading: boolean
+  status: IDownloadStatus | null
 }
 
-export const useDownloadFile = () => {
+/**
+ * Custom hook for downloading files from the backend.
+ *
+ * Manages file download functionality, including authentication, error handling,
+ * and status updates. Allows users to download files by specifying the target
+ * endpoint, filename, and file extension.
+ *
+ * @returns {Object} - An object containing:
+ *  - `download`: A function to initiate the file download.
+ *  - `isLoading`: A boolean indicating whether a download is currently in progress.
+ *  - `status`: An object representing the current status of the download,
+ *    including a message and type ('info' or 'error').
+ *
+ * @constant DEFAULT_ERROR_MESSAGE
+ *  - Default error message displayed when a download fails.
+ * @constant DEFAULT_EMPTY_MESSAGE
+ *  - Default message displayed when no content is found to download.
+ *
+ * @remarks
+ * - This hook uses the `useAuthSlice` hook to fetch the current user's access token.
+ * - Handles both errors (e.g., network issues or unauthorized access) and
+ *   cases where no content is available (204 status).
+ */
+export const useDownloadFile = (): IUseDownloadFileReturn => {
   const { access } = useAuthSlice()
 
   const [isLoading, setIsLoading] = useState(false)
   const [status, setStatus] = useState<IDownloadStatus | null>(null)
 
-  const error = () => (
+  const error = (message: string | undefined) => (
     setStatus({
-      message: DEFAULT_ERROR_MESSAGE,
+      message: message || DEFAULT_ERROR_MESSAGE,
       type: 'error'
     })
   )
@@ -36,7 +61,9 @@ export const useDownloadFile = () => {
         })
 
         if (!response.ok) {
-          error()
+          const resp = await response.json()
+
+          error(resp?.details || resp?.error)
           return
         }
 
@@ -58,7 +85,7 @@ export const useDownloadFile = () => {
 
         window.URL.revokeObjectURL(downloadUrl)
       } catch (err) {
-        error()
+        error(undefined)
       } finally {
         setIsLoading(false)
       }

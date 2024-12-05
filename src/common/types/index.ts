@@ -1,5 +1,6 @@
 import { IRole } from '@/common/interfaces/user.ts'
 import { TableProps } from 'antd/es/table/InternalTable'
+import { Dayjs } from 'dayjs'
 
 export type TDeleteStatus = 'red' | 'green' | 'yellow'
 
@@ -22,3 +23,5 @@ export type IUserBulkEditPayload = {
 }
 
 export type TColumns<T> = TableProps<T>['columns']
+
+export type TRangePickerValue = [start: Dayjs | null | undefined, end: Dayjs | null | undefined]

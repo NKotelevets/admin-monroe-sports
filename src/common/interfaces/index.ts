@@ -66,3 +66,8 @@ export interface IFormProps<Body, FormValues> {
 
   goBack(): void
 }
+
+export interface IDownloadStatus {
+  message: string
+  type: 'error' | 'info'
+}

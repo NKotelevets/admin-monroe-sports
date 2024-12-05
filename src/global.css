@@ -751,6 +751,9 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
 .dropdown ul {
   margin-top: 0 !important
 }
+.ant-dropdown-menu {
+  border-radius: 2px !important
+}
 
 /* AntD Tabs */
 .league-teams .ant-tabs-nav-list {
@@ -793,4 +796,8 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
 .ant-select-open .ant-menu-submenu-arrow::after {
   transform: rotate(-45deg) translateX(-2.5px);
   top: 3px;
+}
+
+.ant-picker-panel-container {
+  border-radius: 2px !important;
 }

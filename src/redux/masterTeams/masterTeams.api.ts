@@ -9,9 +9,10 @@ import {
   IBEMasterTeamDetails, IFEImportMasterTeamCSVResponse,
   IFEMasterTeamDetails,
   IGetMasterTeamsRequest,
-  IGetMasterTeamsResponse,
+  IGetMasterTeamsResponse, IGetScheduleRequestParams,
   IMasterTeamError,
-  IPopulateMTRequest,
+  IPopulateMTRequest, IScheduleRequest,
+  IScheduleRequestResponse,
   ITeamAdmin
 } from '@/common/interfaces/masterTeams'
 import { TDeleteStatus } from '@/common/types'
@@ -51,6 +52,16 @@ export const masterTeamsApi = createApi({
         })),
       }),
       providesTags: [MASTER_TEAMS_TAG],
+    }),
+
+    getScheduleRequest: builder.query<IScheduleRequest[], IGetScheduleRequestParams>({
+      query: (params) => ({
+        url: 'availability/get-masterteam-availability',
+        params,
+      }),
+      transformResponse: (response: IScheduleRequestResponse) => (
+        transformKeysToCamelCase(response)
+      )
     }),
 
     masterTeamsBulkDelete: builder.mutation<void, { ids: string[] }>({
@@ -205,5 +216,6 @@ export const {
   useDeleteMasterTeamMutation,
   useBulkDeleteMasterTeamsMutation,
   useEditMasterTeamMutation,
+  useLazyGetScheduleRequestQuery,
 } = masterTeamsApi
 
