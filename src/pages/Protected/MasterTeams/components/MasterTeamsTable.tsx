@@ -15,7 +15,7 @@ import { IFEMasterTeam, IGetMasterTeamsRequest } from '@/common/interfaces/maste
 import { showTotal } from '@/components/Table/utils.tsx'
 
 type TTablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>
-type TFilterValueKey = 'name' | 'headCoachFullName' | 'teamAdminFullName' | 'league_name'
+type TFilterValueKey = 'name' | 'headCoachFullName' | 'teamAdmins' | 'league_name'
 
 interface ITableParams {
   pagination?: TTablePaginationConfig
@@ -156,7 +156,7 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
           : undefined,
       name: (filters?.['name']?.[0] as string) ?? undefined,
       head_coach: (filters?.['headCoachFullName']?.[0] as string) ?? undefined,
-      team_admins: (filters?.['teamAdminFullName']?.[0] as string) ?? undefined,
+      team_admins: (filters?.['teamAdmins']?.[0] as string) ?? undefined,
       league_name: (filters?.['league_name']?.[0] as string) ?? undefined,
     }
 

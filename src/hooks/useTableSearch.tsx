@@ -23,6 +23,8 @@ export const useTableSearch = (handleTableReset?: () => void) => {
         return onFilter(value, record)
       }
 
+      if (!record[dataIndex]) return false
+
       return (record[dataIndex] as string)
         .toString()
         .toLowerCase()

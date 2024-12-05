@@ -51,6 +51,10 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
     return !!record['leagues'].filter(league => league.name.toLowerCase().includes((value as string).toLowerCase())).length
   }, [])
 
+  const onFilter = useCallback((value: boolean | React.Key, record: IFEMasterTeam) => {
+    return !!record['teamAdmins']?.filter(admin => (`${admin.firstName} ${admin.lastName}`).toLowerCase().includes((value as string).toLowerCase())).length
+  }, [])
+
   const renderTeamAdmins = useCallback((_: unknown, record: IFEMasterTeam) => (
     <>
       {record.teamAdmins?.map((admin, index) => (
@@ -91,7 +95,7 @@ export const useMasterTeamsTable = ({ setSelectedRecordId, setShowDeleteSingleRe
       title: 'Team Administrator',
       dataIndex: 'teamAdmins',
       width: '240px',
-      ...getColumnSearchProps('teamAdmins'),
+      ...getColumnSearchProps('teamAdmins', onFilter),
       sortOrder: getColumnSort('team_admins', ordering),
       sorter: true,
       render: renderTeamAdmins
