@@ -1,37 +1,76 @@
 import { Tabs, Tooltip } from 'antd'
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined'
 import ArrowRightUpIcon from '@/assets/icons/arrow-right-up.svg'
-import { useContext, useMemo } from 'react'
+import { ReactElement, useContext, useMemo } from 'react'
 import styled from '@emotion/styled'
 import { colors } from '@/utils/colors.tsx'
 import { ReactSVG } from 'react-svg'
 import { useNavigate } from 'react-router-dom'
 import { PATH_TO_MASTER_TEAMS } from '@/common/constants/paths.ts'
 import { ScheduleContext } from '@/components/ScheduleRequest/ScheduleContext.ts'
-import { AddTeamButton } from '@/components/ScheduleRequest/AddTeamButton.tsx'
+import { IScheduleRequest } from '@/common/interfaces/masterTeams.ts'
 
 interface IMasterTeamTabListProps {
-  data: unknown // FIXME: add actual type
+  data: IScheduleRequest[]
+  extraContent?: ReactElement
 }
 
-export const TeamTabList = (props: IMasterTeamTabListProps) => {
-  const { data } = props
+/**
+ * `TeamTabList` component renders a tabbed interface to display teams with the option to remove a team or navigate to
+ * the team details page.
+ *
+ * This component uses the `Tabs` from Ant Design and integrates with the `ScheduleContext` to manage selected teams
+ * and their states. Each tab represents a team, with features to:
+ * - Display the team name in the tab.
+ * - Allow the removal of a team from the list.
+ * - Navigate to the team information page when clicked.
+ *
+ * It's also possible to optionally include extra content in the tab bar via `extraContent`.
+ *
+ * @param {IMasterTeamTabListProps} props - The component's props.
+ * @param {IScheduleRequest[]} props.data - Array of schedule request data representing the teams.
+ * @param {ReactElement} [props.extraContent] - Optional extra content to display in the tab bar.
+ *
+ * @returns {ReactElement} The rendered `Tabs` component with each tab representing a team.
+ *
+ * @example
+ * <TeamTabList
+ *   data={scheduleRequests}
+ *   extraContent={<SomeExtraContent />}
+ * />
+ */
+export const TeamTabList = (props: IMasterTeamTabListProps): ReactElement => {
+  const { data, extraContent } = props
   const {
     selectedTabIndex,
     selectedIds,
     setSelectedIds,
     pathToNavigate,
     dates,
-    setSelectedTabIndex
+    setSelectedTabIndex,
   } = useContext(ScheduleContext)
   const navigate = useNavigate()
 
+  /**
+   * Removes a team from the selected list by its index.
+   *
+   * @param {number} index - The index of the team to remove.
+   */
   const removeTeamByIndex = (index: number): void => {
-    const newIds = selectedIds?.filter((_, idx) => idx !== index)
+    const newIds = selectedIds?.filter((id) => id !== data[index].teamId)
     setSelectedIds(newIds || null)
     navigate(`${pathToNavigate}/${dates?.start},${dates?.end}/${newIds?.join(',')}`)
   }
 
+  /**
+   * Renders a tab with the team name and icons for removing the team or navigating to the team details.
+   *
+   * @param {string} title - The team name to display in the tab.
+   * @param {number} index - The index of the tab.
+   * @param {string} id - The ID of the team used for navigation.
+   *
+   * @returns {JSX.Element} The rendered tab with icons for actions.
+   */
   const renderTabWithIcon = (title: string, index: number, id: string) => {
     const selectedClassName = index === selectedTabIndex ? 'selected-tab' : ''
     const canDelete = selectedIds && selectedIds?.length > 1 || false
@@ -69,29 +108,35 @@ export const TeamTabList = (props: IMasterTeamTabListProps) => {
   }
 
   const tabItems = useMemo(() => (
-    data ? Object.keys(data).map((mt, i) => {
+    data.map((sr, i) => {
       return {
-        label: renderTabWithIcon(mt, i, 'xxx'), // TODO: add team id
+        label: renderTabWithIcon(sr.teamName, i, sr.teamId),
         key: `${i}`,
         children: ``
       }
-    }) : []
+    })
   ), [data])
 
-  if (!data) return <></>
+  if (!data.length) return <></>
 
   return (
-    <Tabs
-      defaultActiveKey={`tab-${selectedTabIndex}`}
-      tabBarStyle={{ marginBottom: 0 }}
-      tabBarExtraContent={<AddTeamButton />}
+    <TabStyled
       items={tabItems}
+      more={{ visible: false, icon: '' }}
+      tabBarStyle={{ marginBottom: 0 }}
+      tabBarExtraContent={extraContent}
+      defaultActiveKey={`tab-${selectedTabIndex}`}
       onChange={index => setSelectedTabIndex(parseInt(index))}
     />
   )
 }
 
 // Styled Components
+const TabStyled = styled(Tabs)`
+    & .ant-tabs-nav-more {
+        padding: 0 24px 0 0;
+    }
+`
 const CustomTab = styled.span<{ canDelete: boolean }>`
     display: flex;
     align-items: center;

@@ -3,11 +3,24 @@ import { LoadingOutlined } from '@ant-design/icons'
 import { Button } from '@/components/Button.tsx'
 import styled from '@emotion/styled'
 import { colors } from '@/utils/colors.tsx'
-import TextInput from '../Inputs/TextInput'
+import TextInput from '@/components/Inputs/TextInput.tsx'
 import { useContext } from 'react'
 import { DropdownContext } from '@/components/Dropdown/DropdownContext.ts'
+import { IDropdownProps } from '.'
 
-export const DropdownContent = () => {
+/**
+ * DropdownContent component displays the contents of the dropdown, including a search input,
+ * a list of items, loading state, and action buttons (Cancel and Submit).
+ * This component is used within the `Dropdown` component and interacts with the `DropdownContext`
+ * to manage state such as selected item, search input, and loading state.
+ *
+ * @param props - The properties to configure the dropdown content behavior.
+ * @param props.buttonTitle - The title to be displayed on the submit button.
+ *
+ * @returns The rendered dropdown content with a search input, item list, loading indicator, and action buttons.
+ */
+export const DropdownContent = (props: Pick<IDropdownProps, 'buttonTitle'>) => {
+  const { buttonTitle } = props
   const {
     items,
     loading,
@@ -19,8 +32,16 @@ export const DropdownContent = () => {
     setIsDropdownOpen,
     onSearch,
     onScroll,
-    onAddTeam
+    onLoadMore,
+    onSubmit
   } = useContext(DropdownContext)
+
+  /**
+   * Handles the submit action, calling the `onSubmit` callback with the selected item.
+   */
+  const onSubmitAction = () => {
+    !!selectedItem && onSubmit(selectedItem)
+  }
 
   return (
     <View
@@ -42,26 +63,19 @@ export const DropdownContent = () => {
       <Scroll onScroll={onScroll}>
         <Menu selectedKeys={selectedItem ? [selectedItem] : []}>
           {items.map((item) => (
-            <Menu.Item key={item.value} onClick={() => setSelectedItem(item.value)}>
+            <Menu.Item key={item.value} disabled={item.disabled} onClick={() => setSelectedItem(item.value)}>
               {item.label}
             </Menu.Item>
           ))}
         </Menu>
-        {loading && (
-          <div style={{ textAlign: 'center', padding: 8 }}>
-            <Spin />
-          </div>
+        {!!onLoadMore && (
+          <LoadingWrapper>
+            <Loading visible={loading} size="small" indicator={<LoadingOutlined />} />
+          </LoadingWrapper>
         )}
-        {loading && <Loading style={{ background: 'white' }} size="small" indicator={<LoadingOutlined />} />}
       </Scroll>
 
-      <ActionRow
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          paddingTop: 8
-        }}
-      >
+      <ActionRow>
         <Button
           type="link"
           onClick={() => {
@@ -73,10 +87,10 @@ export const DropdownContent = () => {
         </Button>
         <Button
           type="primary"
-          onClick={onAddTeam}
+          onClick={onSubmitAction}
           disabled={!selectedItem}
         >
-          Add team
+          {buttonTitle}
         </Button>
       </ActionRow>
     </View>
@@ -103,13 +117,22 @@ const Scroll = styled.div`
 const ActionRow = styled.div`
     display: flex;
     justify-content: space-between;
-    padding-top: 8
+    padding-top: 8px;
 `
-const Loading = styled(Spin)`
+const LoadingWrapper = styled.div`
+    background-color: white;
+    width: 100%;
+    height: 40px;
+    display: inline-block;
+    position: relative;
+`
+const Loading = styled(Spin)<{ visible: boolean }>`
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: white;
     padding: 12px;
-    color: ${colors.secondary}
+    color: ${colors.secondary};
+    opacity: ${({ visible }) => visible ? 1 : 0};
 `

@@ -5,6 +5,12 @@ import { IDownloadStatus } from '@/common/interfaces'
 const DEFAULT_ERROR_MESSAGE = `Unable to export. Please, try again!`
 const DEFAULT_EMPTY_MESSAGE = `No content was found to export`
 
+interface IUseDownloadFileReturn {
+  download(url: string, fileName: string, fileExtension: string): void
+  isLoading: boolean
+  status: IDownloadStatus | null
+}
+
 /**
  * Custom hook for downloading files from the backend.
  *
@@ -23,34 +29,20 @@ const DEFAULT_EMPTY_MESSAGE = `No content was found to export`
  * @constant DEFAULT_EMPTY_MESSAGE
  *  - Default message displayed when no content is found to download.
  *
- * @function download
- * @param {string} url - The API endpoint to fetch the file from, relative to the backend URL.
- * @param {string} fileName - The name to use for the downloaded file (excluding the extension).
- * @param {string} fileExtension - The extension to use for the downloaded file (e.g., 'xlsx', 'pdf').
- *
- * @example
- * const { download, isLoading, status } = useDownloadFile();
- * download('reports/export', 'report', 'pdf');
- *
- * @example
- * if (status?.type === 'error') {
- *   console.error(status.message);
- * }
- *
  * @remarks
  * - This hook uses the `useAuthSlice` hook to fetch the current user's access token.
  * - Handles both errors (e.g., network issues or unauthorized access) and
  *   cases where no content is available (204 status).
  */
-export const useDownloadFile = () => {
+export const useDownloadFile = (): IUseDownloadFileReturn => {
   const { access } = useAuthSlice()
 
   const [isLoading, setIsLoading] = useState(false)
   const [status, setStatus] = useState<IDownloadStatus | null>(null)
 
-  const error = () => (
+  const error = (message: string | undefined) => (
     setStatus({
-      message: DEFAULT_ERROR_MESSAGE,
+      message: message || DEFAULT_ERROR_MESSAGE,
       type: 'error'
     })
   )
@@ -69,7 +61,9 @@ export const useDownloadFile = () => {
         })
 
         if (!response.ok) {
-          error()
+          const resp = await response.json()
+
+          error(resp?.details || resp?.error)
           return
         }
 
@@ -91,7 +85,7 @@ export const useDownloadFile = () => {
 
         window.URL.revokeObjectURL(downloadUrl)
       } catch (err) {
-        error()
+        error(undefined)
       } finally {
         setIsLoading(false)
       }

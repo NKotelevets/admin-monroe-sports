@@ -271,56 +271,20 @@ export interface IGetScheduleRequestParams {
   team_ids: string
 }
 
-export interface IScheduleRequestWeekdays {
-  monday: boolean
-  tuesday: boolean
-  wednesday: boolean
-  thursday: boolean
-  friday: boolean
-  saturday: boolean
-  sunday: boolean
+export interface IScheduleData {
+  [key: string]: { time: string, availability: number }[]
 }
 
 export interface IScheduleRequestResponse {
-  id: string
-  is_group: boolean
-  user_id: string
-  weekdays: IScheduleRequestWeekdays
-  time_before: string
-  time_after: string
-  time_ranges: string[][]
-  typed_time_ranges: { time_range: string[], availability_type: number }[]
-  is_one_day: boolean,
-  updated_at: string
-  created_at: string
-  availability_type: number
-  schedule_type: number
-  time_range_type: number
-  start_date: string
-  end_date: string
+  team_id: string
+  team_name: string
+  data: IScheduleData
 }
 
-// export interface IScheduleRequest {
-//   id: string
-//   isGroup: boolean
-//   userId: string
-//   weekdays: IScheduleRequestWeekdays
-//   timeBefore: string
-//   timeAfter: string
-//   timeRanges: string[][]
-//   typedTimeRanges: { timeRange: string[], availabilityType: number }[]
-//   isOneDay: boolean,
-//   updatedAt: string
-//   createdAt: string
-//   availabilityType: number
-//   scheduleType: number
-//   timeRangeType: number
-//   startDate: string
-//   endDate: string
-// }
-
 export interface IScheduleRequest {
-  [key: string]: { [key: string]: { time: string, availability: number }[] }
+  teamId: string
+  teamName: string
+  data: IScheduleData
 }
 
 export interface IScheduleEntry {

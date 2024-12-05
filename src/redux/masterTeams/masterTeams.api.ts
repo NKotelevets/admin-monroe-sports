@@ -54,7 +54,7 @@ export const masterTeamsApi = createApi({
       providesTags: [MASTER_TEAMS_TAG],
     }),
 
-    getScheduleRequest: builder.query<IScheduleRequest, IGetScheduleRequestParams>({
+    getScheduleRequest: builder.query<IScheduleRequest[], IGetScheduleRequestParams>({
       query: (params) => ({
         url: 'availability/get-masterteam-availability',
         params,
