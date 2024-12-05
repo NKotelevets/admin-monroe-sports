@@ -212,7 +212,7 @@ const MasterTeamsTable: FC<IMasterTeamsTableProps> = ({
         columns={columns}
         rowKey={(record) => record.id}
         dataSource={masterTeams}
-        pagination={tableParams.pagination}
+        pagination={masterTeams.length ? tableParams.pagination : undefined}
         loading={isLoading || isFetching}
         onChange={handleTableChange}
         rowClassName={(record) =>
