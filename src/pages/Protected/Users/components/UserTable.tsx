@@ -274,7 +274,7 @@ const UserTable: FC<ISeasonsTableTableProps> = ({
         columns={columns}
         rowKey={(record) => record.id}
         dataSource={users}
-        pagination={tableParams.pagination}
+        pagination={users.length ? tableParams.pagination : undefined}
         loading={isLoading || isFetching}
         onChange={handleTableChange}
         rowClassName={(record) =>

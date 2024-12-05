@@ -238,7 +238,7 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
         columns={columns}
         rowKey={(record) => record.id}
         dataSource={seasons}
-        pagination={tableParams.pagination}
+        pagination={seasons.length ? tableParams.pagination : undefined}
         loading={isLoading || isFetching}
         onChange={handleTableChange}
         rowClassName={(record) =>

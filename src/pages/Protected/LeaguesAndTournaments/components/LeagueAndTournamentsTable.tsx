@@ -210,7 +210,7 @@ const LeagueAndTournamentsTable: FC<ILeagueAndTournamentsTableProps> = ({
         columns={columns}
         rowKey={(record) => record.id}
         dataSource={leagues}
-        pagination={tableParams.pagination}
+        pagination={leagues.length ? tableParams.pagination : undefined}
         loading={isLoading || isFetching}
         onChange={handleTableChange}
         rowClassName={(record) =>
