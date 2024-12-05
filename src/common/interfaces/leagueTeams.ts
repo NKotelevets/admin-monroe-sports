@@ -82,6 +82,12 @@ export interface IFELeagueTeam {
   masterTeam: IFEMasterTeam | null
   operator: IFESimpleEntity | null
   logoS3Url: string
+  type?: 'masterTeam' | 'teamAdmin'
+  adminData?: {
+    id: string
+    name: string | null
+    email: string | null
+  }[]
 }
 
 export interface IGetLeagueTeamsRequest {
@@ -123,7 +129,7 @@ export interface IBELeagueTeamDetails {
   head_coach: IBESimpleEntity
   operator: IBESimpleEntity | null
 
-  master_team_admin: IBESimpleEntity | null
+  master_team_admin: string | null
   master_team_admins: IBESimpleEntity[] | null
 
   league: IBELeague
@@ -149,10 +155,17 @@ export interface IFELeagueTeamDetails {
   masterTeamAdmin: IFESimpleEntity | null
   masterTeamAdmins: IFESimpleEntity[] | null
   league: IFELeague | null
+  season: string | null
   division: IFEDivision | null
   subdivision: IFESubdivision | null
   createdAt: string
   updatedAt: string
+  type?: 'masterTeam' | 'teamAdmin'
+  adminData?: {
+    id: string
+    name: string | null
+    email: string | null
+  }[]
 }
 
 export interface ILeagueTeamError {

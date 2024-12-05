@@ -28,7 +28,30 @@ export const leagueTeamsApi = createApi({
       }),
       transformResponse: (response: IPaginationResponse<IBELeagueTeam[]>) => ({
         count: response?.count || 0,
-        results: transformKeysToCamelCase(response.results),
+        results: response.results.map(lt => {
+          const type = lt.master_team ? 'masterTeam' : 'teamAdmin'
+
+          let adminData
+          if (type === 'masterTeam') {
+            adminData = lt.master_team?.team_admins?.map(admin => ({
+              id: admin.id,
+              name: `${admin.first_name} ${admin.last_name}`,
+              email: admin?.email,
+            }))
+          } else {
+            adminData = [{
+              id: lt.master_team_admin.id,
+              name: null,
+              email: null
+            }]
+          }
+
+          return {
+            ...transformKeysToCamelCase(lt),
+            type,
+            adminData
+          }
+        }),
       }),
       providesTags: [LEAGUE_TEAMS_TAG],
     }),
@@ -66,9 +89,29 @@ export const leagueTeamsApi = createApi({
         url: `teams/league-teams/${id}`,
       }),
       keepUnusedDataFor: 0.0001,
-      transformResponse: (response: IBELeagueTeamDetails) => ({
-        ...transformKeysToCamelCase(response),
-      })
+      transformResponse: (response: IBELeagueTeamDetails): IFELeagueTeamDetails => {
+        const type = response.master_team ? 'masterTeam' : 'teamAdmin'
+
+        let adminData
+        if (type === 'masterTeam') {
+          adminData = response.master_team?.team_admins?.map(admin => ({
+            id: admin.id,
+            name: `${admin.first_name} ${admin.last_name}`,
+            email: admin?.email,
+          }))
+        } else {
+          adminData = [{
+            id: response.master_team_admin || '',
+            name: null,
+            email: null
+          }]
+        }
+       return {
+         ...transformKeysToCamelCase<IFELeagueTeamDetails, IBELeagueTeamDetails>(response),
+         adminData,
+         type
+       }
+      }
     }),
 
     createLeagueTeam: builder.mutation<void, ICreateLeagueTeamRequest>({
@@ -88,8 +131,8 @@ export const leagueTeamsApi = createApi({
       }
     >({
       query: ({ body, id }) => ({
-        url: `teams/teams/${id}/update-team-as-admin`,
-        method: 'PUT',
+        url: `teams/league-teams/${id}/update-league-team-as-admin`,
+        method: 'PATCH',
         body,
       }),
     }),

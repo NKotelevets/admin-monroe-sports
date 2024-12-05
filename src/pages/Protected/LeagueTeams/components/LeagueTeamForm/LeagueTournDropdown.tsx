@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { IFELeague, IGetLeaguesRequestParams, ILeagueForm } from '@/common/interfaces/league.ts'
 import { useFormikContext } from 'formik'
 import { useLeagueSlice } from '@/redux/hooks/useLeagueSlice.ts'
-import { useLazyGetLeaguesQuery } from '@/redux/leagues/leagues.api.ts'
+import { useLazyGetLeagueQuery, useLazyGetLeaguesQuery } from '@/redux/leagues/leagues.api.ts'
 import Select from '@/components/Inputs/Select.tsx'
 
 export const LeagueTournDropdown = React.memo((props: { setSelectedLeague: (league: IFELeague) => void }) => {
@@ -22,6 +22,7 @@ export const LeagueTournDropdown = React.memo((props: { setSelectedLeague: (leag
   } = useLeagueSlice()
 
   const [leaguesList, { isLoading, isFetching, data }] = useLazyGetLeaguesQuery()
+  const [getLeague, { data: singleLeague }] = useLazyGetLeagueQuery()
   const [leagueItems, setLeagueItems] = useState<IFELeague[]>([])
 
   // reset pagination and fetch leagues
@@ -39,8 +40,24 @@ export const LeagueTournDropdown = React.memo((props: { setSelectedLeague: (leag
   useEffect(() => {
     if (!values.league) return
     const currentLeague = leagueItems.find(league => league.id === values.league)
-    !!currentLeague && setSelectedLeague(currentLeague)
+    if (currentLeague) {
+      setSelectedLeague(currentLeague)
+      return
+    }
+
+    fetchSingleLeague()
+
   }, [values.league, leagueItems])
+
+    useEffect(() => {
+      if (!singleLeague) return
+
+      setLeagueItems(items => [...items, singleLeague])
+    }, [singleLeague])
+
+  function fetchSingleLeague() {
+    getLeague(values.league || '')
+  }
 
   const onLoadMore = useCallback(() => {
     if (endReached) return

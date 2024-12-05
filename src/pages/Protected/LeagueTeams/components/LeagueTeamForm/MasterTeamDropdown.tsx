@@ -1,11 +1,16 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useFormikContext } from 'formik'
 import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice.tsx'
-import { useLazyGetMasterTeamQuery, useLazyGetMasterTeamsQuery } from '@/redux/masterTeams/masterTeams.api.ts'
+import { useLazyGetMasterTeamQuery } from '@/redux/masterTeams/masterTeams.api.ts'
 import { IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
-import { IGetLeagueTeamsRequest } from '@/common/interfaces/leagueTeams.ts'
 import Select from '@/components/Inputs/Select.tsx'
 import { ILeagueForm } from '@/common/interfaces/league.ts'
+import { useMasterTeamPaginated } from '@/pages/Protected/MasterTeams/hooks/useMasterTeamPaginated.ts'
+
+interface IMasterTeamDropdownProps {
+  onAddMasterTeam(): void
+  setAddingMasterTeam(state: boolean): void
+}
 
 /**
  * MasterTeamDropdown is a functional component that renders a dropdown menu
@@ -28,10 +33,7 @@ import { ILeagueForm } from '@/common/interfaces/league.ts'
  *
  * @returns {React.Element} Rendered dropdown UI for master team selection and related fields.
  */
-export const MasterTeamDropdown = React.memo((props: {
-  onAddMasterTeam(): void,
-  setAddingMasterTeam(state: boolean): void
-}) => {
+export const MasterTeamDropdown = React.memo((props: IMasterTeamDropdownProps) => {
   const { onAddMasterTeam } = props
 
   const {
@@ -43,35 +45,15 @@ export const MasterTeamDropdown = React.memo((props: {
     setFieldValue
   } = useFormikContext<ILeagueForm>()
 
-  const {
-    setPaginationParams,
-    offset,
-    total,
-    limit
-  } = useMasterTeamsSlice()
+  const { total } = useMasterTeamsSlice()
+  const { masterTeamItems, addItem, isFetching, isLoading, loadMore } = useMasterTeamPaginated()
 
-  const firstLoad = useRef(true)
-  const [masterTeamList, { isLoading, isFetching, data }] = useLazyGetMasterTeamsQuery()
-  const [masterTeamGet, { data: masterTeamAdded }] = useLazyGetMasterTeamQuery()
-  const [masterTeamItems, setMasterTeamItems] = useState<IFEMasterTeam[]>([])
+  const [masterTeamGet, { data: masterTeamAdded, isLoading: isLoadingSingle }] = useLazyGetMasterTeamQuery()
   const [selectedMasterTeam, setSelectedMasterTeam] = useState<IFEMasterTeam | null>(null)
 
-  // fetches first batch of master teams
-  useEffect(() => {
-    if (firstLoad.current) {
-      setMasterTeamItems([])
-      masterTeamList({ limit: 10, offset: 0, ordering: undefined })
-      firstLoad.current = false
-    }
-  }, [])
-
-  // updates local master team list
-  useEffect(() => {
-    if (!data?.results) return
-    setMasterTeamItems(mt => ([...mt, ...data.results]))
-  }, [data])
-
-  // updates selected master team and related fields
+  /**
+   * Updates selected master team and related fields
+   */
   useEffect(() => {
     if (values.masterTeam) {
       const mt = masterTeamItems.findIndex(mt => mt.id === values.masterTeam)
@@ -87,18 +69,18 @@ export const MasterTeamDropdown = React.memo((props: {
     }
   }, [values.masterTeam, masterTeamItems])
 
-  // fetches newly created master team and updates local master team list
+  /**
+   * Fetches master team by id (when editing) and created master
+   * team inside this flow (by hitting "add master team" button)
+   */
   useEffect(() => {
     const checkMasterTeam = selectedMasterTeam !== null && selectedMasterTeam?.id === values.masterTeam
 
-    if (!values.masterTeam || selectedMasterTeam || checkMasterTeam) return
+    if (!values.masterTeam || selectedMasterTeam || checkMasterTeam || isLoadingSingle) return
     const mt = masterTeamItems.findIndex(mt => mt.id === values.masterTeam)
 
     if (mt < 0 && masterTeamAdded === undefined) {
-      masterTeamGet({
-        id: values.masterTeam
-      })
-
+      masterTeamGet({ id: values.masterTeam })
       return
     }
 
@@ -107,55 +89,44 @@ export const MasterTeamDropdown = React.memo((props: {
         if (masterTeamAdded.teamsAdmins?.length) {
           return masterTeamAdded.teamsAdmins[0].fullName
         }
-
         return masterTeamAdded.teamAdmin?.fullName || ''
       }
 
       const teamAdminEmail = () => {
         if (masterTeamAdded.teamsAdmins?.length) {
-          return masterTeamAdded.teamsAdmins[0].fullName
+          return masterTeamAdded.teamsAdmins[0].email
         }
-
-        return `${masterTeamAdded.teamAdmin?.email} ${masterTeamAdded.teamAdmin?.email}` || ''
+        return masterTeamAdded.teamAdmin?.email || ''
       }
 
-      setMasterTeamItems(mt => ([...new Set([
-        ...mt,
-        {
-          id: values.masterTeam!,
-          name: masterTeamAdded?.name,
-          teamAdminId: '',
-          teamAdmin: null,
-          teamAdmins: null,
-          headCoachId: masterTeamAdded.headCoach.id,
-          headCoachFullName: masterTeamAdded.headCoach.fullName,
-          headCoachEmail: masterTeamAdded.headCoach.email,
-          teamAdminFullName: teamAdminFullName(),
-          teamAdminEmail: teamAdminEmail()
-        } as IFEMasterTeam
-      ])]))
+      addItem({
+        id: values.masterTeam!,
+        name: masterTeamAdded?.name,
+        teamAdminId: '',
+        teamAdmin: null,
+        teamAdmins: null,
+        headCoachId: masterTeamAdded.headCoach.id,
+        headCoachFullName: masterTeamAdded.headCoach.fullName,
+        headCoachEmail: masterTeamAdded.headCoach.email,
+        teamAdminFullName: teamAdminFullName(),
+        teamAdminEmail: teamAdminEmail()
+      } as IFEMasterTeam)
     }
-  }, [values.masterTeam, masterTeamItems, selectedMasterTeam, masterTeamAdded])
+  }, [values.masterTeam, masterTeamItems, selectedMasterTeam, masterTeamAdded, isLoadingSingle])
 
+  /**
+   * Holds value if list has reached the end
+   */
   const endReached = useMemo(() => (
     masterTeamItems.length >= total
   ), [masterTeamItems, total])
 
+  /**
+   * Triggers loadMore from hook if end is not reached yet
+   */
   const onLoadMore = useCallback(() => {
-    if (endReached) return
-
-    const leagueTeamsRequestParams: IGetLeagueTeamsRequest = {
-      offset: offset + 10,
-      limit
-    }
-
-    masterTeamList(leagueTeamsRequestParams)
-    setPaginationParams({
-      offset: leagueTeamsRequestParams.offset,
-      limit: leagueTeamsRequestParams.limit,
-      ordering: null
-    })
-  }, [endReached, offset, limit])
+    !endReached && loadMore()
+  }, [endReached])
 
   return (
     <>
@@ -186,7 +157,7 @@ export const MasterTeamDropdown = React.memo((props: {
             onChange={handleChange('masterTeamAdminName')}
             error={touched.masterTeamAdminName ? errors.masterTeamAdminName as string : ''}
             options={[
-              { label: selectedMasterTeam.teamAdminFullName, value: selectedMasterTeam.teamAdminId }
+              { label: selectedMasterTeam.teamAdminFullName || 'No admin', value: selectedMasterTeam.teamAdminId }
             ]}
             onBlur={handleBlur('masterTeamAdminName')}
           />
@@ -198,7 +169,7 @@ export const MasterTeamDropdown = React.memo((props: {
             onChange={handleChange('masterTeamAdminEmail')}
             error={touched.masterTeamAdminEmail ? errors.masterTeamAdminEmail as string : ''}
             options={[
-              { label: selectedMasterTeam.teamAdminEmail, value: values.masterTeamAdminEmail }
+              { label: selectedMasterTeam.teamAdminEmail || 'No email', value: values.masterTeamAdminEmail }
             ]}
             onBlur={handleBlur('masterTeamAdminEmail')}
           />
@@ -206,4 +177,7 @@ export const MasterTeamDropdown = React.memo((props: {
       )}
     </>
   )
-}, () => true)
+}, (prev, next) => (
+  prev.onAddMasterTeam === next.onAddMasterTeam
+  && prev.setAddingMasterTeam === next.setAddingMasterTeam
+))

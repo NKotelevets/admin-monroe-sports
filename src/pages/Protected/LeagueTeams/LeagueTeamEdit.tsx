@@ -75,27 +75,29 @@ const LeagueTeamEdit = (): ReactElement => {
   }
 
   const BREAD_CRUMB_ITEMS = [
-    { title: <a href={PATH_TO_LEAGUE_TEAMS}>Master Teams</a> },
+    { title: <a href={PATH_TO_LEAGUE_TEAMS}>League Teams</a> },
     { title: <MonroeBlueText>{data?.name}</MonroeBlueText> }
   ]
 
   const initialValues: ILeagueForm = {
     name: data.name,
     masterTeam: data?.masterTeam ? data.masterTeam.id : undefined,
-    masterTeamAdminName: data?.masterTeam ? data.masterTeam.teamAdmin?.firstName || '' : '',
-    masterTeamAdminEmail: data?.masterTeam ? data.masterTeam.teamAdmin?.email : '',
+    masterTeamAdminName: data?.adminData && data.type === 'masterTeam' ? data.adminData[0].name || 'No admin' : 'No admin',
+    masterTeamAdminEmail: data?.adminData ? data.adminData[0].email || 'No email' : 'No email',
     league: data.league?.id || undefined,
+    season: data.season || undefined,
     division: data.division?.id || undefined,
     subdivision: data.subdivision?.id || undefined,
-    masterTeamAdmin: undefined
+    masterTeamAdmin: data?.adminData && data.type === 'teamAdmin' ? data.adminData[0].id : undefined,
   }
-  
+
   return (
     <Page
       title="Edit league team"
       breadcrumbs={BREAD_CRUMB_ITEMS}
     >
       <LeagueTeamForm
+        instance={data}
         initialValues={initialValues}
         isLoading={isLoading}
         onSubmit={onSubmit}

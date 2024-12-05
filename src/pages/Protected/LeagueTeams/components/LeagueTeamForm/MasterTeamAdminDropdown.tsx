@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useFormikContext } from 'formik'
 import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
-import { useLazyGetUsersQuery } from '@/redux/user/user.api.ts'
+import { useLazyGetUserDetailsQuery, useLazyGetUsersQuery } from '@/redux/user/user.api.ts'
 import { IFEUser, IGetUsersRequestParams } from '@/common/interfaces/user.ts'
 import Select from '@/components/Inputs/Select.tsx'
 import TextInput from '@/components/Inputs/TextInput.tsx'
@@ -25,6 +25,7 @@ export const MasterTeamAdminDropdown = React.memo(() => {
   } = useUserSlice()
 
   const [teamAdminList, { isLoading, isFetching, data }] = useLazyGetUsersQuery()
+  const [getTeamAdmin, { data: singleTeamAdmin }] = useLazyGetUserDetailsQuery()
   const [masterTeamAdminItems, setMasterTeamAdminItems] = useState<IFEUser[]>([])
 
   // first fetch
@@ -44,6 +45,29 @@ export const MasterTeamAdminDropdown = React.memo(() => {
       setFieldValue('masterTeamAdminEmail', mt >= 0 ? masterTeamAdminItems[mt]?.email : '')
     }
   }, [values.masterTeamAdmin, masterTeamAdminItems])
+
+  useEffect(() => {
+    if (!singleTeamAdmin) return
+
+    setMasterTeamAdminItems(items => [...items, singleTeamAdmin])
+  }, [singleTeamAdmin])
+
+  // set current selected team admin to state
+  useEffect(() => {
+    if (!values.masterTeamAdmin) return
+    const currentLeague = masterTeamAdminItems.find(league => league.id === values.league)
+
+    if (!currentLeague) {
+      fetchSingleTeamAdmin()
+    }
+  }, [values.masterTeamAdmin, masterTeamAdminItems])
+
+  function fetchSingleTeamAdmin() {
+    getTeamAdmin({
+      id: values.masterTeamAdmin || ''
+    })
+  }
+
 
   const endReached = useMemo(() => (
     masterTeamAdminItems.length >= total
@@ -74,6 +98,7 @@ export const MasterTeamAdminDropdown = React.memo(() => {
     <>
       <Select
         showSearch
+        errorPosition="bottom"
         loading={isLoading || isFetching}
         label="Master Team Administrator *"
         placeholder="Select master team administrator"

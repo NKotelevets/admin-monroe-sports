@@ -11,7 +11,7 @@ import { MonroeBlueText } from '@/components/Elements'
 
 const DEFAULT_ERROR_MESSAGE = `Something went wrong. Please, try again!`
 const BREAD_CRUMB_ITEMS = [
-  { title: <a href={PATH_TO_LEAGUE_TEAMS}>Master Teams</a> },
+  { title: <a href={PATH_TO_LEAGUE_TEAMS}>League Teams</a> },
   { title: <MonroeBlueText>Create league team</MonroeBlueText> }
 ]
 
