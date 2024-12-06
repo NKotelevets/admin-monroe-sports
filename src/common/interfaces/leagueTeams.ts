@@ -3,6 +3,7 @@ import { IBEDivision, IBESubdivision, IFEDivision, IFESubdivision } from '@/comm
 import { IBELeague, IFELeague } from '@/common/interfaces/league'
 import { IBEOperator, IFEOperator } from '@/common/interfaces/operator'
 import { IBEMasterTeam, IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
+import { TDeleteStatus } from '@/common/types'
 
 interface IHeadCoachTeamAdmin {
   additional_emails: IAdditionalEmail[]
@@ -151,3 +152,9 @@ export interface ILeagueTeamError {
   error: string
 }
 
+export interface IBulkDeleteResponse {
+  items: ILeagueTeamError[]
+  status: TDeleteStatus
+  total: number
+  success: number
+}

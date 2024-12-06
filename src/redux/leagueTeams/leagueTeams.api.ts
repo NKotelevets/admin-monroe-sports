@@ -5,13 +5,11 @@ import baseQueryWithReAuth from '@/redux/reauthBaseQuery'
 import { IPaginationResponse } from '@/common/interfaces/api'
 import {
   IBELeagueTeam,
-  IBELeagueTeamDetails, ICreateLeagueTeamRequest,
+  IBELeagueTeamDetails, IBulkDeleteResponse, ICreateLeagueTeamRequest,
   IFELeagueTeamDetails,
   IGetLeagueTeamsRequest,
   IGetLeagueTeamsResponse,
-  ILeagueTeamError,
 } from '@/common/interfaces/leagueTeams'
-import { TDeleteStatus } from '@/common/types'
 import { transformKeysToCamelCase, transformKeysToSnakeCase } from '@/utils'
 
 const LEAGUE_TEAMS_TAG = 'LEAGUE_TEAMS'
@@ -135,17 +133,9 @@ export const leagueTeamsApi = createApi({
       invalidatesTags: [LEAGUE_TEAMS_TAG],
     }),
 
-    bulkDeleteLeagueTeams: builder.mutation<
-      {
-        items: ILeagueTeamError[]
-        status: TDeleteStatus
-        total: number
-        success: number
-      },
-      string[]
-    >({
+    bulkDeleteLeagueTeams: builder.mutation<IBulkDeleteResponse, string[]>({
       query: (ids) => ({
-        url: 'teams/teams/bulk-teams-delete',
+        url: 'teams/league-teams/bulk-teams-delete',
         body: {
           ids,
         },

@@ -25,7 +25,8 @@ interface IDeleteProps {
     plural: string
   }
   onClose?(): void
-  onDelete(): void
+  onDelete: ITablePageProps['onDelete']
+  isDeleting?: boolean
 }
 
 /**
@@ -34,14 +35,15 @@ interface IDeleteProps {
  * @extends IPageProps
  * @property {IDeleteProps['deleteTerm']} [deleteTerm] - Optional delete term for managing deletion messages.
  * @property {() => void} [onCreate] - An optional callback function for creating a new entity.
- * @property {() => void} [onDelete] - An optional callback function for performing the delete action.
+ * @property {(ids: string[]) => void} [onDelete] - An optional callback function for performing the delete action.
  * @property {() => void} [onDeleteModalClose] - An optional callback function for closing the delete modal.
  */
 interface ITablePageProps extends IPageProps {
   deleteTerm?: IDeleteProps['deleteTerm']
   onCreate?(): void
-  onDelete?(): void
+  onDelete?(ids: string[]): void
   onDeleteModalClose?(): void
+  isDeleting?: boolean
 }
 
 /**
@@ -59,6 +61,7 @@ export const TablePage: FC<ITablePageProps> = (props: ITablePageProps): ReactEle
     onCreate,
     onDelete,
     controls ,
+    isDeleting,
     ...rest
   } = props
   const { selectedIds, setSelectedIds, singleDeleting, setSingleDeleting } = useTableContext()
@@ -79,6 +82,7 @@ export const TablePage: FC<ITablePageProps> = (props: ITablePageProps): ReactEle
           onDelete={onDelete}
           deleteTerm={deleteTerm}
           singleDeleting={singleDeleting}
+          isDeleting={isDeleting}
         />
       )}
       {!!controls && controls()}
@@ -113,7 +117,13 @@ export const TablePage: FC<ITablePageProps> = (props: ITablePageProps): ReactEle
  * @returns {ReactElement} The rendered Delete component.
  */
 const Delete = (props: IDeleteProps): ReactElement => {
-  const { selectedIds, deleteTerm, singleDeleting, onDelete, onClose } = props
+  const {
+    selectedIds,
+    deleteTerm,
+    singleDeleting,
+    onDelete,
+    onClose
+  } = props
   const [showModal, setShowModal] = useState(false)
 
   const deleteCount = selectedIds.length
@@ -125,9 +135,9 @@ const Delete = (props: IDeleteProps): ReactElement => {
     setShowModal(false)
     onClose && onClose()
   }, [])
-
   const handleDelete = () => {
-    onDelete()
+    !!onDelete && onDelete(selectedIds)
+    closeModal()
   }
 
   return (

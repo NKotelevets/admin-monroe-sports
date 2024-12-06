@@ -65,11 +65,12 @@ import {
   PATH_TO_LEAGUE_TEAMS,
   PATH_TO_MASTER_TEAMS_IMPORT_INFO,
   PATH_TO_CREATE_LEAGUE_TEAM,
-  PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST
+  PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST, PATH_TO_DELETE_INFO_LEAGUE_TEAM
 } from '@/common/constants/paths'
 import LeagueTeamCreate from '@/pages/Protected/LeagueTeams/LeagueTeamCreate.tsx'
 import MasterTeamImportInfo from '@/pages/Protected/MasterTeams/MasterTeamImportInfo.tsx'
 import { MasterTeamScheduleRequest } from '@/pages/Protected/MasterTeams/MasterTeamScheduleRequest.tsx'
+import LeagueTeamDeletingInfo from '@/pages/Protected/LeagueTeams/LeagueTeamDeletingInfo.tsx'
 
 
 const Root = () => (
@@ -119,6 +120,7 @@ const Root = () => (
       {/* League Teams */}
       <Route path={PATH_TO_LEAGUE_TEAMS} element={<LeagueTeams />} />
       <Route path={PATH_TO_CREATE_LEAGUE_TEAM} element={<LeagueTeamCreate />} />
+      <Route path={PATH_TO_DELETE_INFO_LEAGUE_TEAM} element={<LeagueTeamDeletingInfo />} />
 
       {/* Events */}
       <Route path={PATH_TO_EVENTS} element={<Events />} />

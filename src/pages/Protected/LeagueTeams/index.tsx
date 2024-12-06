@@ -1,9 +1,13 @@
 import { LeagueTeamsTable } from './components/leagueTeamsTable.tsx'
 import { TableProvider } from '@/components/Table/MonroeTable/TableProvider.tsx'
 import { TablePage } from '@/layouts/TablePage'
-import { ReactElement } from 'react'
+import { ReactElement, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { PATH_TO_CREATE_LEAGUE_TEAM } from '@/common/constants/paths.ts'
+import { PATH_TO_CREATE_LEAGUE_TEAM, PATH_TO_DELETE_INFO_LEAGUE_TEAM } from '@/common/constants/paths.ts'
+import { useBulkDeleteLeagueTeamsMutation } from '@/redux/leagueTeams/leagueTeams.api.ts'
+import { useNotification } from '@/hooks/useNotification.ts'
+
+const DEFAULT_DELETE_ERROR_MESSAGE = 'Something went wrong. Please, try again!'
 
 const DELETE_TERMS = {
   singular: 'league team',
@@ -30,14 +34,41 @@ const DELETE_TERMS = {
  */
 const LeagueTeams = (): ReactElement => {
   const navigation = useNavigate()
+  const { notify, info } = useNotification()
+  const [bulkDelete, { isSuccess, isError, error, data, isLoading }] = useBulkDeleteLeagueTeamsMutation()
+
+  useEffect(() => {
+    if (!data) return
+
+    const message = `${data.success}/${data.total}  master teams have been successfully removed.`
+
+    if (data.status !== 'green') {
+      info('More info...', message, PATH_TO_DELETE_INFO_LEAGUE_TEAM)
+      return
+    }
+
+    if (data.status === 'green') {
+      notify(message, 'success')
+    }
+  }, [isSuccess, data])
+
+  useEffect(() => {
+    isError && notify(DEFAULT_DELETE_ERROR_MESSAGE, 'error')
+  }, [isError, error])
+
+  const onDelete = (ids: string[]) => {
+    // bulkDelete(['f80fc12f-92da-46fe-ad22-585ce000abaf'])
+    bulkDelete(ids)
+  }
 
   return (
     <TableProvider>
       <TablePage
         title="League Teams"
         onCreate={() => navigation(PATH_TO_CREATE_LEAGUE_TEAM)}
-        onDelete={() => undefined}
+        onDelete={onDelete}
         deleteTerm={DELETE_TERMS}
+        isDeleting={isLoading}
       >
         <LeagueTeamsTable />
       </TablePage>
