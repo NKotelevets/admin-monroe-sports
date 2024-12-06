@@ -66,7 +66,7 @@ const LeagueTeamEdit = (): ReactElement => {
     })
       .unwrap()
       .then(() => {
-        notify('League team was successfully created', 'success')
+        notify('League team was successfully edited', 'success')
         goBack()
       })
       .catch((error) => {

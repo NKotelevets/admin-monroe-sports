@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useFormikContext } from 'formik'
 import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 import { useLazyGetUserDetailsQuery, useLazyGetUsersQuery } from '@/redux/user/user.api.ts'
@@ -7,91 +7,110 @@ import Select from '@/components/Inputs/Select.tsx'
 import TextInput from '@/components/Inputs/TextInput.tsx'
 import { ILeagueForm } from '@/common/interfaces/league.ts'
 
-export const MasterTeamAdminDropdown = React.memo(() => {
+/**
+ * Dropdown component for selecting a Master Team Administrator.
+ *
+ * This component integrates with Formik to manage form state
+ * and provides a paginated dropdown for selecting team administrators.
+ * It also autofills the email of the selected administrator and
+ * supports fetching additional data dynamically.
+ *
+ * Features:
+ * - Fetches initial list of team administrators on mount.
+ * - Dynamically loads more team administrators as needed.
+ * - Ensures selected administrator details are available in the dropdown.
+ * - Populates an email field with the selected administrator's email.
+ */
+export const MasterTeamAdminDropdown = () => {
   const {
-    values,
-    errors,
-    touched,
-    handleChange,
-    handleBlur,
-    setFieldValue
+    values, errors, touched, handleChange, handleBlur, setFieldValue
   } = useFormikContext<ILeagueForm>()
 
-  const {
-    setPaginationParams,
-    offset,
-    total,
-    limit
-  } = useUserSlice()
+  const { setPaginationParams, offset, total, limit } = useUserSlice()
 
   const [teamAdminList, { isLoading, isFetching, data }] = useLazyGetUsersQuery()
   const [getTeamAdmin, { data: singleTeamAdmin }] = useLazyGetUserDetailsQuery()
   const [masterTeamAdminItems, setMasterTeamAdminItems] = useState<IFEUser[]>([])
 
-  // first fetch
+  /**
+   * Fetches the initial list of team administrators when the component mounts.
+   */
   useEffect(() => {
     teamAdminList({ limit: 10, offset: 0, ordering: undefined, role: 'team_admin' })
   }, [])
 
-  // update loaded items
+  /**
+   * Updates the local state with the fetched list of team administrators.
+   */
   useEffect(() => {
-    !!data && setMasterTeamAdminItems(mt => ([...mt, ...data.data]))
+    if (data) {
+      setMasterTeamAdminItems(mt => [...mt, ...data.data])
+    }
   }, [data])
 
-  // updates team admin email field
+  /**
+   * Updates the email field with the email of the selected team administrator.
+   */
   useEffect(() => {
     if (values.masterTeamAdmin) {
-      const mt = masterTeamAdminItems.findIndex(mt => mt.id === values.masterTeamAdmin)
-      setFieldValue('masterTeamAdminEmail', mt >= 0 ? masterTeamAdminItems[mt]?.email : '')
+      const index = masterTeamAdminItems.findIndex(mt => mt.id === values.masterTeamAdmin)
+      const email = index >= 0 ? masterTeamAdminItems[index]?.email : ''
+      setFieldValue('masterTeamAdminEmail', email)
     }
   }, [values.masterTeamAdmin, masterTeamAdminItems])
 
+  /**
+   * Fetches details of the selected team administrator if not present in the list.
+   */
   useEffect(() => {
-    if (!singleTeamAdmin) return
+    if (!values.masterTeamAdmin || !masterTeamAdminItems.length) return
 
-    setMasterTeamAdminItems(items => [...items, singleTeamAdmin])
+    const currentAdmin = masterTeamAdminItems.find(admin => admin.id === values.masterTeamAdmin)
+    if (!currentAdmin) {
+      getTeamAdmin({ id: values.masterTeamAdmin })
+    }
+  }, [values.masterTeamAdmin, masterTeamAdminItems])
+
+  /**
+   * Adds the fetched single team administrator to the local state.
+   */
+  useEffect(() => {
+    if (singleTeamAdmin) {
+      setMasterTeamAdminItems(items => [...new Set([...items, singleTeamAdmin])])
+    }
   }, [singleTeamAdmin])
 
-  // set current selected team admin to state
-  useEffect(() => {
-    if (!values.masterTeamAdmin) return
-    const currentLeague = masterTeamAdminItems.find(league => league.id === values.league)
-
-    if (!currentLeague) {
-      fetchSingleTeamAdmin()
-    }
-  }, [values.masterTeamAdmin, masterTeamAdminItems])
-
-  function fetchSingleTeamAdmin() {
-    getTeamAdmin({
-      id: values.masterTeamAdmin || ''
-    })
-  }
-
-
+  /**
+   * Determines if all administrators have been loaded.
+   */
   const endReached = useMemo(() => (
     masterTeamAdminItems.length >= total
   ), [masterTeamAdminItems, total])
 
+  /**
+   * Loads more team administrators when the dropdown reaches the end of the current list.
+   */
   const onLoadMore = useCallback(() => {
     if (endReached) return
 
-    const leagueTeamsRequestParams: IGetUsersRequestParams = {
+    const params: IGetUsersRequestParams = {
       offset: offset + 10,
       limit,
       role: 'team_admin'
     }
 
-    teamAdminList(leagueTeamsRequestParams)
-    setPaginationParams({
-      offset: leagueTeamsRequestParams.offset,
-      limit: leagueTeamsRequestParams.limit
-    })
+    teamAdminList(params)
+    setPaginationParams({ offset: params.offset, limit: params.limit })
   }, [endReached, offset, limit])
 
-  // dropdown options
+  /**
+   * Formats the list of administrators for the dropdown options.
+   */
   const masterTeamAdmins = useMemo(() => (
-    masterTeamAdminItems.map(admin => ({ value: admin.id, label: `${admin.firstName} ${admin.lastName}` }))
+    masterTeamAdminItems.map(admin => ({
+      value: admin.id,
+      label: `${admin.firstName} ${admin.lastName}`
+    }))
   ), [masterTeamAdminItems])
 
   return (
@@ -107,7 +126,7 @@ export const MasterTeamAdminDropdown = React.memo(() => {
         value={values.masterTeamAdmin}
         onChange={handleChange('masterTeamAdmin')}
         options={masterTeamAdmins}
-        error={touched.masterTeamAdmin ? errors.masterTeamAdmin as string : ''}
+        error={touched.masterTeamAdmin ? (errors.masterTeamAdmin as string) : ''}
         onBlur={handleBlur('masterTeamAdmin')}
       />
       <TextInput
@@ -117,10 +136,10 @@ export const MasterTeamAdminDropdown = React.memo(() => {
         onChange={handleChange}
         placeholder="Master team admin email"
         className="h-32"
-        error={touched.masterTeamAdminEmail ? errors.masterTeamAdminEmail as string : undefined}
+        error={touched.masterTeamAdminEmail ? (errors.masterTeamAdminEmail as string) : undefined}
         onBlur={handleBlur}
         disabled={true}
       />
     </>
   )
-}, () => true)
+}
