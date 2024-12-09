@@ -15,14 +15,17 @@ import SearchLeagueTournament from '@/pages/Protected/Seasons/components/SearchL
 import {
   ICreateSeasonFormValues,
   INITIAL_DIVISION_DATA,
-  seasonValidationSchema,
+  seasonValidationSchema
 } from '@/pages/Protected/Seasons/constants/formik'
 
-import { AccordionHeader, AddEntityButton, MainContainer, MonroeDatePicker } from '@/components/Elements'
 import {
   Accordion,
+  AccordionHeader,
+  AddEntityButton,
   CancelButton,
+  MainContainer,
   MonroeBlueText,
+  MonroeDatePicker,
   MonroeDivider,
   MonroeSecondaryButton,
   OptionTitle,
@@ -30,7 +33,7 @@ import {
   PageContent,
   ProtectedPageSubtitle,
   ProtectedPageSubtitleDescription,
-  ProtectedPageTitle,
+  ProtectedPageTitle
 } from '@/components/Elements'
 import { InputError } from '@/components/Inputs/InputElements'
 import MonroeInput from '@/components/Inputs/MonroeInput'
@@ -47,7 +50,7 @@ import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
 import {
   useBulkDeleteBracketsMutation,
   useGetSeasonDetailsQuery,
-  useUpdateSeasonMutation,
+  useUpdateSeasonMutation
 } from '@/redux/seasons/seasons.api'
 
 import { BEST_RECORD_WINS, POINTS, SINGLE_ELIMINATION_BRACKET, WINNING } from '@/common/constants/league'
@@ -63,7 +66,7 @@ const EditSeason = () => {
   const { data, currentData, isFetching, isLoading } = useGetSeasonDetailsQuery(params!.id || '', {
     skip: !params.id,
     refetchOnMountOrArgChange: true,
-    refetchOnFocus: true,
+    refetchOnFocus: true
   })
   const navigate = useNavigate()
   const [updateSeason] = useUpdateSeasonMutation()
@@ -79,45 +82,39 @@ const EditSeason = () => {
   const [ids, setIds] = useState<number[]>([])
 
   const INITIAL_BREAD_CRUMB_ITEMS = [
-    {
-      title: <a href={PATH_TO_SEASONS}>Seasons</a>,
-    },
-    {
-      title: <MonroeBlueText>{data?.name}</MonroeBlueText>,
-    },
+    { title: <a href={PATH_TO_SEASONS}>Seasons</a> },
+    { title: <MonroeBlueText>{data?.name}</MonroeBlueText> }
   ]
 
   const BREAD_CRUMB_ITEMS = isCreateBracketPage
     ? [
-        {
-          title: (
-            <a
-              href={PATH_TO_SEASONS}
-              onClick={() => {
-                setIsCreateBracketPage(false)
-                setSelectedBracketId(null)
-              }}
-            >
-              Seasons
-            </a>
-          ),
-        },
-        {
-          title: (
-            <a
-              onClick={() => {
-                setIsCreateBracketPage(false)
-                setSelectedBracketId(null)
-              }}
-            >
-              {data?.name}
-            </a>
-          ),
-        },
-        {
-          title: <MonroeBlueText>Edit Bracket</MonroeBlueText>,
-        },
-      ]
+      {
+        title: (
+          <a
+            href={PATH_TO_SEASONS}
+            onClick={() => {
+              setIsCreateBracketPage(false)
+              setSelectedBracketId(null)
+            }}
+          >
+            Seasons
+          </a>
+        )
+      },
+      {
+        title: (
+          <a
+            onClick={() => {
+              setIsCreateBracketPage(false)
+              setSelectedBracketId(null)
+            }}
+          >
+            {data?.name}
+          </a>
+        )
+      },
+      { title: <MonroeBlueText>Edit Bracket</MonroeBlueText> }
+    ]
     : INITIAL_BREAD_CRUMB_ITEMS
 
   useEffect(() => {
@@ -130,11 +127,11 @@ const EditSeason = () => {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${access}`,
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          id: selectedBracketId,
-        }),
+          id: selectedBracketId
+        })
       })
       const fileData = await response.blob()
 
@@ -148,8 +145,8 @@ const EditSeason = () => {
             if (bracket.id === selectedBracketId) {
               bracketName = bracket.name
             }
-          }),
-        ),
+          })
+        )
       )
 
       const blob = new Blob([fileData], { type: 'text/csv' })
@@ -198,26 +195,26 @@ const EditSeason = () => {
                 .map((p) => ({
                   sub_division: p.subpoolName,
                   seed: p.seed,
-                  is_empty: p.isEmpty,
+                  is_empty: p.isEmpty
                 }))
-                .filter((p) => p?.sub_division),
+                .filter((p) => p?.sub_division)
             })),
-            subdivision: bracket.subdivisionsNames,
-          })),
-        })),
-      })),
+            subdivision: bracket.subdivisionsNames
+          }))
+        }))
+      }))
     }
 
     setShowModal(true)
 
     updateSeason({
       id: data!.id as string,
-      body: editSeasonBody,
+      body: editSeasonBody
     }).then(() => {
       setAppNotification({
         message: 'Bracket successfully populated',
         timestamp: new Date().getTime(),
-        type: 'success',
+        type: 'success'
       })
     })
   }
@@ -226,7 +223,7 @@ const EditSeason = () => {
 
   const handleSubmit = async (
     values: ICreateSeasonFormValues,
-    formikHelpers: FormikHelpers<ICreateSeasonFormValues>,
+    formikHelpers: FormikHelpers<ICreateSeasonFormValues>
   ) => {
     const result = await formikHelpers.validateForm(values)
 
@@ -238,11 +235,11 @@ const EditSeason = () => {
       start_date: format(new Date(values.startDate as unknown as string), 'yyyy-MM-dd'),
       expected_end_date: format(new Date(values.expectedEndDate as unknown as string), 'yyyy-MM-dd'),
       divisions: values.divisions.map((division) => ({
-        id: division.id as string,
+        id: division.id || undefined,
         name: division.name,
         description: division.description,
         sub_division: division.subdivisions.map((subdivision) => ({
-          id: subdivision.id as string,
+          id: subdivision.id || undefined,
           name: subdivision.name,
           description: subdivision.description,
           playoff_format: subdivision.playoffFormat === BEST_RECORD_WINS ? 0 : 1,
@@ -269,24 +266,24 @@ const EditSeason = () => {
                   .map((p) =>
                     p.id.length > 2
                       ? {
-                          id: p.id.length > 2 ? p.id : '',
-                          sub_division: p.subpoolName,
-                          seed: p.seed,
-                          is_empty: p.isEmpty,
-                        }
+                        id: p.id.length > 2 ? p.id : '',
+                        sub_division: p.subpoolName,
+                        seed: p.seed,
+                        is_empty: p.isEmpty
+                      }
                       : {
-                          sub_division: p.subpoolName,
-                          seed: p.seed,
-                          is_empty: p.isEmpty,
-                        },
+                        sub_division: p.subpoolName,
+                        seed: p.seed,
+                        is_empty: p.isEmpty
+                      }
                   )
-                  .filter((p) => p?.sub_division),
+                  .filter((p) => p?.sub_division)
               })),
-              subdivision: bracket.subdivisionsNames,
+              subdivision: bracket.subdivisionsNames
             }))
-            .filter((b) => !ids.includes(b.id)),
-        })),
-      })),
+            .filter((b) => !ids.includes(b.id))
+        }))
+      }))
     }
 
     if (ids.length > 0) {
@@ -295,7 +292,7 @@ const EditSeason = () => {
         .then(() => {
           updateSeason({
             id: data!.id as string,
-            body: editSeasonBody,
+            body: editSeasonBody
           })
             .unwrap()
             .then(() => {
@@ -304,15 +301,15 @@ const EditSeason = () => {
         })
         .catch(() => {
           setAppNotification({
-            message: "Can't delete bracket/bracket's. Please try again later",
+            message: 'Can\'t delete bracket/bracket\'s. Please try again later',
             timestamp: new Date().getTime(),
-            type: 'error',
+            type: 'error'
           })
         })
     } else {
       updateSeason({
         id: data!.id as string,
-        body: editSeasonBody,
+        body: editSeasonBody
       })
         .unwrap()
         .then(() => {
@@ -360,13 +357,13 @@ const EditSeason = () => {
                 id: p.id || '',
                 isEmpty: p.is_empty,
                 subpoolName: p.sub_division,
-                seed: p.seed,
+                seed: p.seed
               })),
-              primaryId: match.id,
-            })),
-          })),
-        })),
-      })) || [],
+              primaryId: match.id
+            }))
+          }))
+        }))
+      })) || []
   }
 
   return (
@@ -395,7 +392,7 @@ const EditSeason = () => {
                 </p>
               }
             />,
-            document.body,
+            document.body
           )}
 
         <Formik
@@ -406,18 +403,18 @@ const EditSeason = () => {
           validateOnBlur
         >
           {({
-            values,
-            handleChange,
-            handleSubmit,
-            errors,
-            setFieldValue,
-            validateField,
-            setFieldError,
-            handleBlur,
-            touched,
-            setTouched,
-            setFieldTouched,
-          }) => {
+              values,
+              handleChange,
+              handleSubmit,
+              errors,
+              setFieldValue,
+              validateField,
+              setFieldError,
+              handleBlur,
+              touched,
+              setTouched,
+              setFieldTouched
+            }) => {
             const isAddSubdivisionBtnDisabled = !!errors.divisions?.length || isDuplicateNames
 
             const collapsedDivisionItems = (removeFn: (index: number) => void) =>
@@ -438,7 +435,7 @@ const EditSeason = () => {
                     touched={touched}
                   />
                 ),
-                label: <AccordionHeader>#{idx + 1} Division/Pool</AccordionHeader>,
+                label: <AccordionHeader>#{idx + 1} Division/Pool</AccordionHeader>
               }))
 
             return (
@@ -522,8 +519,8 @@ const EditSeason = () => {
                                         description: subdivision.description,
                                         playoffFormat: data.playoffFormat,
                                         standingsFormat: data.standingsFormat,
-                                        tiebreakersFormat: data.tiebreakersFormat,
-                                      })),
+                                        tiebreakersFormat: data.tiebreakersFormat
+                                      }))
                                     }))
 
                                     setFieldValue('divisions', updatedSubdivisions)
@@ -622,7 +619,7 @@ const EditSeason = () => {
                                   <MonroeTooltip
                                     text={
                                       isAddSubdivisionBtnDisabled
-                                        ? "You can't create division/pool when you have errors in other divisions/pools"
+                                        ? 'You can\'t create division/pool when you have errors in other divisions/pools'
                                         : ''
                                     }
                                     width="280px"
