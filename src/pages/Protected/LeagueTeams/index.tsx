@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { PATH_TO_CREATE_LEAGUE_TEAM, PATH_TO_DELETE_INFO_LEAGUE_TEAM } from '@/common/constants/paths.ts'
 import { useBulkDeleteLeagueTeamsMutation } from '@/redux/leagueTeams/leagueTeams.api.ts'
 import { useNotification } from '@/hooks/useNotification.ts'
+import { ImportLeagueTeamButton } from '@/pages/Protected/LeagueTeams/components/ImportLeagueTeamButton.tsx'
 
 const DEFAULT_DELETE_ERROR_MESSAGE = 'Something went wrong. Please, try again!'
 
@@ -35,7 +36,7 @@ const DELETE_TERMS = {
 const LeagueTeams = (): ReactElement => {
   const navigation = useNavigate()
   const { notify, info } = useNotification()
-  const [bulkDelete, { isSuccess, isError, error, data, isLoading }] = useBulkDeleteLeagueTeamsMutation()
+  const [bulkDelete, { isSuccess, isError, error, data }] = useBulkDeleteLeagueTeamsMutation()
 
   useEffect(() => {
     if (!data) return
@@ -57,8 +58,13 @@ const LeagueTeams = (): ReactElement => {
   }, [isError, error])
 
   const onDelete = (ids: string[]) => {
-    // bulkDelete(['f80fc12f-92da-46fe-ad22-585ce000abaf'])
     bulkDelete(ids)
+  }
+
+  const renderControls = () => {
+    return (
+      <ImportLeagueTeamButton />
+    )
   }
 
   return (
@@ -68,7 +74,7 @@ const LeagueTeams = (): ReactElement => {
         onCreate={() => navigation(PATH_TO_CREATE_LEAGUE_TEAM)}
         onDelete={onDelete}
         deleteTerm={DELETE_TERMS}
-        isDeleting={isLoading}
+        controls={renderControls}
       >
         <LeagueTeamsTable />
       </TablePage>

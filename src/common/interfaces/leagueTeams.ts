@@ -1,9 +1,10 @@
-import { IAdditionalEmail, IAdditionalPhone } from '@/common/interfaces'
+import { IAdditionalEmail, IAdditionalPhone, IDuplicate } from '@/common/interfaces'
 import { IBEDivision, IBESubdivision, IFEDivision, IFESubdivision } from '@/common/interfaces/division'
 import { IBELeague, IFELeague } from '@/common/interfaces/league'
 import { IBEOperator, IFEOperator } from '@/common/interfaces/operator'
 import { IBEMasterTeam, IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
-import { TDeleteStatus } from '@/common/types'
+import { TDeleteStatus, TErrorDuplicate } from '@/common/types'
+import { TLeagueTeamDuplicate } from '@/common/types/leagueTeams.ts'
 
 interface IHeadCoachTeamAdmin {
   additional_emails: IAdditionalEmail[]
@@ -76,7 +77,7 @@ export interface IBELeagueTeam {
 export interface IFELeagueTeam {
   id: string
   name: string
-  headCoach:  IFEHeadCoachTeamAdmin | null
+  headCoach: IFEHeadCoachTeamAdmin | null
   league: IBELeague
   division: IFEDivision | null
   subdivision: IFESubdivision | null
@@ -157,4 +158,99 @@ export interface IBulkDeleteResponse {
   status: TDeleteStatus
   total: number
   success: number
+}
+
+/**
+ * Import League Team CSV
+ */
+
+// BE
+
+export interface IBEImportLeagueTeamCSVError {
+  idx: string
+  error: string
+  league_team_name: string
+}
+
+export interface IDELeagueTeamImportExisting {
+  division_name: string
+  league_name: string
+  league_team_name: string
+  master_team_name: string
+  mt_admin_emails: string[]
+  mt_admin_names: string[]
+  subdivision_name: string
+}
+
+export interface IBELeagueTeamImportNew {
+  'Division/Pool Name': string
+  'League Team Name': string
+  'League/Tourn Name': string
+  'Linked Master Team Name': string
+  'MT Team Admin Email': string
+  'MT Team Admin First and Last Name': string
+  'Subdiv/Pool Name': string
+}
+
+export interface IBEImportLeagueTeamCSVResponse {
+  status: TDeleteStatus
+  errors?: IBEImportLeagueTeamCSVError[]
+  success: string[]
+  duplicates?: IDuplicate<IBELeagueTeamImportNew, IDELeagueTeamImportExisting>[]
+}
+
+// FE
+
+export interface ILeagueTeamImportTable {
+  idx: number
+  index: number
+  teamName: string
+  status: TErrorDuplicate
+  message: string
+}
+
+export interface IImportLeagueTeamCSVError {
+  idx: string
+  error: string
+  leagueName: string
+}
+
+export interface ILeagueTeamImportExisting {
+  id: string
+  divisionName: string
+  leagueName: string
+  leagueTeamName: string
+  masterTeamName: string
+  mtAdminEmails: string[]
+  mtAdminNames: string[]
+  subdivisionName: string
+}
+
+export interface ILeagueTeamImportNew {
+  divisionName: string
+  leagueName: string
+  leagueTeamName: string
+  masterTeamName: string
+  mtAdminEmail: string
+  mtAdminName: string
+  subdivisionName: string
+}
+
+export interface IFEImportLeagueTeamCSVResponse {
+  status: TDeleteStatus
+  errors?: IImportLeagueTeamCSVError[]
+  success: string[]
+  duplicates?: TLeagueTeamDuplicate[]
+}
+
+export interface ILeagueTeamUpdateBody {
+  id: string
+  body: {
+    name?: string
+    master_team?: string
+    master_team_admin?: string
+    league?: string
+    division?: string
+    subdivision?: string
+  }
 }

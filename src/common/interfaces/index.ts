@@ -54,7 +54,7 @@ export interface IDuplicate<T, Y> {
   idx: number
   new: T
   existing: Y
-  differences?: { [key: string]: unknown } | object
+  differences?: { [K in keyof T]?: string }
 }
 
 export interface IFormProps<Body, FormValues> {
