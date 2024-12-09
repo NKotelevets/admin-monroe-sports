@@ -217,22 +217,41 @@ export interface IImportLeagueTeamCSVError {
 
 export interface ILeagueTeamImportExisting {
   id: string
-  divisionName: string
+
+  leagueId?: string
   leagueName: string
   leagueTeamName: string
+
+  masterTeamId?: string
   masterTeamName: string
+
+  mtAdminId?: string[]
   mtAdminEmails: string[]
   mtAdminNames: string[]
+
+  divisionId?: string
+  divisionName: string
+
+  subdivisionId?: string
   subdivisionName: string
 }
 
 export interface ILeagueTeamImportNew {
-  divisionName: string
+  leagueId?: string
   leagueName: string
   leagueTeamName: string
+
+  masterTeamId?: string
   masterTeamName: string
+
+  mtAdminId?: string
   mtAdminEmail: string
   mtAdminName: string
+
+  divisionId?: string
+  divisionName: string
+
+  subdivisionId?: string
   subdivisionName: string
 }
 

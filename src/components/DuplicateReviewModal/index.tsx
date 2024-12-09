@@ -99,7 +99,7 @@ export const DuplicateReviewModal = <T, Y>(props: IDuplicateReviewModalProps<T, 
 
   const total = useMemo(() => duplicates.length, [duplicates])
   const current = duplicates[currentIdx]
-  const difference = current.differences || compareObjects(current.new as object, current.existing as object) || {}
+  const difference = compareObjects(current.new as object, current.existing as object) || {}
   const hasDifferences = !!Object.keys(difference).length
 
   useEffect(() => {

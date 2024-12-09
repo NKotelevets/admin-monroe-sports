@@ -39,29 +39,46 @@ export const LeagueTeamImportTable = (): ReactElement => {
     records: duplicates
   })
 
+  /**
+   * Saves reset ref to use without re-rendering
+   */
   useEffect(() => {
     resetRef.current = reset
   }, [reset])
 
+  /**
+   * Handles close
+   */
   const onClose = () => {
     resetRef.current()
     setSelectedIndex(null)
   }
 
-  // remove current duplicate and goes to next
+  /**
+   * Removes current duplicate and goes to next
+   * @param index
+   */
   const onSkip = (index: number) => {
     resetRef.current()
     removeDuplicate(index)
   }
 
-  // handles update league
+  /**
+   * Updates the league team with CSV data
+   */
   const onUpdate = useCallback((index: number) => {
     const currentLeagueTeam = duplicates[index].existing
+    const newLeagueTeamData = duplicates[index].new
 
     editLeagueTeam({
       id: currentLeagueTeam.id,
       body: {
-        name: currentLeagueTeam.leagueTeamName, // TODO: add other values here
+        name: currentLeagueTeam.leagueTeamName,
+        master_team: newLeagueTeamData.masterTeamId || undefined,
+        master_team_admin: newLeagueTeamData.mtAdminId || undefined,
+        league: newLeagueTeamData.leagueId || undefined,
+        division: newLeagueTeamData.divisionId || undefined,
+        subdivision: newLeagueTeamData.subdivisionId || undefined
       }
     })
   }, [duplicates])
@@ -90,7 +107,7 @@ export const LeagueTeamImportTable = (): ReactElement => {
 
       <Table
         columns={columns}
-        rowKey={(record) => record.idx}
+        rowKey={(record) => record.index || Math.random()}
         dataSource={records}
         pagination={tableParams.pagination}
         onChange={handleTableChange}

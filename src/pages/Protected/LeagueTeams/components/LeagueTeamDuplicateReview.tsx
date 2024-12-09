@@ -2,6 +2,7 @@ import { Flex, Typography } from 'antd'
 import styled from '@emotion/styled'
 import { ReactElement } from 'react'
 import { TLeagueTeamDuplicate } from '@/common/types/leagueTeams.ts'
+import { compareObjects } from '@/utils/compareObjects.ts'
 
 interface IDuplicateReviewProps {
   /**
@@ -29,44 +30,46 @@ export const LeagueTeamDuplicateReview = (props: IDuplicateReviewProps): ReactEl
   const { duplicates, index } = props
   const current = duplicates[index]
 
+  const diff = compareObjects(current.new, current.existing)
+
   return (
     <Flex className="w-790">
       <Container is_new={`false`}>
         <Title>Current</Title>
 
         <Flex className="mg-b16" vertical>
-          <ItemTitle is_changed={`false`}>League Team Name:</ItemTitle>
-          <ItemValueStyle is_changed={`${(!!current.differences?.leagueTeamName)}`}>{current.existing.leagueTeamName}</ItemValueStyle>
+          <ItemTitle is_changed={`${(!!diff?.leagueTeamName)}`}>League Team Name:</ItemTitle>
+          <ItemValueStyle is_changed={`${(!!diff?.leagueTeamName)}`}>{current.existing.leagueTeamName}</ItemValueStyle>
         </Flex>
         <Flex className="mg-b16" vertical>
-          <ItemTitle is_changed={`false`}>Linked League/Tourn:</ItemTitle>
-          <ItemValueStyle is_changed={`${(!!current.differences?.leagueName)}`}>{current.existing.leagueName}</ItemValueStyle>
+          <ItemTitle is_changed={`${(!!diff?.leagueName)}`}>Linked League/Tourn:</ItemTitle>
+          <ItemValueStyle is_changed={`${(!!diff?.leagueName)}`}>{current.existing.leagueName}</ItemValueStyle>
         </Flex>
         <Flex className="mg-b16" vertical>
-          <ItemTitle is_changed={`${(!!current.differences?.divisionName)}`}>Division/Pool:</ItemTitle>
-          <ItemValueStyle is_changed={`false`}>{current.existing.divisionName}</ItemValueStyle>
+          <ItemTitle is_changed={`${(!!diff?.divisionName)}`}>Division/Pool:</ItemTitle>
+          <ItemValueStyle is_changed={`${(!!diff?.divisionName)}`}>{current.existing.divisionName}</ItemValueStyle>
         </Flex>
         <Flex className="mg-b16" vertical>
-          <ItemTitle is_changed={`${(!!current.differences?.subdivisionName)}`}>Subdivision/Pool:</ItemTitle>
-          <ItemValueStyle is_changed={`false`}>{current.existing.subdivisionName}</ItemValueStyle>
-        </Flex>
-
-        <Flex className="mg-b16" vertical>
-          <ItemTitle is_changed={`${(!!current.differences?.masterTeamName)}`}>Master Team Name:</ItemTitle>
-          <ItemValueStyle is_changed={`false`}>{current.existing.masterTeamName}</ItemValueStyle>
+          <ItemTitle is_changed={`${(!!diff?.subdivisionName)}`}>Subdivision/Pool:</ItemTitle>
+          <ItemValueStyle is_changed={`${(!!diff?.subdivisionName)}`}>{current.existing.subdivisionName}</ItemValueStyle>
         </Flex>
 
         <Flex className="mg-b16" vertical>
-          <ItemTitle is_changed={`${(!!current.differences?.mtAdminName)}`}>Team Administrator:</ItemTitle>
+          <ItemTitle is_changed={`${(!!diff?.masterTeamName)}`}>Master Team Name:</ItemTitle>
+          <ItemValueStyle is_changed={`${(!!diff?.masterTeamName)}`}>{current.existing.masterTeamName}</ItemValueStyle>
+        </Flex>
+
+        <Flex className="mg-b16" vertical>
+          <ItemTitle is_changed={`${(!!diff?.mtAdminName)}`}>Team Administrator:</ItemTitle>
           {current.existing.mtAdminNames?.map(name => (
-            <ItemValueStyle is_changed={`false`}>{name}</ItemValueStyle>
+            <ItemValueStyle key={`current-${name}`} is_changed={`${(!!diff?.mtAdminName)}`}>{name}</ItemValueStyle>
           )) || <ItemValueStyle is_changed={`false`}>-</ItemValueStyle>}
         </Flex>
 
         <Flex className="mg-b16" vertical>
-          <ItemTitle is_changed={`${(!!current.differences?.mtAdminEmail)}`}>Team Admin Email:</ItemTitle>
+          <ItemTitle is_changed={`${(!!diff?.mtAdminEmail)}`}>Team Admin Email:</ItemTitle>
           {current.existing.mtAdminEmails?.map(email => (
-            <ItemValueStyle is_changed={`false`}>{email}</ItemValueStyle>
+            <ItemValueStyle key={`current-${email}`} is_changed={`${(!!diff?.mtAdminName)}`}>{email}</ItemValueStyle>
           )) || <ItemValueStyle is_changed={`false`}>-</ItemValueStyle>}
         </Flex>
       </Container>
@@ -75,41 +78,41 @@ export const LeagueTeamDuplicateReview = (props: IDuplicateReviewProps): ReactEl
         <Title>Imported</Title>
 
         <Flex className="mg-b16" vertical>
-          <ItemTitle is_changed={`${(!!current.differences?.leagueTeamName)}`}>League Team Name</ItemTitle>
+          <ItemTitle is_changed={`${(!!diff?.leagueTeamName)}`}>League Team Name</ItemTitle>
           <ItemValueStyle
-            is_changed={`${(!!current.differences?.leagueTeamName)}`}>{current.new.leagueTeamName}</ItemValueStyle>
+            is_changed={`${(!!diff?.leagueTeamName)}`}>{current.new.leagueTeamName}</ItemValueStyle>
         </Flex>
         <Flex className="mg-b16" vertical>
-          <ItemTitle is_changed={`${(!!current.differences?.leagueName)}`}>Linked League/Tourn:</ItemTitle>
+          <ItemTitle is_changed={`${(!!diff?.leagueName)}`}>Linked League/Tourn:</ItemTitle>
           <ItemValueStyle
-            is_changed={`${(!!current.differences?.leagueName)}`}>{current.new.leagueName || '-'}</ItemValueStyle>
+            is_changed={`${(!!diff?.leagueName)}`}>{current.new.leagueName || '-'}</ItemValueStyle>
         </Flex>
         <Flex className="mg-b16" vertical>
-          <ItemTitle is_changed={`${(!!current.differences?.divisionName)}`}>Division/Pool:</ItemTitle>
+          <ItemTitle is_changed={`${(!!diff?.divisionName)}`}>Division/Pool:</ItemTitle>
           <ItemValueStyle
-            is_changed={`${(!!current.differences?.divisionName)}`}>{current.new.divisionName || '-'}</ItemValueStyle>
+            is_changed={`${(!!diff?.divisionName)}`}>{current.new.divisionName || '-'}</ItemValueStyle>
         </Flex>
         <Flex className="mg-b16" vertical>
-          <ItemTitle is_changed={`${(!!current.differences?.subdivisionName)}`}>Subdvision/Pool:</ItemTitle>
+          <ItemTitle is_changed={`${(!!diff?.subdivisionName)}`}>Subdvision/Pool:</ItemTitle>
           <ItemValueStyle
-            is_changed={`${(!!current.differences?.subdivisionName)}`}>{current.new.subdivisionName || '-'}</ItemValueStyle>
-        </Flex>
-
-        <Flex className="mg-b16" vertical>
-          <ItemTitle is_changed={`${(!!current.differences?.masterTeamName)}`}>Master Team Name:</ItemTitle>
-          <ItemValueStyle
-            is_changed={`${(!!current.differences?.masterTeamName)}`}>{current.new.masterTeamName || '-'}</ItemValueStyle>
+            is_changed={`${(!!diff?.subdivisionName)}`}>{current.new.subdivisionName || '-'}</ItemValueStyle>
         </Flex>
 
         <Flex className="mg-b16" vertical>
-          <ItemTitle is_changed={`${(!!current.differences?.mtAdminName)}`}>Team Administrator:</ItemTitle>
+          <ItemTitle is_changed={`${(!!diff?.masterTeamName)}`}>Master Team Name:</ItemTitle>
           <ItemValueStyle
-            is_changed={`${(!!current.differences?.mtAdminName)}`}>{current.new.mtAdminName || '-'}</ItemValueStyle>
+            is_changed={`${(!!diff?.masterTeamName)}`}>{current.new.masterTeamName || '-'}</ItemValueStyle>
+        </Flex>
+
+        <Flex className="mg-b16" vertical>
+          <ItemTitle is_changed={`${(!!diff?.mtAdminName)}`}>Team Administrator:</ItemTitle>
+          <ItemValueStyle
+            is_changed={`${(!!diff?.mtAdminName)}`}>{current.new.mtAdminName || '-'}</ItemValueStyle>
         </Flex>
         <Flex className="mg-b16" vertical>
-          <ItemTitle is_changed={`${(!!current.differences?.mtAdminEmail)}`}>Team Admin Email:</ItemTitle>
+          <ItemTitle is_changed={`${(!!diff?.mtAdminEmail)}`}>Team Admin Email:</ItemTitle>
           <ItemValueStyle
-            is_changed={`${(!!current.differences?.mtAdminEmail)}`}>{current.new.mtAdminEmail || '-'}</ItemValueStyle>
+            is_changed={`${(!!diff?.mtAdminEmail)}`}>{current.new.mtAdminEmail || '-'}</ItemValueStyle>
         </Flex>
       </Container>
     </Flex>
