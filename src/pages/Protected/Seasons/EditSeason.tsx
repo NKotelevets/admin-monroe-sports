@@ -315,6 +315,8 @@ const EditSeason = () => {
         .then(() => {
           navigate(PATH_TO_SEASONS)
         })
+        .catch(() => {
+        })
     }
   }
 
@@ -413,7 +415,8 @@ const EditSeason = () => {
               handleBlur,
               touched,
               setTouched,
-              setFieldTouched
+              setFieldTouched,
+              isValid
             }) => {
             const isAddSubdivisionBtnDisabled = !!errors.divisions?.length || isDuplicateNames
 
@@ -654,7 +657,8 @@ const EditSeason = () => {
                               Cancel
                             </CancelButton>
 
-                            <MonroeButton className="h-40" label="Edit Season" type="primary" onClick={handleSubmit} />
+                            <MonroeButton className="h-40" isDisabled={!isValid} label="Edit Season" type="primary"
+                                          onClick={handleSubmit} />
                           </Flex>
                         </Flex>
                       </Form>
