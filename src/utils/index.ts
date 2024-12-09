@@ -1,4 +1,4 @@
-import { format, parse } from 'date-fns'
+import { format, isValid, parse, parseISO } from 'date-fns'
 import { SorterResult, SortOrder } from 'antd/es/table/interface'
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 
@@ -6,12 +6,74 @@ export const validateNumber = (value: string) => /^[0-9]+$/.test(value) || value
 
 export const getIconColor = (isFiltered: boolean) => (isFiltered ? 'rgba(26, 22, 87, 1)' : 'rgba(189, 188, 194, 1)')
 
+type ParseWithFormatsOptions = {
+  fallbackToISO?: boolean
+  referenceDate?: Date
+}
+
+/**
+ * Parses a date string using multiple formats until a valid date is found.
+ * Optionally, falls back to ISO date parsing if none of the provided formats match.
+ *
+ * @param dateString - The input date string to parse.
+ * @param formats - An array of date format strings to attempt parsing with.
+ *                  Format strings should follow the `date-fns` formatting tokens.
+ * @param options - Optional configuration for parsing:
+ *   - `fallbackToISO`: Whether to attempt ISO date parsing as a fallback. Default is `true`.
+ *   - `referenceDate`: The reference date used when parsing dates without full components
+ *                      (e.g., missing time or timezone). Default is the current date.
+ * @returns The parsed `Date` object if a valid format is found, or `null` if parsing fails.
+ *
+ * @throws This function does not throw errors. Instead, it returns `null` for invalid dates.
+ *
+ * @example
+ * ```typescript
+ * const dateStr = '12/09/2024'
+ * const formats = ['MM/dd/yyyy', 'dd-MM-yyyy']
+ *
+ * const parsedDate = parseWithMultipleFormats(dateStr, formats)
+ * console.log(parsedDate) // Output: Date object representing the parsed date
+ *
+ * const invalidDate = parseWithMultipleFormats('invalid', formats)
+ * console.log(invalidDate) // Output: null
+ * ```
+ */
+export const parseWithMultipleFormats = (
+  dateString: string,
+  formats: string[],
+  options: ParseWithFormatsOptions = {}
+): Date | null => {
+  const { fallbackToISO = true, referenceDate = new Date() } = options
+
+  for (const format of formats) {
+    const parsedDate = parse(dateString, format, referenceDate)
+    if (isValid(parsedDate)) {
+      return parsedDate
+    }
+  }
+
+  if (fallbackToISO) {
+    const isoParsedDate = parseISO(dateString)
+    if (isValid(isoParsedDate)) {
+      return isoParsedDate
+    }
+  }
+
+  return null
+}
+
 /**
  * Formats a date without tz
  * @param date string format: 1990-01-01
- * @returns Jan, 01 1990
+ * @returns Jan, 01 1990 | -
  */
-export const formatWithoutTZ = (date: string) => format(parse(date, 'yyyy-MM-dd', new Date()), 'MMM d, yyyy')
+export const formatWithoutTZ = (date: string) => {
+  const parsedDate = parseWithMultipleFormats(date, ['yyyy-MM-dd', 'MM/dd/yyyy', 'M/d/yyyy', 'M/d/yyyy'])
+
+  if (!parsedDate) return '-'
+
+  return format(parsedDate, 'MMM d, yyyy')
+}
 
 /**
  * Formats phone number using the USA format
