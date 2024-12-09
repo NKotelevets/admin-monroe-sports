@@ -40,7 +40,7 @@ const LeagueTeams = (): ReactElement => {
   useEffect(() => {
     if (!data) return
 
-    const message = `${data.success}/${data.total}  master teams have been successfully removed.`
+    const message = `${data.success}/${data.total} league teams have been successfully removed.`
 
     if (data.status !== 'green') {
       info('More info...', message, PATH_TO_DELETE_INFO_LEAGUE_TEAM)
@@ -57,7 +57,6 @@ const LeagueTeams = (): ReactElement => {
   }, [isError, error])
 
   const onDelete = (ids: string[]) => {
-    // bulkDelete(['f80fc12f-92da-46fe-ad22-585ce000abaf'])
     bulkDelete(ids)
   }
 
