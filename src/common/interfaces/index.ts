@@ -71,3 +71,13 @@ export interface IDownloadStatus {
   message: string
   type: 'error' | 'info'
 }
+
+export interface IExportInfoProps {
+  teamIds: string[]
+  pathToSchedule: string
+  onExport: {
+    isLoading: boolean
+    status: IDownloadStatus | null
+    call(startDate: string, endDate: string, teamIds: string): void
+  }
+}

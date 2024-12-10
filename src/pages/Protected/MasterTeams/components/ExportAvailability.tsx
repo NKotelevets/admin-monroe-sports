@@ -7,19 +7,19 @@ import MonroeButton from '@/components/MonroeButton.tsx'
 import DatePickerRange, { IDateRangePickerRef } from '@/components/DatePickerRange.tsx'
 import { Dayjs } from 'dayjs'
 import { useNotification } from '@/hooks/useNotification.ts'
-import { IExportInfoProps } from '@/common/interfaces/masterTeams.ts'
 import { useMasterTeamExportCSV } from '@/pages/Protected/MasterTeams/hooks/useMasterTeamExportCSV.ts'
+import { IExportInfoProps } from '@/common/interfaces'
 
-export const ExportAvailability = (props: IExportInfoProps) => {
-  const { selectedMasterTeamIds } = props
+export const ExportAvailability = (props: Pick<IExportInfoProps, 'teamIds'>) => {
+  const { teamIds } = props
 
   const content = useCallback(() => (
-    !!selectedMasterTeamIds.length && <DropdownContent masterTeamIds={selectedMasterTeamIds} />
-  ), [selectedMasterTeamIds])
+    !!teamIds.length && <DropdownContent masterTeamIds={teamIds} />
+  ), [teamIds])
 
   // At least one Master Team needs to be selected
   // to show this component
-  if (!selectedMasterTeamIds.length) {
+  if (!teamIds.length) {
     return <></>
   }
 

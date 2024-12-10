@@ -20,19 +20,26 @@ import BaseLayout from '@/layouts/BaseLayout'
 import { useMasterTeamsImportCSVMutation } from '@/redux/masterTeams/masterTeams.api'
 
 import { DEFAULT_IMPORT_MODAL_OPTIONS } from '@/common/constants/import'
-import { PATH_TO_CREATE_MASTER_TEAM, PATH_TO_MASTER_TEAMS_IMPORT_INFO } from '@/common/constants/paths'
+import {
+  PATH_TO_CREATE_MASTER_TEAM,
+  PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST,
+  PATH_TO_MASTER_TEAMS_IMPORT_INFO
+} from '@/common/constants/paths'
 import { IImportModalOptions } from '@/common/interfaces'
 import {
   DeleteMasterTeamModal,
   DeleteModalRef
 } from '@/pages/Protected/MasterTeams/components/DeleteMasterTeamModal.tsx'
 import { ExportAvailability } from '@/pages/Protected/MasterTeams/components/ExportAvailability.tsx'
-import { ScheduleRequestButton } from '@/pages/Protected/MasterTeams/components/ScheduleRequestButton.tsx'
+import { ScheduleRequestButton } from '@/components/ScheduleRequest/ScheduleRequestButton.tsx'
+import { useMasterTeamExportCSV } from '@/pages/Protected/MasterTeams/hooks/useMasterTeamExportCSV.ts'
 
 const MasterTeams = () => {
   const navigate = useNavigate()
   const inputRef = useRef<HTMLInputElement | null>()
   const deleteModalRef = useRef<DeleteModalRef>()
+
+  const { isLoading, status, onExport } = useMasterTeamExportCSV()
 
   const [importMasterTeamCSV] = useMasterTeamsImportCSVMutation()
 
@@ -131,8 +138,16 @@ const MasterTeams = () => {
                 </MonroeDeleteButton>
               )}
 
-              <ScheduleRequestButton selectedMasterTeamIds={selectedRecordsIds} />
-              <ExportAvailability selectedMasterTeamIds={selectedRecordsIds} />
+              <ScheduleRequestButton
+                teamIds={selectedRecordsIds}
+                pathToSchedule={PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST}
+                onExport={{
+                  call: onExport,
+                  status,
+                  isLoading
+                }}
+              />
+              <ExportAvailability teamIds={selectedRecordsIds} />
 
               <ImportButton
                 icon={<DownloadOutlined />}

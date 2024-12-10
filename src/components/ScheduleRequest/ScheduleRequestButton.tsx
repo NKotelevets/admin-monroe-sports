@@ -1,26 +1,28 @@
-import { IExportInfoProps } from '@/common/interfaces/masterTeams.ts'
 import styled from '@emotion/styled'
 import Btn from 'antd/es/button/button'
 import { Dropdown, Flex } from 'antd'
 import { ScheduleOutlined } from '@ant-design/icons'
-import { useDownloadFile } from '@/hooks/useDownloadFile.ts'
 import { useNotification } from '@/hooks/useNotification.ts'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import DatePickerRange, { IDateRangePickerRef } from '@/components/DatePickerRange.tsx'
 import dayjs, { Dayjs } from 'dayjs'
-import { transformKeysToSnakeCase } from '@/utils'
-import { Button } from '@/components/Button'
-import { PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST } from '@/common/constants/paths.ts'
+import { Button } from '@/components/Button.tsx'
 import { useNavigate } from 'react-router-dom'
+import { IExportInfoProps } from '@/common/interfaces'
 
 export const ScheduleRequestButton = (props: IExportInfoProps) => {
-  const { selectedMasterTeamIds } = props
+  const { teamIds, ...rest } = props
 
-  const content = () => <DropdownContent masterTeamIds={selectedMasterTeamIds} />
+  const content = () => (
+    <DropdownContent
+      teamIds={teamIds}
+      {...rest}
+    />
+  )
 
   // At least one Master Team needs to be selected
   // to show this component
-  if (!selectedMasterTeamIds.length) {
+  if (!teamIds.length) {
     return <></>
   }
 
@@ -38,9 +40,8 @@ export const ScheduleRequestButton = (props: IExportInfoProps) => {
   )
 }
 
-const DropdownContent = (props: { masterTeamIds: string[] }) => {
-  const { masterTeamIds } = props
-  const { download, isLoading, status } = useDownloadFile()
+const DropdownContent = (props: IExportInfoProps) => {
+  const { teamIds, onExport, pathToSchedule } = props
   const { notify } = useNotification()
 
   const navigate = useNavigate()
@@ -58,32 +59,22 @@ const DropdownContent = (props: { masterTeamIds: string[] }) => {
    * notifies user when something went wrong
    */
   useEffect(() => {
-    !!status && (
-      notify(status.message, status.type)
+    !!onExport.status && (
+      notify(onExport.status.message, onExport.status.type)
     )
-  }, [status])
+  }, [onExport.status])
 
   /**
    * Downloads the file
    */
   const onExportAvailability = useCallback(() => {
-    if (!startDate || !endDate || !masterTeamIds) return
-    const params = transformKeysToSnakeCase({
-      startDate: startDate.format('YYYY-MM-DD'),
-      endDate: endDate.format('YYYY-MM-DD'),
-      teamIds: masterTeamIds.join(',')
-    }) as Record<string, string>
-
-    download(
-      `availability/export?${new URLSearchParams(params).toString()}`,
-      'master_team_availability',
-      'xlsx'
-    )
-  }, [startDate, endDate, masterTeamIds])
+    if (!startDate || !endDate || !teamIds) return
+    onExport.call(startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'), teamIds.join(','))
+  }, [startDate, endDate, teamIds])
 
   const onShowAvailability = () => {
-    if (!startDate || !endDate || !masterTeamIds) return
-    navigate(`${PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST}/${startDate.format('YYYY-MM-DD')},${endDate.format('YYYY-MM-DD')}/${masterTeamIds.join(',')}`)
+    if (!startDate || !endDate || !teamIds) return
+    navigate(`${pathToSchedule}/${startDate.format('YYYY-MM-DD')},${endDate.format('YYYY-MM-DD')}/${teamIds.join(',')}`)
   }
 
   return (
@@ -102,7 +93,7 @@ const DropdownContent = (props: { masterTeamIds: string[] }) => {
       <Flex>
         <Button
           type="text"
-          disabled={!isValid || isLoading}
+          disabled={!isValid || onExport.isLoading}
           onClick={datePickerRef?.current?.reset}
         >
           Reset
@@ -110,8 +101,8 @@ const DropdownContent = (props: { masterTeamIds: string[] }) => {
         <Spacer />
         <Button
           type="default"
-          loading={isLoading}
-          disabled={!isValid || isLoading}
+          loading={onExport.isLoading}
+          disabled={!isValid || onExport.isLoading}
           onClick={onExportAvailability}
         >
           Export CSV

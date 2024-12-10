@@ -259,10 +259,6 @@ export interface IFEImportMasterTeamCSVResponse {
   duplicates?: IFEDuplicate[]
 }
 
-export interface IExportInfoProps {
-  selectedMasterTeamIds: string[]
-}
-
 // Schedule Request
 
 export interface IGetScheduleRequestParams {

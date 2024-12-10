@@ -27,7 +27,7 @@ export interface IScheduleRequestProps {
   selectedTabIndex: number
 
   /**
-   * The path to navigate when a certain action is triggered.
+   * The path to show schedule on the browser
    */
   pathToNavigate: string
 
