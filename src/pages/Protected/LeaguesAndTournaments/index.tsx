@@ -177,6 +177,7 @@ const LeaguesAndTournaments = () => {
             <Flex>
               {!!selectedRecordsIds.length && (
                 <MonroeDeleteButton
+                  danger
                   type="default"
                   icon={<DeleteOutlined />}
                   iconPosition="start"

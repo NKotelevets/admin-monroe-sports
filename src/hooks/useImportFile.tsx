@@ -1,6 +1,6 @@
-import { ImportButton } from '@/components/Elements'
 import DownloadOutlined from '@ant-design/icons/lib/icons/DownloadOutlined'
 import { ChangeEvent, useRef, useState } from 'react'
+import { Button } from '@/components/Button.tsx'
 
 interface IUseImportFileProps {
   buttonTitle: string
@@ -18,9 +18,9 @@ export const useImportFile = (props: IUseImportFileProps) => {
    * @param props
    * @constructor
    */
-  const Button = (props: { onChange(event: ChangeEvent<HTMLInputElement>): Promise<void> }) => (
+  const ButtonComponent = (props: { onChange(event: ChangeEvent<HTMLInputElement>): Promise<void> }) => (
     <>
-      <ImportButton
+      <Button
         icon={<DownloadOutlined />}
         iconPosition="start"
         type="default"
@@ -29,7 +29,7 @@ export const useImportFile = (props: IUseImportFileProps) => {
         }}
       >
         {buttonTitle}
-      </ImportButton>
+      </Button>
       <input
         ref={(ref) => {
           inputRef.current = ref
@@ -45,7 +45,7 @@ export const useImportFile = (props: IUseImportFileProps) => {
   )
 
   return {
-    Button,
+    Button: ButtonComponent,
     setFileKey,
     fileKey,
     inputRef

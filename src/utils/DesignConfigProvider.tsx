@@ -28,7 +28,9 @@ const DesignConfigProvider: FC<{ children: ReactNode }> = ({ children }) => (
           colorText: colors.secondaryText
         },
         Button: {
-          borderRadius: 2
+          borderRadius: 2,
+          defaultBorderColor: '#626169',
+          defaultColor: colors.secondaryText
         },
         Tooltip: {
           borderRadius: 2,

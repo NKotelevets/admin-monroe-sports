@@ -118,14 +118,19 @@ export interface IBESimpleEntity {
 }
 
 export interface IBELeagueTeamDetails {
+  id: string
   name: string
   head_coach: IBESimpleEntity
-  team_admins: IBESimpleEntity[]
-  players: IBESimpleEntity[]
-  coaches: IBESimpleEntity[]
-  leagues: IBELeague[]
-  divisions: IBEDivision[]
-  subdivisions: IBESubdivision[]
+  operator: IBESimpleEntity
+  master_team: IFEMasterTeam
+  master_team_admins: IBESimpleEntity[]
+  master_team_admin: IBESimpleEntity
+  logo_s3_url?: string
+  league: IBELeague
+  division?: IBEDivision
+  subdivision?: IBESubdivision
+  created_at: string
+  update_at: string
 }
 
 export interface IFESimpleEntity {
@@ -136,14 +141,19 @@ export interface IFESimpleEntity {
 }
 
 export interface IFELeagueTeamDetails {
+  id: string
   name: string
-  headCoach: IFESimpleEntity
-  teamsAdmins: IFESimpleEntity[]
-  players: IFESimpleEntity[]
-  coaches: IFESimpleEntity[]
-  leagues: IFELeague[]
-  divisions: IFEDivision[]
-  subdivisions: IFESubdivision[]
+  masterTeam: IFEMasterTeam
+  masterTeamAdmins?: IFESimpleEntity[]
+  masterTeamAdmin?: IFESimpleEntity
+  headCoach?: IFESimpleEntity
+  operator?: IFESimpleEntity
+  league: IFELeague
+  division?: IFEDivision
+  subdivision?: IFESubdivision
+  logoS3Url?: string
+  createdAt: string
+  updatedAt: string
 }
 
 export interface IBulkDeleteResponse {

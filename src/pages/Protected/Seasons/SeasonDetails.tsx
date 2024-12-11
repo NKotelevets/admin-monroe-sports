@@ -79,6 +79,7 @@ const SeasonDetails = () => {
 
               <Flex>
                 <MonroeDeleteButton
+                  danger
                   icon={<DeleteOutlined />}
                   iconPosition="start"
                   onClick={() => setShowDeleteModal(true)}

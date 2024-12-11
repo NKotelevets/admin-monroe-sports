@@ -1,5 +1,4 @@
 import styled from '@emotion/styled'
-import Btn from 'antd/es/button/button'
 import { Dropdown, Flex } from 'antd'
 import { ScheduleOutlined } from '@ant-design/icons'
 import { useNotification } from '@/hooks/useNotification.ts'
@@ -37,9 +36,9 @@ export const ScheduleRequestButton = (props: Omit<IExportInfoProps, 'teamIds'>) 
       placement="bottomRight"
       overlayClassName="dropdown"
     >
-      <MButton icon={<ScheduleOutlined />} iconPosition="start">
+      <Button icon={<ScheduleOutlined />} iconPosition="start">
         Schedule Request
-      </MButton>
+      </Button>
     </Dropdown>
   )
 }
@@ -138,9 +137,7 @@ const DropdownContent = (props: IExportInfoProps) => {
   )
 }
 
-const MButton = styled(Btn)`
-    margin-right: 8px
-`
+// Styled Components
 const View = styled(Flex)`
     margin-top: 0 !important;
     padding: 8px !important;

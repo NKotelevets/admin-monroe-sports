@@ -62,44 +62,26 @@ export const leagueTeamsApi = createApi({
 
     getLeagueTeam: builder.query<IFELeagueTeamDetails, { id: string }>({
       query: ({ id }) => ({
-        url: `teams/league-teams/${id}/details`,
+        url: `teams/league-teams/${id}`,
       }),
       keepUnusedDataFor: 0.0001,
       transformResponse: (response: IBELeagueTeamDetails) => ({
-        name: response.name,
-        coaches: response.coaches.map((coach) => ({
-          id: coach.id,
-          email: coach.email,
-          fullName: coach.first_name + ' ' + coach.last_name,
-          phone: coach.phone_number,
+        ...transformKeysToCamelCase(response),
+        masterTeamAdmin: response.master_team_admin ? transformKeysToCamelCase({
+          ...response.master_team_admin,
+          full_name: `${response.master_team_admin.first_name} ${response.master_team_admin.last_name}`,
+          phone: response.master_team_admin.phone_number
+        }) : undefined,
+        masterTeamAdmins: response.master_team_admins?.map(mta => transformKeysToCamelCase({
+          ...mta,
+          full_name: `${mta.first_name} ${mta.last_name}`,
+          phone: mta.phone_number
         })),
-        players: response.players.map((player) => ({
-          id: player.id,
-          email: player.email,
-          fullName: player.first_name + ' ' + player.last_name,
-          phone: player.phone_number,
-        })),
-        teamsAdmins: response.team_admins.map((teamAdmin) => ({
-          id: teamAdmin.id,
-          email: teamAdmin.email,
-          fullName: teamAdmin.first_name + ' ' + teamAdmin.last_name,
-          phone: teamAdmin.phone_number,
-        })),
-        headCoach: {
-          id: response.head_coach.id,
-          email: response.head_coach.email,
-          fullName: response.head_coach.first_name + ' ' + response.head_coach.last_name,
-          phone: response.head_coach.phone_number,
-        },
-        leagues: (
-          transformKeysToCamelCase<IFELeagueTeamDetails['leagues'], IBELeagueTeamDetails['leagues']>(response.leagues)
-        ),
-        divisions: (
-          transformKeysToCamelCase<IFELeagueTeamDetails['divisions'], IBELeagueTeamDetails['divisions']>(response.divisions)
-        ),
-        subdivisions: (
-          transformKeysToCamelCase<IFELeagueTeamDetails['subdivisions'], IBELeagueTeamDetails['subdivisions']>(response.subdivisions)
-        ),
+        headCoach: response.head_coach ? transformKeysToCamelCase({
+          ...response.head_coach,
+          full_name: `${response.head_coach.first_name} ${response.head_coach.last_name}`,
+          phone: response.head_coach.phone_number
+        }) : undefined,
       }),
     }),
 

@@ -1,5 +1,4 @@
 import { ScheduleOutlined } from '@ant-design/icons'
-import Btn from 'antd/es/button/button'
 import styled from '@emotion/styled'
 import { Dropdown, Flex } from 'antd'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -9,6 +8,7 @@ import { Dayjs } from 'dayjs'
 import { useNotification } from '@/hooks/useNotification.ts'
 import { useExportScheduleCSV } from '@/hooks/useExportScheduleCSV.ts'
 import { useTableContext } from '@/hooks/useTableContext.ts'
+import { Button } from '@/components/Button.tsx'
 
 interface IExportAvailabilityProps {
   pathToExport: string
@@ -115,9 +115,7 @@ const DropdownContent = (props: { teamIds: string[], pathToExport: string }) => 
   )
 }
 
-const Button = styled(Btn)`
-    margin-right: 8px
-`
+// Styled Components
 const MButton = styled(MonroeButton)`
     font-size: 14px
 `

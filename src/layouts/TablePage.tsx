@@ -1,10 +1,11 @@
-import { CreateNewEntityButton, MonroeDeleteButton } from '@/components/Elements'
+import { CreateNewEntityButton } from '@/components/Elements'
 import { FC, ReactElement, useCallback, useState } from 'react'
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined'
 import MonroeModal from '@/components/MonroeModal.tsx'
 import { IPageProps, Page } from './Page'
 import { useTableContext } from '@/hooks/useTableContext.ts'
+import { Button } from '@/components/Button.tsx'
 
 /**
  * Interface for the props of the Delete component.
@@ -175,13 +176,14 @@ const Delete = (props: IDeleteProps): ReactElement => {
         />
       )}
       {!!selectedIds.length && !singleDeleting && (
-        <MonroeDeleteButton
+        <Button
+          danger={true}
           icon={<DeleteOutlined />}
           iconPosition="start"
           onClick={openModal}
         >
           Delete
-        </MonroeDeleteButton>
+        </Button>
       )}
     </>
   )

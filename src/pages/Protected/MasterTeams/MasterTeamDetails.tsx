@@ -3,19 +3,16 @@ import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined'
 import EditOutlined from '@ant-design/icons/lib/icons/EditOutlined'
 import { Flex } from 'antd'
 import Breadcrumb from 'antd/es/breadcrumb'
-import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import {
   MonroeBlueText,
   MonroeDeleteButton,
-  MonroeLightBlueText,
   MonroeSecondaryButton,
   PageContainer,
   ProtectedPageTitle,
-  ViewText,
-  ViewTextInfo
 } from '@/components/Elements'
 import Loader from '@/components/Loader'
 import MonroeButton from '@/components/MonroeButton'
@@ -28,15 +25,12 @@ import { useDeleteMasterTeamMutation, useGetMasterTeamQuery } from '@/redux/mast
 import {
   PATH_TO_CREATE_LEAGUE,
   PATH_TO_EDIT_MASTER_TEAM,
-  PATH_TO_LEAGUE_PAGE,
   PATH_TO_MASTER_TEAMS
 } from '@/common/constants/paths'
 import { IDetailedError } from '@/common/interfaces'
-import styled from '@emotion/styled'
-import { IFELeague } from '@/common/interfaces/league.ts'
-import { IFEDivision, IFESubdivision } from '@/common/interfaces/division.ts'
 import { useNotification } from '@/hooks/useNotification.ts'
 import { SimpleEntityList } from './components/SimpleEntityList'
+import { LinkedLeagueList } from '@/components/LinkedLeagueList'
 
 /**
  * Page for showing details of a master team in the admin panel.
@@ -124,6 +118,7 @@ const MasterTeamDetails = () => {
 
             <Flex>
               <MonroeDeleteButton
+                danger
                 icon={<DeleteOutlined />}
                 iconPosition="start"
                 onClick={() => setShowDeleteModal(true)}
@@ -167,69 +162,6 @@ const MasterTeamDetails = () => {
     </>
   )
 }
-
-interface ILinkedLeagueListProps {
-  leagues: IFELeague[]
-  divisions: IFEDivision[]
-  subdivisions: IFESubdivision[]
-}
-
-/**
- * LinkedLeagueList component displays a list of leagues associated with a master team.
- * Each league can be navigated to, and it also shows the relevant division and subdivision names.
- *
- * @component
- * @param {ILinkedLeagueListProps} props - Properties for the component.
- * @returns {ReactElement} A component that renders linked leagues with division and subdivision details.
- */
-const LinkedLeagueList = (props: ILinkedLeagueListProps): ReactElement => {
-  const { leagues, divisions, subdivisions } = props
-  const navigate = useNavigate()
-
-  const goToLeague = (id: string) => navigate(`${PATH_TO_LEAGUE_PAGE}/${id}`)
-
-  /**
-   * Renders the list of leagues, each with its division and subdivision names if available.
-   *
-   * @function
-   * @returns {ReactElement[]} An array components, each displaying a league name with division and subdivision info.
-   */
-  const renderLeagues = useCallback(() => (
-    leagues.map((league, index) => {
-      const divisionName = divisions[index]?.name
-      const subdivisionName = subdivisions[index]?.name ? `, ${subdivisions[index]?.name}` : undefined
-
-      return (
-        <Flex vertical key={league.id}>
-          <MonroeLightBlueText className="c-p" onClick={() => goToLeague(league.id)}>
-            {league.name}
-          </MonroeLightBlueText>
-
-          <SubText>
-            {divisionName} {subdivisionName}
-          </SubText>
-        </Flex>
-      )
-    })
-  ), [leagues])
-
-  return (
-    <Flex className="mb-16" align="start">
-      <ViewText className="w-auto">Linked league/tourn:</ViewText>
-
-      <Flex vertical>
-        {renderLeagues()}
-      </Flex>
-    </Flex>
-  )
-}
-
-
-const SubText = styled(ViewTextInfo)`
-    width: auto;
-    margin-top: 0;
-    margin-bottom: 12px
-`
 
 export default MasterTeamDetails
 

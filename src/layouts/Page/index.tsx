@@ -83,7 +83,10 @@ export const Page: FC<IPageProps> = (props: IPageProps): ReactElement => {
 const Header = styled(Flex)`
 `
 const Controls = styled(Flex)`
-  margin-top: 8px
+    margin-top: 8px;
+    display: grid;
+    grid-gap: 8px;
+    grid-auto-flow: column;
 `
 const PageInfo = styled(Flex)`
     margin: 8px 0 24px;

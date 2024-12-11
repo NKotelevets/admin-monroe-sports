@@ -74,6 +74,7 @@ import {
   PATH_TO_USERS_BULK_EDIT,
   PATH_TO_USERS_IMPORT_INFO
 } from '@/common/constants/paths'
+import LeagueTeamDetail from '@/pages/Protected/LeagueTeams/LeagueTeamDetail.tsx'
 
 
 const Root = () => (
@@ -124,6 +125,7 @@ const Root = () => (
       {/* League Teams */}
       <Route path={PATH_TO_LEAGUE_TEAMS} element={<LeagueTeams />} />
       <Route path={PATH_TO_CREATE_LEAGUE_TEAM} element={<LeagueTeamCreate />} />
+      <Route path={`${PATH_TO_LEAGUE_TEAMS}/:id`} element={<LeagueTeamDetail />} />
       <Route path={PATH_TO_DELETE_INFO_LEAGUE_TEAM} element={<LeagueTeamDeletingInfo />} />
       <Route path={`${PATH_TO_LEAGUE_TEAM_SCHEDULE_REQUEST}/:range/:selectedIds`}
              element={<LeagueTeamScheduleRequest />} />

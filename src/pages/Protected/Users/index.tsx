@@ -211,6 +211,7 @@ const Users = () => {
               {!!selectedRecordsIds.length && (
                 <Flex>
                   <MonroeDeleteButton
+                    danger
                     type="default"
                     icon={<ReactSVG src={SmallLockIcon} />}
                     iconPosition="start"

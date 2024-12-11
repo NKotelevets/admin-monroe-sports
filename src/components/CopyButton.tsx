@@ -27,4 +27,5 @@ export const CopyButton = (props: ICopyButtonProps): ReactElement => {
 
 const Copy = styled.div`
     margin-left: 4px;
+    cursor: pointer;
 `

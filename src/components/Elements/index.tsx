@@ -225,7 +225,7 @@ export const MonroeDeleteButton = styled(Button)`
 `
 
 export const ViewText = styled(Typography)`
-  width: 136px;
+  width: 140px;
   margin-right: 12px;
   color: rgba(26, 22, 87, 0.85);
 `
