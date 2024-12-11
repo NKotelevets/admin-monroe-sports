@@ -9,9 +9,11 @@ import dayjs, { Dayjs } from 'dayjs'
 import { Button } from '@/components/Button.tsx'
 import { useNavigate } from 'react-router-dom'
 import { IExportInfoProps } from '@/common/interfaces'
+import { useTableContext } from '@/hooks/useTableContext.ts'
 
-export const ScheduleRequestButton = (props: IExportInfoProps) => {
-  const { teamIds, ...rest } = props
+export const ScheduleRequestButton = (props: Omit<IExportInfoProps, 'teamIds'>) => {
+  const { ...rest } = props
+  const { selectedIds: teamIds, singleDeleting } = useTableContext()
 
   const content = () => (
     <DropdownContent
@@ -20,9 +22,11 @@ export const ScheduleRequestButton = (props: IExportInfoProps) => {
     />
   )
 
-  // At least one Master Team needs to be selected
-  // to show this component
-  if (!teamIds.length) {
+  /**
+   * At least one Master Team needs to be selected to show this component.
+   * If user is deleting, the button is not shown.
+   */
+  if (!teamIds.length || singleDeleting) {
     return <></>
   }
 
@@ -41,7 +45,14 @@ export const ScheduleRequestButton = (props: IExportInfoProps) => {
 }
 
 const DropdownContent = (props: IExportInfoProps) => {
-  const { teamIds, onExport, pathToSchedule } = props
+  const {
+    teamIds,
+    onExport,
+    pathToSchedule,
+    pathToExport,
+    exportFileName,
+    exportFileExtension
+  } = props
   const { notify } = useNotification()
 
   const navigate = useNavigate()
@@ -69,7 +80,14 @@ const DropdownContent = (props: IExportInfoProps) => {
    */
   const onExportAvailability = useCallback(() => {
     if (!startDate || !endDate || !teamIds) return
-    onExport.call(startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'), teamIds.join(','))
+    onExport.call(
+      startDate.format('YYYY-MM-DD'),
+      endDate.format('YYYY-MM-DD'),
+      teamIds.join(','),
+      pathToExport,
+      exportFileName,
+      exportFileExtension
+    )
   }, [startDate, endDate, teamIds])
 
   const onShowAvailability = () => {

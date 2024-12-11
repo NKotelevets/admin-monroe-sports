@@ -10,7 +10,7 @@ interface ILeagueTeamsSliceState {
   offset: number
   total: number
   ordering: string | null
-  createdRecordsNames: string[]
+  createdIds: string[]
   deletedRecordsErrors: ILeagueTeamError[]
   tableRecords: []
   duplicates: []
@@ -24,7 +24,7 @@ const leagueTeamsSliceState: ILeagueTeamsSliceState = {
   ordering: null,
   deletedRecordsErrors: [],
   tableRecords: [],
-  createdRecordsNames: [],
+  createdIds: [],
   duplicates: [],
 }
 
@@ -44,8 +44,8 @@ export const leagueTeamsSlice = createSlice({
       state.offset = action.payload.offset
       state.ordering = action.payload.ordering
     },
-    removeCreatedRecordsNames: (state) => {
-      state.createdRecordsNames = []
+    resetCreatedIds: (state) => {
+      state.createdIds = []
     },
   },
   extraReducers: (builder) =>

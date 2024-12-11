@@ -8,6 +8,7 @@ import { ReactElement, useContext, useEffect, useState } from 'react'
 import { ScheduleContext } from '@/components/ScheduleRequest/ScheduleContext.ts'
 import { useNotification } from '@/hooks/useNotification.ts'
 import { IDownloadStatus } from '@/common/interfaces'
+import { IUseMasterTeamExportCSVReturn } from '@/hooks/useExportScheduleCSV.ts'
 
 const { RangePicker } = DatePicker
 
@@ -18,7 +19,7 @@ interface IScheduleRequestControlsProps {
   status: IDownloadStatus | null
   isLoading: boolean
 
-  onExport(startDate: string, endDate: string, masterTeamIds: string): void
+  onExport: IUseMasterTeamExportCSVReturn['onExport']
 }
 
 /**
@@ -39,6 +40,7 @@ export const ScheduleRequestControls = (props: IScheduleRequestControlsProps): R
     dates,
     selectedIds,
     pathToNavigate,
+    pathToExport,
     selectedTabIndex
   } = useContext(ScheduleContext)
 
@@ -78,7 +80,7 @@ export const ScheduleRequestControls = (props: IScheduleRequestControlsProps): R
   const onExportSingle = () => {
     setExporting('single')
     if (selectedIds) {
-      onExport(dates!.start, dates!.end, selectedIds[selectedTabIndex])
+      onExport(dates!.start, dates!.end, selectedIds[selectedTabIndex], pathToExport)
     }
   }
 
@@ -88,7 +90,7 @@ export const ScheduleRequestControls = (props: IScheduleRequestControlsProps): R
   const onExportAll = () => {
     setExporting('all')
     if (selectedIds) {
-      onExport(dates!.start, dates!.end, selectedIds.join(','))
+      onExport(dates!.start, dates!.end, selectedIds.join(','), pathToExport)
     }
   }
 

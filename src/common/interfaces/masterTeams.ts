@@ -261,30 +261,3 @@ export interface IFEImportMasterTeamCSVResponse {
 
 // Schedule Request
 
-export interface IGetScheduleRequestParams {
-  start_date: string
-  end_date: string
-  team_ids: string
-}
-
-export interface IScheduleData {
-  [key: string]: { time: string, availability: number }[]
-}
-
-export interface IScheduleRequestResponse {
-  team_id: string
-  team_name: string
-  data: IScheduleData
-}
-
-export interface IScheduleRequest {
-  teamId: string
-  teamName: string
-  data: IScheduleData
-}
-
-export interface IScheduleEntry {
-  time: string
-
-  [key: string]: number | string
-}

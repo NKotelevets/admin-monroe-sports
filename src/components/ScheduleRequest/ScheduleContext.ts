@@ -32,6 +32,11 @@ export interface IScheduleRequestProps {
   pathToNavigate: string
 
   /**
+   * The api endpoint to export the schedule
+   */
+  pathToExport: string
+
+  /**
    * A function to set the schedule dates (start and end).
    * @param dates - The start and end dates or null to clear the schedule.
    */

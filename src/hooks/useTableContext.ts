@@ -78,6 +78,10 @@ interface ITableContextType<T> {
    * @param action - A function that receives the previous state and returns the new state.
    */
   setTableParams: Dispatch<SetStateAction<ITableParams<T>>>
+
+  showCreatedRecords: boolean
+  setShowCreatedRecords(value: boolean): void
+
 }
 
 /**

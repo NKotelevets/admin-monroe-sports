@@ -9,14 +9,12 @@ import {
   IBEMasterTeamDetails, IFEImportMasterTeamCSVResponse,
   IFEMasterTeamDetails,
   IGetMasterTeamsRequest,
-  IGetMasterTeamsResponse, IGetScheduleRequestParams,
-  IMasterTeamError,
-  IPopulateMTRequest, IScheduleRequest,
-  IScheduleRequestResponse,
-  ITeamAdmin
+  IGetMasterTeamsResponse, IMasterTeamError,
+  IPopulateMTRequest, ITeamAdmin
 } from '@/common/interfaces/masterTeams'
 import { TDeleteStatus } from '@/common/types'
 import { transformKeysToCamelCase } from '@/utils'
+import { IGetScheduleRequestParams, IScheduleRequest, IScheduleRequestResponse } from '@/common/interfaces'
 
 const MASTER_TEAMS_TAG = 'MASTER_TEAMS'
 

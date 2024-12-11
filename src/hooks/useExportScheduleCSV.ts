@@ -3,11 +3,18 @@ import dayjs from 'dayjs'
 import { useDownloadFile } from '@/hooks/useDownloadFile.ts'
 import { IDownloadStatus } from '@/common/interfaces'
 
-interface UseMasterTeamExportCSVReturn {
+export interface IUseMasterTeamExportCSVReturn {
   isLoading: boolean
   status: IDownloadStatus | null
 
-  onExport(startDate: string, endDate: string, masterTeamIds: string): void
+  onExport(
+    startDate: string,
+    endDate: string,
+    masterTeamIds: string,
+    path: string,
+    fileName?: string,
+    fileExtension?: string
+    ): void
 }
 
 /**
@@ -17,7 +24,7 @@ interface UseMasterTeamExportCSVReturn {
  * based on a specified date range and team IDs. Utilizes the `useDownloadFile`
  * hook for managing file downloads.
  *
- * @returns {UseMasterTeamExportCSVReturn} - An object containing:
+ * @returns {IUseMasterTeamExportCSVReturn} - An object containing:
  *  - `onExport`: A function to initiate the export process.
  *  - `isLoading`: A boolean indicating whether the file is currently being downloaded.
  *  - `status`: The current status of the download process.
@@ -33,21 +40,24 @@ interface UseMasterTeamExportCSVReturn {
  * onExport('2023-01-01', '2023-12-31', 'team1,team2');
  * ```
  */
-export const useMasterTeamExportCSV = (): UseMasterTeamExportCSVReturn => {
+export const useExportScheduleCSV = (): IUseMasterTeamExportCSVReturn => {
   const { download, isLoading, status } = useDownloadFile()
 
-  const onExport = (startDate: string, endDate: string, masterTeamIds: string) => {
+  const onExport = (
+    startDate: string,
+    endDate: string,
+    masterTeamIds: string,
+    path: string,
+    fileName: string = 'team_availability',
+    fileExtension: string = 'xlsx'
+  ) => {
     const params = transformKeysToSnakeCase({
       startDate: dayjs(startDate).format('YYYY-MM-DD'),
       endDate: dayjs(endDate).format('YYYY-MM-DD'),
       teamIds: masterTeamIds
     }) as Record<string, string>
 
-    download(
-      `availability/export?${new URLSearchParams(params).toString()}`,
-      'master_team_availability',
-      'xlsx'
-    )
+    download(`${path}?${new URLSearchParams(params).toString()}`, fileName, fileExtension)
   }
 
   return {

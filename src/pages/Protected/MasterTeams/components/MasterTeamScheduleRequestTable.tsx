@@ -1,15 +1,13 @@
-import styled from '@emotion/styled'
-import { Table } from 'antd'
 import {
-  useMasterTeamScheduleRequestTable
-} from '@/pages/Protected/MasterTeams/hooks/useMasterTeamScheduleRequestTable.tsx'
+  useScheduleRequestTable
+} from '@/hooks/useScheduleRequestTable.tsx'
 import { useLazyGetScheduleRequestQuery } from '@/redux/masterTeams/masterTeams.api.ts'
 import { ReactElement, useContext, useEffect } from 'react'
 import { TeamTabList } from '@/components/ScheduleRequest/TeamTabList.tsx'
 import { ScheduleContext } from '@/components/ScheduleRequest/ScheduleContext.ts'
 import Loader from '@/components/Loader.tsx'
-import { IScheduleEntry } from '@/common/interfaces/masterTeams.ts'
 import { AddMasterTeamDropdown } from '@/pages/Protected/MasterTeams/components/AddMasterTeamDropdown.tsx'
+import { TableStyled } from '@/components/ScheduleRequest/TableStyled'
 
 /**
  * `MasterTeamScheduleRequestTable` is a component that renders a table displaying the schedule requests for
@@ -34,7 +32,7 @@ import { AddMasterTeamDropdown } from '@/pages/Protected/MasterTeams/components/
  */
 export const MasterTeamScheduleRequestTable = (): ReactElement => {
   const { dates, selectedIds, selectedTabIndex } = useContext(ScheduleContext)
-  const { columns, setTableData, data } = useMasterTeamScheduleRequestTable()
+  const { columns, setTableData, data } = useScheduleRequestTable()
 
   const [listScheduleRequest, { data: scheduleRequests, isLoading, isFetching }] = useLazyGetScheduleRequestQuery()
 
@@ -78,31 +76,3 @@ export const MasterTeamScheduleRequestTable = (): ReactElement => {
     </>
   )
 }
-
-// Styled Components
-const TableStyled = styled(Table<IScheduleEntry>)`
-    table-layout: fixed;
-    & colgroup col:first-child {
-        display: table-column; /* Hides the colgroup */
-        
-        max-width: 45px !important;
-        min-width: 45px !important;
-    }
-    & .ant-table-thead > tr > th {
-        height: 48px; /* Set your desired height */
-        border-bottom: 1px solid #BDBCC2;
-    }
-    & .ant-table-thead th.ant-table-cell {
-        padding: 0 !important;
-    }
-    & .date-column {
-        background-color: #F1F0FF;
-        border-bottom: 1px solid #CBC7FF !important;
-        color: #1A1657D9;
-        padding-left: 12px !important;
-        width: 172px;
-    }
-    & .ant-table-row:hover .date-column {
-        background-color: #ece9ff; /* Same as base to prevent override */
-    }
-`

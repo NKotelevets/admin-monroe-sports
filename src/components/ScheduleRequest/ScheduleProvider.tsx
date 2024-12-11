@@ -29,9 +29,14 @@ interface IScheduleProviderProps {
   children: ReactElement
 
   /**
-   * The path to navigate to after certain actions (e.g., form submission).
+   * The path to show schedule on the browser
    */
   pathToNavigate: string
+
+  /**
+   * The api endpoint to export schedule requests
+   */
+  pathToExport: string
 }
 
 /**
@@ -53,7 +58,8 @@ export const ScheduleProvider = (props: IScheduleProviderProps): ReactElement =>
     initialSelectedIds,
     children,
     initialIndex = 0,
-    pathToNavigate
+    pathToNavigate,
+    pathToExport
   } = props
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(initialIndex)
@@ -79,6 +85,7 @@ export const ScheduleProvider = (props: IScheduleProviderProps): ReactElement =>
       selectedIds,
       selectedTabIndex,
       pathToNavigate,
+      pathToExport,
       setSelectedTabIndex,
       setDates,
       setSelectedIds

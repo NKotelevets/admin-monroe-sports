@@ -1,6 +1,7 @@
 import { format, isValid, parse, parseISO } from 'date-fns'
 import { SorterResult, SortOrder } from 'antd/es/table/interface'
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query'
+import dayjs from 'dayjs'
 
 export const validateNumber = (value: string) => /^[0-9]+$/.test(value) || value === ''
 
@@ -216,4 +217,9 @@ export const getTableSortField = <T,>(sorter:  SorterResult<T> | SorterResult<T>
 
   const field = getField(sorter.field as string)
   return sorter.order === 'descend' ? `-${field}` : field
+}
+
+export const checkAmOrPm = (time: string) => {
+  const hour = dayjs(time, 'HH:mm').hour() // Extract the hour
+  return hour < 12 ? 'AM' : 'PM'
 }
