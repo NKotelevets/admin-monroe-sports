@@ -125,6 +125,7 @@ export interface IBESimpleEntity {
 export interface IBEMasterTeamDetails {
   name: string
   head_coach: IBESimpleEntity
+  team_admin: IBESimpleEntity
   team_admins: IBESimpleEntity[]
   players: IBESimpleEntity[]
   coaches: IBESimpleEntity[]
@@ -143,6 +144,7 @@ export interface IFESimpleEntity {
 export interface IFEMasterTeamDetails {
   name: string
   headCoach: IFESimpleEntity
+  teamAdmin?: IFESimpleEntity
   teamsAdmins: IFESimpleEntity[]
   players: IFESimpleEntity[]
   coaches: IFESimpleEntity[]

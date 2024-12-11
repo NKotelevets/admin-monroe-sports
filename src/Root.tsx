@@ -34,6 +34,8 @@ import MasterTeamImportInfo from '@/pages/Protected/MasterTeams/MasterTeamImport
 import MasterTeamScheduleRequest from '@/pages/Protected/MasterTeams/MasterTeamScheduleRequest.tsx'
 import LeagueTeamDeletingInfo from '@/pages/Protected/LeagueTeams/LeagueTeamDeletingInfo.tsx'
 import LeagueTeamScheduleRequest from '@/pages/Protected/LeagueTeams/LeagueTeamScheduleRequest.tsx'
+import LeagueTeamEdit from '@/pages/Protected/LeagueTeams/LeagueTeamEdit.tsx'
+import LeagueTeamDetail from '@/pages/Protected/LeagueTeams/LeagueTeamDetail.tsx'
 
 import InfoAlert from '@/components/InfoAlert'
 import Notification from '@/components/Notification'
@@ -72,10 +74,9 @@ import {
   PATH_TO_USERS,
   PATH_TO_USERS_BLOCKING_INFO,
   PATH_TO_USERS_BULK_EDIT,
-  PATH_TO_USERS_IMPORT_INFO
+  PATH_TO_USERS_IMPORT_INFO,
+  PATH_TO_EDIT_LEAGUE_TEAM
 } from '@/common/constants/paths'
-import LeagueTeamDetail from '@/pages/Protected/LeagueTeams/LeagueTeamDetail.tsx'
-
 
 const Root = () => (
   <AuthProvider>
@@ -129,6 +130,7 @@ const Root = () => (
       <Route path={PATH_TO_DELETE_INFO_LEAGUE_TEAM} element={<LeagueTeamDeletingInfo />} />
       <Route path={`${PATH_TO_LEAGUE_TEAM_SCHEDULE_REQUEST}/:range/:selectedIds`}
              element={<LeagueTeamScheduleRequest />} />
+      <Route path={`${PATH_TO_EDIT_LEAGUE_TEAM}/:id`} element={<LeagueTeamEdit />} />
 
       {/* Events */}
       <Route path={PATH_TO_EVENTS} element={<Events />} />

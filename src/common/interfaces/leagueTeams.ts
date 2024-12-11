@@ -83,6 +83,12 @@ export interface IFELeagueTeam {
   masterTeam: IFEMasterTeam | null
   operator: IFESimpleEntity | null
   logoS3Url: string
+  type?: 'masterTeam' | 'teamAdmin'
+  adminData?: {
+    id: string
+    name: string | null
+    email: string | null
+  }[]
 }
 
 export interface IGetLeagueTeamsRequest {
@@ -149,11 +155,18 @@ export interface IFELeagueTeamDetails {
   headCoach?: IFESimpleEntity
   operator?: IFESimpleEntity
   league: IFELeague
+  season?: string
   division?: IFEDivision
   subdivision?: IFESubdivision
   logoS3Url?: string
   createdAt: string
   updatedAt: string
+  type?: 'masterTeam' | 'teamAdmin'
+  adminData?: {
+    id: string
+    name: string | null
+    email: string | null
+  }[]
 }
 
 export interface IBulkDeleteResponse {

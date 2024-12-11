@@ -15,12 +15,13 @@ import TabPane from 'antd/es/tabs/TabPane'
 import TextInput from '@/components/Inputs/TextInput.tsx'
 import { ReactElement, useCallback, useState } from 'react'
 import { IFELeague, ILeagueForm } from '@/common/interfaces/league.ts'
-import { DivisionSubdivisionDropdown } from './DivisionSubdivisionDropdown'
+import { SeasonAndPoolsDropdown } from './SeasonAndPoolsDropdown.tsx'
 import { MasterTeamDropdown } from '@/pages/Protected/LeagueTeams/components/LeagueTeamForm/MasterTeamDropdown.tsx'
 import { MasterTeamAdminDropdown } from './MasterTeamAdminDropdown'
 import { LeagueTournDropdown } from './LeagueTournDropdown'
 import { leagueTeamValidationSchema } from './validation'
 import { AddingMasterTeam } from '@/pages/Protected/LeagueTeams/components/LeagueTeamForm/AddingMasterTeam.tsx'
+import { IFELeagueTeamDetails } from '@/common/interfaces/leagueTeams.ts'
 
 const leagueTeamInitialValues: ILeagueForm = {
   name: '',
@@ -28,9 +29,14 @@ const leagueTeamInitialValues: ILeagueForm = {
   masterTeamAdmin: undefined,
   masterTeamAdminName: '',
   league: undefined,
+  season: undefined,
   division: undefined,
   subdivision: undefined,
   masterTeamAdminEmail: undefined
+}
+
+interface ILeagueTeamFormProps {
+  instance?: IFELeagueTeamDetails
 }
 
 /**
@@ -57,13 +63,14 @@ const leagueTeamInitialValues: ILeagueForm = {
  *
  * @returns {ReactElement} A form for creating or editing a league team.
  */
-export const LeagueTeamForm = (props: IFormProps<ILeagueForm, ILeagueForm>): ReactElement => {
+export const LeagueTeamForm = (props: IFormProps<ILeagueForm, ILeagueForm> & ILeagueTeamFormProps): ReactElement => {
   const {
     validationSchema,
     initialValues,
     isLoading,
     onSubmit,
-    goBack
+    goBack,
+    instance
   } = props
 
   const isNew = initialValues === undefined
@@ -78,7 +85,7 @@ export const LeagueTeamForm = (props: IFormProps<ILeagueForm, ILeagueForm>): Rea
       setFieldValue('masterTeamAdminName', undefined)
       setFieldValue('masterTeamAdminEmail', undefined)
     }
-  }, [])
+  }, [isNew])
 
   const onAddMasterTeam = () => {
     setAddingMasterTeam(true)
@@ -145,7 +152,6 @@ export const LeagueTeamForm = (props: IFormProps<ILeagueForm, ILeagueForm>): Rea
                     className="h-32"
                     error={touched.name ? errors.name as string : undefined}
                     onBlur={handleBlur}
-                    disabled={!isNew}
                   />
                 </MainContainer>
               </Flex>
@@ -162,11 +168,14 @@ export const LeagueTeamForm = (props: IFormProps<ILeagueForm, ILeagueForm>): Rea
                 <MainContainer>
                   <Tabs
                     onChange={onTabChange(setFieldValue)}
-                    defaultActiveKey="1"
+                    defaultActiveKey={instance?.type === 'teamAdmin' ? '2' : '1'}
                     centered
                   >
                     <TabPane tab="By Master Team" key="1">
-                      <MasterTeamDropdown onAddMasterTeam={onAddMasterTeam} setAddingMasterTeam={setAddingMasterTeam} />
+                      <MasterTeamDropdown
+                        onAddMasterTeam={onAddMasterTeam}
+                        setAddingMasterTeam={setAddingMasterTeam}
+                      />
                     </TabPane>
 
                     <TabPane tab="By MT Admin" key="2">
@@ -186,7 +195,7 @@ export const LeagueTeamForm = (props: IFormProps<ILeagueForm, ILeagueForm>): Rea
 
                 <MainContainer>
                   <LeagueTournDropdown setSelectedLeague={setSelectedLeague} />
-                  <DivisionSubdivisionDropdown selectedLeague={selectedLeague} />
+                  <SeasonAndPoolsDropdown selectedLeague={selectedLeague} />
 
                 </MainContainer>
               </Flex>

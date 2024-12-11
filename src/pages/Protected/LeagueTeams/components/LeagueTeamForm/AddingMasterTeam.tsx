@@ -59,6 +59,7 @@ export const AddingMasterTeam = ({ setAddingMasterTeam }: IAddingMasterTeam): Re
         notify(error?.data?.error || DEFAULT_ERROR_MESSAGE, 'error')
       })
   }
+
   return (
     <MasterTeamForm onSubmit={onSubmit} goBack={() => setAddingMasterTeam(false)} />
   )
