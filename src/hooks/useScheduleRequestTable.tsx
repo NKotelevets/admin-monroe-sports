@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { IScheduleRequest, IScheduleEntry } from '@/common/interfaces/masterTeams.ts'
-import { ScheduleStatus } from '@/pages/Protected/MasterTeams/ScheduleStatus.tsx'
+import { ScheduleStatus } from '@/components/ScheduleRequest/ScheduleStatus.tsx'
 import { ColumnGroupType, ColumnType } from 'antd/es/table/interface'
 import { TColumns } from '@/common/types'
+import { IScheduleEntry, IScheduleRequest } from '@/common/interfaces'
+import { checkAmOrPm } from '@/utils'
 
 /**
- * `useMasterTeamScheduleRequestTable` is a custom hook that manages the data and column structure for the master
+ * `useScheduleRequestTable` is a custom hook that manages the data and column structure for the master
  * team schedule request table.
  *
  * It processes and structures the schedule data into a format compatible with Ant Design's `Table` component and
@@ -18,10 +19,10 @@ import { TColumns } from '@/common/types'
  *
  * @example
  * ```tsx
- * const { columns, data, setTableData } = useMasterTeamScheduleRequestTable()
+ * const { columns, data, setTableData } = useScheduleRequestTable()
  * ```
  */
-export const useMasterTeamScheduleRequestTable = () => {
+export const useScheduleRequestTable = () => {
   const [data, setData] = useState<IScheduleEntry[] | null>(null)
   const [pureData, setPureData] = useState<IScheduleRequest | null>(null)
 
@@ -99,10 +100,12 @@ function transformData(data: IScheduleRequest['data']): IScheduleEntry[] | null 
   // Iterate over each date and its associated schedule entries
   for (const [dateKey, entries] of Object.entries(data)) {
     for (const { time, availability } of entries) {
-      if (!grouped.has(time)) {
-        grouped.set(time, { time })
+      const timeSplit = time.split(' - ')
+      const timeFormatted = `${timeSplit[0]} ${checkAmOrPm(timeSplit[0])} - ${timeSplit[1]} ${checkAmOrPm(timeSplit[1])}`
+      if (!grouped.has(timeFormatted)) {
+        grouped.set(timeFormatted, { time: timeFormatted })
       }
-      grouped.get(time)![dateKey] = availability
+      grouped.get(timeFormatted)![dateKey] = availability
     }
   }
 

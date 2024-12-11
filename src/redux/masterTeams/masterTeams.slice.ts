@@ -16,7 +16,7 @@ interface IMasterTeamsSliceState {
   offset: number
   total: number
   ordering: string | null
-  createdRecordsNames: string[]
+  createdIds: string[]
   deletedRecordsErrors: IMasterTeamError[]
   tableRecords: []
   importCSVTableRecords: IImportMasterTeamCSVTableData[]
@@ -31,7 +31,7 @@ const masterTeamsSliceState: IMasterTeamsSliceState = {
   ordering: null,
   deletedRecordsErrors: [],
   tableRecords: [],
-  createdRecordsNames: [],
+  createdIds: [],
   importCSVTableRecords: [],
   duplicates: []
 }
@@ -52,8 +52,8 @@ export const masterTeamsSlice = createSlice({
       state.offset = action.payload.offset
       state.ordering = action.payload.ordering
     },
-    removeCreatedRecordsNames: (state) => {
-      state.createdRecordsNames = []
+    resetCreatedIds: (state) => {
+      state.createdIds = []
     },
     removeDuplicate: (state, action: PayloadAction<number>) => {
       const remainingDuplicates = state.duplicates.filter((duplicate) => duplicate.idx !== action.payload)
@@ -76,8 +76,11 @@ export const masterTeamsSlice = createSlice({
       .addMatcher(masterTeamsApi.endpoints.bulkDeleteMasterTeams.matchFulfilled, (state, action) => {
         state.deletedRecordsErrors = action.payload.items
       })
+      .addMatcher(masterTeamsApi.endpoints.createMasterTeam.matchFulfilled, (state, action) => {
+        state.createdIds = [action.payload.team_id]
+      })
       .addMatcher(masterTeamsApi.endpoints.masterTeamsImportCSV.matchFulfilled, (state, action) => {
-        state.createdRecordsNames = action.payload.success
+        state.createdIds = action.payload.success
         state.duplicates = action.payload?.duplicates ? action.payload.duplicates.map(duplicatesMap) : []
         state.importCSVTableRecords = [
           ...(action.payload?.duplicates ? action.payload.duplicates.map(duplicatesTableMap) : []),

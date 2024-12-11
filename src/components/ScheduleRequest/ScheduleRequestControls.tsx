@@ -6,13 +6,21 @@ import { Button } from '@/components/Button.tsx'
 import UploadOutlined from '@ant-design/icons/lib/icons/UploadOutlined'
 import { ReactElement, useContext, useEffect, useState } from 'react'
 import { ScheduleContext } from '@/components/ScheduleRequest/ScheduleContext.ts'
-import { useMasterTeamExportCSV } from '@/pages/Protected/MasterTeams/hooks/useMasterTeamExportCSV.ts'
 import { useNotification } from '@/hooks/useNotification.ts'
+import { IDownloadStatus } from '@/common/interfaces'
+import { IUseMasterTeamExportCSVReturn } from '@/hooks/useExportScheduleCSV.ts'
 
 const { RangePicker } = DatePicker
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 const DEFAULT_EXPORT_ERROR_MESSAGE = 'Unable to export CSV. Please, try again!'
+
+interface IScheduleRequestControlsProps {
+  status: IDownloadStatus | null
+  isLoading: boolean
+
+  onExport: IUseMasterTeamExportCSVReturn['onExport']
+}
 
 /**
  * The `ScheduleRequestControls` component provides UI controls for selecting a date range
@@ -26,15 +34,16 @@ const DEFAULT_EXPORT_ERROR_MESSAGE = 'Unable to export CSV. Please, try again!'
  *
  * @returns {ReactElement} The rendered schedule controls with date picker and export buttons.
  */
-export const ScheduleRequestControls = (): ReactElement => {
+export const ScheduleRequestControls = (props: IScheduleRequestControlsProps): ReactElement => {
+  const { onExport, status, isLoading } = props
   const {
     dates,
     selectedIds,
     pathToNavigate,
+    pathToExport,
     selectedTabIndex
   } = useContext(ScheduleContext)
 
-  const { onExport, status, isLoading } = useMasterTeamExportCSV()
   const { notify } = useNotification()
 
   const [exporting, setExporting] = useState<'single' | 'all' | null>(null)
@@ -71,7 +80,7 @@ export const ScheduleRequestControls = (): ReactElement => {
   const onExportSingle = () => {
     setExporting('single')
     if (selectedIds) {
-      onExport(dates!.start, dates!.end, selectedIds[selectedTabIndex])
+      onExport(dates!.start, dates!.end, selectedIds[selectedTabIndex], pathToExport)
     }
   }
 
@@ -81,7 +90,7 @@ export const ScheduleRequestControls = (): ReactElement => {
   const onExportAll = () => {
     setExporting('all')
     if (selectedIds) {
-      onExport(dates!.start, dates!.end, selectedIds.join(','))
+      onExport(dates!.start, dates!.end, selectedIds.join(','), pathToExport)
     }
   }
 

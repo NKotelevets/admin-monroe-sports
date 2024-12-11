@@ -749,7 +749,8 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
 }
 
 .dropdown ul {
-  margin-top: 0 !important
+  margin-top: 0 !important;
+  box-shadow: unset !important;
 }
 .ant-dropdown-menu {
   border-radius: 2px !important

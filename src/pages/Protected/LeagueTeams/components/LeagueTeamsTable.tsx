@@ -43,6 +43,8 @@ export const LeagueTeamsTable = (): ReactElement => {
     ordering,
     total,
     setPaginationParams,
+    createdIds,
+    resetCreatedIds
   } = useLeagueTeamsSlice()
 
   const pagination = useMemo(
@@ -54,6 +56,8 @@ export const LeagueTeamsTable = (): ReactElement => {
    * Fetches league teams when the component mounts.
    * It sets the loading state, initializes pagination parameters, and
    * handles errors by showing a notification if the fetch fails.
+   *
+   * Removes created records from state on unmount.
    */
   useEffect(() => {
     setIsLoading(true)
@@ -62,6 +66,10 @@ export const LeagueTeamsTable = (): ReactElement => {
     listLeagueTeam({ limit, offset, ordering: ordering || undefined })
       .catch(() => notify(ERROR_LOADING_LEAGUE_TEAMS_MESSAGE, 'error'))
       .finally(() => setIsLoading(false))
+
+    return () => {
+      resetCreatedIds()
+    }
   }, [])
 
   type TFilter = Record<TFilterValueKey, FilterValue | null>
@@ -126,8 +134,8 @@ export const LeagueTeamsTable = (): ReactElement => {
       dataSource={leagueTeams}
       onChange={handleTableChange}
       pagination={pagination}
-      showCreated={false}
-      createdIds={[]}
+      showCreated={!!createdIds?.length}
+      createdIds={createdIds || []}
     />
   )
 }

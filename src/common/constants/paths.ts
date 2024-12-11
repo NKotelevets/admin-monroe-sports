@@ -42,6 +42,8 @@ export const PATH_TO_CREATE_LEAGUE_TEAM = '/league-teams/create'
 export const PATH_TO_EDIT_LEAGUE_TEAM = '/league-teams/edit'
 export const PATH_TO_DELETE_INFO_LEAGUE_TEAM = '/league-teams/delete-info'
 export const PATH_TO_LEAGUE_TEAM_IMPORT_INFO = '/league-teams/import-info'
+export const PATH_TO_LEAGUE_TEAM_SCHEDULE_REQUEST = '/league-teams/schedule-request'
+
 
 // REST
 export const PATH_TO_PLAYOFF_FORMAT = '/playoff-format'

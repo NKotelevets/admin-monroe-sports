@@ -8,7 +8,8 @@ import { ReactSVG } from 'react-svg'
 import { useNavigate } from 'react-router-dom'
 import { PATH_TO_MASTER_TEAMS } from '@/common/constants/paths.ts'
 import { ScheduleContext } from '@/components/ScheduleRequest/ScheduleContext.ts'
-import { IScheduleRequest } from '@/common/interfaces/masterTeams.ts'
+
+import { IScheduleRequest } from '@/common/interfaces'
 
 interface IMasterTeamTabListProps {
   data: IScheduleRequest[]

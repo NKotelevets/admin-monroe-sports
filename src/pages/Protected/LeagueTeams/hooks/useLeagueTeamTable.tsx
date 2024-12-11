@@ -22,10 +22,26 @@ import DeleteIcon from '@/assets/icons/delete.svg'
 import CopyIcon from '@/assets/icons/copy.svg'
 import { useCopyContent } from '@/hooks/useCopyContent.tsx'
 import { useTableContext } from '@/hooks/useTableContext.ts'
+import { ColumnType } from 'rc-table/lib/interface'
+import { ColumnGroupType } from 'antd/es/table/interface'
 
 const EMAIL_COPIED_MESSAGE = 'Email successfully copied'
 
-export const useLeagueTeamTable = () => {
+interface IUseLeagueTableReturn {
+  /**
+   * Array of column configuration objects for the league team table.
+   */
+  columns: (ColumnGroupType<IFELeagueTeam> | ColumnType<IFELeagueTeam>)[]
+}
+
+/**
+ * Custom hook for managing league team table configuration and behavior.
+ * Provides column definitions and filtering logic for rendering a table of league teams.
+ *
+ * @returns {IUseLeagueTableReturn} Hook return values.
+ * @returns {Array} columns - Array of column configuration objects for the league team table.
+ */
+export const useLeagueTeamTable = (): IUseLeagueTableReturn => {
   const navigate = useNavigate()
   const {
     setSelectedIds,
@@ -161,11 +177,57 @@ export const useLeagueTeamTable = () => {
   ]
 
   return {
-    columns
+    columns: columns as (ColumnGroupType<IFELeagueTeam> | ColumnType<IFELeagueTeam>)[]
   }
 }
 
-const useLeagueTeamTableRenderers = () => {
+interface IRenderersReturn {
+  /**
+   *  Renders the team name with a clickable link to its details page.
+   */
+  renderTeamName: ColumnType<IFELeagueTeam>['render']
+  /**
+   * Renders the league name with a clickable link to the league page.
+   */
+  renderLeague: ColumnType<IFELeagueTeam>['render']
+  /**
+   * Renders the division name or a placeholder if not available.
+   */
+  renderSubdivision: ColumnType<IFELeagueTeam>['render']
+  /**
+   * Renders the subdivision name or a placeholder if not available.
+   */
+  renderDivision: ColumnType<IFELeagueTeam>['render']
+  /**
+   * Renders the master team name with a clickable link to its details page.
+   */
+  renderMasterTeam: ColumnType<IFELeagueTeam>['render']
+  /**
+   * Renders the head coach's name with a clickable link to their profile.
+   */
+  renderCoachName: ColumnType<IFELeagueTeam>['render']
+  /**
+   * Renders the head coach's email with a copy-to-clipboard feature.
+   */
+  renderCoachEmail: ColumnType<IFELeagueTeam>['render']
+  /**
+   * Renders the team admin's name with a clickable link to their profile.
+   */
+  renderTeamAdminName: ColumnType<IFELeagueTeam>['render']
+  /**
+   * Renders the team admin's email with a copy-to-clipboard feature.
+   */
+  renderTeamAdminEmail: ColumnType<IFELeagueTeam>['render']
+}
+
+/**
+ * Custom hook providing renderer functions for a league team table.
+ * Each function returns React components for rendering specific columns, such as team names,
+ * leagues, divisions, subdivisions, master teams, coaches, and team admin details.
+ *
+ * @returns {IRenderersReturn} Render functions for league team table columns.
+ */
+const useLeagueTeamTableRenderers = (): IRenderersReturn => {
   const navigate = useNavigate()
   const { copy } = useCopyContent()
 
@@ -231,7 +293,7 @@ const useLeagueTeamTableRenderers = () => {
         <TextWithTooltip maxLength={21} text={email} isRegularText />
         <ReactSVG className="c-p mg-l4" src={CopyIcon} />
       </Flex>
-  )
+    )
   }, [])
 
   const renderTeamAdminName = useCallback((_: unknown, { masterTeam }: IFELeagueTeam) => (

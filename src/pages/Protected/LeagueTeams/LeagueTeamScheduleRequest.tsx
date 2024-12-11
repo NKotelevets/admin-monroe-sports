@@ -1,19 +1,21 @@
-import { Page } from '@/layouts/Page/index.tsx'
-import { ReactElement } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST, PATH_TO_MASTER_TEAMS } from '@/common/constants/paths.ts'
-import { MasterTeamScheduleRequestTable } from './components/MasterTeamScheduleRequestTable'
-import { MonroeBlueText } from '@/components/Elements'
+import { useExportScheduleCSV } from '@/hooks/useExportScheduleCSV.ts'
+import { PATH_TO_LEAGUE_TEAM_SCHEDULE_REQUEST, PATH_TO_LEAGUE_TEAMS } from '@/common/constants/paths.ts'
+import { ReactElement } from 'react'
 import { ScheduleRequestControls } from '@/components/ScheduleRequest/ScheduleRequestControls.tsx'
 import { ScheduleProvider } from '@/components/ScheduleRequest/ScheduleProvider.tsx'
-import { useExportScheduleCSV } from '@/hooks/useExportScheduleCSV.ts'
+import { Page } from '@/layouts/Page'
+import { MonroeBlueText } from '@/components/Elements'
+import {
+  LeagueTeamScheduleRequestTable
+} from '@/pages/Protected/LeagueTeams/components/LeagueTeamScheduleRequestTable.tsx'
 
 const BREAD_CRUMB_ITEMS = [
-  { title: <a href={PATH_TO_MASTER_TEAMS}>Master Teams</a> },
+  { title: <a href={PATH_TO_LEAGUE_TEAMS}>League Teams</a> },
   { title: <MonroeBlueText>Schedule Request</MonroeBlueText> }
 ]
 
-const MasterTeamScheduleRequest = () => {
+const LeagueTeamScheduleRequest = () => {
   const params = useParams<{ range: string, selectedIds: string }>()
   const navigate = useNavigate()
 
@@ -21,7 +23,7 @@ const MasterTeamScheduleRequest = () => {
 
   // cant continue without params
   if (!params || !params.range || !params.selectedIds) {
-    navigate(PATH_TO_MASTER_TEAMS)
+    navigate(PATH_TO_LEAGUE_TEAMS)
     return
   }
 
@@ -37,18 +39,18 @@ const MasterTeamScheduleRequest = () => {
     <ScheduleProvider
       initialDates={params.range.split(',')}
       initialSelectedIds={params.selectedIds.split(',')}
-      pathToNavigate={PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST}
-      pathToExport='availability/export'
+      pathToNavigate={PATH_TO_LEAGUE_TEAM_SCHEDULE_REQUEST}
+      pathToExport="availability/export-availability-for-league-team"
     >
       <Page
         title="Schedule Request"
         breadcrumbs={BREAD_CRUMB_ITEMS}
         controls={renderControls}
       >
-        <MasterTeamScheduleRequestTable />
+        <LeagueTeamScheduleRequestTable />
       </Page>
     </ScheduleProvider>
   )
 }
 
-export default MasterTeamScheduleRequest
+export default LeagueTeamScheduleRequest

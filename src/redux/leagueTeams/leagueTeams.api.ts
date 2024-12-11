@@ -11,6 +11,7 @@ import {
   IGetLeagueTeamsResponse,
 } from '@/common/interfaces/leagueTeams'
 import { transformKeysToCamelCase, transformKeysToSnakeCase } from '@/utils'
+import { IGetScheduleRequestParams, IScheduleRequest, IScheduleRequestResponse } from '@/common/interfaces'
 
 const LEAGUE_TEAMS_TAG = 'LEAGUE_TEAMS'
 
@@ -61,7 +62,7 @@ export const leagueTeamsApi = createApi({
 
     getLeagueTeam: builder.query<IFELeagueTeamDetails, { id: string }>({
       query: ({ id }) => ({
-        url: `teams/teams/${id}/details`,
+        url: `teams/league-teams/${id}/details`,
       }),
       keepUnusedDataFor: 0.0001,
       transformResponse: (response: IBELeagueTeamDetails) => ({
@@ -143,6 +144,16 @@ export const leagueTeamsApi = createApi({
       }),
       invalidatesTags: [LEAGUE_TEAMS_TAG],
     }),
+
+    getLeagueTeamScheduleRequest: builder.query<IScheduleRequest[], IGetScheduleRequestParams>({
+      query: (params) => ({
+        url: 'availability/get-league-team-availability',
+        params,
+      }),
+      transformResponse: (response: IScheduleRequestResponse) => (
+        transformKeysToCamelCase(response)
+      )
+    }),
   }),
 })
 
@@ -157,5 +168,6 @@ export const {
   useLeagueTeamsBulkDeleteMutation,
   useBulkDeleteLeagueTeamsMutation,
   useLeagueTeamsDeleteAllMutation,
+  useLazyGetLeagueTeamScheduleRequestQuery
 } = leagueTeamsApi
 
