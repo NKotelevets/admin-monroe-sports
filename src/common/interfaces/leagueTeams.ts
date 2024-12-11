@@ -1,4 +1,4 @@
-import { IAdditionalEmail, IAdditionalPhone } from '@/common/interfaces'
+import { IAdditionalEmail, IAdditionalPhone, IDeletingError } from '@/common/interfaces'
 import { IBEDivision, IBESubdivision, IFEDivision, IFESubdivision } from '@/common/interfaces/division'
 import { IBELeague, IFELeague } from '@/common/interfaces/league'
 import { IBEOperator, IFEOperator } from '@/common/interfaces/operator'
@@ -146,14 +146,8 @@ export interface IFELeagueTeamDetails {
   subdivisions: IFESubdivision[]
 }
 
-export interface ILeagueTeamError {
-  id: string
-  name: string
-  error: string
-}
-
 export interface IBulkDeleteResponse {
-  items: ILeagueTeamError[]
+  items: IDeletingError[]
   status: TDeleteStatus
   total: number
   success: number

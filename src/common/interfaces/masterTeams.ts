@@ -151,12 +151,6 @@ export interface IFEMasterTeamDetails {
   subdivisions: IFESubdivision[]
 }
 
-export interface IMasterTeamError {
-  id: string
-  name: string
-  error: string
-}
-
 export interface IImportMasterTeamCSVTableData {
   idx: number
   index: number

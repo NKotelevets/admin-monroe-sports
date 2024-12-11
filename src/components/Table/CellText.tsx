@@ -8,10 +8,10 @@ interface PropsWithChildren {
   onClick?: () => void
 }
 
-const StyledTypography = styled(Typography)<{ is_link: string }>`
+const StyledTypography = styled(Typography)<{ isLink: boolean }>`
   font-size: 14px;
-  color: ${(props) => (props.is_link === 'true' ? 'rgba(62, 52, 202, 1)' : 'rgba(26, 22, 87, 0.85)')};
-  cursor: ${(props) => (props.is_link === 'true' ? 'pointer' : 'default')};
+  color: ${(props) => props.isLink ? 'rgba(62, 52, 202, 1)' : 'rgba(26, 22, 87, 0.85)'};
+  cursor: ${(props) => props.isLink? 'pointer' : 'default'};
 
   @media (width > 1660px) {
     font-size: 16px;
@@ -19,7 +19,7 @@ const StyledTypography = styled(Typography)<{ is_link: string }>`
 `
 
 const CellText: FC<PropsWithChildren> = ({ children, isLink = false, onClick }) => (
-  <StyledTypography is_link={`${isLink}`} onClick={onClick}>
+  <StyledTypography isLink={isLink} onClick={onClick}>
     {children}
   </StyledTypography>
 )

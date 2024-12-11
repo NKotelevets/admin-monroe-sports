@@ -2,7 +2,8 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 import { leagueTeamsApi } from '@/redux/leagueTeams/leagueTeams.api'
 
-import { IFELeagueTeam, ILeagueTeamError } from '@/common/interfaces/leagueTeams'
+import { IFELeagueTeam } from '@/common/interfaces/leagueTeams'
+import { IDeletingError } from '@/common/interfaces'
 
 interface ILeagueTeamsSliceState {
   leagueTeams: IFELeagueTeam[]
@@ -11,7 +12,7 @@ interface ILeagueTeamsSliceState {
   total: number
   ordering: string | null
   createdIds: string[]
-  deletedRecordsErrors: ILeagueTeamError[]
+  deletedRecordsErrors: IDeletingError[]
   tableRecords: []
   duplicates: []
 }

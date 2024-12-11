@@ -113,3 +113,10 @@ export interface IScheduleEntry {
 
   [key: string]: number | string
 }
+
+export interface IDeletingError {
+  id: string
+  name: string
+  error?: string
+  status: string
+}

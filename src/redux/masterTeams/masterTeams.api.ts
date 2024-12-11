@@ -9,12 +9,16 @@ import {
   IBEMasterTeamDetails, IFEImportMasterTeamCSVResponse,
   IFEMasterTeamDetails,
   IGetMasterTeamsRequest,
-  IGetMasterTeamsResponse, IMasterTeamError,
-  IPopulateMTRequest, ITeamAdmin
+  IGetMasterTeamsResponse, IPopulateMTRequest, ITeamAdmin
 } from '@/common/interfaces/masterTeams'
 import { TDeleteStatus } from '@/common/types'
 import { transformKeysToCamelCase } from '@/utils'
-import { IGetScheduleRequestParams, IScheduleRequest, IScheduleRequestResponse } from '@/common/interfaces'
+import {
+  IGetScheduleRequestParams,
+  IDeletingError,
+  IScheduleRequest,
+  IScheduleRequestResponse
+} from '@/common/interfaces'
 
 const MASTER_TEAMS_TAG = 'MASTER_TEAMS'
 
@@ -183,7 +187,7 @@ export const masterTeamsApi = createApi({
 
     bulkDeleteMasterTeams: builder.mutation<
       {
-        items: IMasterTeamError[]
+        items: IDeletingError[]
         status: TDeleteStatus
         total: number
         success: number

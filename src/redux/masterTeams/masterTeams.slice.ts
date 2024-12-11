@@ -5,10 +5,10 @@ import { masterTeamsApi } from '@/redux/masterTeams/masterTeams.api'
 import {
   IFEDuplicate,
   IFEMasterTeam,
-  IImportMasterTeamCSVTableData,
-  IMasterTeamError
+  IImportMasterTeamCSVTableData
 } from '@/common/interfaces/masterTeams'
 import { duplicatesErrorMap, duplicatesMap, duplicatesTableMap } from '@/redux/masterTeams/mappers'
+import { IDeletingError } from '@/common/interfaces'
 
 interface IMasterTeamsSliceState {
   masterTeams: IFEMasterTeam[]
@@ -17,7 +17,7 @@ interface IMasterTeamsSliceState {
   total: number
   ordering: string | null
   createdIds: string[]
-  deletedRecordsErrors: IMasterTeamError[]
+  deletedRecordsErrors: IDeletingError[]
   tableRecords: []
   importCSVTableRecords: IImportMasterTeamCSVTableData[]
   duplicates: IFEDuplicate[]
