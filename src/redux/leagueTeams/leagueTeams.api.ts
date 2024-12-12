@@ -154,7 +154,7 @@ export const leagueTeamsApi = createApi({
 
     deleteLeagueTeam: builder.mutation<void, string>({
       query: (id) => ({
-        url: `teams/teams/${id}/delete-as-admin`,
+        url: `teams/league-teams/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: [LEAGUE_TEAMS_TAG],

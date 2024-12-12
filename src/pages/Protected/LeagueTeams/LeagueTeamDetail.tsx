@@ -1,22 +1,26 @@
 import { Page } from '@/layouts/Page'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { PATH_TO_LEAGUE_TEAMS, PATH_TO_MASTER_TEAMS } from '@/common/constants/paths.ts'
 import { MonroeBlueText, MonroeLinkText, ViewText } from '@/components/Elements'
 import { Dot, SimpleEntityList } from '@/pages/Protected/MasterTeams/components/SimpleEntityList.tsx'
-import { Flex } from 'antd'
+import { Flex, Tag } from 'antd'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useGetLeagueTeamQuery } from '@/redux/leagueTeams/leagueTeams.api.ts'
+import { useDeleteLeagueTeamMutation, useGetLeagueTeamQuery } from '@/redux/leagueTeams/leagueTeams.api.ts'
 import { useNotification } from '@/hooks/useNotification.ts'
 import { IDetailedError } from '@/common/interfaces'
 import Loader from '@/components/Loader.tsx'
 import CellText from '@/components/Table/CellText.tsx'
 import { Button } from '@/components/Button.tsx'
-import { EditOutlined } from '@ant-design/icons'
+import { CloseCircleOutlined, EditOutlined } from '@ant-design/icons'
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined'
+import MonroeModal from '@/components/MonroeModal.tsx'
 
 const LeagueTeamDetail = () => {
   const params = useParams<{ id: string }>()
   const navigate = useNavigate()
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deleteLT] = useDeleteLeagueTeamMutation()
 
   const { notify } = useNotification()
   const {
@@ -42,20 +46,33 @@ const LeagueTeamDetail = () => {
     { title: <MonroeBlueText>{data?.name}</MonroeBlueText> }
   ]), [data])
 
-  const onDelete = () => {}
+  const navigateToMasterTeam = useCallback(() =>
+      navigate(`${PATH_TO_MASTER_TEAMS}/${data?.masterTeam?.id}`)
+    , [data])
 
-  const onEdit = () => navigate(`${PATH_TO_LEAGUE_TEAMS}/edit/${data?.league?.id}`)
-
-  // const onConnect = () => navigate(`${PATH_TO_LEAGUES}`)
+  const navigateToLeagueTeam = useCallback(() =>
+      navigate(`${PATH_TO_LEAGUE_TEAMS}/${data?.league?.id}`)
+    , [data])
 
   const renderControls = useCallback(() => {
+    const onEdit = () => navigate(`${PATH_TO_LEAGUE_TEAMS}/edit/${data?.id}`)
+
     return (
       <>
-        <Button danger={true} icon={<DeleteOutlined />} onClick={onDelete}>Delete</Button>
-        <Button icon={<EditOutlined />} onClick={onEdit}>Edit</Button>
-        <Button type="primary" icon={<EditOutlined />} onClick={onEdit}>Connect to league/tourn</Button>
+        <Button danger={true} icon={<DeleteOutlined />} onClick={() => setShowDeleteModal(true)}>Delete</Button>
+        <Button type="primary" icon={<EditOutlined />} onClick={onEdit}>Edit</Button>
       </>
     )
+  }, [data])
+
+  const handleDelete = useCallback((id: string) => {
+    deleteLT(id)
+      .unwrap()
+      .then(() => navigate(PATH_TO_LEAGUE_TEAMS))
+      .catch((error) => {
+        setShowDeleteModal(false)
+        notify((error as IDetailedError).details, 'error')
+      })
   }, [])
 
   // Render a loading indicator if data is still loading or unavailable
@@ -65,52 +82,60 @@ const LeagueTeamDetail = () => {
     ? data.masterTeamAdmins
     : (data.masterTeamAdmin ? [data.masterTeamAdmin] : [])
 
-  const navigateToMasterTeam = () => navigate(`${PATH_TO_MASTER_TEAMS}/${data.masterTeam?.id}`)
-  const navigateToLeagueTeam = () => navigate(`${PATH_TO_LEAGUE_TEAMS}/${data.league?.id}`)
-
   return (
-    <Page
-      title={data.name}
-      breadcrumbs={breadCrumbs}
-      controls={renderControls}
-    >
-      <Flex vertical>
-        <Flex className="mb-16">
-          <ViewText>Master team:</ViewText>
+    <>
+      {showDeleteModal && (
+        <MonroeModal
+          okText="Delete"
+          onCancel={() => setShowDeleteModal(false)}
+          onOk={() => handleDelete(params.id as string)}
+          title={`Delete ${data.name}?`}
+          type="warn"
+          content={<p>Are you sure you want to delete {data.name}?</p>}
+        />
+      )}
+      <Page
+        title={data.name}
+        breadcrumbs={breadCrumbs}
+        controls={renderControls}
+      >
+        <Flex vertical>
+          <Flex className="mb-16">
+            <ViewText>Master team:</ViewText>
 
-          <Flex vertical>
-            {!!data.masterTeam?.name && (
-              <MonroeLinkText underline={false} onClick={navigateToMasterTeam}>{data.masterTeam.name}</MonroeLinkText>
-            )}
-            {!data.masterTeam?.name && (<CellText>No master team</CellText>)}
+            <Flex vertical>
+              {!!data.masterTeam?.name && (
+                <MonroeLinkText underline={false} onClick={navigateToMasterTeam}>{data.masterTeam.name}</MonroeLinkText>
+              )}
+              {!data.masterTeam?.name && (<Tag icon={<CloseCircleOutlined/>} color='orange'>Waiting for MT</Tag>)}
+            </Flex>
+          </Flex>
+
+          <SimpleEntityList title="Master Team Admin:" entities={masterTeamData} />
+          <SimpleEntityList title="Coach:" entities={data.headCoach ? [data.headCoach] : undefined} />
+
+          <Flex className="mb-16">
+            <ViewText>Linked league/tourn:</ViewText>
+
+            <Flex align="flex-start">
+              <MonroeLinkText underline={false} onClick={navigateToLeagueTeam}>{data.league?.name}</MonroeLinkText>
+              {!!data.division && (
+                <Flex align="center">
+                  <Dot />
+                  <CellText>{data.division.name}</CellText>
+                </Flex>
+              )}
+              {!!data.subdivision && (
+                <Flex align="center">
+                  <Dot />
+                  <CellText>{data.subdivision.name}</CellText>
+                </Flex>
+              )}
+            </Flex>
           </Flex>
         </Flex>
-
-        <SimpleEntityList title="Master Team Admin:" entities={masterTeamData} />
-        <SimpleEntityList title="Coach:" entities={data.headCoach ? [data.headCoach] : undefined} />
-
-        <Flex className="mb-16">
-          <ViewText>Linked league/tourn:</ViewText>
-
-          <Flex align="flex-start">
-            <MonroeLinkText underline={false} onClick={navigateToLeagueTeam}>{data.league?.name}</MonroeLinkText>
-            {!!data.division && (
-              <Flex align="center">
-                <Dot />
-                <CellText>{data.division.name}</CellText>
-                {/*<MonroeLinkText underline={false} onClick={navigateToMasterTeam}>{data.division.name}</MonroeLinkText>*/}
-              </Flex>
-            )}
-            {!!data.subdivision && (
-              <Flex align="center">
-                <Dot />
-                <CellText>{data.subdivision.name}</CellText>
-              </Flex>
-            )}
-          </Flex>
-        </Flex>
-      </Flex>
-    </Page>
+      </Page>
+    </>
   )
 }
 

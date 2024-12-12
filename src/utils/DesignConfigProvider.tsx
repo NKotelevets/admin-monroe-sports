@@ -10,7 +10,7 @@ const DesignConfigProvider: FC<{ children: ReactNode }> = ({ children }) => (
         colorPrimaryHover: colors.primaryHover,
         colorPrimaryActive: colors.primary,
         colorTextDisabled: colors.dim,
-        borderRadius: 0,
+        borderRadius: 2,
         fontFamily: 'Inter, sans-serif',
         colorError: colors.primary
       },
@@ -36,9 +36,6 @@ const DesignConfigProvider: FC<{ children: ReactNode }> = ({ children }) => (
           borderRadius: 2,
           colorBgSpotlight: 'rgba(62, 62, 72, 0.75)'
         },
-        DatePicker: {
-          borderRadius: 2
-        }
       }
     }}
   >
