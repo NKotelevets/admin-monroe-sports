@@ -93,9 +93,9 @@ export const masterTeamsApi = createApi({
       }),
       invalidatesTags: [MASTER_TEAMS_TAG],
       transformResponse: ({ duplicates, ...rest }: IBEImportMasterTeamCSVResponse) => ({
-        ...rest,
+        ...transformKeysToCamelCase(rest),
         duplicates: duplicates?.map(duplicate => ({
-          ...duplicate,
+          ...transformKeysToCamelCase(duplicate),
           idx: duplicate.index,
           new: {
             headCoachName: duplicate.new['Head Coach First and Last Name'],

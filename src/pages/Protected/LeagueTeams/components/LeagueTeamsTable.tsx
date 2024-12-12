@@ -29,11 +29,12 @@ export const LeagueTeamsTable = (): ReactElement => {
   const { notify } = useNotification()
 
   const {
-    setIsLoading,
     isAllSelected,
+    setTableParams,
+    showCreatedRecords,
+    setIsLoading,
     setSelectedIds,
     setShowAdditionalHeader,
-    setTableParams,
   } = useTableContext<IFELeagueTeam>()
 
   const {
@@ -134,7 +135,7 @@ export const LeagueTeamsTable = (): ReactElement => {
       dataSource={leagueTeams}
       onChange={handleTableChange}
       pagination={pagination}
-      showCreated={!!createdIds?.length}
+      showCreated={showCreatedRecords}
       createdIds={createdIds || []}
     />
   )

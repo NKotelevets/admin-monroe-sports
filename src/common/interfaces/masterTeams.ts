@@ -225,7 +225,7 @@ export interface IImportMasterTeamCSVError {
 export interface IBEImportMasterTeamCSVResponse {
   status: TDeleteStatus
   errors: IImportMasterTeamCSVError[]
-  success: string[]
+  success: IBEMasterTeam[]
   duplicates: IBEDuplicate[]
 }
 
@@ -251,7 +251,7 @@ export interface IFEDuplicate {
 export interface IFEImportMasterTeamCSVResponse {
   status: TDeleteStatus
   errors?: IImportMasterTeamCSVError[]
-  success: string[]
+  success: IFEMasterTeam[]
   duplicates?: IFEDuplicate[]
 }
 

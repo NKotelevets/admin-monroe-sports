@@ -36,9 +36,10 @@ const MasterTeamsTable = (): ReactElement => {
 
   const {
     isAllSelected,
+    setTableParams,
+    showCreatedRecords,
     setIsLoading,
     setSelectedIds,
-    setTableParams,
     setShowAdditionalHeader
   } = useTableContext()
 
@@ -153,7 +154,7 @@ const MasterTeamsTable = (): ReactElement => {
       loading={isLoading || isFetching}
       dataSource={masterTeams}
       onChange={handleTableChange}
-      showCreated={!!createdIds?.length}
+      showCreated={showCreatedRecords}
       createdIds={createdIds || []}
     />
   )

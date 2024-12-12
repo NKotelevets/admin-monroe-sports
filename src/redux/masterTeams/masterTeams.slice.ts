@@ -80,7 +80,7 @@ export const masterTeamsSlice = createSlice({
         state.createdIds = [action.payload.team_id]
       })
       .addMatcher(masterTeamsApi.endpoints.masterTeamsImportCSV.matchFulfilled, (state, action) => {
-        state.createdIds = action.payload.success
+        state.createdIds = action.payload.success.map(mt => mt.id)
         state.duplicates = action.payload?.duplicates ? action.payload.duplicates.map(duplicatesMap) : []
         state.importCSVTableRecords = [
           ...(action.payload?.duplicates ? action.payload.duplicates.map(duplicatesTableMap) : []),

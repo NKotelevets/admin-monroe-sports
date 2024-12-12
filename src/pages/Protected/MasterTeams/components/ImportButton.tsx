@@ -6,6 +6,7 @@ import { IImportModalOptions } from '@/common/interfaces'
 import ImportModal from '@/components/ImportModal.tsx'
 import { PATH_TO_MASTER_TEAMS_IMPORT_INFO } from '@/common/constants/paths.ts'
 import { useNavigate } from 'react-router-dom'
+import { useTableContext } from '@/hooks/useTableContext.ts'
 
 /**
  * ImportButton Component
@@ -17,7 +18,7 @@ import { useNavigate } from 'react-router-dom'
  */
 export const ImportButton = (): ReactElement => {
   const navigate = useNavigate()
-
+  const { setShowCreatedRecords } = useTableContext()
   const { Button, setFileKey } = useImportFile({
     buttonTitle: 'Import CSV',
     accept: '.csv'
@@ -82,8 +83,7 @@ export const ImportButton = (): ReactElement => {
           filename={importModalOptions.filename}
           status={importModalOptions.status}
           errorMessage={importModalOptions.errorMessage}
-          showInList={() => {
-          }}
+          showInList={() => setShowCreatedRecords(true)}
           redirectToImportInfo={() => {
             setImportModalOptions((prev) => ({ ...prev, isOpen: false }))
             navigate(PATH_TO_MASTER_TEAMS_IMPORT_INFO)
