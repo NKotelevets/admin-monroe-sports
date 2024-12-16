@@ -1,21 +1,22 @@
 import styled from '@emotion/styled'
 
-export const ScheduleStatus = (props: { availability: 0 | 1 | 2 }) => {
+export const ScheduleStatus = (props: { availability: number }) => {
   const { availability } = props
+  const status = availability <= 0.9 ? 'red' : (availability <= 1.9 ? 'yellow' : 'green')
   const valueMap = {
-    0: {
+    red: {
       border: '#FF7E75', bg: '#FFD9D6'
     },
-    1: {
+    yellow: {
       border: '#D59B07', bg: '#FFE194'
     },
-    2: {
+    green: {
       border: '#1A790B', bg: '#9EE094'
     }
   }
 
   return (
-    <StatusBox bg={valueMap[availability].bg} border={valueMap[availability].border}>
+    <StatusBox bg={valueMap[status].bg} border={valueMap[status].border}>
       {availability}
     </StatusBox>
   )

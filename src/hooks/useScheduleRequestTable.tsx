@@ -47,7 +47,7 @@ export const useScheduleRequestTable = () => {
         key: `col${key}${Math.random()}`,
         width: 45,
         render: (val: number) => {
-          return <ScheduleStatus availability={val as 1 | 2 | 0}/>
+          return <ScheduleStatus availability={val as number}/>
         }
       })
     }
