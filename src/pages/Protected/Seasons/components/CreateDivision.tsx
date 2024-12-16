@@ -1,7 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons'
 import styled from '@emotion/styled'
-import { Button, Flex } from 'antd'
-import { FieldArray, FormikErrors, FormikTouched } from 'formik'
+import { Button, Flex, Radio, RadioChangeEvent } from 'antd'
+import { FieldArray, FormikErrors, FormikTouched, useFormikContext } from 'formik'
 import { ChangeEventHandler, FC, useEffect, useState } from 'react'
 import { ReactSVG } from 'react-svg'
 
@@ -9,10 +9,10 @@ import CreateSubdivision from '@/pages/Protected/Seasons/components/CreateSubdiv
 import {
   ICreateSeasonDivision,
   ICreateSeasonFormValues,
-  INITIAL_SUBDIVISION_DATA,
+  INITIAL_SUBDIVISION_DATA
 } from '@/pages/Protected/Seasons/constants/formik'
 
-import { Accordion, AccordionHeader, MonroeDivider, OptionTitle } from '@/components/Elements'
+import { Accordion, AccordionHeader, MonroeDivider, OptionTitle, RadioGroupContainer } from '@/components/Elements'
 import { CreateEntityContainer, Subtext, TitleStyle } from '@/components/Elements/entity'
 import MonroeInput from '@/components/Inputs/MonroeInput'
 import MonroeTextarea from '@/components/Inputs/MonroeTextarea'
@@ -27,20 +27,12 @@ import { IFECreateSeason } from '@/common/interfaces/season'
 
 import DeleteIcon from '@/assets/icons/delete.svg'
 import ShowAllIcon from '@/assets/icons/show-all.svg'
+import { BEST_RECORD_WINS, SINGLE_ELIMINATION_BRACKET } from '@/common/constants/league.ts'
+import Typography from 'antd/es/typography'
+import { AddBracketButton } from '@/pages/Protected/Seasons/components/Elements.tsx'
+import { BRACKETS_OPTIONS } from '@/pages/Protected/Seasons/CreateBracket/constants/bracketData.ts'
+import { BracketItem } from '@/pages/Protected/Seasons/components/BracketItem.tsx'
 
-const TextButton = styled(Button)`
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-`
-
-const StyledAccordion = styled(Accordion)`
-  width: 320px;
-
-  @media (width > 1660px) {
-    width: 568px;
-  }
-`
 
 interface ICreateDivisionProps {
   index: number
@@ -58,19 +50,24 @@ interface ICreateDivisionProps {
   handleBlur: (e: React.FocusEvent<any>) => void
 }
 
-const CreateDivision: FC<ICreateDivisionProps> = ({
-  index,
-  division,
-  onChange,
-  errors,
-  setFieldValue,
-  removeFn,
-  isMultipleDivisions,
-  values,
-  setIds,
-  touched,
-  handleBlur,
-}) => {
+const CreateDivision: FC<ICreateDivisionProps> = (props) => {
+  const {
+    index,
+    division,
+    removeFn,
+    isMultipleDivisions,
+    setIds
+  } = props
+
+  const {
+    values,
+    errors,
+    touched,
+    handleBlur,
+    setFieldValue,
+    handleChange: onChange
+  } = useFormikContext<ICreateSeasonFormValues>()
+
   const [isOpenedDetails, setIsOpenedDetails] = useState(index === 0)
   const { isComponentVisible, ref } = useIsActiveComponent(index === 0)
   const isDisabled = !!(errors?.divisions?.[+index] as FormikErrors<IFEDivision>)?.sub_division?.length
@@ -93,6 +90,8 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
   useEffect(() => {
     if (!isComponentVisible) setIsOpenedDetails(false)
   }, [isComponentVisible])
+
+  const namePrefix = `divisions.${index}`
 
   return (
     <CreateEntityContainer ref={ref} isError={isError}>
@@ -146,6 +145,89 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
                 initialHeight={56}
               />
             </div>
+            <div className="mg-b8">
+              <OptionTitle>Default Playoff Format *</OptionTitle>
+              <RadioGroupContainer
+                name={`${namePrefix}.playoffFormat`}
+                onChange={(e: RadioChangeEvent) => setFieldValue(`${namePrefix}.playoffFormat`, e.target.value)}
+                value={division.playoffFormat}
+              >
+                <Radio value={BEST_RECORD_WINS}>Best Record Wins</Radio>
+                <Radio value={SINGLE_ELIMINATION_BRACKET}>
+                  <StyledFlex>
+                    <Typography className="mg-r4">Single Elimination Bracket</Typography>
+                    {/*{isBracketError && <ErrorText>At least one bracket required</ErrorText>}*/}
+                  </StyledFlex>
+                </Radio>
+              </RadioGroupContainer>
+              <FieldArray name={`divisions[${index}.brackets]`}>
+                {(innerArrayHelpers) => (
+                  <>
+                    {division.playoffFormat === SINGLE_ELIMINATION_BRACKET && (
+                      <>
+                        {division?.brackets && (
+                          <Flex vertical>
+                            {division?.brackets?.map((bracket, idx) => {
+                              const onDelete = () => {
+                                innerArrayHelpers.remove(idx)
+                                if (bracket.id && setIds)
+                                  setIds((prev) => [...prev, bracket.id as number])
+                              }
+
+                              const onEdit = () => {
+                                alert('editing bracket')
+                                // setIsCreateBracketPage(true)
+                                // setPathToSubdivisionDataAndIndexes(`${namePrefix}&${divisionIndex}-${index}`)
+                                // setBracketIdx(idx)
+                                // setBracketMode('edit')
+                                // setSelectedBracketId(bracket.id as number)
+                              }
+
+                              return (
+                                <BracketItem
+                                  bracket={bracket}
+                                  onEdit={onEdit}
+                                  onDelete={onDelete}
+                                />
+                              )
+                            })}
+                          </Flex>
+                        )}
+
+                        <MonroeTooltip
+                          text="You can't create bracket when you don't have division/pool name"
+                          width="200px"
+                          containerWidth="158px"
+                        >
+                          <AddBracketButton
+                            type="default"
+                            icon={<PlusOutlined />}
+                            // disabled={isBlockAddBracketButton}
+                            iconPosition="start"
+                            onClick={() => {
+                              alert('creating breacket')
+                              // setIsCreateBracketPage(true)
+                              // setPathToSubdivisionDataAndIndexes(`${namePrefix}&${divisionIndex}-${index}`)
+                              // setBracketIdx(lastBracketIdx)
+                              // setBracketMode('create')
+                              innerArrayHelpers.push({
+                                name: '',
+                                subdivisionsNames: [],
+                                playoffTeams: 2,
+                                matches: BRACKETS_OPTIONS[2],
+                              })
+                              // setSelectedBracketId(null)
+                            }}
+                          >
+                            Add Bracket
+                          </AddBracketButton>
+                        </MonroeTooltip>
+                      </>
+                    )}
+                  </>
+                )}
+              </FieldArray>
+            </div>
           </Flex>
 
           <MonroeDivider />
@@ -175,7 +257,7 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
                       handleBlur={handleBlur}
                     />
                   ),
-                  label: <AccordionHeader is_add_margin={`${idx > 0}`}>#{idx + 1} Subdivision/subpool</AccordionHeader>,
+                  label: <AccordionHeader is_add_margin={`${idx > 0}`}>#{idx + 1} Subdivision/subpool</AccordionHeader>
                 }
               })
 
@@ -199,7 +281,7 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
                   <MonroeTooltip
                     text={
                       isDisabled
-                        ? "You can't create subdivision/subpool when you have errors in other subdivisions/subpools"
+                        ? 'You can\'t create subdivision/subpool when you have errors in other subdivisions/subpools'
                         : ''
                     }
                     width="280px"
@@ -224,3 +306,30 @@ const CreateDivision: FC<ICreateDivisionProps> = ({
 }
 
 export default CreateDivision
+
+// Styled Components
+const StyledFlex = styled(Flex)`
+    flex-direction: column;
+
+    @media (width > 1660px) {
+        flex-direction: row;
+        align-items: flex-end;
+    }
+`
+// const ErrorText = styled(Typography)`
+//     font-weight: 400;
+//     font-size: 12px;
+//     color: #bc261b;
+// `
+const TextButton = styled(Button)`
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+`
+const StyledAccordion = styled(Accordion)`
+    width: 320px;
+
+    @media (width > 1660px) {
+        width: 568px;
+    }
+`

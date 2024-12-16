@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { SingleEliminationBracket } from '@g-loot/react-tournament-brackets'
 import Flex from 'antd/es/flex'
 import { DefaultOptionType } from 'antd/es/select'

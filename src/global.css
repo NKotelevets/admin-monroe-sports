@@ -180,6 +180,7 @@ svg {
   background-color: #FFFFFF;
   border-radius: 2px;
   height: 32px;
+  width: 100%;
 }
 
 @media (width > 1660px) {
@@ -259,6 +260,11 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
 
 .ant-collapse-header {
   padding: 12px 0 !important;
+}
+
+
+.ant-collapse .ant-collapse .ant-collapse-header {
+  padding: 8px 0 !important;
 }
 
 .ant-collapse .ant-collapse-content {
@@ -769,8 +775,9 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
 .league-teams .ant-tabs-top >.ant-tabs-nav::before {
   border-bottom: 1px solid #BDBCC2 !important;
 }
-.league-teams .ant-select-arrow span svg,
-.league-teams .ant-select-selection-search {
+/* AntD Select */
+.form .ant-select-arrow span svg,
+.form .ant-select-selection-search {
   display: inline-block !important;
 }
 
@@ -801,4 +808,8 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
 
 .ant-picker-panel-container {
   border-radius: 2px !important;
+}
+
+form .ant-divider {
+  margin: 24px 0 12px !important;
 }

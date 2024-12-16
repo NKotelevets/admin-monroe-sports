@@ -54,11 +54,6 @@ export const StyledInput = styled(Input)<{ isError?: boolean }>`
     width: 16px;
     height: 16px;
   }
-
-  @media (width > 1660px) {
-    font-size: 18px !important;
-    min-height: 40px !important;
-  }
 `
 
 export const StyledPasswordInput = styled(Input.Password)<{ is_error?: string }>`

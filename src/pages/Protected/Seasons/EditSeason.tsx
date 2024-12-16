@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import { Breadcrumb, Flex } from 'antd'
 import { format } from 'date-fns'

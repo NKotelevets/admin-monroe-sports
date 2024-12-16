@@ -87,21 +87,21 @@ export const INITIAL_DIVISION_DATA = {
 
 export const seasonInitialFormValues: ICreateSeasonFormValues = {
   name: '',
-  league: '',
+  league: undefined,
   startDate: null,
   expectedEndDate: null,
   divisions: [
     {
       name: '',
       description: '',
+      playoffFormat: BEST_RECORD_WINS,
+      brackets: [],
       subdivisions: [
         {
           name: '',
           description: '',
-          playoffFormat: BEST_RECORD_WINS,
           standingsFormat: WINNING,
           tiebreakersFormat: WINNING,
-          brackets: [],
           changed: false,
         },
       ],
@@ -113,23 +113,25 @@ export interface ICreateSeasonSubdivision {
   id?: string
   name: string
   description: string
-  playoffFormat: string
+  playoffFormat?: string // TODO REMOVE THIS
   standingsFormat: string
   tiebreakersFormat: string
   changed: boolean
-  brackets: IBracket[]
+  brackets?: IBracket[] // TODO REMOVE THIS
 }
 
 export interface ICreateSeasonDivision {
   id?: string
   name: string
   description: string
+  playoffFormat: string
+  brackets: IBracket[]
   subdivisions: ICreateSeasonSubdivision[]
 }
 
 export interface ICreateSeasonFormValues {
   name: string
-  league: string
+  league?: string
   startDate: string | null
   expectedEndDate: string | null
   divisions: ICreateSeasonDivision[]

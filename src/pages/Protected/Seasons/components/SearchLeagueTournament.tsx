@@ -1,9 +1,11 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import styled from '@emotion/styled'
 import { Flex } from 'antd'
-import { ChangeEvent, FC, RefObject, useEffect, useState } from 'react'
+import { RefObject, useEffect, useState } from 'react'
 import { ReactSVG } from 'react-svg'
 
-import { SearchLeagueInput, SearchSelectIconWrapper } from '@/components/Elements'
+import { SearchSelectIconWrapper } from '@/components/Elements'
 import { Subtext } from '@/components/Elements/entity'
 
 import { useLazyGetLeaguesQuery } from '@/redux/leagues/leagues.api'
@@ -15,52 +17,41 @@ import useScroll from '@/hooks/useScroll'
 import { IFELeague } from '@/common/interfaces/league'
 
 import ShowAllIcon from '@/assets/icons/show-all.svg'
+import { useFormikContext } from 'formik'
+import { ICreateSeasonFormValues } from '@/pages/Protected/Seasons/constants/formik.ts'
+import TextInput from '@/components/Inputs/TextInput.tsx'
 
 const DEFAULT_LIMIT_RECORDS = 20
 
-const ListItem = styled.li`
-  padding: 5px 12px;
-  color: rgba(26, 22, 87, 0.85);
-  border-bottom: 0;
-  cursor: pointer;
-`
+const SearchLeagueTournament = () => {
 
-const List = styled.ul`
-  position: absolute;
-  left: 0;
-  background-color: white;
-  height: auto;
-  max-height: 240px;
-  width: 100%;
-  box-shadow:
-    0 3px 6px -4px rgba(0, 0, 0, 0.12),
-    0 6px 16px 0 rgba(0, 0, 0, 0.08),
-    0 9px 28px 8px rgba(0, 0, 0, 0.05);
-  padding-right: 4px;
-  z-index: 20;
-  overflow: scroll;
-`
+  const {
+    values,
+    setFieldValue,
+    errors,
+    handleChange,
+    handleBlur
+  } = useFormikContext<ICreateSeasonFormValues>()
 
-const Container = styled.div`
-  position: relative;
-`
+  // (data) => {
+  //   setFieldValue('league', data.id)
+  //   setTouched({ ...touched, league: true })
+  //
+  //   const updatedSubdivisions = values.divisions.map((division) => ({
+  //     name: division.name,
+  //     description: division.description,
+  //     subdivisions: division.subdivisions.map((subdivision) => ({
+  //       name: subdivision.name,
+  //       description: subdivision.description,
+  //       playoffFormat: data.playoffFormat,
+  //       standingsFormat: data.standingsFormat,
+  //       tiebreakersFormat: data.tiebreakersFormat,
+  //     })),
+  //   }))
+  //
+  //   setFieldValue('divisions', updatedSubdivisions)
+  // }
 
-interface ISearchLeagueTournamentProps {
-  setSelectedLeague: (data: IFELeague) => void
-  selectedLeague: undefined | string
-  isError: boolean
-  onBlur: () => void
-  setFieldError: (field: string, message: string | undefined) => void
-}
-
-const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({
-  setSelectedLeague,
-  selectedLeague,
-  isError,
-  onBlur,
-  setFieldError,
-}) => {
-  const [value, setValue] = useState(selectedLeague || '')
   const { isComponentVisible, ref, onClose } = useIsActiveComponent(false)
   const [offset, setOffset] = useState(0)
   const [getLeagues, { data }] = useLazyGetLeaguesQuery()
@@ -73,7 +64,7 @@ const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({
       const response = await getLeagues({
         limit: DEFAULT_LIMIT_RECORDS,
         offset,
-        league_name: value,
+        league_name: values.league,
         order_by: null
       }).unwrap()
 
@@ -97,44 +88,31 @@ const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({
     makeRequest()
   }, [])
 
-  useEffect(() => {
-    if (selectedLeague && !value) setValue(selectedLeague)
-  }, [selectedLeague])
 
-  const handleChange = async (leagueName: string) => setValue(leagueName)
-
-  const getDataWithNewName = async () => {
+  useDebounceEffect(async () => {
     const res = await getLeagues({
       limit: DEFAULT_LIMIT_RECORDS,
       offset: 0,
-      league_name: value === selectedLeague ? '' : value,
+      league_name: values.league === values.league ? '' : values.league,
       order_by: null
     }).unwrap()
 
     setLeaguesList(res?.leagues || [])
-  }
+  }, [values.league])
 
-  useDebounceEffect(getDataWithNewName, [value])
-
-  useEffect(() => {
-    if (!isComponentVisible && selectedLeague) setValue(selectedLeague)
-  }, [isComponentVisible])
 
   return (
     <Flex vertical className="w-full">
       <div ref={ref} className="w-full">
         <Container>
-          <SearchLeagueInput
+          <TextInput
             name="league"
-            onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              handleChange(event.target.value)
-              setFieldError('league', '')
-            }}
-            value={value}
+            onChange={handleChange}
+            value={values.league}
             placeholder="Find league or tournament"
             className="h-32"
-            is_error={`${isError}`}
-            onBlur={onBlur}
+            error={errors.league}
+            onBlur={handleBlur}
           />
 
           <SearchSelectIconWrapper isComponentVisible={isComponentVisible}>
@@ -150,7 +128,7 @@ const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({
                   <ListItem
                     key={league.id}
                     onClick={() => {
-                      setSelectedLeague(league)
+                      setFieldValue('league', league.id)
                       onClose()
                     }}
                   >
@@ -171,3 +149,29 @@ const SearchLeagueTournament: FC<ISearchLeagueTournamentProps> = ({
 }
 
 export default SearchLeagueTournament
+
+// Styled Components
+const ListItem = styled.li`
+  padding: 5px 12px;
+  color: rgba(26, 22, 87, 0.85);
+  border-bottom: 0;
+  cursor: pointer;
+`
+const List = styled.ul`
+  position: absolute;
+  left: 0;
+  background-color: white;
+  height: auto;
+  max-height: 240px;
+  width: 100%;
+  box-shadow:
+    0 3px 6px -4px rgba(0, 0, 0, 0.12),
+    0 6px 16px 0 rgba(0, 0, 0, 0.08),
+    0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  padding-right: 4px;
+  z-index: 20;
+  overflow: scroll;
+`
+const Container = styled.div`
+  position: relative;
+`

@@ -1,8 +1,8 @@
-import { Flex } from 'antd'
+import { Input } from 'antd'
 import { CSSProperties, ChangeEventHandler, FC, ReactNode, InputHTMLAttributes, useMemo } from 'react'
 
-import { InputError, StyledInput } from '@/components/Inputs/InputElements'
 import { OptionTitle } from '@/components/Elements'
+import InputWrapper from '@/components/Inputs/InputWrapper.tsx'
 
 interface ITextInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
   label?: string | ReactNode
@@ -26,25 +26,15 @@ const TextInput: FC<ITextInputProps> = (props) => {
     errorPosition = 'top',
     ...rest
   } = props
-  const errorOnTop = errorPosition === 'top'
 
   const labelComponent = useMemo(() => (
     typeof label === 'string' ? <OptionTitle className="pb-5">{label}</OptionTitle> : label
   ), [label])
 
   return (
-    <>
-      {label && (
-        <Flex vertical={false} justify="space-between" align="center">
-          {labelComponent}
-          {error && errorOnTop && <InputError>{error}</InputError>}
-        </Flex>
-      )}
-
-      <StyledInput isError={error !== undefined} {...rest} />
-
-      {error && !errorOnTop && <InputError>{error}</InputError>}
-    </>
+    <InputWrapper label={labelComponent} errorPosition={errorPosition} error={error}>
+      <Input status={error ? 'error' : undefined} {...rest} />
+    </InputWrapper>
   )
 }
 
