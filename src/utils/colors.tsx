@@ -5,6 +5,6 @@ export const colors = {
   secondary: '#3E34CA',
   secondaryText: '#1A1657D9',
   dim: '#888791',
-  dimLight: '#EFEFF1',
+  dimLight: '#D8D7DB',
   transparent: 'transparent'
 }

@@ -31,7 +31,7 @@ const CustomSelect: FC<IMonroeMultipleSelectProps> = ({ options, value, renderIn
   >
     {options.map((option) => (
       <Select.Option key={option.value} value={option.value}>
-        <Checkbox checked={value.includes(option.value as string)}>{option.label}</Checkbox>
+        <Checkbox checked={value?.includes(option.value as string)}>{option.label}</Checkbox>
       </Select.Option>
     ))}
   </Select>

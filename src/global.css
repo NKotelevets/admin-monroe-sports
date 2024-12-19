@@ -180,6 +180,7 @@ svg {
   background-color: #FFFFFF;
   border-radius: 2px;
   height: 32px;
+  width: 100%;
 }
 
 @media (width > 1660px) {
@@ -259,6 +260,11 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
 
 .ant-collapse-header {
   padding: 12px 0 !important;
+}
+
+
+.ant-collapse .ant-collapse .ant-collapse-header {
+  padding: 8px 0 4px 0 !important
 }
 
 .ant-collapse .ant-collapse-content {
@@ -769,12 +775,17 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
 .league-teams .ant-tabs-top >.ant-tabs-nav::before {
   border-bottom: 1px solid #BDBCC2 !important;
 }
-.league-teams .ant-select-arrow span svg,
-.league-teams .ant-select-selection-search {
+/* AntD Select */
+.form .ant-select-arrow span svg,
+.form .ant-select-selection-search {
   display: inline-block !important;
 }
 
-.ant-select .ant-menu-submenu-arrow::before, .ant-select .ant-menu-submenu-arrow::after {
+.ant-collapse-item-active>.ant-collapse-header .arrow-custom.ant-collapse-arrow {
+  transform: unset;
+}
+
+.ant-select .ant-menu-submenu-arrow::before, .ant-select .ant-menu-submenu-arrow::after, .arrow-custom::before, .arrow-custom::after {
   position: absolute;
   right: 2px;
   top: 7px;
@@ -786,19 +797,24 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
   content: "";
   transform: rotate(-45deg) translateX(2.5px);
 }
-.ant-select .ant-menu-submenu-arrow::after {
+.ant-select .ant-menu-submenu-arrow::after, .arrow-custom::after {
   transform: rotate(45deg) translateX(-2.5px);
 }
 
-.ant-select-open .ant-menu-submenu-arrow::before {
+.ant-select-open .ant-menu-submenu-arrow::before, .arrow-custom.active::before {
   transform: rotate(45deg) translateX(2.5px);
   top: 3px;
 }
-.ant-select-open .ant-menu-submenu-arrow::after {
+.ant-select-open .ant-menu-submenu-arrow::after, .arrow-custom.active::after {
   transform: rotate(-45deg) translateX(-2.5px);
   top: 3px;
 }
 
+
 .ant-picker-panel-container {
   border-radius: 2px !important;
+}
+
+form .ant-divider {
+  margin: 24px 0 12px !important;
 }

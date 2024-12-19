@@ -7,38 +7,41 @@ import { useLocation } from 'react-router-dom'
 
 import Match from '@/pages/Protected/Seasons/CreateBracket/components/Match'
 import WinnerBox from '@/pages/Protected/Seasons/CreateBracket/components/WinnerBox'
-import { BRACKETS_OPTIONS, BRACKET_STYLES } from '@/pages/Protected/Seasons/CreateBracket/constants/bracketData'
+import { BRACKET_STYLES, BRACKETS_OPTIONS } from '@/pages/Protected/Seasons/CreateBracket/constants/bracketData'
 import { bracketTheme } from '@/pages/Protected/Seasons/CreateBracket/utils/bracketTheme'
-import { ICreateSeasonFormValues, bracketSchema } from '@/pages/Protected/Seasons/constants/formik'
+import { bracketSchema, ICreateSeasonFormValues } from '@/pages/Protected/Seasons/constants/formik'
 
 import {
   BracketWrapper,
   CancelButton,
   MainContainer,
+  MonroeBlueText,
   MonroeDivider,
   OptionTitle,
-  ProtectedPageSubtitle,
+  ProtectedPageSubtitle
 } from '@/components/Elements'
 import { InputError } from '@/components/Inputs/InputElements'
 import MonroeInput from '@/components/Inputs/MonroeInput'
 import MonroeButton from '@/components/MonroeButton'
 import MonroeMultipleSelect from '@/components/MonroeMultipleSelect'
 import CustomSelect from '@/components/MonroeSelect'
-import MonroeTooltip from '@/components/MonroeTooltip'
 
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
 
-import { PATH_TO_EDIT_SEASON } from '@/common/constants/paths'
+import { PATH_TO_EDIT_SEASON, PATH_TO_SEASONS } from '@/common/constants/paths'
 import { PLAYOFFS_TEAMS_OPTIONS } from '@/common/constants/playoffsTeamsOptions'
 import { IBracket } from '@/common/interfaces/bracket'
 import { TBracketKeys } from '@/common/types/bracket'
+import { useSeasonFormContext } from '@/pages/Protected/Seasons/components/SeasonForm/UseSeasonFormContext.tsx'
+import { usePageContext } from '@/layouts/Page/context.ts'
+import MonroeTooltip from '@/components/MonroeTooltip.tsx'
 
 interface ICreateBracket {
   values: ICreateSeasonFormValues
   setFieldValue: (
     field: string,
     value: unknown,
-    shouldValidate?: boolean,
+    shouldValidate?: boolean
   ) => Promise<void | FormikErrors<ICreateSeasonFormValues>>
 
   touched: FormikTouched<ICreateSeasonFormValues>
@@ -48,34 +51,83 @@ interface ICreateBracket {
   setFieldTouched: (
     field: string,
     isTouched?: boolean,
-    shouldValidate?: boolean,
+    shouldValidate?: boolean
   ) => Promise<void | FormikErrors<ICreateSeasonFormValues>>
 }
 
 const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue, handleBlur, touched, setFieldTouched }) => {
-  const { setIsCreateBracketPage, pathToSubdivisionDataAndIndexes, bracketIdx, bracketMode } = useSeasonSlice()
+  const { setShowBracketPage } = useSeasonFormContext()
+  const { setPageTitle, setBreadcrumbs } = usePageContext()
+
+  const {
+    setSelectedBracketId,
+    pathToSubdivisionDataAndIndexes,
+    bracketIdx,
+    bracketMode
+  } = useSeasonSlice()
+
   const [teamsOptions, setTeamsOptions] = useState<DefaultOptionType[]>([])
-  const [selectedSubpools, setSelectedSubpools] = useState<DefaultOptionType[]>([])
-  const [namePrefix, indexes] = pathToSubdivisionDataAndIndexes.split('&')
-  const [divisionIndex, subdivisionIndex] = indexes.split('-')
-  const subdivisionValues = values.divisions[+divisionIndex].subdivisions[+subdivisionIndex]
+  const [selectedSubPools, setSelectedSubPools] = useState<DefaultOptionType[]>([])
+
+  const [namePrefix, divisionIndex] = pathToSubdivisionDataAndIndexes.split('&')
+  const subdivisionValues = values.divisions[+divisionIndex]
+
   const location = useLocation()
   const isEditPage = location.pathname.includes(PATH_TO_EDIT_SEASON)
-  const buttonLabel = !isEditPage ? (bracketMode === 'create' ? 'Create Bracket' : 'Save') : 'Save'
-  const subdivisionsInSeason: DefaultOptionType[] = values.divisions?.[+divisionIndex].subdivisions.flatMap(
+  const pageTitle = !isEditPage ? (bracketMode === 'create' ? 'Create Bracket' : 'Edit Bracket') : 'Edit Bracket'
+
+  const subdivisionsInSeason: DefaultOptionType[] = values.divisions?.[+divisionIndex].subDivisions.flatMap(
     (subdivision) => ({
       label: subdivision.name,
-      value: subdivision.name,
-    }),
+      value: subdivision.name
+    })
   )
+
   const filteredSubdivisionsInSeason = subdivisionsInSeason.filter((s) => !!s?.label)
-  const [newBracketData, setNewBracketData] = useState(subdivisionValues.brackets?.[bracketIdx])
   const [isEnabledButton, setIsEnabledButton] = useState(true)
+  const [newBracketData, setNewBracketData] = useState<IBracket>(subdivisionValues.brackets?.[bracketIdx] || {} as IBracket)
   const screenWidth = window.innerWidth
   const [isLargeScreen, setIsLargeScreen] = useState(screenWidth >= 1660)
-  const bracketTouchedFields = touched?.divisions?.[+divisionIndex]?.subdivisions?.[+subdivisionIndex]?.brackets?.[
-    +bracketIdx
-  ] as FormikTouched<IBracket>
+  const bracketTouchedFields = touched?.divisions?.[+divisionIndex]?.brackets?.[+bracketIdx] as FormikTouched<IBracket>
+
+  const onCancel = () => {
+    setShowBracketPage(false)
+
+    if (bracketMode === 'create') {
+      const brackets = subdivisionValues.brackets.filter((_, idx) => idx !== bracketIdx)
+      setFieldValue(`${namePrefix}.brackets`, brackets)
+    }
+  }
+
+  useEffect(() => {
+    setBreadcrumbs([
+      { title: <a href={PATH_TO_SEASONS}>Seasons</a> },
+      {
+        title: (
+          <a
+            onClick={() => {
+              onCancel()
+              setSelectedBracketId(null)
+            }}
+          >
+            {isEditPage ? `Edit` : `Create`} Season
+          </a>
+        )
+      },
+      { title: <MonroeBlueText>{pageTitle}</MonroeBlueText> }
+    ])
+    setPageTitle(pageTitle)
+  }, [pageTitle, isEditPage])
+
+  useEffect(() => {
+    const validateSchema = async () =>
+      await bracketSchema
+        .validate(newBracketData)
+        .then(() => setIsEnabledButton(false))
+        .catch(() => setIsEnabledButton(true))
+
+    validateSchema()
+  }, [newBracketData])
 
   const handleResize = () => {
     const screenWidth = window.innerWidth
@@ -90,9 +142,9 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue, handleBlur, 
   }, [])
 
   const calculateTeamsOptions = () => {
-    const arrayOfNumbers = Array.from({ length: newBracketData?.playoffTeams }, (_, index) => ({
+    const arrayOfNumbers = Array.from({ length: newBracketData?.playoffTeams || 0 }, (_, index) => ({
       label: index + 1,
-      value: index + 1,
+      value: index + 1
     }))
 
     setTeamsOptions(arrayOfNumbers)
@@ -100,33 +152,23 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue, handleBlur, 
 
   const handleClick = () => {
     setFieldValue(`${namePrefix}.brackets.${bracketIdx}`, newBracketData)
-    setIsCreateBracketPage(false)
+    setShowBracketPage(false)
   }
 
   useEffect(() => {
     if (newBracketData?.subdivisionsNames?.length) {
       const subpoolOptions = newBracketData?.subdivisionsNames.map((subpool) => ({
         label: subpool,
-        value: subpool,
+        value: subpool
       }))
       const filteredOptions = subpoolOptions.filter((s) => s.label)
-      setSelectedSubpools(filteredOptions)
+      setSelectedSubPools(filteredOptions)
     }
 
     calculateTeamsOptions()
 
-    if (!newBracketData) setIsCreateBracketPage(false)
+    if (!newBracketData) setShowBracketPage(false)
   }, [newBracketData?.playoffTeams])
-
-  useEffect(() => {
-    const validateSchema = async () =>
-      await bracketSchema
-        .validate(newBracketData)
-        .then(() => setIsEnabledButton(false))
-        .catch(() => setIsEnabledButton(true))
-
-    validateSchema()
-  }, [newBracketData])
 
   const handleTouchFiled = (fieldName: string) =>
     setFieldTouched(`${namePrefix}.brackets.${bracketIdx}.matches.${fieldName}`, true)
@@ -162,7 +204,7 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue, handleBlur, 
             <Flex align="center" justify="space-between">
               <OptionTitle>Subpools in Bracket *</OptionTitle>
 
-              {bracketTouchedFields?.subdivisionsNames && newBracketData?.subdivisionsNames.length === 0 && (
+              {bracketTouchedFields?.subdivisionsNames && newBracketData?.subdivisionsNames?.length === 0 && (
                 <InputError>Subpools in Bracket is required</InputError>
               )}
             </Flex>
@@ -178,28 +220,28 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue, handleBlur, 
                 const arrayOfSubpools = value as unknown as string[]
                 const options = arrayOfSubpools.map((subpool) => ({
                   label: subpool,
-                  value: subpool,
+                  value: subpool
                 }))
 
                 const updatedMatches = newBracketData.matches.map((match) => ({
                   ...match,
-                  participants: match.participants.map((p) => {
-                    if (!arrayOfSubpools.includes(`${p.subpoolName}`)) {
+                  matchParticipants: match.matchParticipants.map((p) => {
+                    if (!arrayOfSubpools.includes(`${p.subDivision}`)) {
                       return {
                         ...p,
-                        subpoolName: '',
+                        subDivision: ''
                       }
                     }
                     return p
-                  }),
+                  })
                 }))
 
                 setNewBracketData((prev) => ({
                   ...prev,
                   subdivisionsNames: arrayOfSubpools,
-                  matches: updatedMatches,
+                  matches: updatedMatches
                 }))
-                setSelectedSubpools(options)
+                setSelectedSubPools(options)
               }}
               onBlur={() => {
                 setFieldTouched(`${namePrefix}.brackets.${bracketIdx}.subdivisionsNames`, true)
@@ -211,14 +253,14 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue, handleBlur, 
           <Flex className="mg-b8" vertical>
             <OptionTitle># playoffs' teams *</OptionTitle>
             <CustomSelect
-              name={`${namePrefix}.brackets.${bracketIdx}.playoffTeams`}
+              name={`${namePrefix}.brackets[${bracketIdx}].playoffTeams`}
               value={`${newBracketData?.playoffTeams}`}
               options={PLAYOFFS_TEAMS_OPTIONS}
               onChange={(value) => {
                 setNewBracketData((prev) => ({
                   ...prev,
                   playoffTeams: +value,
-                  matches: BRACKETS_OPTIONS[+value as TBracketKeys],
+                  matches: BRACKETS_OPTIONS[+value as TBracketKeys]
                 }))
                 calculateTeamsOptions()
               }}
@@ -238,24 +280,33 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue, handleBlur, 
         <BracketWrapper>
           <SingleEliminationBracket
             theme={bracketTheme}
-            matches={newBracketData.matches}
+            matches={newBracketData.matches.map((match, index) => {
+              return ({
+                ...match,
+                index,
+                participants: match.matchParticipants?.map((pt, idx) => ({ ...pt, index: idx }))
+              })
+            })}
             options={{
               style: {
                 ...BRACKET_STYLES,
-                width: isLargeScreen ? 400 : 300,
-              },
+                width: isLargeScreen ? 400 : 300
+              }
             }}
-            matchComponent={(props) => (
-              <Match
-                setNewBracketData={setNewBracketData}
-                matchProps={props}
-                brackets={newBracketData.matches}
-                options={selectedSubpools}
-                teamsOptions={teamsOptions}
-                handleTouchFiled={handleTouchFiled}
-                matches={bracketTouchedFields?.matches}
-              />
-            )}
+            matchComponent={(props) => {
+              return (
+                <Match
+                  setNewBracketData={setNewBracketData}
+                  matchProps={props}
+                  brackets={newBracketData.matches}
+                  options={selectedSubPools}
+                  teamsOptions={teamsOptions}
+                  handleTouchFiled={handleTouchFiled}
+                  matches={bracketTouchedFields?.matches}
+                  name={`${namePrefix}.brackets[${bracketIdx}].matches`}
+                />
+              )
+            }}
           />
 
           <WinnerBox />
@@ -270,14 +321,7 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue, handleBlur, 
         <Flex>
           <CancelButton
             type="default"
-            onClick={() => {
-              setIsCreateBracketPage(false)
-
-              if (bracketMode === 'create') {
-                const brackets = subdivisionValues.brackets.filter((_, idx) => idx !== bracketIdx)
-                setFieldValue(`${namePrefix}.brackets`, brackets)
-              }
-            }}
+            onClick={onCancel}
           >
             Cancel
           </CancelButton>
@@ -285,7 +329,7 @@ const CreateBracket: FC<ICreateBracket> = ({ values, setFieldValue, handleBlur, 
           <MonroeTooltip width="180px" containerWidth="auto" text={isEnabledButton ? 'Missing mandatory data' : ''}>
             <div className="w-150">
               <MonroeButton
-                label={buttonLabel}
+                label={pageTitle}
                 type="primary"
                 onClick={handleClick}
                 isDisabled={isEnabledButton}

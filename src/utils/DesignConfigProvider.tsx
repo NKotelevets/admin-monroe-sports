@@ -36,6 +36,23 @@ const DesignConfigProvider: FC<{ children: ReactNode }> = ({ children }) => (
           borderRadius: 2,
           colorBgSpotlight: 'rgba(62, 62, 72, 0.75)'
         },
+        Input: {
+          hoverBorderColor: colors.dim,
+          activeBorderColor: colors.secondary,
+          activeShadow: `0 0 0 2px #3C39701A`
+        },
+        DatePicker: {
+          cellWidth: 45,
+        },
+        Divider: {
+          margin: 24
+        },
+        Collapse: {
+          headerBg: '#FFFFFF'
+        },
+        Typography: {
+          colorTextHeading: colors.secondaryText
+        }
       }
     }}
   >

@@ -162,7 +162,7 @@ export const seasonsSlice = createSlice({
 
             if (!existingSubdivision) return isSEB
 
-            return existingSubdivision.playoff_format === 1 ? false : isSEB
+            return division.playoff_format === 1 ? false : isSEB
           })
 
           state.isShowImportWarningModal = isSingleEliminationBracketInNewRecords || isChanged

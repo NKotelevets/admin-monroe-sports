@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { IFELeague, ILeagueForm } from '@/common/interfaces/league.ts'
 import { useFormikContext } from 'formik'
 import { useLazyGetSeasonDetailsQuery } from '@/redux/seasons/seasons.api.ts'
-import { IBESubdivision, IFEDivision } from '@/common/interfaces/division.ts'
+import { IFEDivision, IFESubdivision } from '@/common/interfaces/division.ts'
 import { IIdName } from '@/common/interfaces'
 import Select from '@/components/Inputs/Select.tsx'
 import { IFESeason } from '@/common/interfaces/season.ts'
@@ -64,8 +64,8 @@ export const SeasonAndPoolsDropdown = React.memo(
     /**
      * Computes the list of subdivisions for the selected division.
      */
-    const subdivisionList: IBESubdivision[] = useMemo(() => {
-      return divisionList?.find(division => division.id === values.division)?.sub_division || []
+    const subdivisionList: IFESubdivision[] = useMemo(() => {
+      return divisionList?.find(division => division.id === values.division)?.subDivision || []
     }, [divisionList, values.division])
 
     return (
