@@ -1,7 +1,7 @@
 import { IIdName } from '.'
 
-import { IBEDivision, IBESubdivision, IFEDivision } from '@/common/interfaces/division'
-import { IBELeague } from '@/common/interfaces/league'
+import { IBEBracket, IBEDivision, IBESubdivision, IFEDivision } from '@/common/interfaces/division'
+import { IBELeague, IFELeague } from '@/common/interfaces/league'
 import { TDeleteStatus, TErrorDuplicate } from '@/common/types'
 
 interface ISeasonCommonFields {
@@ -42,7 +42,11 @@ export interface IUpdateSeasonBody {
   expected_end_date: string
 }
 
-export interface IFESeason extends ISeasonCommonFields {
+export interface IFESeason {
+  id: string
+  name: string
+  league: IFELeague
+  divisions: IFEDivision[]
   updatedAt: string
   createdAt: string
   startDate: string
@@ -156,12 +160,14 @@ export interface ISeasonReviewUpdateData {
   linkedLeagueName: string
   startDate: string
   expectedEndDate: string
-  divisions: IBEDivision[]
+  divisions: IFEDivision[]
 }
 
 interface ICreateSeasonDivision {
   name: string
   description: string | null
+  playoff_format: number | string
+  brackets: Omit<IBEBracket, 'id'>[]
   sub_division: Omit<IBESubdivision, 'brackets' | 'changed'>[]
 }
 

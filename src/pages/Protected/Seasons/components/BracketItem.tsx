@@ -4,6 +4,7 @@ import SmallEditIcon from '@/assets/icons/small-edit.svg'
 import SmallDeleteIcon from '@/assets/icons/small-delete.svg'
 import { Flex } from 'antd'
 import { IBracket } from '@/common/interfaces/bracket.ts'
+import styled from '@emotion/styled'
 
 interface IBracketItemProps {
   bracket: IBracket
@@ -14,10 +15,10 @@ interface IBracketItemProps {
 export const BracketItem = (props: IBracketItemProps) => {
   const { bracket, onDelete, onEdit } = props
   return (
-    <Flex key={bracket.name} justify="space-between" className="mg-t5">
+    <Bracket key={bracket.name} justify="space-between">
       <BracketNameWrapper>{bracket.name}</BracketNameWrapper>
 
-      <IconsWrapper>
+      <IconsWrapper align='center'>
         <div className="mg-r4">
           <ReactSVG
             src={SmallEditIcon}
@@ -32,6 +33,11 @@ export const BracketItem = (props: IBracketItemProps) => {
           onClick={onDelete}
         />
       </IconsWrapper>
-    </Flex>
+    </Bracket>
   )
 }
+
+const Bracket = styled(Flex)`
+    padding: 0 24px;
+    
+`

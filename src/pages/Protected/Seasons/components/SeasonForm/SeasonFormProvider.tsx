@@ -11,6 +11,7 @@ export const SeasonFormProvider = (props: ISeasonFormProviderProps) => {
 
   const [showBracketPage, setShowBracketPage] = useState(false)
   const [selectedLeague, setSelectedLeague] = useState<IFELeague | null>(null)
+  const [ids, setIds] = useState<number[]>([])
 
   return (
     <SeasonFormContext.Provider
@@ -18,7 +19,9 @@ export const SeasonFormProvider = (props: ISeasonFormProviderProps) => {
         showBracketPage,
         setShowBracketPage,
         selectedLeague,
-        setSelectedLeague
+        setSelectedLeague,
+        ids,
+        setIds
       }}
     >
       {children}

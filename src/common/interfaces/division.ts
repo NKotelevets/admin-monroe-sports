@@ -28,7 +28,7 @@ interface IBEMatch {
   match_participants: IBEMatchParticipant[]
 }
 
-interface IBEBracket {
+export interface IBEBracket {
   created_at?: string
   name: string
   number_of_teams: number
@@ -43,10 +43,8 @@ export interface IBESubdivision {
   id?: string
   name: string
   description: string
-  playoff_format: number | string
   standings_format: number | string
   tiebreakers_format: number | string
-  brackets: IBEBracket[]
   changed: boolean
 }
 
@@ -55,26 +53,27 @@ interface IFEBracket {
   name: string
   numberOfTeams: number
   published: boolean
-  subdivision: string[]
+  subDivision: string[]
   updatedAt: string
   matches: IMatch[]
   id?: number
 }
 
 export interface IFESubdivision {
-  id: string
+  id?: string
   name: string
   description: string
-  playoffFormat: string
-  standingsFormat: string
-  tiebreakersFormat: string
-  brackets: IFEBracket[]
+  standingsFormat: number | string
+  tiebreakersFormat: number | string
+  changed: boolean
 }
 
 export interface IBEDivision {
   id?: string
   name: string
   description: string
+  playoff_format: number | string
+  brackets: IBEBracket[]
   sub_division: IBESubdivision[]
   created_at?: string
   updated_at?: string
@@ -84,22 +83,26 @@ export interface IFEDivision {
   id?: string
   name: string
   description: string
-  sub_division: IBESubdivision[]
+  playoffFormat: number | string
+  brackets: IFEBracket[]
+  subDivision: IFESubdivision[]
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface IImportedSubdivision {
   id?: string
   name: string
   description: string
-  playoff_format: number | string
   standings_format: number | string
   tiebreakers_format: number | string
   changed: boolean
-  brackets: IBEBracket[]
 }
 
 export interface IUpdateDivision {
   name: string
   description: string
   sub_division: IImportedSubdivision[]
+  brackets: IBEBracket[]
+  playoff_format: number | string
 }

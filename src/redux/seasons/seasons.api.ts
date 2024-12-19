@@ -6,13 +6,13 @@ import { IPaginationResponse } from '@/common/interfaces/api'
 import {
   IBECreateSeasonBody,
   IBESeason,
-  ICreateBESeason,
   IDeleteSeasonsResponse,
   IFESeason,
   IGetSeasonsRequestParams,
   IGetSeasonsResponse,
   IImportSeasonsResponse,
 } from '@/common/interfaces/season'
+import { transformKeysToCamelCase, transformKeysToSnakeCase } from '@/utils'
 
 const SEASON_TAG = 'SEASON_TAG'
 
@@ -29,16 +29,7 @@ export const seasonsApi = createApi({
       providesTags: [SEASON_TAG],
       transformResponse: (data: IPaginationResponse<IBESeason[]>) => ({
         count: data.count,
-        seasons: data.results.map((season) => ({
-          divisions: season.divisions,
-          expectedEndDate: season.expected_end_date,
-          id: season.id,
-          league: season.league,
-          name: season.name,
-          startDate: season.start_date,
-          createdAt: season!.created_at as string,
-          updatedAt: season!.updated_at as string,
-        })),
+        seasons: data.results.map((season) => (transformKeysToCamelCase({ ...season }))),
       }),
     }),
     deleteSeason: builder.mutation<void, { id: string }>({
@@ -73,36 +64,26 @@ export const seasonsApi = createApi({
       }),
       invalidatesTags: [SEASON_TAG],
     }),
-    updateSeason: builder.mutation<
-      void,
-      {
-        id: string
-        body: ICreateBESeason
-      }
-    >({
+
+    updateSeason: builder.mutation<void, { id: string, body: IBECreateSeasonBody }>({
       query: ({ id, body }) => ({
         url: 'teams/seasons/' + id,
-        body,
+        body: transformKeysToSnakeCase(body),
         method: 'PUT',
       }),
     }),
+
     getSeasonDetails: builder.query<IFESeason, string>({
       query: (id) => ({
         url: `teams/seasons/${id}`,
       }),
       keepUnusedDataFor: 0.0001,
 
-      transformResponse: (response: IBESeason): IFESeason => ({
-        createdAt: response.created_at as string,
-        divisions: response.divisions,
-        expectedEndDate: response.expected_end_date,
-        id: response.id,
-        league: response.league,
-        name: response.name,
-        startDate: response.start_date,
-        updatedAt: response.updated_at as string,
-      }),
+      transformResponse: (response: IBESeason): IFESeason => (
+        {...transformKeysToCamelCase(response)}
+      ),
     }),
+
     getSeasonBEDetails: builder.query<IBESeason, string>({
       query: (id) => ({
         url: `teams/seasons/${id}`,
