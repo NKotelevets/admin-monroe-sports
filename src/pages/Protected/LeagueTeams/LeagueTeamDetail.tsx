@@ -1,6 +1,6 @@
 import { Page } from '@/layouts/Page'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { PATH_TO_LEAGUE_TEAMS, PATH_TO_MASTER_TEAMS } from '@/common/constants/paths.ts'
+import { PATH_TO_LEAGUE_TEAMS, PATH_TO_MASTER_TEAMS, PATH_TO_SEASONS } from '@/common/constants/paths.ts'
 import { MonroeBlueText, MonroeLinkText, ViewText } from '@/components/Elements'
 import { Dot, SimpleEntityList } from '@/pages/Protected/MasterTeams/components/SimpleEntityList.tsx'
 import { Flex, Tag } from 'antd'
@@ -54,12 +54,21 @@ const LeagueTeamDetail = () => {
       navigate(`${PATH_TO_LEAGUE_TEAMS}/${data?.league?.id}`)
     , [data])
 
+  const navigateToSeason = useCallback(() =>
+      navigate(`${PATH_TO_SEASONS}/${data?.season?.id}`)
+    , [data])
+
   const renderControls = useCallback(() => {
     const onEdit = () => navigate(`${PATH_TO_LEAGUE_TEAMS}/edit/${data?.id}`)
 
     return (
       <>
-        <Button danger={true} icon={<DeleteOutlined />} onClick={() => setShowDeleteModal(true)}>Delete</Button>
+        <Button
+          danger={true}
+          icon={<DeleteOutlined />}
+          disabled={data?.canBeDelete === false}
+          onClick={() => setShowDeleteModal(true)}
+        >Delete</Button>
         <Button type="primary" icon={<EditOutlined />} onClick={onEdit}>Edit</Button>
       </>
     )
@@ -73,7 +82,7 @@ const LeagueTeamDetail = () => {
         setShowDeleteModal(false)
         notify((error as IDetailedError).details, 'error')
       })
-  }, [])
+  }, [data?.canBeDelete])
 
   // Render a loading indicator if data is still loading or unavailable
   if (isLoading || !data) return <Loader />
@@ -107,7 +116,7 @@ const LeagueTeamDetail = () => {
               {!!data.masterTeam?.name && (
                 <MonroeLinkText underline={false} onClick={navigateToMasterTeam}>{data.masterTeam.name}</MonroeLinkText>
               )}
-              {!data.masterTeam?.name && (<Tag icon={<CloseCircleOutlined/>} color='orange'>Waiting for MT</Tag>)}
+              {!data.masterTeam?.name && (<Tag icon={<CloseCircleOutlined />} color="orange">Waiting for MT</Tag>)}
             </Flex>
           </Flex>
 
@@ -133,6 +142,15 @@ const LeagueTeamDetail = () => {
               )}
             </Flex>
           </Flex>
+          {!!data.season && (
+            <Flex className="mb-16">
+              <ViewText>Linked Season:</ViewText>
+
+              <Flex align="flex-start">
+                <MonroeLinkText underline={false} onClick={navigateToSeason}>{data.season?.name}</MonroeLinkText>
+              </Flex>
+            </Flex>
+          )}
         </Flex>
       </Page>
     </>

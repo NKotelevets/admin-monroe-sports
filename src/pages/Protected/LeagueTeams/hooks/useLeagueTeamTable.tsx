@@ -24,6 +24,9 @@ import { useCopyContent } from '@/hooks/useCopyContent.tsx'
 import { useTableContext } from '@/hooks/useTableContext.ts'
 import { ColumnType } from 'rc-table/lib/interface'
 import { ColumnGroupType } from 'antd/es/table/interface'
+import { Tag, Tooltip } from 'antd'
+import { DeleteWrapper } from '@/pages/Protected/LeagueTeams/components/DeleteWrapper.ts'
+import { CloseCircleOutlined } from '@ant-design/icons'
 
 const EMAIL_COPIED_MESSAGE = 'Email successfully copied'
 
@@ -76,7 +79,7 @@ export const useLeagueTeamTable = (): IUseLeagueTableReturn => {
     })
   }
 
-  const onFilter = useCallback((fieldName: keyof Pick<IFELeagueTeam, 'league' | 'division' | 'subdivision'>) => (
+  const onFilter = useCallback((fieldName: keyof Pick<IFELeagueTeam, 'league' | 'division' | 'subdivision' | 'season'>) => (
     (value: boolean | React.Key, record: IFELeagueTeam) => {
       return !!record[fieldName]?.name.toLowerCase().includes((value as string).toLowerCase())
     }
@@ -100,6 +103,15 @@ export const useLeagueTeamTable = (): IUseLeagueTableReturn => {
       width: '240px',
       sortOrder: getColumnSort('league_name', ordering),
       ...getColumnSearchProps('league', onFilter('league')),
+      render: renderLeague
+    },
+    {
+      title: 'Linked Season',
+      dataIndex: 'season',
+      sorter: true,
+      width: '240px',
+      sortOrder: getColumnSort('season_name', ordering),
+      ...getColumnSearchProps('season', onFilter('season')),
       render: renderLeague
     },
     {
@@ -163,14 +175,22 @@ export const useLeagueTeamTable = (): IUseLeagueTableReturn => {
               navigate(PATH_TO_EDIT_LEAGUE_TEAM + `/${record.id}`)
             }}
           />
-          <ReactSVG
-            className="mg-l8"
-            onClick={() => {
-              setSingleDeleting(true)
-              setSelectedIds([value.id])
-            }}
-            src={DeleteIcon}
-          />
+
+          <div className="mg-l8">
+            <Tooltip
+              placement="left"
+              title={!record.canBeDeleted ? `You can't delete a league team that has events` : ''}
+            >
+              <DeleteWrapper onClick={record.canBeDeleted ? () => {
+                setSingleDeleting(true)
+                setSelectedIds([value.id])
+              } : undefined}>
+                <ReactSVG
+                  src={DeleteIcon}
+                />
+              </DeleteWrapper>
+            </Tooltip>
+          </div>
         </Flex>
       )
     }
@@ -263,7 +283,7 @@ const useLeagueTeamTableRenderers = (): IRenderersReturn => {
       underline={false}
       onClick={() => navigate(PATH_TO_MASTER_TEAMS + '/' + masterTeam?.id)}
     >
-      {masterTeam?.name ? masterTeam.name : '-'}
+      {masterTeam?.name ? masterTeam.name : <Tag icon={<CloseCircleOutlined />} color="orange">Waiting for MT</Tag>}
     </MonroeLinkText>
   ), [])
 
@@ -296,21 +316,18 @@ const useLeagueTeamTableRenderers = (): IRenderersReturn => {
     )
   }, [])
 
-  const renderTeamAdminName = useCallback((_: unknown, { masterTeam }: IFELeagueTeam) => (
+  const renderTeamAdminName = useCallback((_: unknown, { adminData }: IFELeagueTeam) => (
     <MonroeLinkText
       inline={true}
       underline={false}
-      onClick={() => navigate(PATH_TO_USERS + '/' + masterTeam?.teamAdmin?.id)}
+      onClick={() => navigate(PATH_TO_USERS + '/' + (adminData?.length ? adminData[0].id : ''))}
     >
-      {masterTeam?.teamAdmin?.firstName && masterTeam?.teamAdmin?.lastName
-        ? (`${masterTeam?.teamAdmin?.firstName} ${masterTeam?.teamAdmin?.lastName}`)
-        : '-'
-      }
+      {adminData?.length && adminData[0].name}
     </MonroeLinkText>
   ), [])
 
-  const renderTeamAdminEmail = useCallback((_: unknown, { masterTeam }: IFELeagueTeam) => {
-    const email = masterTeam?.teamAdmin?.email
+  const renderTeamAdminEmail = useCallback((_: unknown, { adminData }: IFELeagueTeam) => {
+    const email = adminData ? adminData[0].email : undefined
     if (!email) return '-'
 
     return (

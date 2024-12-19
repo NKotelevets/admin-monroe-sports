@@ -85,7 +85,7 @@ const LeagueTeamEdit = (): ReactElement => {
     masterTeamAdminName: data?.adminData && data.type === 'masterTeam' ? data.adminData[0].name || 'No admin' : 'No admin',
     masterTeamAdminEmail: data?.adminData ? data.adminData[0].email || 'No email' : 'No email',
     league: data.league?.id || undefined,
-    season: data.season || undefined,
+    season: data.season?.id || undefined,
     division: data.division?.id || undefined,
     subdivision: data.subdivision?.id || undefined,
     masterTeamAdmin: data?.adminData && data.type === 'teamAdmin' ? data.adminData[0].id : undefined,

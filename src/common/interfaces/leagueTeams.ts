@@ -4,6 +4,7 @@ import { IBELeague, IFELeague } from '@/common/interfaces/league'
 import { IBEOperator, IFEOperator } from '@/common/interfaces/operator'
 import { IBEMasterTeam, IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
 import { TDeleteStatus } from '@/common/types'
+import { IFESeason } from '@/common/interfaces/season.ts'
 
 interface IHeadCoachTeamAdmin {
   additional_emails: IAdditionalEmail[]
@@ -76,12 +77,14 @@ export interface IBELeagueTeam {
 export interface IFELeagueTeam {
   id: string
   name: string
+  canBeDeleted: boolean
   headCoach:  IFEHeadCoachTeamAdmin | null
   league: IBELeague
   division: IFEDivision | null
   subdivision: IFESubdivision | null
   masterTeam: IFEMasterTeam | null
   operator: IFESimpleEntity | null
+  season: IFESeason | null
   logoS3Url: string
   type?: 'masterTeam' | 'teamAdmin'
   adminData?: {
@@ -99,6 +102,7 @@ export interface IGetLeagueTeamsRequest {
   division_name?: string | null
   subdivision_name?: string | null
   league_name?: string | null
+  season_name?: string | null
 }
 
 export interface IGetLeagueTeamsResponse {
@@ -149,13 +153,14 @@ export interface IFESimpleEntity {
 export interface IFELeagueTeamDetails {
   id: string
   name: string
+  canBeDelete: boolean
   masterTeam: IFEMasterTeam
   masterTeamAdmins?: IFESimpleEntity[]
   masterTeamAdmin?: IFESimpleEntity
   headCoach?: IFESimpleEntity
   operator?: IFESimpleEntity
   league: IFELeague
-  season?: string
+  season?: IFESeason
   division?: IFEDivision
   subdivision?: IFESubdivision
   logoS3Url?: string
