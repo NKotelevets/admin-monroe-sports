@@ -11,12 +11,14 @@ import { useEventsSlice } from '@/redux/hooks/useEventsSlice'
 import { useTableContext } from '@/hooks/useTableContext.ts'
 import { showTotal } from '@/components/Table/utils.tsx'
 import { getTableSortField } from '@/utils'
+import styled from '@emotion/styled'
+import { colors } from '@/utils/colors.tsx'
 
 const ERROR_LOADING_EVENTS_MESSAGE = `Could not load events. Please, try again!`
 
 
 export const EventsTable = () => {
-  const [listEvents] = useLazyListEventsQuery()
+  const [listEvents, { isLoading, isFetching }] = useLazyListEventsQuery()
 
   const { notify } = useNotification()
   const { columns } = useEventsTable()
@@ -97,20 +99,25 @@ export const EventsTable = () => {
     }
 
     const fieldMap = {
-      leagueName: 'league_name',
       subResource: 'sub_resource',
       team1Name: 'team1_name',
-      team2Name: 'team2_ame'
+      team2Name: 'team2_name',
+      location: 'location_name',
+      courtNumber: 'court_number',
+      homeTeam: 'home_team_name',
+      awayTeam: 'away_team_name',
+      league: 'league_name'
     }
 
     const leagueTeamsRequestParams: TListEventRequestParams = {
       offset: newOffset,
       limit: newLimit,
       ordering: getTableSortField<IEvent>(sorter, fieldMap),
+      date: (filters?.['date']?.[0] as string) ?? undefined,
       leagueName: (filters?.['leagueName']?.[0] as string) ?? undefined,
       subResource: (filters?.['subResource']?.[0] as string) ?? undefined,
       team1Name: (filters?.['team1Name']?.[0] as string) ?? undefined,
-      team2Name: (filters?.['team2Name']?.[0] as string) ?? undefined,
+      team2Name: (filters?.['team2Name']?.[0] as string) ?? undefined
     }
 
     listEvents(leagueTeamsRequestParams)
@@ -123,13 +130,20 @@ export const EventsTable = () => {
   }
 
   return (
-    <MonroeTable<IEvent>
+    <TableStyled
       columns={columns}
       dataSource={events}
       onChange={handleTableChange}
+      loading={isFetching || isLoading}
       pagination={pagination}
       showCreated={showCreatedRecords}
       createdIds={createdIds || []}
     />
   )
 }
+
+const TableStyled = styled(MonroeTable<IEvent>)`
+  & tbody .ant-table-column-sort {
+      background-color: ${colors.secondaryLight} !important;
+  }
+`

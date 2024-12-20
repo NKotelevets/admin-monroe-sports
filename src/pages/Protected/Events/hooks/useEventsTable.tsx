@@ -16,6 +16,9 @@ import dayjs from 'dayjs'
 import { EventTypeTag } from '@/pages/Protected/Events/components/EventTypeTag.tsx'
 import { RSVPStatus } from '../components/RSVPStatus'
 import { Typography } from 'antd'
+import FilterFilled from '@ant-design/icons/lib/icons/FilterFilled'
+import { getIconColor } from '@/utils'
+import { DateFilterDropdown } from '@/components/Table/DateFilterDropdown.tsx'
 
 export const useEventsTable = () => {
   const navigate = useNavigate()
@@ -32,7 +35,6 @@ export const useEventsTable = () => {
     setSelectedIds([])
   }, [])
 
-
   function handleReset() {
     listEvents({
       limit,
@@ -45,16 +47,36 @@ export const useEventsTable = () => {
     return () => navigate(`${PATH_TO_LOCATION}/${id}`)
   }, [])
 
+  const filterIcon = useCallback((filtered: boolean) => (
+    <FilterFilled style={{ color: getIconColor(filtered) }} />
+  ), [])
+
+  const onFilterDate = useCallback( (value: unknown, record: IEvent) => {
+    if (!record['date']) return false
+
+    return (record['date'] as string)
+      .toString()
+      .toLowerCase()
+      .includes((value as string).toLowerCase())
+  }, [])
+
   const columns: TColumns<IEvent> = [
     {
       title: 'Day',
       dataIndex: 'day',
-      sorter: true,
       width: '88px',
       fixed: 'left',
-      // TODO: missing filter
-      // TODO: missing sorter
-      render: (_, record) => record.day.substring(0, 3)
+      filters: [
+        { text: 'Mon', value: 'monday' },
+        { text: 'Tue', value: 'tuesday' },
+        { text: 'Wed', value: 'wednesday' },
+        { text: 'Thu', value: 'thursday' },
+        { text: 'Fri', value: 'friday' },
+        { text: 'Sat', value: 'saturday' },
+        { text: 'Sun', value: 'sunday' }
+      ],
+      filterIcon,
+      render: (_, record) => record.day ? record.day.substring(0, 3) : '-'
     },
     {
       title: 'Date',
@@ -62,8 +84,9 @@ export const useEventsTable = () => {
       sorter: true,
       width: '144px',
       fixed: 'left',
-      // TODO: missing filter
-      // TODO: missing sorter
+      filterIcon,
+      filterDropdown: (props) => <DateFilterDropdown {...props} />,
+      onFilter: onFilterDate,
       render: (_, record) => dayjs(record.date, 'YYYY-MM-DD').format('MM/DD/YYYY')
     },
     {
@@ -71,8 +94,6 @@ export const useEventsTable = () => {
       dataIndex: 'time',
       sorter: true,
       width: '130px',
-      // TODO: missing filter
-      // TODO: missing sorter
       render: (_, record) => dayjs(record.time, 'HH:mm:ss').format('hh:mm A')
     },
     {
@@ -80,26 +101,25 @@ export const useEventsTable = () => {
       dataIndex: 'time',
       sorter: true,
       width: '130px',
-      // TODO: missing filter
-      // TODO: missing sorter
       render: (_, record) => dayjs(record.time, 'HH:mm:ss').add(record.duration, 'hour').format('hh:mm A')
     },
     {
       title: 'Event type',
       dataIndex: 'type',
-      sorter: true,
-      width: '140px',
-      // TODO: missing filter
-      // TODO: missing sorter
+      width: '192px',
+      filters: [
+        { text: 'Game', value: '0' },
+        { text: 'Practice', value: '2' },
+        { text: 'Playoff', value: '3' },
+        { text: 'Other event', value: '5' },
+      ],
+      filterIcon,
       render: (_, record) => <EventTypeTag type={record.type} />
     },
     {
       title: 'RSVP',
       dataIndex: 'rsvpAnswers',
-      sorter: true,
       width: '144px',
-      // TODO: missing filter
-      // TODO: missing sorter
       render: (_, record) => <RSVPStatus rsvp={record.rsvpAnswers} />
     },
     // {
@@ -123,14 +143,12 @@ export const useEventsTable = () => {
     {
       title: 'Court',
       dataIndex: 'courtNumber',
-      sorter: true,
       width: '96px',
       render: (_, record) => record.courtNumber ? record.courtNumber : '##'
     },
     {
       title: 'Sub Resource',
       dataIndex: 'subResource',
-      sorter: true,
       width: '152px',
       render: (_, record) => record.subResource ? record.subResource : '##'
     },

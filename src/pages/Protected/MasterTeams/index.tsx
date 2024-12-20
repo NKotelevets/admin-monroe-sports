@@ -1,11 +1,11 @@
 import MasterTeamsTable from './components/MasterTeamsTable'
 import { useNavigate } from 'react-router-dom'
-import { useBulkDeleteMasterTeamsMutation } from '@/redux/masterTeams/masterTeams.api'
+import { useBulkDeleteMasterTeamsMutation, useMasterTeamsImportCSVMutation } from '@/redux/masterTeams/masterTeams.api'
 
 import {
   PATH_TO_CREATE_MASTER_TEAM,
   PATH_TO_DELETING_INFO_MASTER_TEAMS,
-  PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST
+  PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST, PATH_TO_MASTER_TEAMS_IMPORT_INFO
 } from '@/common/constants/paths'
 import { ExportAvailability } from '@/components/ExportAvailability.tsx'
 import { ScheduleRequestButton } from '@/components/ScheduleRequest/ScheduleRequestButton.tsx'
@@ -13,8 +13,9 @@ import { useExportScheduleCSV } from '@/hooks/useExportScheduleCSV.ts'
 import { TableProvider } from '@/components/Table/MonroeTable/TableProvider.tsx'
 import { TablePage } from '@/layouts/TablePage.tsx'
 import { useNotification } from '@/hooks/useNotification.ts'
-import { ImportButton } from '@/pages/Protected/MasterTeams/components/ImportButton.tsx'
 import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice.tsx'
+import { ImportButton } from '@/components/ImportButton.tsx'
+import { TDeleteStatus } from '@/common/types'
 
 const DELETE_TERMS = {
   singular: 'master team',
@@ -29,6 +30,7 @@ const MasterTeams = () => {
   const { total } = useMasterTeamsSlice()
 
   const [bulkDeleteMT] = useBulkDeleteMasterTeamsMutation()
+  const [importMasterTeamCSV] = useMasterTeamsImportCSVMutation()
 
   /**
    * Handles deletion of one or multiple master teams.
@@ -58,12 +60,33 @@ const MasterTeams = () => {
     }
   }
 
+  /**
+   * Handles importing a CSV
+   * @param body
+   */
+  const onImport = async (body: FormData) => {
+    return importMasterTeamCSV(body).unwrap()
+      .then(response => ({
+        status: response.status as TDeleteStatus,
+        message: ''
+      }))
+      .catch(response => {
+        return ({
+          status: 'red' as TDeleteStatus,
+          message: (response?.data as {
+            code: string;
+            error: string
+          })?.error || response.data?.detail || 'Something went wrong. Please, try again'
+        })
+      })
+  }
+
   const renderControls = () => {
     return (
       <>
         <ScheduleRequestButton
           pathToExport="availability/export"
-          exportFileName='master-teams-availability'
+          exportFileName="master-teams-availability"
           pathToSchedule={PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST}
           onExport={{
             call: onExport,
@@ -72,7 +95,10 @@ const MasterTeams = () => {
           }}
         />
         <ExportAvailability pathToExport="availability/export" />
-        <ImportButton />
+        <ImportButton
+          infoPath={PATH_TO_MASTER_TEAMS_IMPORT_INFO}
+          onChange={onImport}
+        />
       </>
     )
   }

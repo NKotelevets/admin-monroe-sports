@@ -6,6 +6,7 @@ export type TPaginatedEvents = IPaginationResponse<NestedSnakeCase<IEvent>[]>
 
 export type TListEventRequestParams = {
   court?: string
+  date?: string
   leagueName?: string
   limit?: number
   offset?: number

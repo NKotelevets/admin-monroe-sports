@@ -1,12 +1,18 @@
 import { useImportFile } from '@/hooks/useImportFile.tsx'
 import { ChangeEvent, ReactElement, useState } from 'react'
 import { DEFAULT_IMPORT_MODAL_OPTIONS } from '@/common/constants/import.ts'
-import { useMasterTeamsImportCSVMutation } from '@/redux/masterTeams/masterTeams.api.ts'
 import { IImportModalOptions } from '@/common/interfaces'
 import ImportModal from '@/components/ImportModal.tsx'
-import { PATH_TO_MASTER_TEAMS_IMPORT_INFO } from '@/common/constants/paths.ts'
 import { useNavigate } from 'react-router-dom'
 import { useTableContext } from '@/hooks/useTableContext.ts'
+import { TDeleteStatus } from '@/common/types'
+
+interface TImportButtonProps {
+  fileName?: string
+  infoPath: string
+
+  onChange(body: FormData): Promise<{ status: TDeleteStatus; message: string; }>
+}
 
 /**
  * ImportButton Component
@@ -16,15 +22,16 @@ import { useTableContext } from '@/hooks/useTableContext.ts'
  *
  * @returns {ReactElement} The ImportButton component.
  */
-export const ImportButton = (): ReactElement => {
-  const navigate = useNavigate()
+export const ImportButton = (props: TImportButtonProps): ReactElement => {
+  const { infoPath, fileName = 'csv_file', onChange } = props
   const { setShowCreatedRecords } = useTableContext()
   const { Button, setFileKey } = useImportFile({
     buttonTitle: 'Import CSV',
     accept: '.csv'
   })
 
-  const [importMasterTeamCSV] = useMasterTeamsImportCSVMutation()
+  const navigate = useNavigate()
+
   const [importModalOptions, setImportModalOptions] = useState<IImportModalOptions>(DEFAULT_IMPORT_MODAL_OPTIONS)
 
   /**
@@ -34,7 +41,7 @@ export const ImportButton = (): ReactElement => {
    * @param {ChangeEvent<HTMLInputElement>} event - The file input change event.
    * @returns {Promise<void>} A promise resolving when the file is processed.
    */
-  const onChange = async (event: ChangeEvent<HTMLInputElement>): Promise<void> => {
+  const onFile = async (event: ChangeEvent<HTMLInputElement>): Promise<void> => {
     setImportModalOptions(DEFAULT_IMPORT_MODAL_OPTIONS)
     const file = event.target.files?.[0]
 
@@ -47,27 +54,24 @@ export const ImportButton = (): ReactElement => {
       })
 
       const body = new FormData()
-      body.set('csv_file', file)
+      body.set(fileName, file)
 
-      await importMasterTeamCSV(body)
-        .unwrap()
+      await onChange(body)
         .then(response => {
           setImportModalOptions({
             filename: file.name,
             isOpen: true,
             status: response.status,
-            errorMessage: ''
+            errorMessage: response.message
           })
         })
-        .catch((error) => {
+        .catch(() => {
+
           setImportModalOptions({
             filename: file.name,
             isOpen: true,
             status: 'red',
-            errorMessage: (error.data as {
-              code: string;
-              error: string
-            })?.error || error.data?.detail || 'Something went wrong. Please, try again'
+            errorMessage: 'Something went wrong. Please try again!'
           })
         })
 
@@ -86,12 +90,12 @@ export const ImportButton = (): ReactElement => {
           showInList={() => setShowCreatedRecords(true)}
           redirectToImportInfo={() => {
             setImportModalOptions((prev) => ({ ...prev, isOpen: false }))
-            navigate(PATH_TO_MASTER_TEAMS_IMPORT_INFO)
+            navigate(infoPath)
           }}
           onClose={() => setImportModalOptions((prev) => ({ ...prev, isOpen: false }))}
         />
       )}
-      <Button onChange={onChange} />
+      <Button onChange={onFile} />
     </>
   )
 }

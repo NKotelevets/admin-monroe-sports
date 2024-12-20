@@ -42,7 +42,7 @@ const DesignConfigProvider: FC<{ children: ReactNode }> = ({ children }) => (
           activeShadow: `0 0 0 2px #3C39701A`
         },
         DatePicker: {
-          cellWidth: 45,
+          cellWidth: 45
         },
         Divider: {
           margin: 24
@@ -54,10 +54,21 @@ const DesignConfigProvider: FC<{ children: ReactNode }> = ({ children }) => (
           colorTextHeading: colors.secondaryText,
           colorLink: colors.secondary,
           colorLinkHover: colors.secondaryText,
-          colorLinkActive: colors.secondaryText,
+          colorLinkActive: colors.secondaryText
         },
         Table: {
           colorText: colors.secondaryText
+        },
+        Calendar: {
+          colorPrimary: colors.secondary
+        },
+        Radio: {
+          colorPrimary: colors.secondary
+        },
+        Dropdown: {
+          colorPrimary: colors.primary,
+          controlItemBgActive: 'rgba(244, 244, 245, 1)',
+          controlItemBgActiveHover: 'rgba(234, 234, 235, 1)'
         }
       }
     }}

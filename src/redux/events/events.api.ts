@@ -46,7 +46,7 @@ export const eventsApi = createApi({
      */
     importEventsCSV: builder.mutation<IImportEventsCSVResponse, FormData>({
       query: (body) => ({
-        url: 'games/rsvp/import-playoffs-from-csv',
+        url: 'games/admin-events/import-events-from-csv',
         method: 'POST',
         body,
       }),
