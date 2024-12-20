@@ -28,3 +28,11 @@ export type TColumns<T> = TableProps<T>['columns']
 export type TRangePickerValue = [start: Dayjs | null | undefined, end: Dayjs | null | undefined]
 
 export type IBreadcrumbs = { title: ReactElement }[] | undefined
+
+export type NestedSnakeCase<T> = T extends object
+  ? { [K in keyof T as K extends string
+    ? K extends `${infer First}${infer Rest}`
+      ? `${Lowercase<First>}${Rest extends Capitalize<Rest> ? `_${Lowercase<Rest>}` : Rest}`
+      : K
+    : K]: NestedSnakeCase<T[K]> }
+  : T;

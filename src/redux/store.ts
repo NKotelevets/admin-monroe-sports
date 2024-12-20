@@ -5,7 +5,7 @@ import createWebStorage from 'redux-persist/lib/storage/createWebStorage'
 import { appSlice } from '@/redux/app/app.slice'
 import { authApi } from '@/redux/auth/auth.api'
 import { authReducer } from '@/redux/auth/auth.reducer'
-import { gamesApi } from '@/redux/games/games.api'
+import { eventsApi } from '@/redux/events/events.api.ts'
 import { leaguesApi } from '@/redux/leagues/leagues.api'
 import { leaguesReducer } from '@/redux/leagues/leagues.reducer'
 import { masterTeamsApi } from '@/redux/masterTeams/masterTeams.api'
@@ -16,6 +16,7 @@ import { userApi } from '@/redux/user/user.api'
 import { userReducer } from '@/redux/user/user.reducer'
 import { leagueTeamsReducer } from '@/redux/leagueTeams/leagueTeams.reducer.ts'
 import { leagueTeamsApi } from '@/redux/leagueTeams/leagueTeams.api.ts'
+import { eventsReducer } from '@/redux/events/events.reducer.ts'
 
 const createNoopStorage = () => {
   return {
@@ -47,7 +48,7 @@ const rootReducer = combineReducers({
   ...seasonsReducer,
   ...masterTeamsReducer,
   ...leagueTeamsReducer,
-  [gamesApi.reducerPath]: gamesApi.reducer,
+  ...eventsReducer,
   [appSlice.name]: appSlice.reducer,
 })
 
@@ -68,7 +69,7 @@ const store = configureStore({
       seasonsApi.middleware,
       masterTeamsApi.middleware,
       leagueTeamsApi.middleware,
-      gamesApi.middleware,
+      eventsApi.middleware,
     ]),
 })
 

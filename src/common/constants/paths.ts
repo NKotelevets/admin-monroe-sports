@@ -44,12 +44,19 @@ export const PATH_TO_DELETE_INFO_LEAGUE_TEAM = '/league-teams/delete-info'
 export const PATH_TO_LEAGUE_TEAM_IMPORT_INFO = '/league-teams/import-info'
 export const PATH_TO_LEAGUE_TEAM_SCHEDULE_REQUEST = '/league-teams/schedule-request'
 
+// EVENTS
+export const PATH_TO_EVENTS = '/events'
+export const PATH_TO_CREATE_EVENT = '/events/create'
+export const PATH_TO_EDIT_EVENT = '/events/edit'
+export const PATH_TO_DELETE_INFO_EVENTS = '/events/delete-info'
+
+// LOCATION
+export const PATH_TO_LOCATION = '/locations'
 
 // REST
 export const PATH_TO_PLAYOFF_FORMAT = '/playoff-format'
 export const PATH_TO_STANDINGS_FORMAT = '/standings-format'
 export const PATH_TO_TIEBREAKERS = '/tiebreakers'
-export const PATH_TO_EVENTS = '/events'
 export const PATH_TO_GROUPS = '/groups'
 
 export const PROTECTED_PAGES = [

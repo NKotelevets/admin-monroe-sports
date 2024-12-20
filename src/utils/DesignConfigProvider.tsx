@@ -51,7 +51,13 @@ const DesignConfigProvider: FC<{ children: ReactNode }> = ({ children }) => (
           headerBg: '#FFFFFF'
         },
         Typography: {
-          colorTextHeading: colors.secondaryText
+          colorTextHeading: colors.secondaryText,
+          colorLink: colors.secondary,
+          colorLinkHover: colors.secondaryText,
+          colorLinkActive: colors.secondaryText,
+        },
+        Table: {
+          colorText: colors.secondaryText
         }
       }
     }}
