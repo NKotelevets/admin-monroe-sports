@@ -180,13 +180,14 @@ const EditSeason = () => {
   ]
 
   return (
-    <SeasonFormProvider>
+    <SeasonFormProvider mustValidate={true}>
       <Page
         title="Edit Season"
         breadcrumbs={BREAD_CRUMB_ITEMS}
       >
         <SeasonForm
           title="Edit Season"
+          validateOnMount
           breadcrumbs={BREAD_CRUMB_ITEMS}
           initialValues={initialValues}
           isLoading={isUpdating}

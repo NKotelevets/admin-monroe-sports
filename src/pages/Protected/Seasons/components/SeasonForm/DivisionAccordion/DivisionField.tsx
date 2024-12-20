@@ -29,7 +29,7 @@ const { TextArea } = Input
 
 export const DivisionField: React.FC<DivisionFormProps> = (props) => {
   const { index, isOpened, arrayHelpers } = props
-  const { setShowBracketPage, setIds } = useSeasonFormContext()
+  const { setShowBracketPage, setIds, getErrorMessage } = useSeasonFormContext()
   const { showForm, setShowForm } = useFormSummary(isOpened)
   const {
     setBracketIdx,
@@ -70,7 +70,7 @@ export const DivisionField: React.FC<DivisionFormProps> = (props) => {
     .map((dN, idx, array) => (array.indexOf(dN) === idx ? false : dN))
     .filter((i) => i)
   const notUniqueNameErrorText = listOfDuplicatedNames.find((dN) => dN === division.values?.name) ? 'Name already exists' : ''
-  const isError = touched?.divisions?.[index] ? !!errors?.divisions?.[index] || isDuplicateNames : false
+  const isError = !!getErrorMessage(errors?.divisions?.[index] ? 'error' : '', !!touched?.divisions?.[index]) || isDuplicateNames
 
   useEffect(() => {
     if (notUniqueNameErrorText === 'Name already exists') {
@@ -121,18 +121,14 @@ export const DivisionField: React.FC<DivisionFormProps> = (props) => {
           name={`divisions[${index}].name`}
           onChange={handleChange(`divisions[${index}].name`)}
           value={division.values?.name || ''}
-          error={
-            touched?.divisions?.[index]
-              ? notUniqueNameErrorText || (errors?.divisions?.[index] as FormikErrors<IFEDivision>)?.name
-              : ''
-          }
+          error={getErrorMessage(notUniqueNameErrorText || (errors?.divisions?.[index] as FormikErrors<IFEDivision>)?.name,!!touched?.divisions?.[index])}
           onBlur={handleBlur(`divisions[${index}].name`)}
         />
 
         <InputWrapper
           label="Division/Pool description"
           errorPosition="bottom"
-          error={division.touched?.description ? division.errors?.description || '' : ''}
+          error={getErrorMessage(division.errors?.description || '', division.touched?.description)}
         >
           <TextArea
             name={`divisions[${index}].description`}
@@ -146,7 +142,7 @@ export const DivisionField: React.FC<DivisionFormProps> = (props) => {
         <RadioWrapper
           isBracket={isByBracket}
           label="Playoff Format *"
-          error={division.touched?.playoffFormat ? division.errors?.playoffFormat || '' : ''}
+          error={getErrorMessage(division.errors?.playoffFormat, division.touched?.playoffFormat)}
         >
           <Radio.Group
             name={`divisions[${index}].playoffFormat`}

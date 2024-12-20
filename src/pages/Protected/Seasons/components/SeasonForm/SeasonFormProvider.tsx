@@ -4,14 +4,23 @@ import { IFELeague } from '@/common/interfaces/league.ts'
 
 export interface ISeasonFormProviderProps {
   children: ReactElement
+  mustValidate?: boolean
 }
 
 export const SeasonFormProvider = (props: ISeasonFormProviderProps) => {
-  const { children } = props
+  const { children, mustValidate } = props
 
   const [showBracketPage, setShowBracketPage] = useState(false)
   const [selectedLeague, setSelectedLeague] = useState<IFELeague | null>(null)
   const [ids, setIds] = useState<number[]>([])
+
+  const getErrorMessage = (error?: string, touched?: boolean): string => {
+    if(mustValidate) {
+      return error || ''
+    }
+
+    return touched && error ? error : ''
+  }
 
   return (
     <SeasonFormContext.Provider
@@ -21,7 +30,8 @@ export const SeasonFormProvider = (props: ISeasonFormProviderProps) => {
         selectedLeague,
         setSelectedLeague,
         ids,
-        setIds
+        setIds,
+        getErrorMessage
       }}
     >
       {children}
