@@ -27,6 +27,8 @@ import { ColumnGroupType } from 'antd/es/table/interface'
 import { Tag, Tooltip } from 'antd'
 import { DeleteWrapper } from '@/pages/Protected/LeagueTeams/components/DeleteWrapper.ts'
 import { CloseCircleOutlined } from '@ant-design/icons'
+import { colors } from '@/utils/colors.tsx'
+import { SVGIcon } from '@/components/SVGIcon.tsx'
 
 const EMAIL_COPIED_MESSAGE = 'Email successfully copied'
 
@@ -168,7 +170,7 @@ export const useLeagueTeamTable = (): IUseLeagueTableReturn => {
       width: '96px',
       fixed: 'right',
       render: (value, record) => (
-        <Flex className="c-p" justify="center" align="center">
+        <Flex className="c-p" justify="flex-start" align="center">
           <ReactSVG
             src={EditIcon}
             onClick={() => {
@@ -185,7 +187,8 @@ export const useLeagueTeamTable = (): IUseLeagueTableReturn => {
                 setSingleDeleting(true)
                 setSelectedIds([value.id])
               } : undefined}>
-                <ReactSVG
+                <SVGIcon
+                  color={colors.primary}
                   src={DeleteIcon}
                 />
               </DeleteWrapper>

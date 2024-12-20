@@ -22,6 +22,8 @@ import { useCopyContent } from '@/hooks/useCopyContent.tsx'
 import { ColumnType } from 'rc-table/lib/interface'
 import { TColumns } from '@/common/types'
 import { ColumnGroupType } from 'antd/es/table/interface'
+import { colors } from '@/utils/colors.tsx'
+import { SVGIcon } from '@/components/SVGIcon.tsx'
 
 interface IUseMasterTableReturn {
   /**
@@ -150,7 +152,7 @@ export const useMasterTeamsTable = (): IUseMasterTableReturn => {
       width: '96px',
       fixed: 'right',
       render: (value, record) => (
-        <Flex className="c-p" justify="center" align="center">
+        <Flex className="c-p" justify="flex-start" align="center">
           <ReactSVG
             src={EditIcon}
             onClick={() => {
@@ -158,7 +160,8 @@ export const useMasterTeamsTable = (): IUseMasterTableReturn => {
             }}
           />
 
-          <ReactSVG
+          <SVGIcon
+            color={colors.primary}
             className="mg-l8"
             onClick={() => {
               setSingleDeleting(true)
