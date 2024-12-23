@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom'
 import { TRangePickerValue } from '@/common/types'
 import dayjs, { Dayjs } from 'dayjs'
 import { Col, DatePicker, Row } from 'antd'
@@ -38,17 +37,15 @@ export const ScheduleRequestControls = (props: IScheduleRequestControlsProps): R
   const { onExport, status, isLoading } = props
   const {
     dates,
-    selectedIds,
-    pathToNavigate,
     pathToExport,
-    selectedTabIndex
+    selectedTabIndex,
+    navigateWithData,
+    additionalData
   } = useContext(ScheduleContext)
 
   const { notify } = useNotification()
 
   const [exporting, setExporting] = useState<'single' | 'all' | null>(null)
-
-  const navigate = useNavigate()
   const pickerValue: TRangePickerValue = [dayjs(dates?.start, DATE_FORMAT), dayjs(dates?.end, DATE_FORMAT)]
 
   /**
@@ -70,7 +67,7 @@ export const ScheduleRequestControls = (props: IScheduleRequestControlsProps): R
    */
   const onDateRangeChange = (newDates: [Dayjs | null, Dayjs | null] | null) => {
     if (newDates && newDates.length > 0) {
-      navigate(`${pathToNavigate}/${dayjs(newDates[0]).format('YYYY-MM-DD')},${dayjs(newDates[1]).format('YYYY-MM-DD')}/${selectedIds}`)
+      navigateWithData(undefined, dayjs(newDates[0]).format('YYYY-MM-DD'), dayjs(newDates[1]).format('YYYY-MM-DD'))
     }
   }
 
@@ -79,8 +76,8 @@ export const ScheduleRequestControls = (props: IScheduleRequestControlsProps): R
    */
   const onExportSingle = () => {
     setExporting('single')
-    if (selectedIds) {
-      onExport(dates!.start, dates!.end, selectedIds[selectedTabIndex], pathToExport)
+    if (additionalData) {
+      onExport(dates!.start, dates!.end, additionalData[selectedTabIndex].id, pathToExport)
     }
   }
 
@@ -89,8 +86,9 @@ export const ScheduleRequestControls = (props: IScheduleRequestControlsProps): R
    */
   const onExportAll = () => {
     setExporting('all')
-    if (selectedIds) {
-      onExport(dates!.start, dates!.end, selectedIds.join(','), pathToExport)
+    if (additionalData) {
+      const ids = additionalData.map(dt => dt.id)
+      onExport(dates!.start, dates!.end, ids.join(','), pathToExport)
     }
   }
 

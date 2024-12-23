@@ -1,4 +1,6 @@
 import { createContext } from 'react'
+import { TScheduleAdditionalData } from '@/common/types'
+import { IScheduleRequest } from '@/common/interfaces'
 
 /**
  * Represents a type for schedule dates, which can be a pair of start and end dates or null.
@@ -36,6 +38,8 @@ export interface IScheduleRequestProps {
    */
   pathToExport: string
 
+  additionalData?: TScheduleAdditionalData[]
+
   /**
    * A function to set the schedule dates (start and end).
    * @param dates - The start and end dates or null to clear the schedule.
@@ -53,6 +57,10 @@ export interface IScheduleRequestProps {
    * @param index - The index of the selected tab.
    */
   setSelectedTabIndex(index: number): void
+
+  navigateWithData(data?: TScheduleAdditionalData[], start?: string, end?: string): void
+
+  removeTeamByIndex(index: number, data: IScheduleRequest[]): void
 }
 
 /**

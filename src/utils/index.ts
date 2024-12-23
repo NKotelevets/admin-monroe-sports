@@ -2,6 +2,7 @@ import { format, isValid, parse, parseISO } from 'date-fns'
 import { SorterResult, SortOrder } from 'antd/es/table/interface'
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import dayjs from 'dayjs'
+import pako from 'pako'
 
 export const validateNumber = (value: string) => /^[0-9]+$/.test(value) || value === ''
 
@@ -222,4 +223,32 @@ export const getTableSortField = <T,>(sorter:  SorterResult<T> | SorterResult<T>
 export const checkAmOrPm = (time: string) => {
   const hour = dayjs(time, 'HH:mm').hour() // Extract the hour
   return hour < 12 ? 'AM' : 'PM'
+}
+
+// Function to compress data
+export const compressData = (data: object | string): string => {
+  try {
+    const jsonString = typeof data === 'string' ? data : JSON.stringify(data)
+    const compressed = pako.deflate(jsonString) // Compress to Uint8Array
+    const base64String = btoa(String.fromCharCode(...compressed)) // Base64 encode
+    // Make Base64 URL-safe
+    return base64String.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+  } catch (err) {
+    // console.error('Compression and encoding failed:', err)
+    return ''
+  }
+}
+
+// Function to decompress data
+export const decompressData = (base64String: string): object | string | null => {
+  try {
+    // Make Base64 string standard-compliant
+    const normalizedBase64 = base64String.replace(/-/g, '+').replace(/_/g, '/')
+    const compressed = Uint8Array.from(atob(normalizedBase64), (c) => c.charCodeAt(0)) // Decode Base64
+    const decompressed = pako.inflate(compressed, { to: 'string' }) // Decompress
+    return JSON.parse(decompressed) // Parse JSON
+  } catch (err) {
+    // console.error('Decoding and decompression failed:', err)
+    return null
+  }
 }

@@ -175,7 +175,7 @@ export const leagueTeamsApi = createApi({
 
     getLeagueTeamScheduleRequest: builder.query<IScheduleRequest[], IGetScheduleRequestParams>({
       query: (params) => ({
-        url: 'availability/get-league-team-availability',
+        url: 'availability/get-masterteam-availability',
         params
       }),
       transformResponse: (response: IScheduleRequestResponse) => (

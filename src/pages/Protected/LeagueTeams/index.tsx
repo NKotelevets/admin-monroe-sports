@@ -3,7 +3,10 @@ import { TableProvider } from '@/components/Table/MonroeTable/TableProvider.tsx'
 import { TablePage } from '@/layouts/TablePage'
 import { ReactElement, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { PATH_TO_CREATE_LEAGUE_TEAM, PATH_TO_DELETE_INFO_LEAGUE_TEAM } from '@/common/constants/paths.ts'
+import {
+  PATH_TO_CREATE_LEAGUE_TEAM,
+  PATH_TO_DELETE_INFO_LEAGUE_TEAM
+} from '@/common/constants/paths.ts'
 import { useBulkDeleteLeagueTeamsMutation } from '@/redux/leagueTeams/leagueTeams.api.ts'
 import { useNotification } from '@/hooks/useNotification.ts'
 import { useLeagueTeamsSlice } from '@/redux/hooks/useLeagueTeamsSlice.tsx'
@@ -35,7 +38,7 @@ const DELETE_TERMS = {
  * @returns {ReactElement} The LeagueTeams page component.
  */
 const LeagueTeams = (): ReactElement => {
-  const navigation = useNavigate()
+  const navigate = useNavigate()
 
   const { notify, info } = useNotification()
   const { total } = useLeagueTeamsSlice()
@@ -78,7 +81,7 @@ const LeagueTeams = (): ReactElement => {
     <TableProvider>
       <TablePage
         title="League Teams"
-        onCreate={() => navigation(PATH_TO_CREATE_LEAGUE_TEAM)}
+        onCreate={() => navigate(PATH_TO_CREATE_LEAGUE_TEAM)}
         onDelete={onDelete}
         deleteTerm={DELETE_TERMS}
         isDeleting={isLoading}

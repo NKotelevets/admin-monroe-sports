@@ -2,19 +2,12 @@ import MasterTeamsTable from './components/MasterTeamsTable'
 import { useNavigate } from 'react-router-dom'
 import { useBulkDeleteMasterTeamsMutation } from '@/redux/masterTeams/masterTeams.api'
 
-import {
-  PATH_TO_CREATE_MASTER_TEAM,
-  PATH_TO_DELETING_INFO_MASTER_TEAMS,
-  PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST
-} from '@/common/constants/paths'
-import { ExportAvailability } from '@/components/ExportAvailability.tsx'
-import { ScheduleRequestButton } from '@/components/ScheduleRequest/ScheduleRequestButton.tsx'
-import { useExportScheduleCSV } from '@/hooks/useExportScheduleCSV.ts'
+import { PATH_TO_CREATE_MASTER_TEAM, PATH_TO_DELETING_INFO_MASTER_TEAMS } from '@/common/constants/paths'
 import { TableProvider } from '@/components/Table/MonroeTable/TableProvider.tsx'
 import { TablePage } from '@/layouts/TablePage.tsx'
 import { useNotification } from '@/hooks/useNotification.ts'
-import { ImportButton } from '@/pages/Protected/MasterTeams/components/ImportButton.tsx'
 import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice.tsx'
+import { MasterTeamTableControls } from '@/pages/Protected/MasterTeams/components/MasterTeamTableControls.tsx'
 
 const DELETE_TERMS = {
   singular: 'master team',
@@ -25,10 +18,9 @@ const MasterTeams = () => {
   const navigate = useNavigate()
 
   const { notify, info } = useNotification()
-  const { onExport, isLoading, status } = useExportScheduleCSV()
   const { total } = useMasterTeamsSlice()
 
-  const [bulkDeleteMT] = useBulkDeleteMasterTeamsMutation()
+  const [bulkDeleteMT, { isLoading }] = useBulkDeleteMasterTeamsMutation()
 
   /**
    * Handles deletion of one or multiple master teams.
@@ -59,22 +51,7 @@ const MasterTeams = () => {
   }
 
   const renderControls = () => {
-    return (
-      <>
-        <ScheduleRequestButton
-          pathToExport="availability/export"
-          exportFileName='master-teams-availability'
-          pathToSchedule={PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST}
-          onExport={{
-            call: onExport,
-            status,
-            isLoading
-          }}
-        />
-        <ExportAvailability pathToExport="availability/export" />
-        <ImportButton />
-      </>
-    )
+    return <MasterTeamTableControls />
   }
 
   return (

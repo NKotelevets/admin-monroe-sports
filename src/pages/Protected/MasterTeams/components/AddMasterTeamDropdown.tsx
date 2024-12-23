@@ -1,47 +1,34 @@
-import { IDropdownProps } from '@/components/Dropdown'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useLazyGetMasterTeamsQuery } from '@/redux/masterTeams/masterTeams.api.ts'
 import { ScheduleContext } from '@/components/ScheduleRequest/ScheduleContext.ts'
 import useDebounceEffect from '@/hooks/useDebounceEffect.ts'
 import { AddTeamDropdown } from '@/components/ScheduleRequest/AddTeamDropdown.tsx'
+import { TScheduleAdditionalData } from '@/common/types'
+import { IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
 
 export const AddMasterTeamDropdown = () => {
-  const { selectedIds } = useContext(ScheduleContext)
-
   const [offset, setOffset] = useState(0)
   const [searchQuery, setSearchQuery] = useState('')
-  const [teams, setTeams] = useState<IDropdownProps['items']>([])
-  const [teamsList, { data, isLoading, isError, isFetching }] = useLazyGetMasterTeamsQuery()
+  const [teams, setTeams] = useState<IFEMasterTeam[]>([])
+  const [
+    teamsList,
+    { data, isLoading, isError, isFetching }
+  ] = useLazyGetMasterTeamsQuery()
 
-  /**
-   * Fetches first teams on mount
-   */
-  useEffect(() => {
-    teamsList({
-      limit: 10,
-      offset
-    })
-  }, [])
+  const {
+    navigateWithData,
+    additionalData,
+    dates
+  } = useContext(ScheduleContext)
+
 
   /**
    * Formats and accumulates fetched teams
    */
   useEffect(() => {
     if (!data) return
-
-    const teamOptions = data.results
-      .map(team => (
-        { label: team.name, value: team.id, disabled: selectedIds?.includes(team.id) }
-      ))
-
-    setTeams(curr => [...curr, ...teamOptions])
+    setTeams(prev => [...prev, ...data.results])
   }, [data])
-
-  useEffect(() => {
-    setTeams(curr => curr.map(team => (
-      { label: team.label, value: team.value, disabled: selectedIds?.includes(team.value) }
-    )))
-  }, [selectedIds])
 
   /**
    * Handles search field with debounce
@@ -71,10 +58,36 @@ export const AddMasterTeamDropdown = () => {
     setOffset(newOffset)
   }, [offset, searchQuery])
 
+  /**
+   * Handles adding team to list
+   * @param value
+   */
+  const onSubmit = useCallback((value: string) => {
+    const newTeam = teams.find(team => team.id === value)
+    const newAdditionalData = [...additionalData || [], {
+      id: newTeam?.id,
+      name: newTeam?.name,
+      masterTeamName: undefined,
+      masterTeamId: undefined,
+      leagueName: undefined
+    } as TScheduleAdditionalData]
+
+    navigateWithData(newAdditionalData, dates?.start, dates?.end)
+  }, [teams, dates])
+
+  const ids = useMemo(() => (
+    additionalData ? additionalData.map(addD => addD.id) : []
+  ), [additionalData])
+
+  const options = useMemo(() => teams.map(team => (
+    { label: team.name, value: team.id, disabled: ids?.includes(team.id) }
+  )), [teams, ids])
+
 
   return (
     <AddTeamDropdown
-      teams={teams}
+      teams={options}
+      onSubmit={onSubmit}
       count={data?.count}
       isError={isError}
       isLoading={isLoading}

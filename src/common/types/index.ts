@@ -28,3 +28,11 @@ export type TColumns<T> = TableProps<T>['columns']
 export type TRangePickerValue = [start: Dayjs | null | undefined, end: Dayjs | null | undefined]
 
 export type IBreadcrumbs = { title: ReactElement }[] | undefined
+
+export type TScheduleAdditionalData = {
+  id: string
+  name: string
+  masterTeamName?: string
+  masterTeamId?: string
+  leagueName?: string
+}

@@ -1,6 +1,4 @@
-import { useNavigate } from 'react-router-dom'
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { ScheduleContext } from '@/components/ScheduleRequest/ScheduleContext.ts'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNotification } from '@/hooks/useNotification.ts'
 import { Dropdown, IDropdownProps } from '@/components/Dropdown'
 
@@ -17,9 +15,11 @@ interface IAddTeamDropdownProps {
   loadMore(): void
 
   setSearchQuery(value: string): void
+
+  onSubmit(value: string): void
 }
 
-export const AddTeamDropdown = (props: IAddTeamDropdownProps) => {
+export const AddTeamDropdown = React.memo((props: IAddTeamDropdownProps) => {
   const { notify } = useNotification()
 
   const {
@@ -30,17 +30,9 @@ export const AddTeamDropdown = (props: IAddTeamDropdownProps) => {
     count,
     loadMore,
     setSearchQuery,
+    onSubmit,
     searchQuery
   } = props
-
-  const {
-    selectedIds,
-    setSelectedIds,
-    pathToNavigate,
-    dates
-  } = useContext(ScheduleContext)
-
-  const navigate = useNavigate()
 
   const [offset, setOffset] = useState(0)
 
@@ -72,17 +64,6 @@ export const AddTeamDropdown = (props: IAddTeamDropdownProps) => {
     setOffset(newOffset)
   }, [endReached, offset, searchQuery])
 
-  /**
-   * Handles adding team to list
-   * @param value
-   */
-  const onSubmit = useCallback((value: string) => {
-    const newIds = [...selectedIds || [], value]
-
-    setSelectedIds(newIds)
-    navigate(`${pathToNavigate}/${dates?.start},${dates?.end}/${newIds?.join(',')}`)
-  }, [selectedIds])
-
   return (
     <Dropdown
       items={teams}
@@ -93,4 +74,13 @@ export const AddTeamDropdown = (props: IAddTeamDropdownProps) => {
       onSubmit={onSubmit}
     />
   )
-}
+}, (prev, next) => {
+  return (
+    prev.count === next.count
+    && prev.teams === next.teams
+    && prev.isError === next.isError
+    && prev.isLoading === next.isLoading
+    && prev.isFetching === next.isFetching
+    && prev.searchQuery === next.searchQuery
+  )
+})

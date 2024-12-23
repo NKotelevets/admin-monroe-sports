@@ -50,7 +50,8 @@ const DropdownContent = (props: IExportInfoProps) => {
     pathToSchedule,
     pathToExport,
     exportFileName,
-    exportFileExtension
+    exportFileExtension,
+    onShowSchedule
   } = props
   const { notify } = useNotification()
 
@@ -91,7 +92,15 @@ const DropdownContent = (props: IExportInfoProps) => {
 
   const onShowAvailability = () => {
     if (!startDate || !endDate || !teamIds) return
-    navigate(`${pathToSchedule}/${startDate.format('YYYY-MM-DD')},${endDate.format('YYYY-MM-DD')}/${teamIds.join(',')}`)
+
+    const start = startDate.format('YYYY-MM-DD')
+    const end = endDate.format('YYYY-MM-DD')
+
+    if (onShowSchedule) {
+      return onShowSchedule(teamIds, start, end)
+    }
+
+    navigate(`${pathToSchedule}/${start},${end}/${teamIds.join(',')}`)
   }
 
   return (
