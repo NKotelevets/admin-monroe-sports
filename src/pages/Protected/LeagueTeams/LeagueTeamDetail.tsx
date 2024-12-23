@@ -1,6 +1,11 @@
 import { Page } from '@/layouts/Page'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { PATH_TO_LEAGUE_TEAMS, PATH_TO_MASTER_TEAMS, PATH_TO_SEASONS } from '@/common/constants/paths.ts'
+import {
+  PATH_TO_LEAGUE_TEAMS,
+  PATH_TO_LEAGUES,
+  PATH_TO_MASTER_TEAMS,
+  PATH_TO_SEASONS
+} from '@/common/constants/paths.ts'
 import { MonroeBlueText, MonroeLinkText, ViewText } from '@/components/Elements'
 import { Dot, SimpleEntityList } from '@/pages/Protected/MasterTeams/components/SimpleEntityList.tsx'
 import { Flex, Tag } from 'antd'
@@ -50,8 +55,8 @@ const LeagueTeamDetail = () => {
       navigate(`${PATH_TO_MASTER_TEAMS}/${data?.masterTeam?.id}`)
     , [data])
 
-  const navigateToLeagueTeam = useCallback(() =>
-      navigate(`${PATH_TO_LEAGUE_TEAMS}/${data?.league?.id}`)
+  const navigateToLeague = useCallback(() =>
+      navigate(`${PATH_TO_LEAGUES}/${data?.league?.id}`)
     , [data])
 
   const navigateToSeason = useCallback(() =>
@@ -127,7 +132,7 @@ const LeagueTeamDetail = () => {
             <ViewText>Linked league/tourn:</ViewText>
 
             <Flex align="flex-start">
-              <MonroeLinkText underline={false} onClick={navigateToLeagueTeam}>{data.league?.name}</MonroeLinkText>
+              <MonroeLinkText underline={false} onClick={navigateToLeague}>{data.league?.name}</MonroeLinkText>
               {!!data.division && (
                 <Flex align="center">
                   <Dot />
