@@ -14,11 +14,12 @@ import { DeleteWrapper } from '@/pages/Protected/LeagueTeams/components/DeleteWr
 import DeleteIcon from '@/assets/icons/delete.svg'
 import dayjs from 'dayjs'
 import { EventTypeTag } from '@/pages/Protected/Events/components/EventTypeTag.tsx'
-import { RSVPStatus } from '../components/RSVPStatus'
+// import { RSVPStatus } from '../components/RSVPStatus'
 import { Typography } from 'antd'
 import FilterFilled from '@ant-design/icons/lib/icons/FilterFilled'
 import { getIconColor } from '@/utils'
 import { DateFilterDropdown } from '@/components/Table/DateFilterDropdown.tsx'
+import { eventType } from '@/common/constants/events.ts'
 
 export const useEventsTable = () => {
   const navigate = useNavigate()
@@ -106,7 +107,7 @@ export const useEventsTable = () => {
     {
       title: 'Event type',
       dataIndex: 'type',
-      width: '192px',
+      width: '140px',
       filters: [
         { text: 'Game', value: '0' },
         { text: 'Practice', value: '2' },
@@ -117,17 +118,90 @@ export const useEventsTable = () => {
       render: (_, record) => <EventTypeTag type={record.type} />
     },
     {
-      title: 'RSVP',
-      dataIndex: 'rsvpAnswers',
-      width: '144px',
-      render: (_, record) => <RSVPStatus rsvp={record.rsvpAnswers} />
+      title: 'Team 1 Name',
+      dataIndex: 'homeTeam',
+      sorter: true,
+      width: '188px',
+      render: (_, record) => {
+        if (record.type === eventType.PLAYOFF && !record.homeLeagueTeam?.division?.brackets.length) {
+          return record.homeLeagueTeam?.subdivision?.name
+        }
+
+        if (record.type === eventType.GAME || record.type === eventType.PLAYOFF) {
+          return record.homeLeagueTeam?.name
+        }
+
+        // if event is OTHER or PRACTICE, master team name is displayed
+        return record.homeTeam?.name
+      }
     },
+    {
+      title: 'Team 2 Name',
+      dataIndex: 'awayTeam',
+      sorter: true,
+      width: '188px',
+      render: (_, record) => {
+        if (record.type === eventType.PLAYOFF && !record.awayLeagueTeam?.division?.brackets.length) {
+          return record.awayLeagueTeam?.subdivision?.name
+        }
+
+        if (record.type === eventType.GAME || record.type === eventType.PLAYOFF) {
+          return record.awayLeagueTeam?.name
+        }
+
+        // if event is OTHER or PRACTICE, master team name is displayed
+        return record.awayTeam?.name
+      }
+    },
+    {
+      title: 'Team 1 League',
+      dataIndex: 'homeTeam',
+      sorter: true,
+      width: '188px',
+      render: (_, record) => {
+        if (record.type === eventType.PLAYOFF && !record.awayLeagueTeam?.division?.brackets.length) {
+          return record.awayLeagueTeam?.subdivision?.name
+        }
+
+        if (record.type === eventType.GAME || record.type === eventType.PLAYOFF) {
+          return record.awayLeagueTeam?.name
+        }
+
+        // if event is OTHER or PRACTICE, master team name is displayed
+        return record.awayTeam?.name
+      }
+    },
+    {
+      title: 'Team 2 League',
+      dataIndex: 'awayTeam',
+      sorter: true,
+      width: '188px',
+      render: (_, record) => {
+        if (record.type === eventType.PLAYOFF && !record.awayLeagueTeam?.division?.brackets.length) {
+          return record.awayLeagueTeam?.subdivision?.name
+        }
+
+        return record.awayLeagueTeam?.name
+      }
+    },
+    // {
+    //   title: 'RSVP',
+    //   dataIndex: 'rsvpAnswers',
+    //   width: '144px',
+    //   render: (_, record) => <RSVPStatus rsvp={record.rsvpAnswers} />
+    // },
     // {
     //   title: 'Status',
     //   dataIndex: 'status',
     //   sorter: true,
     //   width: '115px'
     // },
+    {
+      title: 'League/Tourn',
+      dataIndex: 'league',
+      sorter: true,
+      width: '188px'
+    },
     {
       title: 'Location',
       dataIndex: 'location',
@@ -151,25 +225,6 @@ export const useEventsTable = () => {
       dataIndex: 'subResource',
       width: '152px',
       render: (_, record) => record.subResource ? record.subResource : '##'
-    },
-    {
-      title: 'Team 1 Name',
-      dataIndex: 'homeTeam',
-      sorter: true,
-      width: '188px'
-      // TODO
-    },
-    {
-      title: 'Team 2 Name',
-      dataIndex: 'awayTeam',
-      sorter: true,
-      width: '188px'
-    },
-    {
-      title: 'League/Tourn',
-      dataIndex: 'league',
-      sorter: true,
-      width: '188px'
     },
     {
       title: 'Actions',

@@ -1,5 +1,6 @@
 import { Tag } from 'antd'
 import { ReactElement } from 'react'
+import { eventType } from '@/common/constants/events.ts'
 
 type TEventTypeTagProps = {
   type: number
@@ -37,10 +38,10 @@ export const EventTypeTag = (props: TEventTypeTagProps): ReactElement => {
   const { type } = props
 
   const typeMap: Record<number, { color: string; name: string }> = {
-    0: { color: 'green', name: 'Game' },
-    1: { color: 'blue', name: 'Practice' },
-    2: { color: 'default', name: 'Playoff' },
-    5: { color: 'yellow', name: 'Other event' },
+    [eventType.GAME]: { color: 'green', name: 'Game' },
+    [eventType.PRACTICE]: { color: 'blue', name: 'Practice' },
+    [eventType.PLAYOFF]: { color: 'default', name: 'Playoff' },
+    [eventType.OTHER]: { color: 'yellow', name: 'Other event' },
   }
 
   if (type in typeMap) {
