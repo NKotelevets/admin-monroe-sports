@@ -9,7 +9,6 @@ import {
 } from '@/common/constants/paths.ts'
 import { useBulkDeleteLeagueTeamsMutation } from '@/redux/leagueTeams/leagueTeams.api.ts'
 import { useNotification } from '@/hooks/useNotification.ts'
-// import { ImportLeagueTeamButton } from '@/pages/Protected/LeagueTeams/components/ImportLeagueTeamButton.tsx'
 import { useLeagueTeamsSlice } from '@/redux/hooks/useLeagueTeamsSlice.tsx'
 import { LeagueTeamTableControls } from '@/pages/Protected/LeagueTeams/components/LeagueTeamTableControls.tsx'
 
