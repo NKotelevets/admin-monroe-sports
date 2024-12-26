@@ -1,9 +1,10 @@
-import { IAdditionalEmail, IAdditionalPhone, IDuplicate } from '@/common/interfaces'
+import { IAdditionalEmail, IAdditionalPhone, IDuplicate, IDeletingError } from '@/common/interfaces'
 import { IBEDivision, IBESubdivision, IFEDivision, IFESubdivision } from '@/common/interfaces/division'
 import { IBELeague, IFELeague } from '@/common/interfaces/league'
 import { IBEOperator, IFEOperator } from '@/common/interfaces/operator'
 import { IBEMasterTeam, IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
 import { TDeleteStatus, TErrorDuplicate } from '@/common/types'
+import { IFESeason } from '@/common/interfaces/season.ts'
 import { TLeagueTeamDuplicate } from '@/common/types/leagueTeams.ts'
 
 interface IHeadCoachTeamAdmin {
@@ -77,13 +78,21 @@ export interface IBELeagueTeam {
 export interface IFELeagueTeam {
   id: string
   name: string
-  headCoach: IFEHeadCoachTeamAdmin | null
+  canBeDeleted: boolean
+  headCoach:  IFEHeadCoachTeamAdmin | null
   league: IBELeague
   division: IFEDivision | null
   subdivision: IFESubdivision | null
   masterTeam: IFEMasterTeam | null
   operator: IFESimpleEntity | null
+  season: IFESeason | null
   logoS3Url: string
+  type?: 'masterTeam' | 'teamAdmin'
+  adminData?: {
+    id: string
+    name: string | null
+    email: string | null
+  }[]
 }
 
 export interface IGetLeagueTeamsRequest {
@@ -94,6 +103,7 @@ export interface IGetLeagueTeamsRequest {
   division_name?: string | null
   subdivision_name?: string | null
   league_name?: string | null
+  season_name?: string | null
 }
 
 export interface IGetLeagueTeamsResponse {
@@ -119,14 +129,19 @@ export interface IBESimpleEntity {
 }
 
 export interface IBELeagueTeamDetails {
+  id: string
   name: string
   head_coach: IBESimpleEntity
-  team_admins: IBESimpleEntity[]
-  players: IBESimpleEntity[]
-  coaches: IBESimpleEntity[]
-  leagues: IBELeague[]
-  divisions: IBEDivision[]
-  subdivisions: IBESubdivision[]
+  operator: IBESimpleEntity
+  master_team: IFEMasterTeam
+  master_team_admins: IBESimpleEntity[]
+  master_team_admin: IBESimpleEntity
+  logo_s3_url?: string
+  league: IBELeague
+  division?: IBEDivision
+  subdivision?: IBESubdivision
+  created_at: string
+  update_at: string
 }
 
 export interface IFESimpleEntity {
@@ -137,24 +152,31 @@ export interface IFESimpleEntity {
 }
 
 export interface IFELeagueTeamDetails {
-  name: string
-  headCoach: IFESimpleEntity
-  teamsAdmins: IFESimpleEntity[]
-  players: IFESimpleEntity[]
-  coaches: IFESimpleEntity[]
-  leagues: IFELeague[]
-  divisions: IFEDivision[]
-  subdivisions: IFESubdivision[]
-}
-
-export interface ILeagueTeamError {
   id: string
   name: string
-  error: string
+  canBeDelete: boolean
+  masterTeam: IFEMasterTeam
+  masterTeamAdmins?: IFESimpleEntity[]
+  masterTeamAdmin?: IFESimpleEntity
+  headCoach?: IFESimpleEntity
+  operator?: IFESimpleEntity
+  league: IFELeague
+  season?: IFESeason
+  division?: IFEDivision
+  subdivision?: IFESubdivision
+  logoS3Url?: string
+  createdAt: string
+  updatedAt: string
+  type?: 'masterTeam' | 'teamAdmin'
+  adminData?: {
+    id: string
+    name: string | null
+    email: string | null
+  }[]
 }
 
 export interface IBulkDeleteResponse {
-  items: ILeagueTeamError[]
+  items: IDeletingError[]
   status: TDeleteStatus
   total: number
   success: number

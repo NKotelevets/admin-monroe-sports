@@ -82,15 +82,15 @@ const SeasonDetailsColumn: FC<ISeasonDetailsColumn> = ({
               </ItemValueStyle>
 
               <ul className="ls-n ">
-                {division.sub_division.map((subdivision, i) => (
+                {division.subDivision.map((subdivision, i) => (
                   <ItemValueStyle is_changed={`${!!isDivisionOrSubdivisionChanged}`}>
                     <ItemValueStyle is_changed={`${!!isDivisionOrSubdivisionChanged}`}>
                       {i + 1} {subdivision.name}
                     </ItemValueStyle>
 
                     <ItemValueStyle is_changed={`${!!isDivisionOrSubdivisionChanged}`}>
-                      PF - {subdivision.playoff_format}, SF - {subdivision.standings_format}, TF -{' '}
-                      {subdivision.tiebreakers_format}
+                      PF - {division.playoffFormat}, SF - {subdivision.standingsFormat}, TF -{' '}
+                      {subdivision.tiebreakersFormat}
                     </ItemValueStyle>
                   </ItemValueStyle>
                 ))}

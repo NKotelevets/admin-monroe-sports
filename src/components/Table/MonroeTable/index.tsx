@@ -5,6 +5,7 @@ import { GetProp } from 'antd'
 import { TableProps } from 'antd/es/table/InternalTable'
 import { ExpandedHeaderLeftText, ExpandedTableHeader, MonroeBlueText, MonroeLightBlueText } from '@/components/Elements'
 import { useTableContext } from '@/hooks/useTableContext.ts'
+
 type TTablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>
 
 interface ITableParams<T> {
@@ -54,14 +55,22 @@ type TMonroeTableProps<T> = {
  *   columns={columns}
  * />
  */
-export const MonroeTable= <T extends object,>(props: TMonroeTableProps<T>): ReactElement => {
-  const { onChange, showCreated, createdIds, pagination , columns, ...rest} = props
+export const MonroeTable = <T extends object, >(props: TMonroeTableProps<T>): ReactElement => {
+  const {
+    onChange,
+    showCreated,
+    createdIds,
+    pagination,
+    columns,
+    ...rest
+  } = props
+
   const {
     selectedIds,
     setSelectedIds,
     isAllSelected,
-    setIsAllSelected,
     showAdditionalHeader,
+    setIsAllSelected,
     setShowAdditionalHeader,
     isLoading
   } = useTableContext()
@@ -77,11 +86,10 @@ export const MonroeTable= <T extends object,>(props: TMonroeTableProps<T>): Reac
         showQuickJumper: true,
         showSizeChanger: true,
         total: pagination.total,
-        showTotal,
-      },
+        showTotal
+      }
     })
   }, [pagination])
-
 
   return (
     <>
@@ -102,6 +110,7 @@ export const MonroeTable= <T extends object,>(props: TMonroeTableProps<T>): Reac
               onClick={() => {
                 setSelectedIds([])
                 setIsAllSelected(false)
+                setShowAdditionalHeader(false)
               }}
             >
               Unselect all league teams
@@ -110,29 +119,29 @@ export const MonroeTable= <T extends object,>(props: TMonroeTableProps<T>): Reac
         </ExpandedTableHeader>
       )}
 
-    <Table
-      columns={columns}
-      loading={isLoading}
-      rowKey={(record) => record.id}
-      pagination={tableParams.pagination}
-      rowClassName={(record) =>
-        showCreated && createdIds.find((id) => id === record.id) ? 'highlighted-row' : ''
-      }
-      scroll={{
-        x: 1000,
-      }}
-      rowSelection={{
-        type: 'checkbox',
-        selectedRowKeys: selectedIds,
-        onChange: (selected) => {
-          if (selected.length === pagination?.limit) setShowAdditionalHeader(true)
-          if (selected.length < (pagination?.limit || 0)) setShowAdditionalHeader(false)
-          setSelectedIds(selected as string[])
-        },
-      }}
-      onChange={onChange as TableProps['onChange']}
-      {...rest}
-    />
+      <Table
+        columns={columns}
+        loading={isLoading}
+        rowKey={(record) => record.id}
+        pagination={pagination ? tableParams.pagination : undefined}
+        rowClassName={(record) => showCreated && createdIds.find((id) => {return id === record.id })
+          ? 'highlighted-row' : ''
+        }
+        scroll={{
+          x: 'scroll'
+        }}
+        rowSelection={{
+          type: 'checkbox',
+          selectedRowKeys: selectedIds,
+          onChange: (selected) => {
+            if (selected.length === pagination?.limit) setShowAdditionalHeader(true)
+            if (selected.length < (pagination?.limit || 0)) setShowAdditionalHeader(false)
+            setSelectedIds(selected as string[])
+          }
+        }}
+        onChange={onChange as TableProps['onChange']}
+        {...rest}
+      />
     </>
   )
 }

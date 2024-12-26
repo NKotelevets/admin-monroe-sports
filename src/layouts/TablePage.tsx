@@ -1,10 +1,11 @@
-import { CreateNewEntityButton, MonroeDeleteButton } from '@/components/Elements'
+import { CreateNewEntityButton } from '@/components/Elements'
 import { FC, ReactElement, useCallback, useState } from 'react'
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined'
 import MonroeModal from '@/components/MonroeModal.tsx'
 import { IPageProps, Page } from './Page'
 import { useTableContext } from '@/hooks/useTableContext.ts'
+import { Button } from '@/components/Button.tsx'
 
 /**
  * Interface for the props of the Delete component.
@@ -18,15 +19,15 @@ import { useTableContext } from '@/hooks/useTableContext.ts'
  * @property {() => void} onDelete - A callback function that is triggered when the delete action is confirmed.
  */
 interface IDeleteProps {
-  selectedIds: string[]
-  singleDeleting: boolean
   deleteTerm: {
     singular: string
     plural: string
   }
-  onClose?(): void
   onDelete: ITablePageProps['onDelete']
   isDeleting?: boolean
+  maxSelection: number
+
+  onClose?(): void
 }
 
 /**
@@ -40,10 +41,14 @@ interface IDeleteProps {
  */
 interface ITablePageProps extends IPageProps {
   deleteTerm?: IDeleteProps['deleteTerm']
-  onCreate?(): void
-  onDelete?(ids: string[]): void
-  onDeleteModalClose?(): void
   isDeleting?: boolean
+  maxSelection: number
+
+  onCreate?(): void
+
+  onDelete?(ids: string[], isAllSelected?: boolean): Promise<boolean>
+
+  onDeleteModalClose?(): void
 }
 
 /**
@@ -60,8 +65,9 @@ export const TablePage: FC<ITablePageProps> = (props: ITablePageProps): ReactEle
     deleteTerm,
     onCreate,
     onDelete,
-    controls ,
+    controls,
     isDeleting,
+    maxSelection,
     ...rest
   } = props
   const { selectedIds, setSelectedIds, singleDeleting, setSingleDeleting } = useTableContext()
@@ -77,11 +83,10 @@ export const TablePage: FC<ITablePageProps> = (props: ITablePageProps): ReactEle
     <>
       {!!selectedIds?.length && onDelete && deleteTerm && (
         <Delete
+          maxSelection={maxSelection}
           onClose={onDeleteModalClose}
-          selectedIds={selectedIds}
           onDelete={onDelete}
           deleteTerm={deleteTerm}
-          singleDeleting={singleDeleting}
           isDeleting={isDeleting}
         />
       )}
@@ -118,25 +123,42 @@ export const TablePage: FC<ITablePageProps> = (props: ITablePageProps): ReactEle
  */
 const Delete = (props: IDeleteProps): ReactElement => {
   const {
-    selectedIds,
     deleteTerm,
-    singleDeleting,
+    maxSelection,
     onDelete,
     onClose
   } = props
+
+  const {
+    selectedIds,
+    isAllSelected,
+    singleDeleting,
+    setIsAllSelected,
+    setSelectedIds,
+    setSingleDeleting
+  } = useTableContext()
+
   const [showModal, setShowModal] = useState(false)
 
-  const deleteCount = selectedIds.length
+  const deleteCount = isAllSelected ? maxSelection : selectedIds.length
   const deleteMany = deleteCount > 1
   const term = deleteMany ? deleteTerm.plural : deleteTerm.singular
 
   const openModal = useCallback(() => setShowModal(true), [])
+
   const closeModal = useCallback(() => {
     setShowModal(false)
     onClose && onClose()
   }, [])
-  const handleDelete = () => {
-    !!onDelete && onDelete(selectedIds)
+  const handleDelete = async () => {
+    if (!onDelete) return
+
+    const deleteSuccessful = await onDelete(selectedIds, isAllSelected)
+    if (deleteSuccessful) {
+      setIsAllSelected(false)
+      setSelectedIds([])
+      setSingleDeleting(false)
+    }
     closeModal()
   }
 
@@ -144,26 +166,24 @@ const Delete = (props: IDeleteProps): ReactElement => {
     <>
       {!!selectedIds.length && (showModal || singleDeleting) && (
         <MonroeModal
-          onCancel={closeModal}
+          type="warn"
+          closable={false}
           okText="Delete"
           onOk={handleDelete}
+          onCancel={closeModal}
           title={`Delete ${deleteMany ? deleteCount : ''} ${term}?`}
-          type="warn"
-          content={
-            <p>
-              Are you sure you want to delete {deleteMany ? deleteCount : 'this'} {term}?
-            </p>
-          }
+          content={<p>Are you sure you want to delete {deleteMany ? deleteCount : 'this'} {term}?</p>}
         />
       )}
       {!!selectedIds.length && !singleDeleting && (
-        <MonroeDeleteButton
+        <Button
+          danger={true}
           icon={<DeleteOutlined />}
           iconPosition="start"
           onClick={openModal}
         >
           Delete
-        </MonroeDeleteButton>
+        </Button>
       )}
     </>
   )

@@ -125,6 +125,7 @@ export interface IBESimpleEntity {
 export interface IBEMasterTeamDetails {
   name: string
   head_coach: IBESimpleEntity
+  team_admin: IBESimpleEntity
   team_admins: IBESimpleEntity[]
   players: IBESimpleEntity[]
   coaches: IBESimpleEntity[]
@@ -143,18 +144,13 @@ export interface IFESimpleEntity {
 export interface IFEMasterTeamDetails {
   name: string
   headCoach: IFESimpleEntity
+  teamAdmin?: IFESimpleEntity
   teamsAdmins: IFESimpleEntity[]
   players: IFESimpleEntity[]
   coaches: IFESimpleEntity[]
   leagues: IFELeague[]
   divisions: IFEDivision[]
   subdivisions: IFESubdivision[]
-}
-
-export interface IMasterTeamError {
-  id: string
-  name: string
-  error: string
 }
 
 export interface IImportMasterTeamCSVTableData {
@@ -229,7 +225,7 @@ export interface IImportMasterTeamCSVError {
 export interface IBEImportMasterTeamCSVResponse {
   status: TDeleteStatus
   errors: IImportMasterTeamCSVError[]
-  success: string[]
+  success: IBEMasterTeam[]
   duplicates: IBEDuplicate[]
 }
 
@@ -255,40 +251,9 @@ export interface IFEDuplicate {
 export interface IFEImportMasterTeamCSVResponse {
   status: TDeleteStatus
   errors?: IImportMasterTeamCSVError[]
-  success: string[]
+  success: IFEMasterTeam[]
   duplicates?: IFEDuplicate[]
-}
-
-export interface IExportInfoProps {
-  selectedMasterTeamIds: string[]
 }
 
 // Schedule Request
 
-export interface IGetScheduleRequestParams {
-  start_date: string
-  end_date: string
-  team_ids: string
-}
-
-export interface IScheduleData {
-  [key: string]: { time: string, availability: number }[]
-}
-
-export interface IScheduleRequestResponse {
-  team_id: string
-  team_name: string
-  data: IScheduleData
-}
-
-export interface IScheduleRequest {
-  teamId: string
-  teamName: string
-  data: IScheduleData
-}
-
-export interface IScheduleEntry {
-  time: string
-
-  [key: string]: number | string
-}

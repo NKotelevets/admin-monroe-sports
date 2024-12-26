@@ -1,12 +1,14 @@
 export interface IParticipant {
   id: string
   isEmpty: boolean
-  subpoolName: string | null
+  subDivision: string | null
   seed: number | null
 }
 
 export interface IMatch {
   id: number
+  matchIntegerId?: number
+  bracket?: number
   nextMatchId: number | null
   tournamentRoundText?: string
   state: string
@@ -15,9 +17,11 @@ export interface IMatch {
   startTime: string
   topTeam?: string
   bottomTeam?: string
-  participants: IParticipant[]
+  matchParticipants: IParticipant[]
   primaryId?: string
   stage?: string
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface IBracket {

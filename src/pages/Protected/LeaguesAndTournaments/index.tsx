@@ -114,7 +114,7 @@ const LeaguesAndTournaments = () => {
             filename: file.name,
             isOpen: true,
             status: 'red',
-            errorMessage: (error.data as { code: string; details: string }).details,
+            errorMessage: (error.data as { code: string; details: string }).details || (error.data as { code: string; detail: string }).detail,
           })
         })
 
@@ -177,6 +177,7 @@ const LeaguesAndTournaments = () => {
             <Flex>
               {!!selectedRecordsIds.length && (
                 <MonroeDeleteButton
+                  danger
                   type="default"
                   icon={<DeleteOutlined />}
                   iconPosition="start"

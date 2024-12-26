@@ -25,6 +25,7 @@ import { compareObjects } from '@/utils/compareObjects'
 import { BEST_RECORD_WINS, POINTS, SINGLE_ELIMINATION_BRACKET, WINNING } from '@/common/constants/league'
 import { IImportedSubdivision, IUpdateDivision } from '@/common/interfaces/division'
 import { IBESeason, ISeasonDuplicate, ISeasonReviewUpdateData } from '@/common/interfaces/season'
+import { transformKeysToCamelCase } from '@/utils'
 
 const SUCCESS_MESSAGE = 'Record Updated'
 const ERROR_MESSAGE = "Record can't be updated. Please try again."
@@ -55,14 +56,14 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
       {
         name: newData.divisionPollName,
         description: newData.divisionPollDescription,
-        sub_division: [
+        playoffFormat: newData.playoffFormat,
+        brackets: [],
+        subDivision: [
           {
             name: newData.subdivisionPollName,
-            playoff_format: newData.playoffFormat,
-            standings_format: newData.standingsFormat,
-            tiebreakers_format: newData.tiebreakersFormat,
+            standingsFormat: newData.standingsFormat,
+            tiebreakersFormat: newData.tiebreakersFormat,
             description: newData.subdivisionPollDescription,
-            brackets: [],
             changed: false,
           },
         ],
@@ -77,14 +78,14 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
     divisions: duplicateData.divisions.map((division) => ({
       name: division.name,
       description: division.description,
-      sub_division: division.sub_division.map((subdivision) => ({
+      playoffFormat: division.playoff_format === 0 ? BEST_RECORD_WINS : SINGLE_ELIMINATION_BRACKET,
+      brackets: transformKeysToCamelCase(division.brackets),
+      subDivision: division.sub_division.map((subdivision) => ({
         name: subdivision.name,
         description: subdivision.description,
-        playoff_format: subdivision.playoff_format === 0 ? BEST_RECORD_WINS : SINGLE_ELIMINATION_BRACKET,
-        standings_format: subdivision.standings_format === 0 ? WINNING : POINTS,
-        tiebreakers_format: subdivision.tiebreakers_format === 0 ? WINNING : POINTS,
+        standingsFormat: subdivision.standings_format === 0 ? WINNING : POINTS,
+        tiebreakersFormat: subdivision.tiebreakers_format === 0 ? WINNING : POINTS,
         changed: subdivision.changed,
-        brackets: subdivision.brackets,
       })),
     })),
   }
@@ -95,19 +96,18 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
   const currentDivision = normalizedExistingData.divisions.find(
     (division) => division.name === normalizedNewData.divisions[0].name,
   )
-  const newSubdivision = normalizedNewData.divisions[0].sub_division[0]
-  const existedSubdivision = currentDivision?.sub_division.find(
-    (subdivision) => subdivision.name === normalizedNewData.divisions[0].sub_division[0].name,
+  const newSubdivision = normalizedNewData.divisions[0].subDivision[0]
+  const existedSubdivision = currentDivision?.subDivision.find(
+    (subdivision) => subdivision.name === normalizedNewData.divisions[0].subDivision[0].name,
   )
   const isDifference = existedSubdivision
     ? !(
-        newSubdivision.playoff_format === existedSubdivision.playoff_format &&
-        newSubdivision.standings_format === existedSubdivision.standings_format &&
-        newSubdivision.tiebreakers_format === existedSubdivision.tiebreakers_format &&
+        newSubdivision.standingsFormat === existedSubdivision.standingsFormat &&
+        newSubdivision.tiebreakersFormat === existedSubdivision.tiebreakersFormat &&
         newSubdivision.description === existedSubdivision.description
       )
     : true
-  const isDivisionOrSubdivisionChanged = currentDivision ? !!isDifference : true
+  const isDivisionOrSubdivisionChanged = currentDivision ? isDifference : true
 
   const handleNextDuplicate = () => setCurrentIdx((prev) => prev + 1)
 
@@ -127,14 +127,14 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
       id: division.id as string,
       name: division.name,
       description: division.description,
+      playoff_format: division.playoff_format,
+      brackets: division.brackets,
       sub_division: division.sub_division.map((subdivision) => ({
         id: subdivision.id as string,
         name: subdivision.name,
         description: subdivision.description,
-        playoff_format: subdivision.playoff_format,
         standings_format: subdivision.standings_format,
         tiebreakers_format: subdivision.tiebreakers_format,
-        brackets: subdivision.brackets,
         changed: subdivision.changed,
       })),
     }))
@@ -142,13 +142,13 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
     const mappedNewDivisions: IUpdateDivision[] = normalizedNewData.divisions.map((division) => ({
       name: division.name,
       description: division.description,
-      sub_division: division.sub_division.map((subdivision) => ({
+      brackets: [],
+      playoff_format: division.playoffFormat === BEST_RECORD_WINS ? 0 : 1,
+      sub_division: division.subDivision.map((subdivision) => ({
         name: subdivision.name,
         description: subdivision.description,
-        playoff_format: subdivision.playoff_format === BEST_RECORD_WINS ? 0 : 1,
-        standings_format: subdivision.standings_format === WINNING ? 0 : 1,
-        tiebreakers_format: subdivision.tiebreakers_format === WINNING ? 0 : 1,
-        brackets: [],
+        standings_format: subdivision.standingsFormat === WINNING ? 0 : 1,
+        tiebreakers_format: subdivision.tiebreakersFormat === WINNING ? 0 : 1,
         changed: false,
       })),
     }))
@@ -188,13 +188,13 @@ const SeasonsReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ id
         ...mappedDivisions,
         {
           ...normalizedNewData.divisions[0],
-          sub_division: normalizedNewData.divisions[0].sub_division.map((subdivision) => ({
+          playoff_format: normalizedNewData.divisions[0].playoffFormat === BEST_RECORD_WINS ? 0 : 1,
+          brackets: [],
+          sub_division: normalizedNewData.divisions[0].subDivision.map((subdivision) => ({
             name: subdivision.name,
             description: subdivision.description,
-            playoff_format: subdivision.playoff_format === BEST_RECORD_WINS ? 0 : 1,
-            standings_format: subdivision.standings_format === POINTS ? 1 : 0,
-            tiebreakers_format: subdivision.tiebreakers_format === POINTS ? 1 : 0,
-            brackets: [],
+            standings_format: subdivision.standingsFormat === POINTS ? 1 : 0,
+            tiebreakers_format: subdivision.tiebreakersFormat === POINTS ? 1 : 0,
             changed: false,
           })),
         },

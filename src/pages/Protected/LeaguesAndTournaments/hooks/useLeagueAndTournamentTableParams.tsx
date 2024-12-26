@@ -26,6 +26,8 @@ import { IFELeague } from '@/common/interfaces/league'
 
 import DeleteIcon from '@/assets/icons/delete.svg'
 import EditIcon from '@/assets/icons/edit.svg'
+import { colors } from '@/utils/colors.tsx'
+import { SVGIcon } from '@/components/SVGIcon.tsx'
 
 type TColumns<T> = TableProps<T>['columns']
 type TDataIndex = keyof IFELeague
@@ -172,7 +174,7 @@ export const useLeagueAndTournamentTableParams = ({ setSelectedRecordId, setShow
       width: '96px',
       fixed: 'right',
       render: (value) => (
-        <Flex vertical={false} justify="center" align="center" className="c-p">
+        <Flex vertical={false} justify="flex-start" align="center" className="c-p">
           <ReactSVG
             src={EditIcon}
             onClick={() => {
@@ -180,7 +182,8 @@ export const useLeagueAndTournamentTableParams = ({ setSelectedRecordId, setShow
             }}
           />
 
-          <ReactSVG
+          <SVGIcon
+            color={colors.primary}
             onClick={() => {
               setSelectedRecordId(value.id)
               setShowDeleteSingleRecordModal(true)

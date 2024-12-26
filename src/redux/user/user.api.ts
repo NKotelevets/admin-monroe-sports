@@ -182,6 +182,7 @@ export const {
   useBulkBlockUsersMutation,
   useCreateUserAsAdminMutation,
   useGetUserDetailsQuery,
+  useLazyGetUserDetailsQuery,
   useBulkEditMutation,
   useImportUsersCSVMutation,
   useSendInvitationMutation,

@@ -2,11 +2,12 @@ import * as Yup from 'yup'
 
 import { BEST_RECORD_WINS, SINGLE_ELIMINATION_BRACKET, WINNING } from '@/common/constants/league'
 import { IBracket } from '@/common/interfaces/bracket'
+import { FormikErrors, FormikTouched } from 'formik'
 
 export const participantSchema = Yup.object().shape({
   id: Yup.string(),
   isEmpty: Yup.boolean(),
-  subpoolName: Yup.string().when('isEmpty', {
+  subDivision: Yup.string().when('isEmpty', {
     is: (value: boolean) => !value,
     then: (schema) => schema.required(),
     otherwise: (schema) => schema.optional(),
@@ -30,7 +31,7 @@ export const matchSchema = Yup.object({
   startTime: Yup.string().required(),
   topTeam: Yup.string(),
   bottomTeam: Yup.string(),
-  participants: Yup.array().of(participantSchema).required(),
+  matchParticipants: Yup.array().of(participantSchema).required(),
 })
 
 export const bracketSchema = Yup.object({
@@ -43,9 +44,25 @@ export const bracketSchema = Yup.object({
 const subdivisionValidationSchema = Yup.object().shape({
   name: Yup.string().required('Subdivision/subpool name is required'),
   description: Yup.string(),
-  playoffFormat: Yup.string(),
   standingsFormat: Yup.string(),
   tiebreakersFormat: Yup.string(),
+})
+
+export const divisionValidationSchema = Yup.object<ICreateSeasonDivision[]>().shape({
+  name: Yup.string().required('Division Name is required'),
+  description: Yup.string(),
+  playoffFormat: Yup.string(),
+  subDivisions: Yup.array()
+    .of(subdivisionValidationSchema)
+    .test('unique-names', 'Subdivision names must be unique', (items) => {
+      if (!items) return true // Return true if the array is empty or undefined
+
+      const names = items.map((item) => item.name)
+      const uniqueNames = new Set(names)
+
+      return names.length === uniqueNames.size // Validate uniqueness
+    })
+    .required(),
   brackets: Yup.array()
     .of(bracketSchema)
     .when('playoffFormat', {
@@ -54,18 +71,22 @@ const subdivisionValidationSchema = Yup.object().shape({
     }),
 })
 
-export const divisionValidationSchema = Yup.object<ICreateSeasonDivision[]>().shape({
-  name: Yup.string().required('Division Name is required'),
-  description: Yup.string(),
-  subdivisions: Yup.array().of(subdivisionValidationSchema).required(),
-})
-
 export const seasonValidationSchema = Yup.object<ICreateSeasonFormValues>().shape({
   name: Yup.string().required('Name is required'),
   league: Yup.string().required('Linked League/Tourn is required'),
   startDate: Yup.string().required('Start Date is required'),
   expectedEndDate: Yup.string().required('Expected End Date is required'),
-  divisions: Yup.array().of(divisionValidationSchema).required(),
+  divisions: Yup.array()
+    .of(divisionValidationSchema)
+    .test('unique-names', 'Names must be unique', (items) => {
+      if (!items) return true // Return true if the array is empty or undefined
+
+      const names = items.map((item) => item.name)
+      const uniqueNames = new Set(names)
+
+      return names.length === uniqueNames.size // Validate uniqueness
+    })
+    .required(),
 })
 
 export const INITIAL_SUBDIVISION_DATA = {
@@ -82,26 +103,26 @@ export const INITIAL_DIVISION_DATA = {
   id: '',
   name: '',
   description: '',
-  subdivisions: [INITIAL_SUBDIVISION_DATA],
+  subDivisions: [INITIAL_SUBDIVISION_DATA],
 }
 
 export const seasonInitialFormValues: ICreateSeasonFormValues = {
   name: '',
-  league: '',
+  league: undefined,
   startDate: null,
   expectedEndDate: null,
   divisions: [
     {
       name: '',
       description: '',
-      subdivisions: [
+      playoffFormat: BEST_RECORD_WINS,
+      brackets: [],
+      subDivisions: [
         {
           name: '',
           description: '',
-          playoffFormat: BEST_RECORD_WINS,
           standingsFormat: WINNING,
           tiebreakersFormat: WINNING,
-          brackets: [],
           changed: false,
         },
       ],
@@ -113,24 +134,30 @@ export interface ICreateSeasonSubdivision {
   id?: string
   name: string
   description: string
-  playoffFormat: string
   standingsFormat: string
   tiebreakersFormat: string
   changed: boolean
-  brackets: IBracket[]
 }
 
 export interface ICreateSeasonDivision {
   id?: string
   name: string
   description: string
-  subdivisions: ICreateSeasonSubdivision[]
+  playoffFormat: string
+  brackets: IBracket[]
+  subDivisions: ICreateSeasonSubdivision[]
 }
 
 export interface ICreateSeasonFormValues {
   name: string
-  league: string
+  league?: string
   startDate: string | null
   expectedEndDate: string | null
   divisions: ICreateSeasonDivision[]
+}
+
+export interface IDivisionFormik {
+  values?: ICreateSeasonDivision;
+  touched?: FormikTouched<ICreateSeasonDivision>; // Nested touched object
+  errors?: FormikErrors<ICreateSeasonDivision>;   // Nested error object
 }

@@ -13,7 +13,7 @@ import { showTotal } from '@/components/Table/utils'
 
 const ERROR_LOADING_LEAGUE_TEAMS_MESSAGE = `Could not load league teams. Please, try again!`
 
-type TFilterValueKey = 'name' | 'division' | 'subdivision' | 'league'
+type TFilterValueKey = 'name' | 'division' | 'subdivision' | 'league' | 'season'
 
 
 /**
@@ -29,11 +29,12 @@ export const LeagueTeamsTable = (): ReactElement => {
   const { notify } = useNotification()
 
   const {
-    setIsLoading,
     isAllSelected,
-    setSelectedIds,
-    setShowAdditionalHeader,
     setTableParams,
+    showCreatedRecords,
+    setIsLoading,
+    setSelectedIds,
+    setShowAdditionalHeader
   } = useTableContext<IFELeagueTeam>()
 
   const {
@@ -43,6 +44,8 @@ export const LeagueTeamsTable = (): ReactElement => {
     ordering,
     total,
     setPaginationParams,
+    createdIds,
+    resetCreatedIds
   } = useLeagueTeamsSlice()
 
   const pagination = useMemo(
@@ -54,6 +57,8 @@ export const LeagueTeamsTable = (): ReactElement => {
    * Fetches league teams when the component mounts.
    * It sets the loading state, initializes pagination parameters, and
    * handles errors by showing a notification if the fetch fails.
+   *
+   * Removes created records from state on unmount.
    */
   useEffect(() => {
     setIsLoading(true)
@@ -62,6 +67,10 @@ export const LeagueTeamsTable = (): ReactElement => {
     listLeagueTeam({ limit, offset, ordering: ordering || undefined })
       .catch(() => notify(ERROR_LOADING_LEAGUE_TEAMS_MESSAGE, 'error'))
       .finally(() => setIsLoading(false))
+
+    return () => {
+      resetCreatedIds()
+    }
   }, [])
 
   type TFilter = Record<TFilterValueKey, FilterValue | null>
@@ -86,8 +95,8 @@ export const LeagueTeamsTable = (): ReactElement => {
     setTableParams({
       pagination: {
         ...pagination,
-        showTotal,
-      },
+        showTotal
+      }
     })
 
     if (!isAllSelected) {
@@ -99,6 +108,7 @@ export const LeagueTeamsTable = (): ReactElement => {
       league: 'league_name',
       division: 'division_name',
       subdivision: 'subdivision_name',
+      season: 'season_name'
     }
 
     const leagueTeamsRequestParams: IGetLeagueTeamsRequest = {
@@ -109,6 +119,7 @@ export const LeagueTeamsTable = (): ReactElement => {
       division_name: (filters?.['division']?.[0] as string) ?? undefined,
       subdivision_name: (filters?.['subdivision']?.[0] as string) ?? undefined,
       league_name: (filters?.['league']?.[0] as string) ?? undefined,
+      season_name: (filters?.['season']?.[0] as string) ?? undefined
     }
 
     listLeagueTeam(leagueTeamsRequestParams)
@@ -116,7 +127,7 @@ export const LeagueTeamsTable = (): ReactElement => {
     setPaginationParams({
       offset: leagueTeamsRequestParams.offset,
       limit: leagueTeamsRequestParams.limit,
-      ordering: leagueTeamsRequestParams.ordering || null,
+      ordering: leagueTeamsRequestParams.ordering || null
     })
   }
 
@@ -126,8 +137,8 @@ export const LeagueTeamsTable = (): ReactElement => {
       dataSource={leagueTeams}
       onChange={handleTableChange}
       pagination={pagination}
-      showCreated={false}
-      createdIds={[]}
+      showCreated={showCreatedRecords}
+      createdIds={createdIds || []}
     />
   )
 }

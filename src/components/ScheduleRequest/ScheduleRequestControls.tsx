@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom'
 import { TRangePickerValue } from '@/common/types'
 import dayjs, { Dayjs } from 'dayjs'
 import { Col, DatePicker, Row } from 'antd'
@@ -6,13 +5,21 @@ import { Button } from '@/components/Button.tsx'
 import UploadOutlined from '@ant-design/icons/lib/icons/UploadOutlined'
 import { ReactElement, useContext, useEffect, useState } from 'react'
 import { ScheduleContext } from '@/components/ScheduleRequest/ScheduleContext.ts'
-import { useMasterTeamExportCSV } from '@/pages/Protected/MasterTeams/hooks/useMasterTeamExportCSV.ts'
 import { useNotification } from '@/hooks/useNotification.ts'
+import { IDownloadStatus } from '@/common/interfaces'
+import { IUseMasterTeamExportCSVReturn } from '@/hooks/useExportScheduleCSV.ts'
 
 const { RangePicker } = DatePicker
 
 const DATE_FORMAT = 'YYYY-MM-DD'
 const DEFAULT_EXPORT_ERROR_MESSAGE = 'Unable to export CSV. Please, try again!'
+
+interface IScheduleRequestControlsProps {
+  status: IDownloadStatus | null
+  isLoading: boolean
+
+  onExport: IUseMasterTeamExportCSVReturn['onExport']
+}
 
 /**
  * The `ScheduleRequestControls` component provides UI controls for selecting a date range
@@ -26,20 +33,19 @@ const DEFAULT_EXPORT_ERROR_MESSAGE = 'Unable to export CSV. Please, try again!'
  *
  * @returns {ReactElement} The rendered schedule controls with date picker and export buttons.
  */
-export const ScheduleRequestControls = (): ReactElement => {
+export const ScheduleRequestControls = (props: IScheduleRequestControlsProps): ReactElement => {
+  const { onExport, status, isLoading } = props
   const {
     dates,
-    selectedIds,
-    pathToNavigate,
-    selectedTabIndex
+    pathToExport,
+    selectedTabIndex,
+    navigateWithData,
+    additionalData
   } = useContext(ScheduleContext)
 
-  const { onExport, status, isLoading } = useMasterTeamExportCSV()
   const { notify } = useNotification()
 
   const [exporting, setExporting] = useState<'single' | 'all' | null>(null)
-
-  const navigate = useNavigate()
   const pickerValue: TRangePickerValue = [dayjs(dates?.start, DATE_FORMAT), dayjs(dates?.end, DATE_FORMAT)]
 
   /**
@@ -61,7 +67,7 @@ export const ScheduleRequestControls = (): ReactElement => {
    */
   const onDateRangeChange = (newDates: [Dayjs | null, Dayjs | null] | null) => {
     if (newDates && newDates.length > 0) {
-      navigate(`${pathToNavigate}/${dayjs(newDates[0]).format('YYYY-MM-DD')},${dayjs(newDates[1]).format('YYYY-MM-DD')}/${selectedIds}`)
+      navigateWithData(undefined, dayjs(newDates[0]).format('YYYY-MM-DD'), dayjs(newDates[1]).format('YYYY-MM-DD'))
     }
   }
 
@@ -70,8 +76,8 @@ export const ScheduleRequestControls = (): ReactElement => {
    */
   const onExportSingle = () => {
     setExporting('single')
-    if (selectedIds) {
-      onExport(dates!.start, dates!.end, selectedIds[selectedTabIndex])
+    if (additionalData) {
+      onExport(dates!.start, dates!.end, additionalData[selectedTabIndex].id, pathToExport)
     }
   }
 
@@ -80,8 +86,9 @@ export const ScheduleRequestControls = (): ReactElement => {
    */
   const onExportAll = () => {
     setExporting('all')
-    if (selectedIds) {
-      onExport(dates!.start, dates!.end, selectedIds.join(','))
+    if (additionalData) {
+      const ids = additionalData.map(dt => dt.id)
+      onExport(dates!.start, dates!.end, ids.join(','), pathToExport)
     }
   }
 

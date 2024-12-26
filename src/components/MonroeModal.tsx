@@ -8,25 +8,6 @@ import WarningIcon from '@/assets/icons/warn.svg'
 
 type TMonroeModalType = 'warn'
 
-const Title = styled.h3`
-  font-size: 16px;
-  font-weight: 500;
-  color: rgba(26, 22, 87, 0.85);
-`
-
-const Subtitle = styled(Typography)`
-  font-size: 14px;
-  color: rgba(26, 22, 87, 0.85);
-`
-
-const MonroeModalOverlay = styled.div`
-  position: fixed;
-  background-color: rgba(41, 41, 48, 0.7);
-  height: 100vh;
-  width: 100vw;
-  z-index: 999;
-`
-
 interface IMonroeModalProps {
   onOk: () => void
   onCancel?: () => void
@@ -40,20 +21,21 @@ interface IMonroeModalProps {
 const MonroeModal: FC<IMonroeModalProps> = ({ onCancel, onOk, title, content, okText, closable = true }) =>
   createPortal(
     <MonroeModalOverlay>
-      <Modal
+      <ModalStyled
         centered
         open
         onOk={onOk}
         onCancel={onCancel}
         okText={okText}
         closable={closable}
+        width={416}
         cancelButtonProps={{
           style: {
             display: onCancel ? 'inline-flex' : 'none',
           },
         }}
       >
-        <Flex className="w-416">
+        <Flex>
           <div className="mg-r16">
             <ReactSVG src={WarningIcon} />
           </div>
@@ -63,9 +45,34 @@ const MonroeModal: FC<IMonroeModalProps> = ({ onCancel, onOk, title, content, ok
             <Subtitle>{content}</Subtitle>
           </div>
         </Flex>
-      </Modal>
+      </ModalStyled>
     </MonroeModalOverlay>,
     document.body,
   )
 
 export default MonroeModal
+
+// Styled Components
+const ModalStyled = styled(Modal)`
+    & .ant-modal-content {
+        padding: 32px 32px 24px 32px;
+        border-radius: 2px;
+    }
+`
+const Title = styled.h3`
+    font-size: 16px;
+    font-weight: 500;
+    color: rgba(26, 22, 87, 0.85);
+`
+const Subtitle = styled(Typography)`
+    font-size: 14px;
+    color: rgba(26, 22, 87, 0.85);
+    margin-top: 8px
+`
+const MonroeModalOverlay = styled.div`
+    position: fixed;
+    background-color: rgba(41, 41, 48, 0.7);
+    height: 100vh;
+    width: 100vw;
+    z-index: 999;
+`

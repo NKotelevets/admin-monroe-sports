@@ -144,6 +144,7 @@ export interface ILeagueForm {
   masterTeamAdminName: string
   masterTeamAdminEmail: string | undefined
   league: string | undefined
+  season: string | undefined
   division: string | undefined
   subdivision: string | undefined
 }

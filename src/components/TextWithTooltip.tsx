@@ -36,7 +36,7 @@ const TextWithTooltip: FC<ITitleWithTooltipProps> = ({ maxLength, text, onClick,
       </Tooltip>
     ) : (
       <StyledTypography is_regular_text={`${isRegularText}`} onClick={onClick}>
-        {text}
+        {text ? text : '-'}
       </StyledTypography>
     )}
   </>

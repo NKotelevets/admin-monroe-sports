@@ -8,11 +8,13 @@ import { ReactSVG } from 'react-svg'
 import { useNavigate } from 'react-router-dom'
 import { PATH_TO_MASTER_TEAMS } from '@/common/constants/paths.ts'
 import { ScheduleContext } from '@/components/ScheduleRequest/ScheduleContext.ts'
-import { IScheduleRequest } from '@/common/interfaces/masterTeams.ts'
+
+import { IScheduleRequest } from '@/common/interfaces'
 
 interface IMasterTeamTabListProps {
   data: IScheduleRequest[]
   extraContent?: ReactElement
+  pathToNavigate?: string
 }
 
 /**
@@ -40,26 +42,25 @@ interface IMasterTeamTabListProps {
  * />
  */
 export const TeamTabList = (props: IMasterTeamTabListProps): ReactElement => {
-  const { data, extraContent } = props
+  const { data, extraContent, pathToNavigate: detailPath } = props
   const {
     selectedTabIndex,
     selectedIds,
-    setSelectedIds,
-    pathToNavigate,
-    dates,
+    removeTeamByIndex,
     setSelectedTabIndex,
+    additionalData
   } = useContext(ScheduleContext)
+
   const navigate = useNavigate()
+  const navigateTo = detailPath || PATH_TO_MASTER_TEAMS
 
   /**
    * Removes a team from the selected list by its index.
    *
    * @param {number} index - The index of the team to remove.
    */
-  const removeTeamByIndex = (index: number): void => {
-    const newIds = selectedIds?.filter((id) => id !== data[index].teamId)
-    setSelectedIds(newIds || null)
-    navigate(`${pathToNavigate}/${dates?.start},${dates?.end}/${newIds?.join(',')}`)
+  const remove = (index: number): void => {
+    removeTeamByIndex(index, data)
   }
 
   /**
@@ -69,16 +70,16 @@ export const TeamTabList = (props: IMasterTeamTabListProps): ReactElement => {
    * @param {number} index - The index of the tab.
    * @param {string} id - The ID of the team used for navigation.
    *
-   * @returns {JSX.Element} The rendered tab with icons for actions.
+   * @returns {ReactElement} The rendered tab with icons for actions.
    */
-  const renderTabWithIcon = (title: string, index: number, id: string) => {
+  const renderTabWithIcon = (title: string, index: number, id: string): ReactElement => {
     const selectedClassName = index === selectedTabIndex ? 'selected-tab' : ''
     const canDelete = selectedIds && selectedIds?.length > 1 || false
 
     const onInfoPress = (event: React.MouseEvent<HTMLSpanElement>) => {
       event.preventDefault()
       event.stopPropagation()
-      navigate(`${PATH_TO_MASTER_TEAMS}/${id}`)
+      navigate(`${navigateTo}/${additionalData ? additionalData[index].id : id}`)
     }
 
     return (
@@ -86,10 +87,14 @@ export const TeamTabList = (props: IMasterTeamTabListProps): ReactElement => {
         className={selectedClassName}
         canDelete={canDelete}
       >
-        <TabText className="tab-text">{title}</TabText>
+        <Tooltip title={additionalData ? title : undefined}>
+          <TabText className="tab-text">
+            {`${additionalData![index].name} ${additionalData![index].leagueName ? `(${additionalData![index].leagueName})` : ''}`}
+          </TabText>
+        </Tooltip>
         <Tooltip title="Remove team from the list">
           <HoverIcon
-            onClick={() => removeTeamByIndex(index)}
+            onClick={() => remove(index)}
             className="hover-icon"
             title="Delete this tab"
           >

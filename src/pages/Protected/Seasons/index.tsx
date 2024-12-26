@@ -171,7 +171,7 @@ const Seasons = () => {
 
             <Flex>
               {!!selectedRecordsIds.length && (
-                <MonroeDeleteButton icon={<DeleteOutlined />} iconPosition="start" onClick={() => setIsOpenModal(true)}>
+                <MonroeDeleteButton danger icon={<DeleteOutlined />} iconPosition="start" onClick={() => setIsOpenModal(true)}>
                   Delete
                 </MonroeDeleteButton>
               )}

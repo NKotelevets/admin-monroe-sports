@@ -1,11 +1,13 @@
 import { OptionTitle } from '@/components/Elements'
 import { Button, Flex, Select as SL, Spin } from 'antd'
 import { SelectProps } from 'antd/es/select'
-import { ReactElement, useCallback, useMemo } from 'react'
+import { ReactElement, useCallback, useMemo, useState } from 'react'
 import styled from '@emotion/styled'
 import { InputError } from '@/components/Inputs/InputElements.tsx'
 import { colors } from '@/utils/colors.tsx'
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons'
+import useDebounceEffect from '@/hooks/useDebounceEffect.ts'
+import { NotFoundContentList } from '@/components/NotFoundContentList.tsx'
 interface IDropdownProps extends SelectProps {
   label: string | ReactElement
   buttonText?: string
@@ -20,7 +22,7 @@ interface IDropdownProps extends SelectProps {
 }
 
 /**
- * Drop in replacement of Ant.D Select component
+ * Drop in replacement of Ant.D Select component with debounced search
  * @param props
  * @constructor
  */
@@ -34,8 +36,11 @@ const Select = (props: IDropdownProps) => {
     onLoadMore,
     errorPosition = 'top',
     buttonAction,
+    onSearch,
     ...rest
   } = props
+
+  const [searchValue, setSearchValue] = useState('')
 
   const fieldStatus = error ? 'error' : undefined
   const errorOnTop = errorPosition === 'top'
@@ -68,20 +73,32 @@ const Select = (props: IDropdownProps) => {
     }
   }, [onLoadMore, loading])
 
+  // set search value
+  const onSearching = (value: string) => {
+    setSearchValue(value)
+  }
+
+  // debounce search
+  useDebounceEffect(() => {
+    !!onSearch && onSearch(searchValue)
+  }, [searchValue])
+
   return (
-    <Content vertical isLast={isLast}>
+    <Content vertical isLast={isLast} className='form'>
       <Flex vertical={false} justify="space-between" align="center">
         {labelComponent}
         {error && errorOnTop && <InputError>{error}</InputError>}
       </Flex>
 
       <SelectStyled
-        status={fieldStatus}
         virtual={false} // needed to use custom scroll bars, but might impact performance
+        status={fieldStatus}
+        onSearch={onSearching}
         onPopupScroll={handleScroll}
         placeholder="Select master team"
-        suffixIcon={<div className="ant-menu-submenu-arrow"></div>}
         dropdownRender={renderCustomItems}
+        suffixIcon={<div className="ant-menu-submenu-arrow"></div>}
+        notFoundContent={<NotFoundContentList hidden={loading} message={`There's no match. Try a different name or create a league/tourn first.`} />}
         {...rest}
       />
 

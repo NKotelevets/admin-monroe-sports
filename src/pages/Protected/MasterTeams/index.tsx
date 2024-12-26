@@ -1,187 +1,73 @@
 import MasterTeamsTable from './components/MasterTeamsTable'
-import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined'
-import DownloadOutlined from '@ant-design/icons/lib/icons/DownloadOutlined'
-import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
-import { Flex } from 'antd'
-import { ChangeEvent, useRef, useState } from 'react'
-import { Helmet } from 'react-helmet'
 import { useNavigate } from 'react-router-dom'
+import { useBulkDeleteMasterTeamsMutation } from '@/redux/masterTeams/masterTeams.api'
 
-import {
-  CreateNewEntityButton,
-  ImportButton,
-  MonroeDeleteButton,
-  PageContainer,
-  ProtectedPageTitle
-} from '@/components/Elements'
-import ImportModal from '@/components/ImportModal.tsx'
+import { PATH_TO_CREATE_MASTER_TEAM, PATH_TO_DELETING_INFO_MASTER_TEAMS } from '@/common/constants/paths'
+import { TableProvider } from '@/components/Table/MonroeTable/TableProvider.tsx'
+import { TablePage } from '@/layouts/TablePage.tsx'
+import { useNotification } from '@/hooks/useNotification.ts'
+import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice.tsx'
+import { MasterTeamTableControls } from '@/pages/Protected/MasterTeams/components/MasterTeamTableControls.tsx'
 
-import BaseLayout from '@/layouts/BaseLayout'
-import { useMasterTeamsImportCSVMutation } from '@/redux/masterTeams/masterTeams.api'
-
-import { DEFAULT_IMPORT_MODAL_OPTIONS } from '@/common/constants/import'
-import { PATH_TO_CREATE_MASTER_TEAM, PATH_TO_MASTER_TEAMS_IMPORT_INFO } from '@/common/constants/paths'
-import { IImportModalOptions } from '@/common/interfaces'
-import {
-  DeleteMasterTeamModal,
-  DeleteModalRef
-} from '@/pages/Protected/MasterTeams/components/DeleteMasterTeamModal.tsx'
-import { ExportAvailability } from '@/pages/Protected/MasterTeams/components/ExportAvailability.tsx'
-import { ScheduleRequestButton } from '@/pages/Protected/MasterTeams/components/ScheduleRequestButton.tsx'
+const DELETE_TERMS = {
+  singular: 'master team',
+  plural: 'master teams'
+}
 
 const MasterTeams = () => {
   const navigate = useNavigate()
-  const inputRef = useRef<HTMLInputElement | null>()
-  const deleteModalRef = useRef<DeleteModalRef>()
 
-  const [importMasterTeamCSV] = useMasterTeamsImportCSVMutation()
+  const { notify, info } = useNotification()
+  const { total } = useMasterTeamsSlice()
 
-  const [selectedRecordsIds, setSelectedRecordsIds] = useState<string[]>([])
-  const [showAdditionalHeader, setShowAdditionalHeader] = useState(false)
-  const [isDeleteAllRecords, setIsDeleteAllRecords] = useState(false)
-  const [showCreatedRecords, setShowCreatedRecords] = useState(false)
-  const [importModalOptions, setImportModalOptions] = useState<IImportModalOptions>(DEFAULT_IMPORT_MODAL_OPTIONS)
+  const [bulkDeleteMT, { isLoading }] = useBulkDeleteMasterTeamsMutation()
 
-  const [fileKey, setFileKey] = useState('')
+  /**
+   * Handles deletion of one or multiple master teams.
+   * @param selectedIds
+   * @param isAllSelected
+   */
+  const onDelete = async (selectedIds: string[], isAllSelected: boolean): Promise<boolean> => {
+    const deleteHandler = isAllSelected ? bulkDeleteMT([]) : bulkDeleteMT(selectedIds)
 
-  const onCSVInputChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    setImportModalOptions(DEFAULT_IMPORT_MODAL_OPTIONS)
-    const file = event.target.files?.[0]
+    try {
+      const response = await deleteHandler.unwrap()
+      let message = `${response.success}/${response.total} master teams have been successfully removed.`
 
-    if (file) {
-      setImportModalOptions({
-        filename: file.name,
-        isOpen: true,
-        status: 'loading',
-        errorMessage: ''
-      })
+      if (response.success === 1 && response.total === 1) {
+        message = `Master team has been successfully removed.`
+      }
 
-      const body = new FormData()
-      body.set('csv_file', file)
+      if (response.status === 'green') {
+        notify(message, 'success')
+        return true
+      }
 
-      await importMasterTeamCSV(body)
-        .unwrap()
-        .then(response => {
-          setImportModalOptions({
-            filename: file.name,
-            isOpen: true,
-            status: response.status,
-            errorMessage: ''
-          })
-        })
-        .catch((error) => {
-          setImportModalOptions({
-            filename: file.name,
-            isOpen: true,
-            status: 'red',
-            errorMessage: (error.data as {
-              code: string;
-              error: string
-            })?.error || error.data?.detail || 'Something went wrong. Please, try again'
-          })
-        })
-
-      setFileKey(new Date().toISOString())
+      info('More info...', message, PATH_TO_DELETING_INFO_MASTER_TEAMS)
+      return false
+    } catch (error) {
+      return false
     }
   }
 
-  const onDelete = () => {
-    setSelectedRecordsIds([])
-    setShowAdditionalHeader(false)
-    setIsDeleteAllRecords(false)
+  const renderControls = () => {
+    return <MasterTeamTableControls />
   }
 
   return (
-    <BaseLayout>
-      <>
-        <Helmet>
-          <title>Admin Panel | Master Teams </title>
-        </Helmet>
-
-        <DeleteMasterTeamModal
-          ref={deleteModalRef}
-          onDelete={onDelete}
-          isDeleteAllRecords={isDeleteAllRecords}
-          selectedRecordsIds={selectedRecordsIds}
-        />
-
-        {importModalOptions.isOpen && (
-          <ImportModal
-            title="Importing"
-            filename={importModalOptions.filename}
-            status={importModalOptions.status}
-            errorMessage={importModalOptions.errorMessage}
-            showInList={() => setShowCreatedRecords(true)}
-            redirectToImportInfo={() => {
-              setImportModalOptions((prev) => ({ ...prev, isOpen: false }))
-              navigate(PATH_TO_MASTER_TEAMS_IMPORT_INFO)
-            }}
-            onClose={() => setImportModalOptions((prev) => ({ ...prev, isOpen: false }))}
-          />
-        )}
-
-        <PageContainer>
-          <Flex justify="space-between" align="center" vertical={false}>
-            <ProtectedPageTitle>Master Teams</ProtectedPageTitle>
-
-            <Flex>
-              {!!selectedRecordsIds.length && (
-                <MonroeDeleteButton icon={<DeleteOutlined />} iconPosition="start" onClick={deleteModalRef?.current?.openModal}>
-                  Delete
-                </MonroeDeleteButton>
-              )}
-
-              <ScheduleRequestButton selectedMasterTeamIds={selectedRecordsIds} />
-              <ExportAvailability selectedMasterTeamIds={selectedRecordsIds} />
-
-              <ImportButton
-                icon={<DownloadOutlined />}
-                iconPosition="start"
-                type="default"
-                onClick={() => {
-                  inputRef.current?.click()
-                }}
-              >
-                Import CSV
-              </ImportButton>
-
-              <CreateNewEntityButton
-                icon={<PlusOutlined />}
-                iconPosition="start"
-                type="primary"
-                onClick={() => navigate(PATH_TO_CREATE_MASTER_TEAM)}
-              >
-                Create master team
-              </CreateNewEntityButton>
-            </Flex>
-          </Flex>
-
-          <input
-            ref={(ref) => {
-              inputRef.current = ref
-            }}
-            type="file"
-            name="masterTeams"
-            accept=".csv"
-            onChange={onCSVInputChange}
-            className="d-n"
-            key={fileKey}
-          />
-
-          <Flex flex="1 1 auto" vertical>
-            <MasterTeamsTable
-              isDeleteAllRecords={isDeleteAllRecords}
-              setSelectedRecordsIds={setSelectedRecordsIds}
-              selectedRecordIds={selectedRecordsIds}
-              showAdditionalHeader={showAdditionalHeader}
-              setShowAdditionalHeader={setShowAdditionalHeader}
-              setIsDeleteAllRecords={setIsDeleteAllRecords}
-              showCreatedRecords={showCreatedRecords}
-            />
-          </Flex>
-        </PageContainer>
-      </>
-    </BaseLayout>
+    <TableProvider>
+      <TablePage
+        title="Master Teams"
+        onCreate={() => navigate(PATH_TO_CREATE_MASTER_TEAM)}
+        onDelete={onDelete}
+        deleteTerm={DELETE_TERMS}
+        isDeleting={isLoading}
+        controls={renderControls}
+        maxSelection={total}
+      >
+        <MasterTeamsTable />
+      </TablePage>
+    </TableProvider>
   )
 }
 

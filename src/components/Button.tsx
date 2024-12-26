@@ -32,9 +32,8 @@ export const Button = (props: ButtonProps & { spinnerColor?: string }) => {
 }
 
 const MButton = styled(Btn)`
-    font-size: 14px;
     display: flex;
-    flex: 1
+    flex: 1;
 `
 const Spinner = styled(LoadingOutlined)<{ color?: string | undefined }>`
     position: absolute;

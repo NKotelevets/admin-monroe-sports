@@ -19,6 +19,8 @@ import { IFESeason } from '@/common/interfaces/season'
 import DeleteIcon from '@/assets/icons/delete.svg'
 import EditIcon from '@/assets/icons/edit.svg'
 import WarningIcon from '@/assets/icons/small-warn.svg'
+import { SVGIcon } from '@/components/SVGIcon.tsx'
+import { colors } from '@/utils/colors.tsx'
 
 type TDataIndex = keyof IFESeason
 type TColumns<T> = TableProps<T>['columns']
@@ -67,7 +69,7 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
       ...getColumnSearchProps('name'),
       sortOrder: ordering?.includes('name') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
       render: (value, record) => {
-        const showIcon = record.divisions.flatMap((d) => d.sub_division?.filter((s) => s.changed)).length
+        const showIcon = record.divisions.flatMap((d) => d.subDivision?.filter((s) => s.changed)).length
 
         return (
           <Flex align="center" justify="flex-start">
@@ -165,15 +167,16 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
       fixed: 'right',
       render: (_, record) => {
         return (
-          <Flex vertical={false} justify="center" align="center">
+          <Flex vertical={false} justify="flex-start" align="center">
             <ReactSVG src={EditIcon} onClick={() => navigate(`${PATH_TO_EDIT_SEASON}/${record.id}`)} className="c-p" />
-            <ReactSVG
+            <SVGIcon
+              color={colors.primary}
+              className="c-p mg-l8"
               onClick={() => {
                 setSelectedRecordId(record.id)
                 setShowDeleteSingleRecordModal(true)
               }}
               src={DeleteIcon}
-              className="c-p mg-l8"
             />
           </Flex>
         )

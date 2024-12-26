@@ -7,8 +7,13 @@ import { useNotification } from '@/hooks/useNotification.ts'
 import { useNavigate } from 'react-router-dom'
 import { PATH_TO_LEAGUE_TEAMS } from '@/common/constants/paths.ts'
 import { ReactElement } from 'react'
+import { MonroeBlueText } from '@/components/Elements'
 
 const DEFAULT_ERROR_MESSAGE = `Something went wrong. Please, try again!`
+const BREAD_CRUMB_ITEMS = [
+  { title: <a href={PATH_TO_LEAGUE_TEAMS}>League Teams</a> },
+  { title: <MonroeBlueText>Create league team</MonroeBlueText> }
+]
 
 /**
  * League Team Create Page
@@ -58,7 +63,10 @@ const LeagueTeamCreate = (): ReactElement => {
   }
 
   return (
-    <Page title="Create league team">
+    <Page
+      title="Create league team"
+      breadcrumbs={BREAD_CRUMB_ITEMS}
+    >
       <LeagueTeamForm
         isLoading={isLoading}
         onSubmit={onSubmit}

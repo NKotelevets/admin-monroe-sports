@@ -39,7 +39,7 @@ const CreateMasterTeam = () => {
         goBack()
       })
       .catch(error => {
-        notify(error?.data?.error || DEFAULT_ERROR_MESSAGE, 'error')
+        notify(error?.data?.details || error?.data?.error || DEFAULT_ERROR_MESSAGE, 'error')
       })
   }
 

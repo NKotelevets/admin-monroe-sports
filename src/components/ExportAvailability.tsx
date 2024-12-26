@@ -1,5 +1,4 @@
 import { ScheduleOutlined } from '@ant-design/icons'
-import Btn from 'antd/es/button/button'
 import styled from '@emotion/styled'
 import { Dropdown, Flex } from 'antd'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -7,19 +6,29 @@ import MonroeButton from '@/components/MonroeButton.tsx'
 import DatePickerRange, { IDateRangePickerRef } from '@/components/DatePickerRange.tsx'
 import { Dayjs } from 'dayjs'
 import { useNotification } from '@/hooks/useNotification.ts'
-import { IExportInfoProps } from '@/common/interfaces/masterTeams.ts'
-import { useMasterTeamExportCSV } from '@/pages/Protected/MasterTeams/hooks/useMasterTeamExportCSV.ts'
+import { useExportScheduleCSV } from '@/hooks/useExportScheduleCSV.ts'
+import { useTableContext } from '@/hooks/useTableContext.ts'
+import { Button } from '@/components/Button.tsx'
 
-export const ExportAvailability = (props: IExportInfoProps) => {
-  const { selectedMasterTeamIds } = props
+interface IExportAvailabilityProps {
+  pathToExport: string
+}
 
+export const ExportAvailability = (props: IExportAvailabilityProps) => {
+  const { pathToExport } = props
+  const { selectedIds: teamIds, singleDeleting } = useTableContext()
+
+  /**
+   * Renders dropdown content if one or more teams are selected.
+   */
   const content = useCallback(() => (
-    !!selectedMasterTeamIds.length && <DropdownContent masterTeamIds={selectedMasterTeamIds} />
-  ), [selectedMasterTeamIds])
+    !!teamIds.length && <DropdownContent teamIds={teamIds} pathToExport={pathToExport} />
+  ), [teamIds])
 
-  // At least one Master Team needs to be selected
-  // to show this component
-  if (!selectedMasterTeamIds.length) {
+  /**
+   * At least one Master Team needs to be selected to show this component.
+   */
+  if (!teamIds.length || singleDeleting) {
     return <></>
   }
 
@@ -37,9 +46,9 @@ export const ExportAvailability = (props: IExportInfoProps) => {
   )
 }
 
-const DropdownContent = (props: { masterTeamIds: string[] }) => {
-  const { masterTeamIds } = props
-  const { onExport, isLoading, status } = useMasterTeamExportCSV()
+const DropdownContent = (props: { teamIds: string[], pathToExport: string }) => {
+  const { teamIds, pathToExport } = props
+  const { onExport, isLoading, status } = useExportScheduleCSV()
   const { notify } = useNotification()
 
   const datePickerRef = useRef<IDateRangePickerRef>()
@@ -65,11 +74,12 @@ const DropdownContent = (props: { masterTeamIds: string[] }) => {
    * Downloads the file
    */
   const onClickExport = () => {
-    if (!startDate || !endDate || !masterTeamIds) return
+    if (!startDate || !endDate || !teamIds) return
     onExport(
       startDate.format('YYYY-MM-DD'),
       endDate.format('YYYY-MM-DD'),
-      masterTeamIds.join(',')
+      teamIds.join(','),
+      pathToExport
     )
   }
 
@@ -105,9 +115,7 @@ const DropdownContent = (props: { masterTeamIds: string[] }) => {
   )
 }
 
-const Button = styled(Btn)`
-    margin-right: 8px
-`
+// Styled Components
 const MButton = styled(MonroeButton)`
     font-size: 14px
 `

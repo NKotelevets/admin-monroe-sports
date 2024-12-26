@@ -10,7 +10,7 @@ const DesignConfigProvider: FC<{ children: ReactNode }> = ({ children }) => (
         colorPrimaryHover: colors.primaryHover,
         colorPrimaryActive: colors.primary,
         colorTextDisabled: colors.dim,
-        borderRadius: 0,
+        borderRadius: 2,
         fontFamily: 'Inter, sans-serif',
         colorError: colors.primary
       },
@@ -28,14 +28,30 @@ const DesignConfigProvider: FC<{ children: ReactNode }> = ({ children }) => (
           colorText: colors.secondaryText
         },
         Button: {
-          borderRadius: 2
+          borderRadius: 2,
+          defaultBorderColor: '#626169',
+          defaultColor: colors.secondaryText
         },
         Tooltip: {
           borderRadius: 2,
           colorBgSpotlight: 'rgba(62, 62, 72, 0.75)'
         },
+        Input: {
+          hoverBorderColor: colors.dim,
+          activeBorderColor: colors.secondary,
+          activeShadow: `0 0 0 2px #3C39701A`
+        },
         DatePicker: {
-          borderRadius: 2
+          cellWidth: 45,
+        },
+        Divider: {
+          margin: 24
+        },
+        Collapse: {
+          headerBg: '#FFFFFF'
+        },
+        Typography: {
+          colorTextHeading: colors.secondaryText
         }
       }
     }}

@@ -3,10 +3,7 @@ import { IBESeason, IImportedSeasonInfo, INewSeasonCSVFormat } from '@/common/in
 
 export const getNormalizedVersionOfSeason = (existing: IBESeason, season: INewSeasonCSVFormat): IImportedSeasonInfo => {
   const existedDivision = existing.divisions.find((division) => division.name === season['Division/Pool Name'])
-  const existedSubdivision = existedDivision
-    ? existedDivision.sub_division.find((subdivision) => subdivision.name === season['Subdiv/Pool Name'])
-        ?.playoff_format
-    : ''
+  const existedSubdivision = existedDivision ? existedDivision.playoff_format : ''
 
   return {
     id: existing.id,

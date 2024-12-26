@@ -7,6 +7,7 @@ import styled from '@emotion/styled'
 import { PageContext } from './context'
 import Breadcrumb from 'antd/es/breadcrumb'
 import { Description } from '@/components/Elements/deletingBlockingInfoElements.tsx'
+import { IBreadcrumbs } from '@/common/types'
 
 
 /**
@@ -22,7 +23,7 @@ export interface IPageProps {
   children: ReactElement
 
   subtitle?: string
-  breadcrumbs?: { title: ReactElement }[]
+  breadcrumbs?: IBreadcrumbs
   controls?(): ReactElement
 }
 
@@ -39,13 +40,16 @@ export interface IPageProps {
  * </Page>
  */
 export const Page: FC<IPageProps> = (props: IPageProps): ReactElement => {
-  const { title, children, subtitle, breadcrumbs, controls } = props
+  const { title, children, subtitle, breadcrumbs: initialBreadcrumbs, controls } = props
   const [pageTitle, setPageTitle] = useState(title)
+  const [breadcrumbs, setBreadcrumbs] = useState<IBreadcrumbs>(initialBreadcrumbs)
 
   return (
     <PageContext.Provider value={{
+      pageTitle,
+      breadcrumbs,
       setPageTitle,
-      pageTitle
+      setBreadcrumbs,
     }}>
     <>
       <div id="page-portal"></div>
@@ -83,7 +87,10 @@ export const Page: FC<IPageProps> = (props: IPageProps): ReactElement => {
 const Header = styled(Flex)`
 `
 const Controls = styled(Flex)`
-  margin-top: 8px
+    margin-top: 8px;
+    display: grid;
+    grid-gap: 8px;
+    grid-auto-flow: column;
 `
 const PageInfo = styled(Flex)`
     margin: 8px 0 24px;
