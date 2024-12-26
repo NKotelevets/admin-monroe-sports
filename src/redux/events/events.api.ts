@@ -4,7 +4,7 @@ import baseQueryWithReAuth from '@/redux/reauthBaseQuery'
 
 import { TDeleteStatus } from '@/common/types'
 import { transformKeysToCamelCase, transformKeysToSnakeCase } from '@/utils'
-import { TListEventRequestParams, TPaginatedEvents } from '@/common/types/games.ts'
+import { TListEventRequestParams, TPaginatedEvents } from '@/common/types/events.ts'
 import { IPaginationResponse } from '@/common/interfaces/api.ts'
 import { IEvent } from '@/common/interfaces/event.ts'
 

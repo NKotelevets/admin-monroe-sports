@@ -36,3 +36,11 @@ export type NestedSnakeCase<T> = T extends object
       : K
     : K]: NestedSnakeCase<T[K]> }
   : T;
+
+export type TPagination = {
+  count?: number
+  total: number
+  limit: number
+  offset: number
+  ordering?: string
+}

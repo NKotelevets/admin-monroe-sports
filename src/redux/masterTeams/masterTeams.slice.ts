@@ -2,11 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { masterTeamsApi } from '@/redux/masterTeams/masterTeams.api'
 
-import {
-  IFEDuplicate,
-  IFEMasterTeam,
-  IImportMasterTeamCSVTableData
-} from '@/common/interfaces/masterTeams'
+import { IFEDuplicate, IFEMasterTeam, IImportMasterTeamCSVTableData } from '@/common/interfaces/masterTeams'
 import { duplicatesErrorMap, duplicatesMap, duplicatesTableMap } from '@/redux/masterTeams/mappers'
 import { IDeletingError } from '@/common/interfaces'
 

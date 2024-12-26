@@ -75,8 +75,9 @@ import {
   PATH_TO_USERS_BLOCKING_INFO,
   PATH_TO_USERS_BULK_EDIT,
   PATH_TO_USERS_IMPORT_INFO,
-  PATH_TO_EDIT_LEAGUE_TEAM
+  PATH_TO_EDIT_LEAGUE_TEAM, PATH_TO_CREATE_EVENT
 } from '@/common/constants/paths'
+import EventCreate from '@/pages/Protected/Events/EventCreate.tsx'
 
 const Root = () => (
   <AuthProvider>
@@ -134,6 +135,7 @@ const Root = () => (
 
       {/* Events */}
       <Route path={PATH_TO_EVENTS} element={<Events />} />
+      <Route path={PATH_TO_CREATE_EVENT} element={<EventCreate />} />
     </Routes>
   </AuthProvider>
 )
