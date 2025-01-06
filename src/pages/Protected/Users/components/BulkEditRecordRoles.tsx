@@ -15,14 +15,15 @@ import { TRole } from '@/common/types'
 import { IFERole } from '@/common/interfaces/role.ts'
 import Flex from 'antd/es/flex'
 import MonroeSelect from '@/components/MonroeSelect.tsx'
-import { DeleteIconWrapper, EmptySpace } from '@/pages/Protected/Users/components/index.tsx'
-import { ReactSVG } from 'react-svg'
+import { EmptySpace } from '@/pages/Protected/Users/components/index.tsx'
 import DeleteIcon from '@/assets/icons/delete.svg'
 import MasterTeamsMultipleSelectWithSearch from '@/components/MasterTeamsMultipleSelectWithSearch.tsx'
 import OperatorsInput from '@/pages/Protected/Users/components/OperatorsInput.tsx'
 import MonroeTooltip from '@/components/MonroeTooltip.tsx'
 import { AddRoleButton } from '@/pages/Protected/Seasons/components/Elements.tsx'
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
+import { colors } from '@/utils/colors.tsx'
+import { SVGIcon } from '@/components/SVGIcon.tsx'
 
 const MAX_CREATED_ROLES_BY_ADMIN = 6
 const MAX_CREATED_ROLES_BY_OPERATOR = 4
@@ -273,12 +274,14 @@ export const BulkEditRecordRoles = ({ record }: IProps) => {
                 disabled={!canEdit || !canDelete}
               />
 
-              <DeleteIconWrapper
-                is_hide={`${!canDelete || (isSameUser && role.name === MASTER_ADMIN_ROLE) || (isOperatorWithoutAdmin && role.name === MASTER_ADMIN_ROLE)}`}
-                onClick={() => canDelete && deleteRecordRole(record, role.name)}
-              >
-                <ReactSVG src={DeleteIcon} />
-              </DeleteIconWrapper>
+              {(!canDelete || (isSameUser && role.name === MASTER_ADMIN_ROLE) || (isOperatorWithoutAdmin && role.name === MASTER_ADMIN_ROLE)) && (
+                <SVGIcon
+                  color={colors.primary}
+                  className="mg-l8 mg-r32"
+                  onClick={() => canDelete && deleteRecordRole(record, role.name)}
+                  src={DeleteIcon}
+                />
+              )}
             </Flex>
 
             {hasTeams && (

@@ -2,7 +2,6 @@ import { Divider, Flex } from 'antd'
 import { DefaultOptionType } from 'antd/es/select'
 import { FormikErrors } from 'formik'
 import { ChangeEventHandler, FC, useEffect, useState } from 'react'
-import { ReactSVG } from 'react-svg'
 
 import OperatorsInput from '@/pages/Protected/Users/components/OperatorsInput'
 import { ICreateUserFormValues } from '@/pages/Protected/Users/constants/formik'
@@ -24,6 +23,8 @@ import { IFERole } from '@/common/interfaces/role'
 import { TRole } from '@/common/types'
 
 import DeleteIcon from '@/assets/icons/delete.svg'
+import { colors } from '@/utils/colors.tsx'
+import { SVGIcon } from '@/components/SVGIcon.tsx'
 
 interface IPopulateRoleProps {
   index: number
@@ -33,28 +34,30 @@ interface IPopulateRoleProps {
   setFieldValue: (
     field: string,
     value: string | IIdName[] | IFERole,
-    shouldValidate?: boolean,
+    shouldValidate?: boolean
   ) => Promise<void | FormikErrors<ICreateUserFormValues>>
   removeFn: (index: number) => void
   values: ICreateUserFormValues
   setFieldTouched: (
     field: string,
     isTouched?: boolean,
-    shouldValidate?: boolean,
+    shouldValidate?: boolean
   ) => Promise<void | FormikErrors<ICreateUserFormValues>>
   isSameUser?: boolean
 }
 
-const PopulateRole: FC<IPopulateRoleProps> = ({
-  index,
-  role,
-  errors,
-  setFieldValue,
-  removeFn,
-  values,
-  setFieldTouched,
-  isSameUser,
-}) => {
+const PopulateRole: FC<IPopulateRoleProps> = (props) => {
+  const {
+    index,
+    role,
+    errors,
+    setFieldValue,
+    removeFn,
+    values,
+    setFieldTouched,
+    isSameUser
+  } = props
+
   const [isOpenedDetails, setIsOpenedDetails] = useState(index === 0 ? true : false)
   const { ref, isComponentVisible } = useIsActiveComponent(index === 0 ? true : false)
   const isError = !!errors?.roles?.[index]
@@ -68,7 +71,7 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
     return false
   }).map((role) => ({
     label: role,
-    value: role,
+    value: role
   }))
   const isRoleWithTeams = ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(role.name as TRole)
   const isOperator = (role.name as TRole) === OPERATOR_ROLE
@@ -108,9 +111,12 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
 
           {!([OPERATOR_ROLE, MASTER_ADMIN_ROLE].includes(role.name) && !isAdmin) &&
             !(isSameUser && role.name === MASTER_ADMIN_ROLE) && (
-              <div onClick={() => removeFn(index)}>
-                <ReactSVG src={DeleteIcon} />
-              </div>
+              <SVGIcon
+                color={colors.primary}
+                className="mg-l8 mg-r32"
+                onClick={() => removeFn(index)}
+                src={DeleteIcon}
+              />
             )}
         </Flex>
       )}
@@ -128,7 +134,7 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
                 onChange={(value) =>
                   setFieldValue(`roles.${index}`, {
                     name: value,
-                    linkedEntities: [],
+                    linkedEntities: []
                   })
                 }
                 options={options}
