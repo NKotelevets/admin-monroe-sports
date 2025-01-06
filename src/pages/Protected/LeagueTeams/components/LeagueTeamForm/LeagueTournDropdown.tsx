@@ -24,7 +24,7 @@ export const LeagueTournDropdown = React.memo((props: { setSelectedLeague: (leag
       values,
       errors,
       touched,
-      handleChange,
+      setFieldValue,
       handleBlur
     } = useFormikContext<ILeagueForm>()
 
@@ -56,7 +56,7 @@ export const LeagueTournDropdown = React.memo((props: { setSelectedLeague: (leag
      * Effect to accumulate fetched league data into the state
      */
     useEffect(() => {
-      setLeagueItems(lg => [...lg, ...(data?.leagues || [])])
+      updateLeagueTeamItems(data?.leagues || [])
     }, [data])
 
     /**
@@ -71,6 +71,8 @@ export const LeagueTournDropdown = React.memo((props: { setSelectedLeague: (leag
       }
 
       getLeague(values.league || '')
+        .unwrap()
+        .catch(() => setFieldValue('league', undefined))
     }, [values.league, leagueItems])
 
     /**
@@ -78,8 +80,29 @@ export const LeagueTournDropdown = React.memo((props: { setSelectedLeague: (leag
      */
     useEffect(() => {
       if (!singleLeague) return
-      setLeagueItems(items => [...items, singleLeague])
+      updateLeagueTeamItems([singleLeague])
     }, [singleLeague])
+
+    const onChange = (value: string) => {
+      setFieldValue('league', value)
+      setFieldValue('season', undefined)
+      setFieldValue('division', undefined)
+      setFieldValue('subdivision', undefined)
+    }
+
+    const updateLeagueTeamItems = (items: IFELeague[]) => {
+      setLeagueItems(lt => {
+        const seen = new Set<number | string>()
+
+        return (
+          [...lt, ...items].filter(item => {
+            if (seen.has(item.id)) return false
+            seen.add(item.id)
+            return true
+          })
+        )
+      })
+    }
 
     /**
      * Loads more leagues by updating the pagination parameters and fetching the next set of leagues.
@@ -123,7 +146,7 @@ export const LeagueTournDropdown = React.memo((props: { setSelectedLeague: (leag
         placeholder="Select legue/tourn"
         optionFilterProp="label"
         value={values.league}
-        onChange={handleChange('league')}
+        onChange={onChange}
         onLoadMore={!endReached ? onLoadMore : undefined}
         options={leagueOptions}
         error={touched.league ? errors.league as string : ''}

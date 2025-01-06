@@ -30,7 +30,8 @@ export const SeasonAndPoolsDropdown = React.memo(
       errors,
       touched,
       handleChange,
-      handleBlur
+      handleBlur,
+      setFieldValue
     } = useFormikContext<ILeagueForm>()
 
     const [getSeason, { isLoading, isFetching }] = useLazyGetSeasonDetailsQuery()
@@ -53,6 +54,26 @@ export const SeasonAndPoolsDropdown = React.memo(
 
       getSeasons()
     }, [selectedLeague])
+
+    useEffect(() => {
+      if (!!seasonList.length && values.season) {
+        const find = seasonList.find(season => season.id === values.season)
+
+        if (!find) {
+          setFieldValue('season', undefined)
+          setFieldValue('division', undefined)
+          setFieldValue('subdivision', undefined)
+
+        }
+      }
+    }, [values.season, seasonList])
+
+    const onChange = (fieldName: keyof ILeagueForm, resetFields: (keyof ILeagueForm)[]) => {
+      return (value: unknown) => {
+        setFieldValue(fieldName, value)
+        resetFields.map(field => setFieldValue(field, undefined))
+      }
+    }
 
     /**
      * Computes the list of divisions for the selected season.
@@ -79,7 +100,7 @@ export const SeasonAndPoolsDropdown = React.memo(
           placeholder="Select season"
           optionFilterProp="label"
           value={values.season}
-          onChange={handleChange('season')}
+          onChange={onChange('season', ['division', 'subdivision'])}
           options={seasonList.map(season => ({ value: season.id, label: season.name }))}
           error={touched.season ? (errors.season as string) : ''}
           onBlur={handleBlur('season')}
@@ -93,7 +114,7 @@ export const SeasonAndPoolsDropdown = React.memo(
           placeholder="Select division/pool"
           optionFilterProp="label"
           value={values.division}
-          onChange={handleChange('division')}
+          onChange={onChange('division', ['subdivision'])}
           options={divisionList.map(division => ({ value: division.id, label: division.name }))}
           error={touched.division ? (errors.division as string) : ''}
           onBlur={handleBlur('division')}
