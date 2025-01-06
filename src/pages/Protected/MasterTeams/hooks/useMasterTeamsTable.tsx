@@ -97,7 +97,7 @@ export const useMasterTeamsTable = (): IUseMasterTableReturn => {
       sorter: true,
       fixed: 'left',
       width: '240px',
-      sortOrder: getColumnSort('name', ordering),
+      sortOrder: getColumnSort('name', ordering || null),
       ...getColumnSearchProps('name'),
       render: (_, record) => (
         <TextWithTooltip
@@ -112,7 +112,7 @@ export const useMasterTeamsTable = (): IUseMasterTableReturn => {
       dataIndex: 'teamAdmins',
       width: '240px',
       ...getColumnSearchProps('teamAdmins', onFilterTeamAdmin),
-      sortOrder: getColumnSort('team_admins', ordering),
+      sortOrder: getColumnSort('team_admins', ordering || null),
       sorter: true,
       render: renderTeamAdmins
     },
@@ -127,7 +127,7 @@ export const useMasterTeamsTable = (): IUseMasterTableReturn => {
       dataIndex: 'headCoachFullName',
       width: '240px',
       ...getColumnSearchProps('headCoachFullName'),
-      sortOrder: getColumnSort('head_coach', ordering),
+      sortOrder: getColumnSort('head_coach', ordering || null),
       sorter: true,
       render: renderHeadCoachName
     },
@@ -143,7 +143,7 @@ export const useMasterTeamsTable = (): IUseMasterTableReturn => {
       width: '240px',
       ...getColumnSearchProps('leagues', onFilterLeague),
       sorter: true,
-      sortOrder: getColumnSort('league_name', ordering),
+      sortOrder: getColumnSort('league_name', ordering || null),
       render: renderLinkedLeague
     },
     {

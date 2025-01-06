@@ -4,6 +4,7 @@ import React, { CSSProperties, ReactNode, InputHTMLAttributes, useMemo, ReactEle
 import { InputError } from '@/components/Inputs/InputElements'
 import { OptionTitle } from '@/components/Elements'
 import styled from '@emotion/styled'
+import { colors } from '@/utils/colors.tsx'
 
 export interface IInputWrapper extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
   label?: string | ReactNode
@@ -12,6 +13,7 @@ export interface IInputWrapper extends Omit<InputHTMLAttributes<HTMLInputElement
   last?: boolean
   errorPosition?: 'top' | 'bottom'
   className?: string
+  helpText?: string
   children: ReactElement
 }
 
@@ -21,6 +23,7 @@ const InputWrapper = React.memo((props: IInputWrapper) => {
     error,
     errorPosition = 'top',
     children,
+    helpText,
     ...rest
   } = props
   const errorOnTop = errorPosition === 'top'
@@ -39,6 +42,8 @@ const InputWrapper = React.memo((props: IInputWrapper) => {
       )}
       {children}
       {error && !errorOnTop && <InputError>{error}</InputError>}
+      {helpText && <HelpText>{helpText}</HelpText>}
+
     </Wrapper>
   )
 }, (prev,next) => {
@@ -53,4 +58,8 @@ export default InputWrapper
 // Styled Components
 const Wrapper = styled.div<{ last?: boolean }>`
     margin-bottom: ${({ last }) => last === true ? 0 : 12}px;
+`
+const HelpText = styled(InputError)`
+    margin-top: 4px;
+    color: ${colors.dim} !important;
 `

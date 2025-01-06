@@ -12,7 +12,7 @@ export const eventFormSchema = yup.object({
     (value) => value !== undefined ? validEventTypes().includes(value) : false
   ).required(),
   eventDescription: yup.string(),
-  eventSubscribers: yup.string(),
+  eventSubscribers: yup.array().of(yup.string()),
   date: yup
     .string()
     .required('Date is required')
@@ -37,15 +37,15 @@ export const eventFormSchema = yup.object({
   courtOrField: yup.string(),
   subResources: yup.string(),
   ignoreConflicts: yup.boolean(),
-  leagueTeam1Id: yup.string().required('Team 1 Name is required'),
+  leagueTeam1Id: yup.string().required('Team 1 is required'),
   leagueTeam2Id: yup
     .string()
     .when('eventType', ([eventType], schema) =>
-      eventType === 0 || eventType === 1 ? schema.required('Team 2 Name is required for this event type') : schema.optional()
+      eventType === 0 || eventType === 2 ? schema.required('Team 2 is required for this event type') : schema.optional()
     ),
   league: yup
     .string()
     .when('eventType', ([eventType], schema) =>
-      eventType === 5 ? schema.required('League is required for Playoff events') : schema.optional()
+      eventType === 0 || eventType === 2 ? schema.required('League is required for this event type') : schema.optional()
     )
 })

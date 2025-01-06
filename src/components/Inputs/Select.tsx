@@ -3,18 +3,20 @@ import { Button, Flex, Select as SL, Spin } from 'antd'
 import { SelectProps } from 'antd/es/select'
 import { ReactElement, useCallback, useMemo, useState } from 'react'
 import styled from '@emotion/styled'
-import { InputError } from '@/components/Inputs/InputElements.tsx'
 import { colors } from '@/utils/colors.tsx'
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons'
 import useDebounceEffect from '@/hooks/useDebounceEffect.ts'
 import { NotFoundContentList } from '@/components/NotFoundContentList.tsx'
-interface IDropdownProps extends SelectProps {
+import InputWrapper from '@/components/Inputs/InputWrapper.tsx'
+export interface IDropdownProps extends SelectProps {
   label: string | ReactElement
   buttonText?: string
   error?: string
   errorPosition?: 'top' | 'bottom'
   isLast?: boolean
-  loading?: boolean,
+  loading?: boolean
+  helpText?: string
+  debounceSearch?: boolean
 
   buttonAction?(): void
 
@@ -37,13 +39,14 @@ const Select = (props: IDropdownProps) => {
     errorPosition = 'top',
     buttonAction,
     onSearch,
+    helpText,
+    debounceSearch = true,
     ...rest
   } = props
 
   const [searchValue, setSearchValue] = useState('')
 
   const fieldStatus = error ? 'error' : undefined
-  const errorOnTop = errorPosition === 'top'
 
   // label
   const labelComponent = useMemo(() => (
@@ -85,24 +88,24 @@ const Select = (props: IDropdownProps) => {
 
   return (
     <Content vertical isLast={isLast} className='form'>
-      <Flex vertical={false} justify="space-between" align="center">
-        {labelComponent}
-        {error && errorOnTop && <InputError>{error}</InputError>}
-      </Flex>
-
-      <SelectStyled
-        virtual={false} // needed to use custom scroll bars, but might impact performance
-        status={fieldStatus}
-        onSearch={onSearching}
-        onPopupScroll={handleScroll}
-        placeholder="Select master team"
-        dropdownRender={renderCustomItems}
-        suffixIcon={<div className="ant-menu-submenu-arrow"></div>}
-        notFoundContent={<NotFoundContentList hidden={loading} message={`There's no match. Try a different name or create a league/tourn first.`} />}
-        {...rest}
-      />
-
-      {error && !errorOnTop && <InputError>{error}</InputError>}
+      <InputWrapper
+        label={labelComponent}
+        helpText={helpText}
+        error={error}
+        errorPosition={errorPosition}
+      >
+        <SelectStyled
+          virtual={false} // needed to use custom scroll bars, but might impact performance
+          status={fieldStatus}
+          onSearch={debounceSearch ? onSearching : onSearch}
+          onPopupScroll={handleScroll}
+          placeholder="Select master team"
+          dropdownRender={renderCustomItems}
+          suffixIcon={<div className="ant-menu-submenu-arrow"></div>}
+          notFoundContent={<NotFoundContentList hidden={loading} message={`There's no match. Try a different name or create a league/tourn first.`} />}
+          {...rest}
+        />
+      </InputWrapper>
     </Content>
   )
 }

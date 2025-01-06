@@ -828,3 +828,7 @@ form .ant-divider {
   border-top: 0 !important;
   margin-top: 8px !important;
 }
+
+.email-tag-selector .ant-select-selector{
+  padding: 4px 6px !important;
+}

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useLazyGetMasterTeamsQuery } from '@/redux/masterTeams/masterTeams.api.ts'
+import { useLazyGetMasterTeamQuery, useLazyGetMasterTeamsQuery } from '@/redux/masterTeams/masterTeams.api.ts'
 import { IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
 import { IGetLeagueTeamsRequest } from '@/common/interfaces/leagueTeams.ts'
 import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice.tsx'
@@ -10,20 +10,26 @@ export const useMasterTeamPaginated = () => {
   const {
     setPaginationParams,
     offset,
-    limit
+    limit,
+    total,
   } = useMasterTeamsSlice()
 
   const [masterTeamList, { isLoading, isFetching, data }] = useLazyGetMasterTeamsQuery()
+  const [getMasterTeam, singleData] = useLazyGetMasterTeamQuery()
   const [masterTeamItems, setMasterTeamItems] = useState<IFEMasterTeam[]>([])
 
   // fetches first batch of master teams
   useEffect(() => {
     if (firstLoad.current) {
+      const params = { limit: 10, offset: 0 }
+
+      setPaginationParams(params)
       setMasterTeamItems([])
-      masterTeamList({ limit: 10, offset: 0, ordering: undefined })
+      masterTeamList(params)
       firstLoad.current = false
     }
   }, [])
+
 
   // updates local master team list
   useEffect(() => {
@@ -40,7 +46,10 @@ export const useMasterTeamPaginated = () => {
     setMasterTeamItems(list => [...list, item])
   }, [])
 
+
   const loadMore = useCallback(() => {
+    if (masterTeamItems.length >= total) return
+
     const leagueTeamsRequestParams: IGetLeagueTeamsRequest = {
       offset: offset + 10,
       limit
@@ -52,7 +61,7 @@ export const useMasterTeamPaginated = () => {
       limit: leagueTeamsRequestParams.limit,
       ordering: null
     })
-  }, [limit, offset])
+  }, [limit, offset, masterTeamItems, total])
 
   return {
     masterTeamItems,
@@ -60,7 +69,9 @@ export const useMasterTeamPaginated = () => {
     isFetching,
     loadedData: data,
     loadMore,
-    addItem
+    addItem,
+    getMasterTeam,
+    singleData
   }
 
 }

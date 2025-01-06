@@ -59,7 +59,7 @@ export interface IEvent {
 export interface IEventForm {
   eventType: number | null
   eventDescription: string
-  eventSubscribers: string
+  eventSubscribers?: string[]
   date: string
   day: string
   time: string
@@ -70,4 +70,11 @@ export interface IEventForm {
   ignoreConflicts: boolean
   leagueTeam1Id: string
   leagueTeam2Id: string
+  team1Name?: string
+  team2Name?: string
+  coach1Name?: string
+  coach2Name?: string
+  isAddingLeagueTeam?: boolean
+  isAddingMasterTeam?: boolean
+  isAddingLocation?: boolean
 }

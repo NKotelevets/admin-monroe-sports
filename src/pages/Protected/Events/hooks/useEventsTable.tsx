@@ -52,7 +52,7 @@ export const useEventsTable = () => {
     <FilterFilled style={{ color: getIconColor(filtered) }} />
   ), [])
 
-  const onFilterDate = useCallback( (value: unknown, record: IEvent) => {
+  const onFilterDate = useCallback((value: unknown, record: IEvent) => {
     if (!record['date']) return false
 
     return (record['date'] as string)
@@ -77,7 +77,7 @@ export const useEventsTable = () => {
         { text: 'Sun', value: 'sunday' }
       ],
       filterIcon,
-      render: (_, record) => record.day ? record.day.substring(0, 3) : '-'
+      render: (_, record) => record.day ? record.day.substring(0, 3) : dayjs(record.date, 'YYYY-MM-DD').format('ddd')
     },
     {
       title: 'Date',
@@ -112,7 +112,7 @@ export const useEventsTable = () => {
         { text: 'Game', value: '0' },
         { text: 'Practice', value: '2' },
         { text: 'Playoff', value: '3' },
-        { text: 'Other event', value: '5' },
+        { text: 'Other event', value: '5' }
       ],
       filterIcon,
       render: (_, record) => <EventTypeTag type={record.type} />
@@ -124,15 +124,15 @@ export const useEventsTable = () => {
       width: '188px',
       render: (_, record) => {
         if (record.type === eventType.PLAYOFF && !record.homeLeagueTeam?.division?.brackets.length) {
-          return record.homeLeagueTeam?.subdivision?.name
+          return record.homeLeagueTeam?.subdivision?.name || '-'
         }
 
         if (record.type === eventType.GAME || record.type === eventType.PLAYOFF) {
-          return record.homeLeagueTeam?.name
+          return record.homeLeagueTeam?.name || '-'
         }
 
         // if event is OTHER or PRACTICE, master team name is displayed
-        return record.homeTeam?.name
+        return record.homeTeam?.name || '-'
       }
     },
     {
@@ -142,15 +142,15 @@ export const useEventsTable = () => {
       width: '188px',
       render: (_, record) => {
         if (record.type === eventType.PLAYOFF && !record.awayLeagueTeam?.division?.brackets.length) {
-          return record.awayLeagueTeam?.subdivision?.name
+          return record.awayLeagueTeam?.subdivision?.name || '-'
         }
 
         if (record.type === eventType.GAME || record.type === eventType.PLAYOFF) {
-          return record.awayLeagueTeam?.name
+          return record.awayLeagueTeam?.name || '-'
         }
 
         // if event is OTHER or PRACTICE, master team name is displayed
-        return record.awayTeam?.name
+        return record.awayTeam?.name || '-'
       }
     },
     {
@@ -160,15 +160,15 @@ export const useEventsTable = () => {
       width: '188px',
       render: (_, record) => {
         if (record.type === eventType.PLAYOFF && !record.awayLeagueTeam?.division?.brackets.length) {
-          return record.awayLeagueTeam?.subdivision?.name
+          return record.awayLeagueTeam?.subdivision?.name || '-'
         }
 
         if (record.type === eventType.GAME || record.type === eventType.PLAYOFF) {
-          return record.awayLeagueTeam?.name
+          return record.awayLeagueTeam?.name || '-'
         }
 
         // if event is OTHER or PRACTICE, master team name is displayed
-        return record.awayTeam?.name
+        return record.awayTeam?.name || '-'
       }
     },
     {
@@ -178,10 +178,10 @@ export const useEventsTable = () => {
       width: '188px',
       render: (_, record) => {
         if (record.type === eventType.PLAYOFF && !record.awayLeagueTeam?.division?.brackets.length) {
-          return record.awayLeagueTeam?.subdivision?.name
+          return record.awayLeagueTeam?.subdivision?.name || '-'
         }
 
-        return record.awayLeagueTeam?.name
+        return record.awayLeagueTeam?.name || '-'
       }
     },
     // {

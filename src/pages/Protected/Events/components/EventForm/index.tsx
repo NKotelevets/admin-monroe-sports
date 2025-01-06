@@ -14,6 +14,8 @@ import dayjs, { Dayjs } from 'dayjs'
 import TextInput from '@/components/Inputs/TextInput.tsx'
 import { LocationDropdown } from './LocationDropdown'
 import { eventDurationOptions, eventInitialValues, eventTypeOptions } from '@/common/constants/events'
+import { EmailTagsInput } from '@/components/Inputs/EmailTagsInput.tsx'
+import { PracticeForm } from './PracticeForm.tsx'
 
 
 export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
@@ -46,7 +48,9 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
           errors,
           handleBlur,
           touched,
-          setFieldValue
+          setFieldValue,
+          setFieldError,
+          setFieldTouched
         }) => {
 
         if (addingLocation) {
@@ -161,6 +165,24 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     setAddingLocation={setAddingLocation}
                     onAddLocation={onAddLocation}
                   />
+
+                  <TextInput
+                    name="courtOrField"
+                    label="Court / Field"
+                    value={values.courtOrField}
+                    onChange={handleChange('courtOrField')}
+                    onBlur={handleBlur('courtOrField')}
+                    error={touched.courtOrField ? errors.courtOrField : undefined}
+                  />
+
+                  <TextInput
+                    name="subResources"
+                    label="Sub Resource"
+                    value={values.subResources}
+                    onChange={handleChange('subResources')}
+                    onBlur={handleBlur('subResources')}
+                    error={touched.subResources ? errors.subResources : undefined}
+                  />
                 </MainContainer>
               </Flex>
 
@@ -171,7 +193,7 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                   <ProtectedPageSubtitle>Team(s)</ProtectedPageSubtitle>
                 </div>
                 <MainContainer>
-                  oi
+                  <PracticeForm />
                 </MainContainer>
               </Flex>
 
@@ -182,7 +204,15 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                   <ProtectedPageSubtitle>Event subscribers</ProtectedPageSubtitle>
                 </div>
                 <MainContainer>
-                  oi
+                  <EmailTagsInput
+                    label="Subscribers"
+                    helpText="To add more than 1 subscriber, enter their emails with “,” or a space."
+                    value={values.eventSubscribers || []} // Controlled input
+                    onChange={(value) => setFieldValue('eventSubscribers', value)}
+                    error={errors.eventSubscribers}
+                    onError={(value) => setFieldError('eventSubscribers', value)}
+                    onBlur={() => setFieldTouched('eventSubscribers')}
+                  />
                 </MainContainer>
               </Flex>
 

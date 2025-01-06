@@ -10,7 +10,7 @@ export const eventType = {
 export const eventInitialValues = {
   eventType: 1, // Number field, initialized as empty or a default value
   eventDescription: '', // Optional string field
-  eventSubscribers: '', // Optional string field
+  eventSubscribers: [], // Optional string field
   date: '', // Required field, start empty
   day: '', // Required field, start empty
   time: '', // Required field, start empty
@@ -21,7 +21,14 @@ export const eventInitialValues = {
   ignoreConflicts: false, // Boolean, defaults to false
   leagueTeam1Id: '', // Required field
   leagueTeam2Id: '', // Conditional field
-  league: '' // Conditional field
+  league: '', // Conditional field
+  team1Name: undefined,
+  team2Name: undefined,
+  coach1Name: undefined,
+  coach2Name: undefined,
+  isAddingLeagueTeam: false,
+  isAddingMasterTeam: false,
+  isAddingLocation: false
 }
 
 export const eventTypeOptions = [
