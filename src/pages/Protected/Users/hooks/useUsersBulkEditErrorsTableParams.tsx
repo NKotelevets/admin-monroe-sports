@@ -30,7 +30,9 @@ interface ITableParams {
   filters?: Parameters<GetProp<TableProps, 'onChange'>>[1]
 }
 
-export const useUsersBulkEditErrorsTableParams = ({ tableParams }: { tableParams: ITableParams }) => {
+export const useUsersBulkEditErrorsTableParams = (props: { tableParams: ITableParams }) => {
+  const { tableParams } = props
+
   const navigate = useNavigate()
   const searchInput = useRef<InputRef>(null)
   const handleReset = (clearFilters: () => void) => clearFilters()
@@ -60,9 +62,10 @@ export const useUsersBulkEditErrorsTableParams = ({ tableParams }: { tableParams
       dataIndex: 'first_name',
       filterSearch: true,
       filterMode: 'tree',
+      className: 'hide-right-border',
       onFilter: (value, record) => record.first_name.includes(value as string),
       fixed: 'left',
-      width: '240px',
+      width: '144px',
       sorter: (a, b) => a.first_name.length - b.first_name.length,
       sortOrder: tableParams.sortOrder,
       ...getColumnSearchProps('first_name'),
@@ -74,11 +77,12 @@ export const useUsersBulkEditErrorsTableParams = ({ tableParams }: { tableParams
       title: 'Last Name',
       dataIndex: 'last_name',
       fixed: 'left',
-      width: '240px',
+      width: '144px',
       filterSearch: true,
       filterMode: 'tree',
-      sorter: (a, b) => a.first_name.length - b.first_name.length,
-      sortOrder: tableParams.sortOrder,
+      className: 'hide-right-border',
+      // sorter: (a, b) => a.first_name.length - b.first_name.length,
+      // sortOrder: tableParams.sortOrder,
       ...getColumnSearchProps('last_name'),
       render: (value, record) => (
         <TextWithTooltip maxLength={25} text={value} onClick={() => navigate(PATH_TO_USERS + '/' + record.id)} />
@@ -87,7 +91,7 @@ export const useUsersBulkEditErrorsTableParams = ({ tableParams }: { tableParams
     {
       title: '',
       dataIndex: 'gender',
-      width: '80px',
+      width: '48px',
       fixed: 'left',
       onFilter: (value, record) => value === record.gender,
       filters: [

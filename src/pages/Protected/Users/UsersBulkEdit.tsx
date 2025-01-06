@@ -98,12 +98,15 @@ const UsersBulkEdit = () => {
             type: 'success'
           })
         } else {
-          const errorData = failed.map((fail, index) => ({
-            ...fail,
-            first_name: selectedRecords[index].firstName,
-            last_name: selectedRecords[index].lastName,
-            gender: selectedRecords[index].gender,
-          }))
+          const errorData = failed.map(fail => {
+            const record = selectedRecords.find(record => record.id === fail.id)
+            return {
+              ...fail,
+              first_name: record?.firstName || '-',
+              last_name: record?.lastName || '-',
+              gender: record ? record.gender : 2
+            }
+          })
 
           setEditUsersErrors(errorData)
           info(
