@@ -91,7 +91,7 @@ const UsersBulkEdit = () => {
       .then((response) => {
         const { failed, status, total } = response
 
-        if (status === 'green') {
+        if (status === 'green' && !failed.length) {
           navigation(PATH_TO_USERS)
           setAppNotification({
             message: total > 1 ? 'Users successfully updated' : 'User successfully updated',
