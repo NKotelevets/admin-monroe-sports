@@ -37,7 +37,7 @@ const UsersBulkEdit = () => {
   const { columns } = useUsersBulkEditTableParams()
   const { selectedRecords, setEditUsersErrors } = useUserSlice()
   const { setAppNotification } = useAppSlice()
-  const { notify } = useNotification()
+  const { notify, info } = useNotification()
 
   const [bulkEdit] = useBulkEditMutation()
 
@@ -98,8 +98,19 @@ const UsersBulkEdit = () => {
             type: 'success'
           })
         } else {
-          setEditUsersErrors(failed)
-          navigation(PATH_TO_BULK_EDIT_USER_ERRORS)
+          const errorData = failed.map((fail, index) => ({
+            ...fail,
+            first_name: selectedRecords[index].firstName,
+            last_name: selectedRecords[index].lastName,
+            gender: selectedRecords[index].gender,
+          }))
+
+          setEditUsersErrors(errorData)
+          info(
+            'Show Info',
+            total > 1 ? 'One or more users could not be updated' : 'The user could not be updated',
+            PATH_TO_BULK_EDIT_USER_ERRORS
+          )
         }
       })
       .catch((error) => {
