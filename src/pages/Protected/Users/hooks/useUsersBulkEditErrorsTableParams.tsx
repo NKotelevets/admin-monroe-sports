@@ -88,6 +88,7 @@ export const useUsersBulkEditErrorsTableParams = ({ tableParams }: { tableParams
       title: '',
       dataIndex: 'gender',
       width: '80px',
+      fixed: 'left',
       onFilter: (value, record) => value === record.gender,
       filters: [
         { text: 'Female', value: 0 },
