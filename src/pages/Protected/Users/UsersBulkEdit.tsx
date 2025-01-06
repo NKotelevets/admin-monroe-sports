@@ -24,9 +24,10 @@ import {
   TEAM_ADMIN_ROLE
 } from '@/common/constants'
 import { PATH_TO_BULK_EDIT_USER_ERRORS, PATH_TO_USERS } from '@/common/constants/paths'
-import { IRole } from '@/common/interfaces/user'
+import { IBulkEditFEUser, IRole } from '@/common/interfaces/user'
 import { TRole } from '@/common/types'
 import { useNotification } from '@/hooks/useNotification.ts'
+import styled from '@emotion/styled'
 
 const ROLES_WITH_TEAMS: TRole[] = [HEAD_COACH_ROLE, COACH_ROLE, PLAYER_ROLE, TEAM_ADMIN_ROLE]
 const DEFAULT_ERROR_MESSAGE = 'Unable to save changes. Please, try again!'
@@ -136,7 +137,7 @@ const UsersBulkEdit = () => {
             </Flex>
           </Flex>
 
-          <Table
+          <TableStyled
             columns={columns}
             pagination={false}
             rowKey={(record) => record.id}
@@ -153,3 +154,8 @@ const UsersBulkEdit = () => {
 
 export default UsersBulkEdit
 
+const TableStyled = styled(Table<IBulkEditFEUser>)`
+    & .ant-table-content {
+        overflow: unset !important;
+    }
+`
