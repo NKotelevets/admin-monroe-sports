@@ -9,6 +9,7 @@ import { useMasterTeamPaginated } from '@/pages/Protected/MasterTeams/hooks/useM
 import { VS } from '@/pages/Protected/Events/components/VS.tsx'
 import { IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
 import { useLazyGetMasterTeamQuery } from '@/redux/masterTeams/masterTeams.api.ts'
+import { useEventFormContext } from '@/pages/Protected/Events/hooks/useEventFormContext.ts'
 
 type TFieldNames = 'leagueTeam1Id' | 'leagueTeam2Id'
 
@@ -46,6 +47,7 @@ const MasterTeamSelect = (props: { fieldName: 'leagueTeam1Id' | 'leagueTeam2Id' 
   const { fieldName } = props
   const { values, touched, errors, setFieldValue, setFieldTouched } = useFormikContext<IEventForm>()
   const { masterTeamItems, loadMore, isLoading, isFetching } = useMasterTeamPaginated()
+  const { setAddingMasterTeam } = useEventFormContext()
 
   const [getMasterTeam] = useLazyGetMasterTeamQuery()
 
@@ -82,7 +84,7 @@ const MasterTeamSelect = (props: { fieldName: 'leagueTeam1Id' | 'leagueTeam2Id' 
         buttonText="Add master team"
         loading={isLoading || isFetching}
         value={values[fieldName]}
-        buttonAction={() => setFieldValue('isAddingMasterTeam', true)}
+        buttonAction={() => setAddingMasterTeam(true)}
         options={masterTeamItems?.map(mt => ({ label: mt.name, value: mt.id })) || []}
         onChange={(value) => setFieldValue(fieldName, value)}
         error={touched[fieldName] ? errors[fieldName] : undefined}

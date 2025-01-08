@@ -70,10 +70,16 @@ export interface IEventForm {
   ignoreConflicts: boolean
   leagueTeam1Id: string
   leagueTeam2Id: string
+  league?: string
+  season?: string
   team1Name?: string
   team2Name?: string
   coach1Name?: string
   coach2Name?: string
+  season1Name?: string
+  season2Name?: string
+  league1Name?: string
+  league2Name?: string
   isAddingLeagueTeam?: boolean
   isAddingMasterTeam?: boolean
   isAddingLocation?: boolean

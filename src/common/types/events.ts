@@ -26,3 +26,19 @@ export type TListLocationRequest = {
 export type TListLocationResponse = {
   results: ILocation[]
 } & TPagination
+
+export type TEventPracticePayload = {
+  event_type: number
+  event_description: string
+  event_subscribers: string
+  date: string
+  day: string
+  time: string
+  location_id: string
+  court_or_field: string
+  sub_resources: string
+  ignore_conflicts: boolean
+  team_1_id: string
+  team_2_id: string
+  duration: number
+}

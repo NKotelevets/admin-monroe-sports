@@ -2,7 +2,7 @@ import * as yup from 'yup'
 import dayjs from 'dayjs'
 import { validEventTypes } from '@/common/constants/events.ts'
 
-const validWeekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+const validWeekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 export const validDurations = [30, 45, 60, 75, 90, 105, 120]
 
 export const eventFormSchema = yup.object({
@@ -24,7 +24,7 @@ export const eventFormSchema = yup.object({
   time: yup
     .string()
     .required('Time is required')
-    .test('is-valid-time', 'Time must be a valid format', (value) => dayjs(value, 'HH:mm', true).isValid()),
+    .test('is-valid-time', 'Time must be a valid format', (value) => dayjs(value, 'HH:mm:ss', true).isValid()),
   // .matches(/^([01]?\d|2[0-3]):[0-5]\d$/, 'Time must be a valid format'),
   duration: yup
     .number()

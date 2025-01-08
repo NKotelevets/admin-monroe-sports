@@ -103,7 +103,7 @@ export const formatPhoneNumber = (phoneNumber: string | number) => {
  * @returns {string|null} - 'ascend' if sorting in ascending order, 'descend' if descending,
  *                          or null if no sorting is applied to the column.
  */
-export const getColumnSort = (sortParam: string, ordering: string | null): SortOrder | undefined => {
+export const getColumnSort = (sortParam: string, ordering?: string | null): SortOrder | undefined => {
   if (ordering === sortParam || ordering === `-${sortParam}`) {
     return ordering.startsWith('-') ? 'descend' : 'ascend'
   }
@@ -222,4 +222,34 @@ export const getTableSortField = <T,>(sorter:  SorterResult<T> | SorterResult<T>
 export const checkAmOrPm = (time: string) => {
   const hour = dayjs(time, 'HH:mm').hour() // Extract the hour
   return hour < 12 ? 'AM' : 'PM'
+}
+
+/**
+ * Removes properties with empty string (`""`) values from an object.
+ *
+ * This function takes an object as input and returns a new object where
+ * all properties with empty string (`""`) values are removed. It preserves
+ * the original types of the object's properties.
+ *
+ * @template T - The type of the input object.
+ * @param {T} obj - The input object from which empty string properties should be removed.
+ * @returns {{ [K in keyof T]: Exclude<T[K], ""> }} A new object without empty string values.
+ *
+ * @example
+ * const obj = { a: 1, b: "", c: "test", d: "" }
+ * const cleanedObj = removeEmptyStringAttributes(obj)
+ * console.log(cleanedObj) // Output: { a: 1, c: "test" }
+ */
+export function removeEmptyStringAttributes<T extends object>(obj: T): {
+  [K in keyof T]: Exclude<T[K], ''>
+} {
+  const result: Partial<{ [K in keyof T]: Exclude<T[K], ''> }> = {}
+
+  for (const key of Object.keys(obj) as Array<keyof T>) {
+    if (obj[key] !== '') {
+      result[key] = obj[key] as Exclude<T[typeof key], ''>
+    }
+  }
+
+  return result as { [K in keyof T]: Exclude<T[K], ''> }
 }

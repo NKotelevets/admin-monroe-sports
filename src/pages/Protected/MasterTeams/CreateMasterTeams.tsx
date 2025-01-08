@@ -18,9 +18,17 @@ const BREAD_CRUMB_ITEMS = [
   { title: <MonroeBlueText>Create master team</MonroeBlueText> }
 ]
 
-const CreateMasterTeam = () => {
-  const navigation = useNavigate()
+type TCreateMasterTeamProps = {
+  embedded?: boolean
+  goBack?(): void
+  breadcrumbs?: { title: JSX.Element }[]
+}
+
+const CreateMasterTeam = (props: TCreateMasterTeamProps) => {
+  const { embedded, goBack: goBackParent, breadcrumbs } = props
   const { notify } = useNotification()
+
+  const navigation = useNavigate()
   const [createMasterTeam] = useCreateMasterTeamMutation()
 
   const goBack = () => navigation(PATH_TO_MASTER_TEAMS)
@@ -43,6 +51,15 @@ const CreateMasterTeam = () => {
       })
   }
 
+  if (embedded) {
+    return (
+      <MasterTeamForm
+        onSubmit={handleSubmit}
+        goBack={goBackParent || goBack}
+      />
+    )
+  }
+
   return (
     <>
       <Helmet>
@@ -51,7 +68,7 @@ const CreateMasterTeam = () => {
 
       <BaseLayout>
         <PageContainer vertical>
-          <Breadcrumb items={BREAD_CRUMB_ITEMS} />
+          <Breadcrumb items={breadcrumbs || BREAD_CRUMB_ITEMS} />
           <ProtectedPageTitle>Create Master Team</ProtectedPageTitle>
           <MasterTeamForm
             onSubmit={handleSubmit}

@@ -188,6 +188,7 @@ export const leagueTeamsApi = createApi({
 export const {
   useGetLeagueTeamsQuery,
   useLazyGetLeagueTeamsQuery,
+  useLazyGetLeagueTeamQuery,
   useGetLeagueTeamQuery,
   useCreateLeagueTeamMutation,
   useEditLeagueTeamMutation,

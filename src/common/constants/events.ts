@@ -8,7 +8,7 @@ export const eventType = {
 }
 
 export const eventInitialValues = {
-  eventType: 1, // Number field, initialized as empty or a default value
+  eventType: eventType.PRACTICE, // Number field, initialized as empty or a default value
   eventDescription: '', // Optional string field
   eventSubscribers: [], // Optional string field
   date: '', // Required field, start empty
@@ -22,10 +22,15 @@ export const eventInitialValues = {
   leagueTeam1Id: '', // Required field
   leagueTeam2Id: '', // Conditional field
   league: '', // Conditional field
+  season: '', // Conditional field
   team1Name: undefined,
   team2Name: undefined,
   coach1Name: undefined,
   coach2Name: undefined,
+  season1Name: undefined,
+  season2Name: undefined,
+  league1Name: undefined,
+  league2Name: undefined,
   isAddingLeagueTeam: false,
   isAddingMasterTeam: false,
   isAddingLocation: false

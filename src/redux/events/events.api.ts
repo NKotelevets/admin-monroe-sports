@@ -3,10 +3,15 @@ import { createApi } from '@reduxjs/toolkit/query/react'
 import baseQueryWithReAuth from '@/redux/reauthBaseQuery'
 
 import { TDeleteStatus } from '@/common/types'
-import { transformKeysToCamelCase, transformKeysToSnakeCase } from '@/utils'
-import { TListEventRequestParams, TPaginatedEvents } from '@/common/types/events.ts'
+import {
+  removeEmptyStringAttributes,
+  transformKeysToCamelCase,
+  transformKeysToSnakeCase
+} from '@/utils'
+import { TEventPracticePayload, TListEventRequestParams, TPaginatedEvents } from '@/common/types/events.ts'
 import { IPaginationResponse } from '@/common/interfaces/api.ts'
 import { IEvent } from '@/common/interfaces/event.ts'
+import { eventType } from '@/common/constants/events.ts'
 
 const EVENTS_TAG = 'EVENTS'
 
@@ -33,13 +38,54 @@ export const eventsApi = createApi({
     /**
      * Delete multiple events at once
      */
+    createEvent: builder.mutation<void, TEventPracticePayload>({
+      query: (body) => {
+        let url = 'games/admin-events/create-practice-event'
+
+        body = removeEmptyStringAttributes(body)
+
+        switch (body.event_type) {
+          case eventType.PRACTICE:
+            url = 'games/admin-events/create-practice-event'
+            break
+          case eventType.OTHER:
+            url = 'games/admin-events/create-other-event'
+            body = {
+              ...body,
+              master_team_1_id: body.team_1_id,
+              master_team_2_id: body.team_2_id,
+            } as TEventPracticePayload
+            break
+          case eventType.GAME:
+            url = 'games/admin-events/create-game-event'
+            body = {
+              ...body,
+              league_team_1_id: body.team_1_id,
+              league_team_2_id: body.team_2_id,
+            } as TEventPracticePayload
+            break
+          case eventType.PLAYOFF:
+            url = 'games/admin-events/create-game-event'
+            break
+        }
+
+        return ({
+          url,
+          method: 'POST',
+          body,
+        })
+      }
+    }),
+    /**
+     * Delete multiple events at once
+     */
     bulkDelete: builder.mutation<void, { ids: string[] }>({
       query: (ids) => ({
         url: 'games/admin-events',
         body: {
           ids
         }
-      }),
+      })
     }),
     /**
      * Import event playoffs
@@ -48,14 +94,15 @@ export const eventsApi = createApi({
       query: (body) => ({
         url: 'games/admin-events/import-events-from-csv',
         method: 'POST',
-        body,
-      }),
-    }),
-  }),
+        body
+      })
+    })
+  })
 })
 
 export const {
   useLazyListEventsQuery,
-  useImportEventsCSVMutation
+  useImportEventsCSVMutation,
+  useCreateEventMutation
 } = eventsApi
 
