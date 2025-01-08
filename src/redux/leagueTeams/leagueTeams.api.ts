@@ -97,7 +97,7 @@ export const leagueTeamsApi = createApi({
         if (type === 'masterTeam') {
           adminData = response.master_team?.teamAdmins?.map(admin => ({
             id: admin.id,
-            name: `${admin.firstName} ${admin.lastName}`,
+            name: `${admin.firstName} ${admin.lastName}`.trim(),
             email: admin?.email
           }))
         } else {
@@ -114,17 +114,17 @@ export const leagueTeamsApi = createApi({
           type,
           masterTeamAdmin: response.master_team_admin ? transformKeysToCamelCase({
             ...response.master_team_admin,
-            full_name: `${response.master_team_admin.first_name} ${response.master_team_admin.last_name}`,
+            full_name: `${response.master_team_admin.first_name} ${response.master_team_admin.last_name}`.trim(),
             phone: response.master_team_admin.phone_number
           }) : undefined,
           masterTeamAdmins: response.master_team_admins?.map(mta => transformKeysToCamelCase({
             ...mta,
-            full_name: `${mta.first_name} ${mta.last_name}`,
+            full_name: `${mta.first_name} ${mta.last_name}`.trim(),
             phone: mta.phone_number
           })),
           headCoach: response.head_coach ? transformKeysToCamelCase({
             ...response.head_coach,
-            full_name: `${response.head_coach.first_name} ${response.head_coach.last_name}`,
+            full_name: `${response.head_coach.first_name} ${response.head_coach.last_name}`.trim(),
             phone: response.head_coach.phone_number
           }) : undefined
         })

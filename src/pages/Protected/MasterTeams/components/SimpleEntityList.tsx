@@ -18,16 +18,22 @@ export const SimpleEntityList = (props: { entities?: IFESimpleEntity[], title: s
   const renderEntities = useCallback(() => (
     entities?.map(({ id, fullName, email, phone }) => (
       <Flex align="center" key={id}>
-        <MonroeLightBlueText className="c-p" onClick={() => goToTeamAdmin(id)}>
-          {fullName}
-        </MonroeLightBlueText>
+        {fullName ? (
+          <MonroeLightBlueText className="c-p" onClick={() => goToTeamAdmin(id)}>
+            {fullName}
+          </MonroeLightBlueText>
+        ) : '-'}
 
-        <Dot />
+        {email && (
+          <>
+            <Dot />
 
-        <Flex align="center">
-          <DetailValue>{email}</DetailValue>
-          <CopyButton type="email" content={email} />
-        </Flex>
+            <Flex align="center">
+              <DetailValue>{email}</DetailValue>
+              <CopyButton type="email" content={email} />
+            </Flex>
+          </>
+        )}
 
         {!!phone && (
           <>
