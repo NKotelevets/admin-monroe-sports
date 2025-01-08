@@ -5,15 +5,18 @@ import { useCreateUserAsAdminMutation } from '@/redux/user/user.api.ts'
 import { useEffect, useState } from 'react'
 import {
   ICreateUserAsAdmin,
-  ICreateUserAsAdminRequestBody, ICreateUserAsAdminResponse,
+  ICreateUserAsAdminRequestBody,
+  ICreateUserAsAdminResponse,
   IExtendedFEUser,
-  IFEDuplicate, IRole
+  IFEDuplicate,
+  IRole
 } from '@/common/interfaces/user.ts'
 import { useNavigate } from 'react-router-dom'
 import { PATH_TO_USERS } from '@/common/constants/paths.ts'
 import { isFetchBaseQueryError } from '@/utils'
 import { MonroeBlueText } from '@/components/Elements'
 import { Page } from '@/layouts/Page'
+import { useNotification } from '@/hooks/useNotification.ts'
 
 const BREAD_CRUMB_ITEMS = [
   { title: <a href={PATH_TO_USERS}>Users</a> },
@@ -45,14 +48,24 @@ const BREAD_CRUMB_ITEMS = [
  */
 const CreateUser = () => {
   const navigation = useNavigate()
+
   const [createUserAsAdmin, { error, isLoading }] = useCreateUserAsAdminMutation()
   const [duplicate, setDuplicate] = useState<ICreateUserAsAdminResponse>()
   const [selectedRoles, setSelectedRoles] = useState<IRole[]>()
 
+  const { notify } = useNotification()
+
   useEffect(() => {
-    error
-    && isFetchBaseQueryError<IFEDuplicate & { exists: IExtendedFEUser[] }>(error)
-    && setDuplicate({ existing: error.data.exists, new: error.data.new })
+    if (error && isFetchBaseQueryError<IFEDuplicate & { exists: IExtendedFEUser[] }>(error)) {
+      if (typeof error === 'object' && 'new' in error && 'existing' in error) {
+        return setDuplicate({ existing: error.data.exists, new: error.data.new })
+      }
+
+      const errorMessage = (error as { data: { error: string } })?.data?.error
+        || 'Could not create the user. Please, try again!'
+
+      notify(errorMessage, 'error')
+    }
   }, [error])
 
   const goBack = () => navigation(PATH_TO_USERS)
@@ -92,7 +105,7 @@ const CreateUser = () => {
         />
       )}
 
-      <Page title='Create User' breadcrumbs={BREAD_CRUMB_ITEMS}>
+      <Page title="Create User" breadcrumbs={BREAD_CRUMB_ITEMS}>
         <UserForm
           isLoading={isLoading}
           onSubmit={createUser}
