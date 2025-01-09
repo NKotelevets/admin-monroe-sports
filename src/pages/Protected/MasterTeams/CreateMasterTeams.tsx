@@ -20,7 +20,7 @@ const BREAD_CRUMB_ITEMS = [
 
 type TCreateMasterTeamProps = {
   embedded?: boolean
-  goBack?(): void
+  goBack?(response?: string): void
   breadcrumbs?: { title: JSX.Element }[]
 }
 
@@ -31,7 +31,13 @@ const CreateMasterTeam = (props: TCreateMasterTeamProps) => {
   const navigation = useNavigate()
   const [createMasterTeam] = useCreateMasterTeamMutation()
 
-  const goBack = () => navigation(PATH_TO_MASTER_TEAMS)
+  const goBack = (response?: string) => {
+    if (goBackParent) {
+      return goBackParent(response)
+    }
+
+    navigation(PATH_TO_MASTER_TEAMS)
+  }
 
   const handleSubmit = (values: IPopulateMTRequest) => {
     createMasterTeam({
@@ -42,9 +48,9 @@ const CreateMasterTeam = (props: TCreateMasterTeamProps) => {
       team_admins: values.team_admins
     })
       .unwrap()
-      .then(() => {
+      .then((response) => {
         notify(`Master Team "${values.name}" was created`, 'success')
-        goBack()
+        goBack(response.team_id)
       })
       .catch(error => {
         notify(error?.data?.details || error?.data?.error || DEFAULT_ERROR_MESSAGE, 'error')

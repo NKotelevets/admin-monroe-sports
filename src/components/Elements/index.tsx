@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { Collapse, DatePicker, Radio, Space } from 'antd'
+import { Collapse, DatePicker, Divider, Radio, Space } from 'antd'
 import Button from 'antd/es/button/button'
 import Flex from 'antd/es/flex'
 import Typography from 'antd/es/typography'
@@ -7,8 +7,9 @@ import Typography from 'antd/es/typography'
 import MonroeInput from '@/components/Inputs/MonroeInput'
 import { colors } from '@/utils/colors.tsx'
 
-export const MonroeBlueText = styled(Typography)`
-  color: rgba(26, 22, 87, 0.85);
+export const MonroeBlueText = styled(Typography)<{ onClick?: unknown }>`
+    color: rgba(26, 22, 87, 0.85);
+    cursor: ${({ onClick }) => onClick ? 'pointer' : 'unset'};
 `
 
 export const MonroeLinkText = styled(Typography)<{ underline?: boolean, inline?: boolean }>`
@@ -293,4 +294,8 @@ export const Box = styled(Space)<{ error: boolean, showForm?: boolean; children?
     cursor: ${({ showForm }) => showForm ? 'pointer' : 'default' };
     
     border: 1px solid ${({ error }) => error ? colors.primary : colors.dimLight};
+`
+
+export const Line = styled(Divider)`
+    margin: 24px 0 !important
 `

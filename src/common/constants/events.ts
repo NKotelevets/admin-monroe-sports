@@ -8,21 +8,23 @@ export const eventType = {
 }
 
 export const eventInitialValues = {
-  eventType: eventType.PRACTICE, // Number field, initialized as empty or a default value
-  eventDescription: '', // Optional string field
-  eventSubscribers: [], // Optional string field
-  date: '', // Required field, start empty
-  day: '', // Required field, start empty
-  time: '', // Required field, start empty
-  duration: null, // Required number, start empty
-  locationId: '', // Required field
-  courtOrField: '', // Optional string field
-  subResources: '', // Optional string field
-  ignoreConflicts: false, // Boolean, defaults to false
-  leagueTeam1Id: '', // Required field
-  leagueTeam2Id: '', // Conditional field
-  league: '', // Conditional field
-  season: '', // Conditional field
+  eventType: eventType.PRACTICE,
+  eventDescription: '',
+  eventSubscribers: [],
+  date: '',
+  day: '',
+  time: '',
+  duration: null,
+  locationId: '',
+  courtOrField: '',
+  subResources: '',
+  ignoreConflicts: false,
+  team1Id: '',
+  team2Id: '',
+  league: '',
+  season: '',
+  repeats: 0,
+  endRepeat: '',
   team1Name: undefined,
   team2Name: undefined,
   coach1Name: undefined,
@@ -30,10 +32,7 @@ export const eventInitialValues = {
   season1Name: undefined,
   season2Name: undefined,
   league1Name: undefined,
-  league2Name: undefined,
-  isAddingLeagueTeam: false,
-  isAddingMasterTeam: false,
-  isAddingLocation: false
+  league2Name: undefined
 }
 
 export const eventTypeOptions = [
@@ -54,3 +53,8 @@ export const eventDurationOptions = [
 
 export const validEventTypes = () => [eventType.GAME, eventType.PRACTICE, eventType.PLAYOFF, eventType.OTHER]
 
+export const eventRepeatOptions = [
+  { label: 'No repeat', value: 0 },
+  { label: 'Every day', value: 1 },
+  { label: 'Every week', value: 2 }
+]

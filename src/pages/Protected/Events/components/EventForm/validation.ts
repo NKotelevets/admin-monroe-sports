@@ -12,7 +12,7 @@ export const eventFormSchema = yup.object({
     (value) => value !== undefined ? validEventTypes().includes(value) : false
   ).required(),
   eventDescription: yup.string(),
-  eventSubscribers: yup.array().of(yup.string()),
+  eventSubscribers: yup.array().nullable().of(yup.string()),
   date: yup
     .string()
     .required('Date is required')
@@ -25,7 +25,6 @@ export const eventFormSchema = yup.object({
     .string()
     .required('Time is required')
     .test('is-valid-time', 'Time must be a valid format', (value) => dayjs(value, 'HH:mm:ss', true).isValid()),
-  // .matches(/^([01]?\d|2[0-3]):[0-5]\d$/, 'Time must be a valid format'),
   duration: yup
     .number()
     .required('Duration is required')
@@ -37,8 +36,8 @@ export const eventFormSchema = yup.object({
   courtOrField: yup.string(),
   subResources: yup.string(),
   ignoreConflicts: yup.boolean(),
-  leagueTeam1Id: yup.string().required('Team 1 is required'),
-  leagueTeam2Id: yup
+  team1Id: yup.string().required('Team 1 is required'),
+  team2Id: yup
     .string()
     .when('eventType', ([eventType], schema) =>
       eventType === 0 || eventType === 2 ? schema.required('Team 2 is required for this event type') : schema.optional()

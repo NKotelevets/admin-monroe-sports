@@ -1,8 +1,8 @@
 import { useLocationsSlice } from '@/redux/hooks/useLocationsSlice'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLazyListLocationQuery } from '@/redux/locations/locations.api.ts'
-import { ILocation } from '@/common/interfaces/event.ts'
 import { TListLocationResponse } from '@/common/types/events.ts'
+import { ILocation } from '@/common/interfaces/location.ts'
 
 export const useLocationPaginated = () => {
   const firstLoad = useRef(true)

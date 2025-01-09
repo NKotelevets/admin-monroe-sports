@@ -5,11 +5,12 @@ import { IEventForm } from '@/common/interfaces/event.ts'
 import { useEffect, useState } from 'react'
 import Select from '@/components/Inputs/Select.tsx'
 import { VS } from '@/pages/Protected/Events/components/VS.tsx'
-import { useLazyGetMasterTeamQuery } from '@/redux/masterTeams/masterTeams.api.ts'
 import { useLeagueTeamPaginated } from '@/pages/Protected/LeagueTeams/hooks/useLeagueTeamPaginated.ts'
 import { IFELeagueTeam } from '@/common/interfaces/leagueTeams.ts'
+import { useEventFormContext } from '@/pages/Protected/Events/hooks/useEventFormContext.ts'
+import { useLazyGetLeagueTeamQuery } from '@/redux/leagueTeams/leagueTeams.api.ts'
 
-type TFieldNames = 'leagueTeam1Id' | 'leagueTeam2Id'
+type TFieldNames = 'team1Id' | 'team2Id'
 type TX = TAccordionFormProps['items'] & {
   season?: string
 }
@@ -22,8 +23,8 @@ export const GameForm = () => {
       key,
       label,
       children: <LeagueTeamSelect fieldName={fieldName} />,
-      title: values[fieldName === 'leagueTeam1Id' ? 'team1Name' : 'team2Name'] || label,
-      subtitle: values[fieldName === 'leagueTeam1Id' ? 'coach1Name' : 'coach2Name'],
+      title: values[fieldName === 'team1Id' ? 'team1Name' : 'team2Name'] || label,
+      subtitle: values[fieldName === 'team1Id' ? 'coach1Name' : 'coach2Name'],
       error: errors[fieldName]
     }]
   )
@@ -31,29 +32,29 @@ export const GameForm = () => {
   return (
     <>
       <AccordionForm
-        items={team('0', 'leagueTeam1Id', 'Team 1')}
+        items={team('0', 'team1Id', 'Team 1')}
       />
       <VS />
       <AccordionForm
-        items={team('1', 'leagueTeam2Id', 'Team 2')}
+        items={team('0', 'team2Id', 'Team 2')}
       />
     </>
   )
 }
 
-const LeagueTeamSelect = (props: { fieldName: 'leagueTeam1Id' | 'leagueTeam2Id' }) => {
+const LeagueTeamSelect = (props: { fieldName: 'team1Id' | 'team2Id' }) => {
   const { fieldName } = props
   const { values, touched, errors, setFieldValue, setFieldTouched } = useFormikContext<IEventForm>()
 
-  const isTeam1 = fieldName === 'leagueTeam1Id'
+  const isTeam1 = fieldName === 'team1Id'
   const isDisabled = !isTeam1 && !values.season
   const params = {
     seasonId: !isTeam1 ? values.season : undefined,
   }
+  const { setAddingLeagueTeam, setTargetField } = useEventFormContext()
+  const { leagueTeamItems, loadMore, isLoading, isFetching, addItem } = useLeagueTeamPaginated(params)
 
-  const { leagueTeamItems, loadMore, isLoading, isFetching } = useLeagueTeamPaginated(params)
-
-  const [getMasterTeam] = useLazyGetMasterTeamQuery()
+  const [getLeagueTeam, { data: leagueTeamAdded, isLoading: isLoadingSingle }] = useLazyGetLeagueTeamQuery()
   const [currentLT, setCurrentLT] = useState<IFELeagueTeam | undefined>(undefined)
 
   const teamNameFiled = isTeam1 ? 'team1Name' : 'team2Name'
@@ -61,7 +62,6 @@ const LeagueTeamSelect = (props: { fieldName: 'leagueTeam1Id' | 'leagueTeam2Id' 
   const seasonNameFiled = isTeam1 ? 'season1Name' : 'season2Name'
   const leagueNameFiled = isTeam1 ? 'league1Name' : 'league2Name'
 
-  // TODO: TEAMS MUST BE ON SAME LEAGUE
   useEffect(() => {
     if (!currentLT) return
 
@@ -74,16 +74,23 @@ const LeagueTeamSelect = (props: { fieldName: 'leagueTeam1Id' | 'leagueTeam2Id' 
   }, [currentLT])
 
   useEffect(() => {
-    if (!values[fieldName]) return
+    if (!values[fieldName] || isLoadingSingle) return
     const mt = leagueTeamItems.find(mt => mt.id === values[fieldName] as string)
 
-    if (!mt) {
-      getMasterTeam({ id: values[fieldName] })
+    if (!mt && leagueTeamAdded === undefined) {
+      getLeagueTeam({ id: values[fieldName] })
       return
     }
 
+    if (!mt && leagueTeamAdded) {
+      addItem({
+        ...leagueTeamAdded,
+        id: values[fieldName],
+      } as unknown as IFELeagueTeam)
+    }
+
     setCurrentLT(mt)
-  }, [leagueTeamItems, values[fieldName], fieldName])
+  }, [leagueTeamItems, values[fieldName], fieldName, leagueTeamAdded, isLoadingSingle])
 
   return (
     <>
@@ -92,10 +99,13 @@ const LeagueTeamSelect = (props: { fieldName: 'leagueTeam1Id' | 'leagueTeam2Id' 
         disabled={isDisabled}
         onLoadMore={loadMore}
         placeholder="Select team"
-        buttonText="Add master team"
+        buttonText="Add league team"
         loading={isLoading || isFetching}
         value={values[fieldName]}
-        buttonAction={() => setFieldValue('isAddingMasterTeam', true)}
+        buttonAction={() => {
+          setAddingLeagueTeam(true)
+          setTargetField(fieldName)
+        }}
         options={leagueTeamItems?.map(mt => ({ label: mt.name, value: mt.id })) || []}
         onChange={(value) => setFieldValue(fieldName, value)}
         error={touched[fieldName] ? errors[fieldName] : undefined}

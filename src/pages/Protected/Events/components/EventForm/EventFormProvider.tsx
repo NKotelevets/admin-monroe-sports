@@ -1,8 +1,7 @@
-import { ReactElement, useState } from 'react'
-import { ILocation } from '@/common/interfaces/event.ts'
-import { IFEMasterTeam } from '@/common/interfaces/masterTeams'
+import { ReactElement, useEffect, useState } from 'react'
 import { IFELeagueTeam } from '@/common/interfaces/leagueTeams.ts'
-import { EventFormContext } from '@/pages/Protected/Events/components/EventForm/EventFormContext.ts'
+import { EventFormContext, TEventTeamName } from '@/pages/Protected/Events/components/EventForm/EventFormContext.ts'
+import { ILocation } from '@/common/interfaces/location.ts'
 
 export type TEventFormProviderProps = {
   children: ReactElement
@@ -15,9 +14,20 @@ export const EventFormProvider = (props: TEventFormProviderProps) => {
   const [addingLeagueTeam, setAddingLeagueTeam] = useState(false)
   const [addingLocation, setAddingLocation] = useState(false)
 
-  const [addedMasterTeam, setAddedMasterTeam] = useState<IFEMasterTeam | undefined>(undefined)
+  const [addedMasterTeam, setAddedMasterTeam] = useState<string | undefined>(undefined)
   const [addedLeagueTeam, setAddedLeagueTeam] = useState<IFELeagueTeam | undefined>(undefined)
   const [addedLocation, setAddedLocation] = useState<ILocation | undefined>(undefined)
+
+  const [isAddingRelated, setIsAddingRelated] = useState(false)
+  const [targetField, setTargetField] = useState<TEventTeamName | undefined>(undefined)
+
+  useEffect(() => {
+    if (addingMasterTeam || addingLeagueTeam || addingLocation) {
+      setIsAddingRelated(true)
+    } else {
+      setIsAddingRelated(false)
+    }
+  }, [addingMasterTeam, addingLeagueTeam, addingLocation])
 
   return (
     <EventFormContext.Provider
@@ -33,7 +43,10 @@ export const EventFormProvider = (props: TEventFormProviderProps) => {
         addedLeagueTeam,
         setAddedLeagueTeam,
         addedLocation,
-        setAddedLocation
+        setAddedLocation,
+        isAddingRelated,
+        targetField,
+        setTargetField,
       }}
     >
       {children}

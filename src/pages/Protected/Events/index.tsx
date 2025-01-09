@@ -67,7 +67,11 @@ const Events = () => {
         controls={() => <EventTableControls />}
         maxSelection={total}
       >
-        <EventsTable />
+        <>
+          IMPLEMENTAR DELETE
+          IMPLEMENTAR DETAILS
+          <EventsTable />
+        </>
       </TablePage>
     </TableProvider>
   )

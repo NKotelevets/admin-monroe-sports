@@ -8,7 +8,12 @@ import {
   transformKeysToCamelCase,
   transformKeysToSnakeCase
 } from '@/utils'
-import { TEventPracticePayload, TListEventRequestParams, TPaginatedEvents } from '@/common/types/events.ts'
+import {
+  TEventCreationPayload,
+  TEventEditingPayload,
+  TListEventRequestParams,
+  TPaginatedEvents
+} from '@/common/types/events.ts'
 import { IPaginationResponse } from '@/common/interfaces/api.ts'
 import { IEvent } from '@/common/interfaces/event.ts'
 import { eventType } from '@/common/constants/events.ts'
@@ -36,9 +41,18 @@ export const eventsApi = createApi({
       providesTags: [EVENTS_TAG]
     }),
     /**
-     * Delete multiple events at once
+     * Get an event by ID.
      */
-    createEvent: builder.mutation<void, TEventPracticePayload>({
+    getEvent: builder.query<IEvent, { id: string }>({
+      query: ({id}) => ({
+        url: `games/admin-events/${id}`,
+      }),
+      transformResponse: (response: IEvent) => ({ ...transformKeysToCamelCase(response) }),
+    }),
+    /**
+     * Create a new event
+     */
+    createEvent: builder.mutation<void, TEventCreationPayload>({
       query: (body) => {
         let url = 'games/admin-events/create-practice-event'
 
@@ -54,7 +68,7 @@ export const eventsApi = createApi({
               ...body,
               master_team_1_id: body.team_1_id,
               master_team_2_id: body.team_2_id,
-            } as TEventPracticePayload
+            } as TEventCreationPayload
             break
           case eventType.GAME:
             url = 'games/admin-events/create-game-event'
@@ -62,16 +76,48 @@ export const eventsApi = createApi({
               ...body,
               league_team_1_id: body.team_1_id,
               league_team_2_id: body.team_2_id,
-            } as TEventPracticePayload
+            } as TEventCreationPayload
             break
           case eventType.PLAYOFF:
-            url = 'games/admin-events/create-game-event'
+            // playoffs are not created via admin panel
+            // only through import csv
             break
         }
 
         return ({
           url,
           method: 'POST',
+          body,
+        })
+      }
+    }),
+    /**
+     * Edit an event
+     */
+    editEvent: builder.mutation<void, TEventEditingPayload>({
+      query: (body) => {
+        body = removeEmptyStringAttributes(body)
+
+        switch (body.event_type) {
+          case eventType.OTHER:
+            body = {
+              ...body,
+              master_team_1_id: body.team_1_id,
+              master_team_2_id: body.team_2_id,
+            } as TEventEditingPayload
+            break
+          case eventType.GAME || eventType.PLAYOFF:
+            body = {
+              ...body,
+              league_team_1_id: body.team_1_id,
+              league_team_2_id: body.team_2_id,
+            } as TEventEditingPayload
+            break
+        }
+
+        return ({
+          url: `games/admin-events/${body.id}`,
+          method: 'PATCH',
           body,
         })
       }
@@ -101,8 +147,10 @@ export const eventsApi = createApi({
 })
 
 export const {
+  useGetEventQuery,
   useLazyListEventsQuery,
   useImportEventsCSVMutation,
-  useCreateEventMutation
+  useCreateEventMutation,
+  useEditEventMutation,
 } = eventsApi
 

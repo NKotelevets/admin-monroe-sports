@@ -2,16 +2,7 @@ import { IFELeagueTeam, IFESimpleEntity } from '@/common/interfaces/leagueTeams.
 import { IFEDivision, IFESubdivision } from '@/common/interfaces/division.ts'
 import { IFESeason } from '@/common/interfaces/season.ts'
 import { IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
-
-export interface ILocation {
-  id: string
-  name: string
-  address: string
-  zipCode: string
-  state: string
-  latitude: string
-  longitude: string
-}
+import { ILocation } from '@/common/interfaces/location.ts'
 
 export interface IRsvpAnswers {
   going: number
@@ -68,8 +59,10 @@ export interface IEventForm {
   courtOrField: string
   subResources: string
   ignoreConflicts: boolean
-  leagueTeam1Id: string
-  leagueTeam2Id: string
+  repeats?: number
+  endRepeat?: string
+  team1Id: string
+  team2Id: string
   league?: string
   season?: string
   team1Name?: string
@@ -80,7 +73,4 @@ export interface IEventForm {
   season2Name?: string
   league1Name?: string
   league2Name?: string
-  isAddingLeagueTeam?: boolean
-  isAddingMasterTeam?: boolean
-  isAddingLocation?: boolean
 }

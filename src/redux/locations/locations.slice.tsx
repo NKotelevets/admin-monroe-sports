@@ -1,8 +1,8 @@
-import { ILocation } from '@/common/interfaces/event'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { locationsApi } from '@/redux/locations/locations.api.ts'
 import { TPagination } from '@/common/types'
 import { TListLocationResponse } from '@/common/types/events.ts'
+import { ILocation } from '@/common/interfaces/location.ts'
 
 interface LocationsState {
   locations: ILocation[]

@@ -44,3 +44,9 @@ export type TPagination = {
   offset: number
   ordering?: string
 }
+
+export type TScreenProps = {
+  embedded?: boolean
+  goBack?(response?: string): void
+  breadcrumbs?: { title: JSX.Element }[]
+}

@@ -5,9 +5,10 @@ import { ILeagueForm } from '@/common/interfaces/league.ts'
 import { ICreateLeagueTeamRequest } from '@/common/interfaces/leagueTeams.ts'
 import { useNotification } from '@/hooks/useNotification.ts'
 import { useNavigate } from 'react-router-dom'
-import { PATH_TO_LEAGUE_TEAMS } from '@/common/constants/paths.ts'
+import { PATH_TO_LEAGUE_TEAMS, PATH_TO_MASTER_TEAMS } from '@/common/constants/paths.ts'
 import { ReactElement } from 'react'
 import { MonroeBlueText } from '@/components/Elements'
+import { TScreenProps } from '@/common/types'
 
 const DEFAULT_ERROR_MESSAGE = `Something went wrong. Please, try again!`
 const BREAD_CRUMB_ITEMS = [
@@ -42,24 +43,41 @@ const BREAD_CRUMB_ITEMS = [
  * ```
  *
  */
-const LeagueTeamCreate = (): ReactElement => {
+const LeagueTeamCreate = (props: TScreenProps): ReactElement => {
   const navigate = useNavigate()
+  const { embedded, goBack: goBackParent } = props
   const { notify } = useNotification()
 
-  const [createLeagueTeam, {isLoading}] = useCreateLeagueTeamMutation()
+  const [createLeagueTeam, { isLoading }] = useCreateLeagueTeamMutation()
 
-  const goBack = () => navigate(PATH_TO_LEAGUE_TEAMS)
+  const goBack = (response?: string) => {
+    if (goBackParent) {
+      return goBackParent(response)
+    }
+
+    navigate(PATH_TO_MASTER_TEAMS)
+  }
 
   const onSubmit = (body: ILeagueForm) => {
     createLeagueTeam(body as ICreateLeagueTeamRequest)
       .unwrap()
-      .then(() => {
+      .then((response) => {
         notify('League team was successfully created', 'success')
-        goBack()
+        goBack(response.league_team_id)
       })
       .catch((error) => {
         notify(error?.data?.error || error?.data?.details || DEFAULT_ERROR_MESSAGE, 'error')
       })
+  }
+
+  if (embedded) {
+    return (
+      <LeagueTeamForm
+        isLoading={isLoading}
+        onSubmit={onSubmit}
+        goBack={goBack}
+      />
+    )
   }
 
   return (

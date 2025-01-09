@@ -240,9 +240,9 @@ export const checkAmOrPm = (time: string) => {
  * const cleanedObj = removeEmptyStringAttributes(obj)
  * console.log(cleanedObj) // Output: { a: 1, c: "test" }
  */
-export function removeEmptyStringAttributes<T extends object>(obj: T): {
+export const removeEmptyStringAttributes = <T extends object>(obj: T): {
   [K in keyof T]: Exclude<T[K], ''>
-} {
+} => {
   const result: Partial<{ [K in keyof T]: Exclude<T[K], ''> }> = {}
 
   for (const key of Object.keys(obj) as Array<keyof T>) {
@@ -252,4 +252,12 @@ export function removeEmptyStringAttributes<T extends object>(obj: T): {
   }
 
   return result as { [K in keyof T]: Exclude<T[K], ''> }
+}
+
+export const scrollToTop = () => {
+  const scrollableElement = document.querySelector('.ant-layout-content div')
+
+  if (scrollableElement) {
+    scrollableElement.scrollTo({ top: 0, behavior: 'smooth' }) // Scroll to the top
+  }
 }

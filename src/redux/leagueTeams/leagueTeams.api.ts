@@ -131,7 +131,7 @@ export const leagueTeamsApi = createApi({
       }
     }),
 
-    createLeagueTeam: builder.mutation<void, ICreateLeagueTeamRequest>({
+    createLeagueTeam: builder.mutation<{ league_team_id: string }, ICreateLeagueTeamRequest>({
       query: (body) => ({
         url: 'teams/league-teams/create-league-team-as-admin',
         method: 'POST',

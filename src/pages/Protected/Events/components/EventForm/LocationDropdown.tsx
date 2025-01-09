@@ -1,14 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useFormikContext } from 'formik'
 import Select from '@/components/Inputs/Select.tsx'
-import { IEventForm, ILocation } from '@/common/interfaces/event.ts'
+import { IEventForm } from '@/common/interfaces/event.ts'
 import { useLocationPaginated } from '@/pages/Protected/Events/hooks/useLocationPaginated.tsx'
 import { useLazyGetLocationQuery } from '@/redux/locations/locations.api.ts'
+import { useEventFormContext } from '@/pages/Protected/Events/hooks/useEventFormContext.ts'
+import { ILocation } from '@/common/interfaces/location.ts'
 
-interface ILocationDropdownProps {
-  onAddLocation(): void
-  setAddingLocation(state: boolean): void
-}
 
 /**
  * LocationDropdown is a functional component that renders a dropdown menu
@@ -31,8 +29,8 @@ interface ILocationDropdownProps {
  *
  * @returns {React.Element} Rendered dropdown UI for location selection and related fields.
  */
-export const LocationDropdown = React.memo((props: ILocationDropdownProps) => {
-  const { onAddLocation } = props
+export const LocationDropdown = React.memo(() => {
+  const { setAddingLocation } = useEventFormContext()
 
   const {
     values,
@@ -96,14 +94,11 @@ export const LocationDropdown = React.memo((props: ILocationDropdownProps) => {
         onChange={handleChange('locationId')}
         onLoadMore={!endReached ? onLoadMore : undefined}
         options={locations.map(mt => ({ label: mt.name, value: mt.id }))}
-        buttonAction={onAddLocation}
+        buttonAction={() => setAddingLocation(true)}
         buttonText="Add location"
         error={touched.locationId ? errors.locationId as string : ''}
         onBlur={handleBlur('locationId')}
       />
     </>
   )
-}, (prev, next) => (
-  prev.onAddLocation === next.onAddLocation
-  && prev.setAddingLocation === next.setAddingLocation
-))
+}, () => false)

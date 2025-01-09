@@ -1,8 +1,9 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import baseQueryWithReAuth from '@/redux/reauthBaseQuery.ts'
 import { TListLocationRequest, TListLocationResponse } from '@/common/types/events'
-import { transformKeysToCamelCase } from '@/utils'
-import { ILocation } from '@/common/interfaces/event.ts'
+import { transformKeysToCamelCase, transformKeysToSnakeCase } from '@/utils'
+import { ILocation } from '@/common/interfaces/location.ts'
+import { TLocationForm } from '@/common/types/location.ts'
 
 const LOCATIONS_TAG = 'LOCATIONS'
 
@@ -25,11 +26,21 @@ export const locationsApi = createApi({
       }),
       transformResponse: (response: ILocation) => transformKeysToCamelCase(response),
       providesTags: [LOCATIONS_TAG]
-    })
+    }),
+
+    createLocation: builder.mutation<ILocation, TLocationForm>({
+      query: (body) => ({
+        url: 'games/locations',
+        method: 'POST',
+        body: transformKeysToSnakeCase(body)
+      }),
+      invalidatesTags: [LOCATIONS_TAG]
+    }),
   })
 })
 
 export const {
   useLazyListLocationQuery,
-  useLazyGetLocationQuery
+  useLazyGetLocationQuery,
+  useCreateLocationMutation
 } = locationsApi
