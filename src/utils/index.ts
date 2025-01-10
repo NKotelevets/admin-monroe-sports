@@ -203,10 +203,20 @@ export const transformKeysToSnakeCase = <T, K>(obj: K): T => {
   return obj as unknown as T
 }
 
-// Helper function to convert camelCase to snake_case
-const toSnakeCase = (str: string): string =>
-  str.replace(/([A-Z])/g, '_$1').toLowerCase()
-
+/**
+ * Converts a camelCase string to snake_case, including inserting underscores before numbers.
+ *
+ * @param {string} str - The camelCase string to be converted.
+ *
+ * @returns {string} The converted snake_case string.
+ */
+const toSnakeCase = (str: string): string => {
+  return str
+    .replace(/([a-z])([A-Z])/g, '$1_$2') // Add underscore between lowercase and uppercase
+    .replace(/([a-zA-Z])([0-9])/g, '$1_$2') // Add underscore before numbers
+    .replace(/([0-9])([a-zA-Z])/g, '$1_$2') // Add underscore after numbers
+    .toLowerCase()
+}
 
 export const getTableSortField = <T,>(sorter:  SorterResult<T> | SorterResult<T>[], fieldMap: { [key: string]: string }) => {
   if (Array.isArray(sorter) || !sorter.order) return undefined

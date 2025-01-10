@@ -85,7 +85,8 @@ export const eventsApi = createApi({
           method: 'POST',
           body
         })
-      }
+      },
+      invalidatesTags: [EVENTS_TAG]
     }),
     /**
      * Edit an event
@@ -109,7 +110,8 @@ export const eventsApi = createApi({
           method: 'PATCH',
           body
         })
-      }
+      },
+      invalidatesTags: [EVENTS_TAG]
     }),
     /**
      * Delete multiple events at once

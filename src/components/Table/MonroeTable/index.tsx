@@ -18,6 +18,7 @@ interface ITableParams<T> {
 type TMonroeTableProps<T> = {
   showCreated: boolean
   createdIds: string[]
+  objTerm: string
   pagination?: {
     offset: number
     limit: number
@@ -38,6 +39,7 @@ type TMonroeTableProps<T> = {
  * @param {TMonroeTableProps} props - Props passed to the MonroeTable component.
  * @param {boolean} props.showCreated - Indicates whether to highlight rows based on `createdIds`.
  * @param {string[]} props.createdIds - An array of IDs for rows that should be highlighted, typically representing newly created records.
+ * @param {string} props.objTerm - An string represent the object type name, like "master teams", "leagues"...
  * @param {object} [props.pagination] - An optional object specifying custom pagination settings.
  * @param {number} props.pagination.offset - The current offset for paginated data.
  * @param {number} props.pagination.limit - The number of items to display per page.
@@ -62,6 +64,7 @@ export const MonroeTable = <T extends object, >(props: TMonroeTableProps<T>): Re
     createdIds,
     pagination,
     columns,
+    objTerm,
     ...rest
   } = props
 
@@ -97,13 +100,13 @@ export const MonroeTable = <T extends object, >(props: TMonroeTableProps<T>): Re
         <ExpandedTableHeader>
           <ExpandedHeaderLeftText>
             {isAllSelected
-              ? `All ${pagination.total} master teams are selected.`
-              : `All ${pagination.limit} master teams on this page are selected.`}
+              ? `All ${pagination.total} ${objTerm} are selected.`
+              : `All ${pagination.limit} ${objTerm} on this page are selected.`}
           </ExpandedHeaderLeftText>
 
           {!isAllSelected ? (
             <MonroeLightBlueText onClick={() => setIsAllSelected(true)}>
-              Select all {pagination.total} master teams instead.
+              Select all {pagination.total} {objTerm} instead.
             </MonroeLightBlueText>
           ) : (
             <MonroeLightBlueText
@@ -113,7 +116,7 @@ export const MonroeTable = <T extends object, >(props: TMonroeTableProps<T>): Re
                 setShowAdditionalHeader(false)
               }}
             >
-              Unselect all league teams
+              Unselect all {objTerm}
             </MonroeLightBlueText>
           )}
         </ExpandedTableHeader>

@@ -7,6 +7,7 @@ export type TPaginatedEvents = IPaginationResponse<NestedSnakeCase<IEvent>[]>
 
 export type TListEventRequestParams = {
   court?: string
+  courtOrField?: string
   date?: string
   day?: string
   leagueName?: string
@@ -15,10 +16,21 @@ export type TListEventRequestParams = {
   ordering?: string
   search?: string
   subResource?: string
-  team1Name?: string
+
+  homeTeam?: string
+  team1name?: string
+  team1Season?: string
+  team1HeadCoach?: string
+
+  awayTeam?: string
   team2Name?: string
+  team2Season?: string
+  team2HeadCoach?: string
+
   type?: string
   repeats?: string
+  location?: string
+  locationName?: string
 }
 
 export type TEventFilter = keyof TListEventRequestParams

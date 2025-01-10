@@ -37,6 +37,11 @@ export const eventFormSchema = yup.object({
   subResources: yup.string(),
   ignoreConflicts: yup.boolean(),
   team1Id: yup.string().required('Team 1 is required'),
+  repeats: yup.number(),
+  endRepeat: yup.string()
+    .when('repeats', ([repeats], schema) =>
+      repeats > 0 ? schema.required('End repeat is requited when repeats is set') : schema.optional()
+    ),
   team2Id: yup
     .string()
     .nullable()

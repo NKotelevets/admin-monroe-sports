@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom'
 import { useNotification } from '@/hooks/useNotification.ts'
 import { useLeagueTeamsSlice } from '@/redux/hooks/useLeagueTeamsSlice.tsx'
 import { useEffect } from 'react'
-import { EventTableControls } from '@/pages/Protected/Events/components/EventTableControls.tsx'
 import { EventsTable } from '@/pages/Protected/Events/components/EventsTable.tsx'
 import { useBulkDeleteEventsMutation } from '@/redux/events/events.api.ts'
 
@@ -34,10 +33,13 @@ const Events = () => {
   /**
    * Handles deletion of one or multiple events.
    * @param ids
+   * @param isAllSelected
    */
-  const onDelete = async (ids: string[]): Promise<boolean> => {
+  const onDelete = async (ids: string[], isAllSelected: boolean): Promise<boolean> => {
+    const deleteHandler = isAllSelected ? bulkDelete([]) : bulkDelete(ids)
+
     try {
-      const response = await bulkDelete(ids).unwrap()
+      const response = await deleteHandler.unwrap()
       let message = `${response.success}/${response.total} events have been successfully removed.`
 
       if (response.success === 1 && response.total === 1) {
@@ -64,13 +66,10 @@ const Events = () => {
         onDelete={onDelete}
         deleteTerm={DELETE_TERMS}
         isDeleting={isLoading}
-        controls={() => <EventTableControls />}
+        // controls={() => <EventTableControls />}
         maxSelection={total}
       >
-        <>
-          ORDER/FILTER NEEDS CHECKING
-          <EventsTable />
-        </>
+        <EventsTable />
       </TablePage>
     </TableProvider>
   )

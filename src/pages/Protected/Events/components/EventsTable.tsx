@@ -116,10 +116,16 @@ export const EventsTable = () => {
       date: (filters?.['date']?.[0] as string) ?? undefined,
       leagueName: (filters?.['leagueName']?.[0] as string) ?? undefined,
       subResource: (filters?.['subResource']?.[0] as string) ?? undefined,
-      team1Name: (filters?.['team1Name']?.[0] as string) ?? undefined,
-      team2Name: (filters?.['team2Name']?.[0] as string) ?? undefined,
+      team1name: (filters?.['homeTeam']?.[0] as string) ?? undefined,
+      team1Season: (filters?.['team1Season']?.[0] as string) ?? undefined,
+      team1HeadCoach: (filters?.['team1HeadCoach']?.[0] as string) ?? undefined,
+      team2Name: (filters?.['awayTeam']?.[0] as string) ?? undefined,
+      team2Season: (filters?.['team2Season']?.[0] as string) ?? undefined,
+      team2HeadCoach: (filters?.['team2HeadCoach']?.[0] as string) ?? undefined,
+      court: (filters?.['courtOrField']?.[0] as string) ?? undefined,
       type: (filters?.['type']?.join(',') as string) ?? undefined,
       repeats: (filters?.['repeats']?.join(',') as string) ?? undefined,
+      location: (filters?.['location']?.[0] as string) ?? undefined,
     }
 
     listEvents(leagueTeamsRequestParams)
@@ -133,6 +139,7 @@ export const EventsTable = () => {
 
   return (
     <TableStyled
+      objTerm='events'
       columns={columns}
       dataSource={events}
       onChange={handleTableChange}

@@ -135,7 +135,8 @@ const Delete = (props: IDeleteProps): ReactElement => {
     singleDeleting,
     setIsAllSelected,
     setSelectedIds,
-    setSingleDeleting
+    setSingleDeleting,
+    setShowAdditionalHeader
   } = useTableContext()
 
   const [showModal, setShowModal] = useState(false)
@@ -150,11 +151,13 @@ const Delete = (props: IDeleteProps): ReactElement => {
     setShowModal(false)
     onClose && onClose()
   }, [])
+
   const handleDelete = async () => {
     if (!onDelete) return
 
     const deleteSuccessful = await onDelete(selectedIds, isAllSelected)
     if (deleteSuccessful) {
+      setShowAdditionalHeader(false)
       setIsAllSelected(false)
       setSelectedIds([])
       setSingleDeleting(false)

@@ -209,6 +209,7 @@ export const useEventsTable = () => {
       dataIndex: 'homeTeam',
       sorter: true,
       width: '188px',
+      ...getColumnSearchProps('homeTeam', undefined, false),
       render: (_, record) => getTeamName({
         event: record,
         masterTeam: record.homeTeam,
@@ -217,9 +218,10 @@ export const useEventsTable = () => {
     },
     {
       title: 'Head Coach Team 1',
-      dataIndex: 'team_1_head_coach',
+      dataIndex: 'team1HeadCoach',
       sorter: true,
-      width: '188px',
+      width: '204px',
+      ...getColumnSearchProps('team1HeadCoach' as keyof IEvent, () => true),
       render: (_, record) => getTeamHeadCoachName({
         event: record,
         masterTeam: record.homeTeam,
@@ -228,9 +230,10 @@ export const useEventsTable = () => {
     },
     {
       title: 'Season',
-      dataIndex: 'season',
+      dataIndex: 'team1Season',
       sorter: true,
       width: '188px',
+      ...getColumnSearchProps('team1Season' as keyof IEvent, () => true),
       render: (_, record) => getSeasonName({
         event: record,
         leagueTeam: record.homeLeagueTeam
@@ -241,6 +244,7 @@ export const useEventsTable = () => {
       dataIndex: 'awayTeam',
       sorter: true,
       width: '188px',
+      ...getColumnSearchProps('awayTeam', undefined, false),
       render: (_, record) => getTeamName({
         event: record,
         masterTeam: record.awayTeam,
@@ -249,9 +253,10 @@ export const useEventsTable = () => {
     },
     {
       title: 'Head Coach Team 2',
-      dataIndex: 'team_2_head_coach',
+      dataIndex: 'team2HeadCoach',
       sorter: true,
-      width: '188px',
+      width: '204px',
+      ...getColumnSearchProps('team2HeadCoach' as keyof IEvent, () => true),
       render: (_, record) => getTeamHeadCoachName({
         event: record,
         masterTeam: record.awayTeam,
@@ -260,9 +265,10 @@ export const useEventsTable = () => {
     },
     {
       title: 'Season',
-      dataIndex: 'season',
+      dataIndex: 'team2Season',
       sorter: true,
       width: '188px',
+      ...getColumnSearchProps('team2Season' as keyof IEvent, () => true),
       render: (_, record) => getSeasonName({
         event: record,
         leagueTeam: record.awayLeagueTeam
@@ -285,23 +291,25 @@ export const useEventsTable = () => {
       dataIndex: 'location',
       sorter: true,
       width: '240px',
-      ...getColumnSearchProps('location'),
+      ...getColumnSearchProps('location', () => true),
       render: (_, record) => (
         <Typography.Link onClick={navigateToLocation(record.location.id)}>
-          {record.location.address}
+          {record.location.name}
         </Typography.Link>
       )
     },
     {
       title: 'Court',
-      dataIndex: 'courtNumber',
+      dataIndex: 'courtOrField',
       width: '96px',
+      ...getColumnSearchProps('courtOrField', () => true),
       render: (_, record) => record.courtOrField ? record.courtOrField : '##'
     },
     {
       title: 'Sub Resource',
       dataIndex: 'subResource',
       width: '152px',
+      ...getColumnSearchProps('subResource', () => true),
       render: (_, record) => record.subResource ? record.subResource : '##'
     },
     {
