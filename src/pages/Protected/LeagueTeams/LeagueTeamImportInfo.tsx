@@ -1,12 +1,12 @@
 import { ReactElement } from 'react'
 import { MonroeBlueText } from '@/components/Elements'
-import { PATH_TO_MASTER_TEAMS } from '@/common/constants/paths'
+import { PATH_TO_LEAGUE_TEAMS } from '@/common/constants/paths'
 import { TableProvider } from '@/components/Table/MonroeTable/TableProvider.tsx'
 import { LeagueTeamImportTable } from './components/LeagueTeamImportTable'
 import { Page } from '@/layouts/Page'
 
 const BREADCRUMB_ITEMS = [
-  { title: <a href={PATH_TO_MASTER_TEAMS}>League Teams</a> },
+  { title: <a href={PATH_TO_LEAGUE_TEAMS}>League Teams</a> },
   { title: <MonroeBlueText>Import info</MonroeBlueText> }
 ]
 
