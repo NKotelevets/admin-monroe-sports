@@ -4,13 +4,16 @@ import baseQueryWithReAuth from '@/redux/reauthBaseQuery'
 
 import { IPaginationResponse } from '@/common/interfaces/api'
 import {
+  IBEImportLeagueTeamCSVResponse,
   IBELeagueTeam,
   IBELeagueTeamDetails,
   IBulkDeleteResponse,
   ICreateLeagueTeamRequest,
+  IFEImportLeagueTeamCSVResponse,
   IFELeagueTeamDetails,
   IGetLeagueTeamsRequest,
-  IGetLeagueTeamsResponse
+  IGetLeagueTeamsResponse,
+  ILeagueTeamUpdateBody,
 } from '@/common/interfaces/leagueTeams'
 import { transformKeysToCamelCase, transformKeysToSnakeCase } from '@/utils'
 import { IGetScheduleRequestParams, IScheduleRequest, IScheduleRequestResponse } from '@/common/interfaces'
@@ -76,13 +79,32 @@ export const leagueTeamsApi = createApi({
       invalidatesTags: [LEAGUE_TEAMS_TAG]
     }),
 
-    leagueTeamsImportCSV: builder.mutation<void, FormData>({
+    leagueTeamsImportCSV: builder.mutation<IFEImportLeagueTeamCSVResponse, FormData>({
       query: (body) => ({
-        url: 'teams/seasons/import-seasons',
+        url: 'teams/league-teams/import-league-teams-from-csv',
         body,
         method: 'POST'
       }),
-      invalidatesTags: [LEAGUE_TEAMS_TAG]
+      invalidatesTags: [LEAGUE_TEAMS_TAG],
+      transformResponse(response: IBEImportLeagueTeamCSVResponse) {
+        return {
+          ...response,
+          errors: transformKeysToCamelCase(response?.errors),
+          duplicates: response.duplicates?.map((dupe, idx) => ({
+            idx,
+            existing: transformKeysToCamelCase(dupe.existing),
+            new: {
+              divisionName: dupe.new['Division/Pool Name'],
+              leagueName: dupe.new['League/Tourn Name'],
+              leagueTeamName: dupe.new['League Team Name'],
+              masterTeamName: dupe.new['Linked Master Team Name'],
+              mtAdminEmail: dupe.new['MT Team Admin Email'],
+              mtAdminName: dupe.new['MT Team Admin First and Last Name'],
+              subdivisionName: dupe.new['Subdiv/Pool Name']
+            }
+          }))
+        }
+      }
     }),
 
     getLeagueTeam: builder.query<IFELeagueTeamDetails, { id: string }>({
@@ -140,13 +162,7 @@ export const leagueTeamsApi = createApi({
       invalidatesTags: [LEAGUE_TEAMS_TAG]
     }),
 
-    editLeagueTeam: builder.mutation<
-      void,
-      {
-        id: string
-        body: ICreateLeagueTeamRequest
-      }
-    >({
+    editLeagueTeam: builder.mutation<void, ILeagueTeamUpdateBody>({
       query: ({ body, id }) => ({
         url: `teams/league-teams/${id}/update-league-team-as-admin`,
         method: 'PATCH',

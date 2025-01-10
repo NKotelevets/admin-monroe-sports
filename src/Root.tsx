@@ -45,11 +45,9 @@ import AuthProvider from '@/utils/AuthProvider'
 import {
   PATH_TO_BULK_EDIT_USER_ERRORS,
   PATH_TO_CREATE_LEAGUE,
-  PATH_TO_CREATE_LEAGUE_TEAM,
   PATH_TO_CREATE_MASTER_TEAM,
   PATH_TO_CREATE_SEASON,
   PATH_TO_CREATE_USER,
-  PATH_TO_DELETE_INFO_LEAGUE_TEAM,
   PATH_TO_DELETING_INFO_MASTER_TEAMS,
   PATH_TO_EDIT_LEAGUE,
   PATH_TO_EDIT_MASTER_TEAM,
@@ -58,11 +56,9 @@ import {
   PATH_TO_EVENTS,
   PATH_TO_LEAGUE_PAGE,
   PATH_TO_LEAGUE_TEAM_SCHEDULE_REQUEST,
-  PATH_TO_LEAGUE_TEAMS,
   PATH_TO_LEAGUES,
   PATH_TO_LEAGUES_DELETING_INFO,
   PATH_TO_LEAGUES_IMPORT_INFO,
-  PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST,
   PATH_TO_MASTER_TEAMS,
   PATH_TO_MASTER_TEAMS_IMPORT_INFO,
   PATH_TO_OPERATOR_ONBOARDING,
@@ -75,8 +71,15 @@ import {
   PATH_TO_USERS_BLOCKING_INFO,
   PATH_TO_USERS_BULK_EDIT,
   PATH_TO_USERS_IMPORT_INFO,
+  PATH_TO_LEAGUE_TEAMS,
+  PATH_TO_CREATE_LEAGUE_TEAM,
+  PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST,
+  PATH_TO_DELETE_INFO_LEAGUE_TEAM,
+  PATH_TO_LEAGUE_TEAM_IMPORT_INFO,
   PATH_TO_EDIT_LEAGUE_TEAM
 } from '@/common/constants/paths'
+import LeagueTeamImportInfo from '@/pages/Protected/LeagueTeams/LeagueTeamImportInfo.tsx'
+
 
 const Root = () => (
   <AuthProvider>
@@ -131,6 +134,7 @@ const Root = () => (
       <Route path={`${PATH_TO_LEAGUE_TEAM_SCHEDULE_REQUEST}/:range/:selectedIds`}
              element={<LeagueTeamScheduleRequest />} />
       <Route path={`${PATH_TO_EDIT_LEAGUE_TEAM}/:id`} element={<LeagueTeamEdit />} />
+      <Route path={PATH_TO_LEAGUE_TEAM_IMPORT_INFO} element={<LeagueTeamImportInfo />} />
 
       {/* Events */}
       <Route path={PATH_TO_EVENTS} element={<Events />} />

@@ -44,7 +44,6 @@ const LeagueTeams = (): ReactElement => {
   const { total } = useLeagueTeamsSlice()
 
   const [bulkDelete, { isError, error, isLoading }] = useBulkDeleteLeagueTeamsMutation()
-
   /**
    * Shows a toast if deletion has errors.
    */

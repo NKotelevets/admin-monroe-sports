@@ -2,6 +2,7 @@ import { ScheduleRequestButton } from '@/components/ScheduleRequest/ScheduleRequ
 import { PATH_TO_LEAGUE_TEAM_SCHEDULE_REQUEST } from '@/common/constants/paths.ts'
 import { ExportAvailability } from '@/components/ExportAvailability.tsx'
 import { useExportScheduleCSV } from '@/hooks/useExportScheduleCSV.ts'
+import { ImportLeagueTeamButton } from '@/pages/Protected/LeagueTeams/components/ImportLeagueTeamButton.tsx'
 import { useLeagueTeamsSlice } from '@/redux/hooks/useLeagueTeamsSlice.tsx'
 import { useNavigate } from 'react-router-dom'
 import { compressData } from '@/utils'
@@ -40,6 +41,7 @@ export const LeagueTeamTableControls = () => {
         }}
       />
       <ExportAvailability pathToExport='availability/export-availability-for-league-team' />
+      <ImportLeagueTeamButton/>
     </>
   )
 }
