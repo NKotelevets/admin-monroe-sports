@@ -91,12 +91,12 @@ export const useLeagueTeamImportInfoTableParams = ({
       ...getColumnSearchProps<ILeagueTeamImportTable>('teamName'),
       render: (value, record) => (
         <CellText
-          isLink
+          isLink={record.status === 'Duplicate'}
           onClick={() => {
             record.status === 'Duplicate' && setSelectedIndex(record.idx)
           }}
         >
-          {value}
+          {value || '-'}
         </CellText>
       )
     },
