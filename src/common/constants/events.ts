@@ -7,6 +7,13 @@ export const eventType = {
   OTHER: 5
 }
 
+export const eventTypeByValue: { [key: number]: string } = {
+  0: 'Game',
+  1: 'Practice',
+  2: 'Playoff',
+  5: 'Other'
+}
+
 export const eventInitialValues = {
   eventType: eventType.PRACTICE,
   eventDescription: '',
@@ -58,3 +65,9 @@ export const eventRepeatOptions = [
   { label: 'Every day', value: 1 },
   { label: 'Every week', value: 2 }
 ]
+
+export const eventRepeatName: { [key: number]: string } = {
+  0: 'No repeat',
+  1: 'Every day',
+  2: 'Every week'
+}

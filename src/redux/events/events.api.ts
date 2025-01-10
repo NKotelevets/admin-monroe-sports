@@ -2,12 +2,8 @@ import { createApi } from '@reduxjs/toolkit/query/react'
 
 import baseQueryWithReAuth from '@/redux/reauthBaseQuery'
 
-import { TDeleteStatus } from '@/common/types'
-import {
-  removeEmptyStringAttributes,
-  transformKeysToCamelCase,
-  transformKeysToSnakeCase
-} from '@/utils'
+import { TBulkDeleteResponse, TDeleteStatus } from '@/common/types'
+import { removeEmptyStringAttributes, transformKeysToCamelCase, transformKeysToSnakeCase } from '@/utils'
 import {
   TEventCreationPayload,
   TEventEditingPayload,
@@ -44,10 +40,10 @@ export const eventsApi = createApi({
      * Get an event by ID.
      */
     getEvent: builder.query<IEvent, { id: string }>({
-      query: ({id}) => ({
-        url: `games/admin-events/${id}`,
+      query: ({ id }) => ({
+        url: `games/admin-events/${id}`
       }),
-      transformResponse: (response: IEvent) => ({ ...transformKeysToCamelCase(response) }),
+      transformResponse: (response: IEvent) => ({ ...transformKeysToCamelCase(response) })
     }),
     /**
      * Create a new event
@@ -67,7 +63,7 @@ export const eventsApi = createApi({
             body = {
               ...body,
               master_team_1_id: body.team_1_id,
-              master_team_2_id: body.team_2_id,
+              master_team_2_id: body.team_2_id
             } as TEventCreationPayload
             break
           case eventType.GAME:
@@ -75,7 +71,7 @@ export const eventsApi = createApi({
             body = {
               ...body,
               league_team_1_id: body.team_1_id,
-              league_team_2_id: body.team_2_id,
+              league_team_2_id: body.team_2_id
             } as TEventCreationPayload
             break
           case eventType.PLAYOFF:
@@ -87,7 +83,7 @@ export const eventsApi = createApi({
         return ({
           url,
           method: 'POST',
-          body,
+          body
         })
       }
     }),
@@ -99,18 +95,11 @@ export const eventsApi = createApi({
         body = removeEmptyStringAttributes(body)
 
         switch (body.event_type) {
-          case eventType.OTHER:
-            body = {
-              ...body,
-              master_team_1_id: body.team_1_id,
-              master_team_2_id: body.team_2_id,
-            } as TEventEditingPayload
-            break
           case eventType.GAME || eventType.PLAYOFF:
             body = {
               ...body,
               league_team_1_id: body.team_1_id,
-              league_team_2_id: body.team_2_id,
+              league_team_2_id: body.team_2_id
             } as TEventEditingPayload
             break
         }
@@ -118,20 +107,22 @@ export const eventsApi = createApi({
         return ({
           url: `games/admin-events/${body.id}`,
           method: 'PATCH',
-          body,
+          body
         })
       }
     }),
     /**
      * Delete multiple events at once
      */
-    bulkDelete: builder.mutation<void, { ids: string[] }>({
+    bulkDeleteEvents: builder.mutation<TBulkDeleteResponse, string[]>({
       query: (ids) => ({
-        url: 'games/admin-events',
+        url: 'games/admin-events/bulk-events-delete',
         body: {
           ids
-        }
-      })
+        },
+        method: 'POST'
+      }),
+      invalidatesTags: [EVENTS_TAG]
     }),
     /**
      * Import event playoffs
@@ -152,5 +143,6 @@ export const {
   useImportEventsCSVMutation,
   useCreateEventMutation,
   useEditEventMutation,
+  useBulkDeleteEventsMutation
 } = eventsApi
 

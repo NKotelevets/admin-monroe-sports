@@ -39,6 +39,7 @@ export const eventFormSchema = yup.object({
   team1Id: yup.string().required('Team 1 is required'),
   team2Id: yup
     .string()
+    .nullable()
     .when('eventType', ([eventType], schema) =>
       eventType === 0 || eventType === 2 ? schema.required('Team 2 is required for this event type') : schema.optional()
     ),

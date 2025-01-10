@@ -4,10 +4,10 @@ import { TableProvider } from '@/components/Table/MonroeTable/TableProvider.tsx'
 import { useNavigate } from 'react-router-dom'
 import { useNotification } from '@/hooks/useNotification.ts'
 import { useLeagueTeamsSlice } from '@/redux/hooks/useLeagueTeamsSlice.tsx'
-import { useBulkDeleteLeagueTeamsMutation } from '@/redux/leagueTeams/leagueTeams.api.ts'
 import { useEffect } from 'react'
 import { EventTableControls } from '@/pages/Protected/Events/components/EventTableControls.tsx'
 import { EventsTable } from '@/pages/Protected/Events/components/EventsTable.tsx'
+import { useBulkDeleteEventsMutation } from '@/redux/events/events.api.ts'
 
 const DEFAULT_DELETE_ERROR_MESSAGE = 'Something went wrong. Please, try again!'
 
@@ -22,7 +22,7 @@ const Events = () => {
   const { notify, info } = useNotification()
   const { total } = useLeagueTeamsSlice()
 
-  const [bulkDelete, { isError, error, isLoading }] = useBulkDeleteLeagueTeamsMutation()
+  const [bulkDelete, { isError, error, isLoading }] = useBulkDeleteEventsMutation()
 
   /**
    * Shows a toast if deletion has errors.
@@ -38,10 +38,10 @@ const Events = () => {
   const onDelete = async (ids: string[]): Promise<boolean> => {
     try {
       const response = await bulkDelete(ids).unwrap()
-      let message = `${response.success}/${response.total} league teams have been successfully removed.`
+      let message = `${response.success}/${response.total} events have been successfully removed.`
 
       if (response.success === 1 && response.total === 1) {
-        message = `League team has been successfully removed.`
+        message = `Event has been successfully removed.`
       }
 
       if (response.status === 'green') {
@@ -68,8 +68,7 @@ const Events = () => {
         maxSelection={total}
       >
         <>
-          IMPLEMENTAR DELETE
-          IMPLEMENTAR DETAILS
+          ORDER/FILTER NEEDS CHECKING
           <EventsTable />
         </>
       </TablePage>

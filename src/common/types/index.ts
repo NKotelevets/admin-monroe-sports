@@ -2,6 +2,7 @@ import { IRole } from '@/common/interfaces/user.ts'
 import { TableProps } from 'antd/es/table/InternalTable'
 import { Dayjs } from 'dayjs'
 import { ReactElement } from 'react'
+import { IDeletingError } from '@/common/interfaces'
 
 export type TDeleteStatus = 'red' | 'green' | 'yellow'
 
@@ -49,4 +50,11 @@ export type TScreenProps = {
   embedded?: boolean
   goBack?(response?: string): void
   breadcrumbs?: { title: JSX.Element }[]
+}
+
+export type TBulkDeleteResponse ={
+  items: IDeletingError[]
+  status: TDeleteStatus
+  total: number
+  success: number
 }

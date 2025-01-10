@@ -100,12 +100,12 @@ export const EventsTable = () => {
 
     const fieldMap = {
       subResource: 'sub_resource',
-      team1Name: 'team1_name',
-      team2Name: 'team2_name',
+      team1Name: 'team_1_name',
+      team2Name: 'team_2_name',
       location: 'location_name',
       courtNumber: 'court_number',
-      homeTeam: 'home_team_name',
-      awayTeam: 'away_team_name',
+      homeTeam: 'team_1_name',
+      awayTeam: 'team_2_name',
       league: 'league_name'
     }
 
@@ -117,7 +117,9 @@ export const EventsTable = () => {
       leagueName: (filters?.['leagueName']?.[0] as string) ?? undefined,
       subResource: (filters?.['subResource']?.[0] as string) ?? undefined,
       team1Name: (filters?.['team1Name']?.[0] as string) ?? undefined,
-      team2Name: (filters?.['team2Name']?.[0] as string) ?? undefined
+      team2Name: (filters?.['team2Name']?.[0] as string) ?? undefined,
+      type: (filters?.['type']?.join(',') as string) ?? undefined,
+      repeats: (filters?.['repeats']?.join(',') as string) ?? undefined,
     }
 
     listEvents(leagueTeamsRequestParams)

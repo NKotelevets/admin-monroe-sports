@@ -45,7 +45,7 @@ const EventEdit = () => {
       time: body.time,
       location_id: body.locationId,
       court_or_field: body.courtOrField,
-      sub_resources: body.subResources,
+      sub_resource: body.subResources,
       repeats: body.repeats,
       endRepeat: body.endRepeat,
       ignore_conflicts: body.ignoreConflicts,
@@ -91,14 +91,18 @@ const EventEdit = () => {
   const initialValues = {
     ...eventInitialValues,
 
+    eventType: data.type,
     date: data.date,
     eventDescription: data.eventDescription,
     day: data.day || dayjs(data.date, 'YYYY-MM-DD').format('dddd'),
     time: data.time,
     duration: data.duration || 30,
-    repeats: data.repeats || 0,
-    eventType: data.type,
+    repeats: data.repeats ? parseInt(data.repeats) : 0,
+
     locationId: data.location?.id || '',
+    courtOrField: data.courtOrField,
+    subResource: data.subResource,
+
     season: data.season?.id || '',
     league: data.league || '',
 
