@@ -252,3 +252,10 @@ export const decompressData = (base64String: string): object | string | null => 
     return null
   }
 }
+
+export const isAtLeast16YearsOld = (date: string): boolean  => {
+  const sixteenYearsAgo = dayjs().subtract(16, 'year')
+  const inputDate = dayjs(date)
+
+  return !inputDate.isAfter(sixteenYearsAgo, 'day')
+}

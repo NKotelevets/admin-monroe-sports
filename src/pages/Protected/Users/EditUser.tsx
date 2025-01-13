@@ -2,7 +2,10 @@ import Breadcrumb from 'antd/es/breadcrumb'
 import { useEffect } from 'react'
 import { Helmet } from 'react-helmet'
 import { useNavigate, useParams } from 'react-router-dom'
-import { editUserValidationSchema, ICreateUserFormValues } from '@/pages/Protected/Users/constants/formik'
+import {
+  editUserValidationSchema,
+  ICreateUserFormValues,
+} from '@/pages/Protected/Users/constants/formik'
 
 import { MonroeBlueText, PageContainer, ProtectedPageTitle } from '@/components/Elements'
 import Loader from '@/components/Loader'

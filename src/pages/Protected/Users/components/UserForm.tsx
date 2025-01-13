@@ -1,10 +1,10 @@
-import { Divider } from 'antd'
+import { DatePicker, Divider } from 'antd'
 import Flex from 'antd/es/flex'
 import { DefaultOptionType } from 'antd/es/select'
 import dayjs from 'dayjs'
 import { Form, Formik, FormikHelpers } from 'formik'
 import {
-  ICreateUserFormValues,
+  ICreateUserFormValues, INITIAL_ROLE_DATA,
   userInitialFormData,
   userValidationSchema
 } from '@/pages/Protected/Users/constants/formik'
@@ -12,7 +12,6 @@ import {
 import {
   CancelButton,
   MainContainer,
-  MonroeDatePicker,
   OptionTitle,
   PageContent,
   ProtectedPageSubtitle
@@ -142,6 +141,16 @@ const UserForm = (props: IFormProps<ICreateUserAsAdmin, ICreateUserFormValues>):
         // returns operator form and updates field on creation
         if (showOperatorScreen) return <CreateOperator />
 
+        const onBirthDateChange = (_: unknown, data: string | string[]) => {
+          if (data) {
+            setFieldValue('birthDate', dayjs(data as string, 'MMMM D, YYYY').format('YYYY-MM-DD'))
+            setFieldValue('roles', [INITIAL_ROLE_DATA], true)
+          } else {
+            setFieldValue('birthDate', null)
+            setFieldValue('roles', [INITIAL_ROLE_DATA], true)
+          }
+        }
+
         return (
           <Form onSubmit={handleSubmit}>
             <PageContent>
@@ -181,16 +190,11 @@ const UserForm = (props: IFormProps<ICreateUserAsAdmin, ICreateUserFormValues>):
 
                   <Flex vertical justify="flex-start" className="w-full mg-b8">
                     <OptionTitle>Birth Date</OptionTitle>
-                    <MonroeDatePicker
+                    <DatePicker
                       name="birthDate"
+                      format={'MMMM D, YYYY'}
                       value={values.birthDate ? dayjs(values.birthDate, 'YYYY-MM-DD') : null}
-                      onChange={(_: unknown, data: string | string[]) => {
-                        if (data) {
-                          setFieldValue('birthDate', dayjs(data as string, 'YYYY-MM-DD'))
-                        } else {
-                          setFieldValue('birthDate', null)
-                        }
-                      }}
+                      onChange={onBirthDateChange}
                       maxDate={dayjs(new Date())}
                       disabled={!isNew}
                     />

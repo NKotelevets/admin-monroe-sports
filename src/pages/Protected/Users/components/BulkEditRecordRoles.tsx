@@ -8,7 +8,7 @@ import {
   HEAD_COACH_ROLE,
   MASTER_ADMIN_ROLE,
   OPERATOR_ROLE,
-  PARENT_ROLE,
+  PARENT_ROLE, PLAYER_ROLE,
   TEAM_ADMIN_ROLE
 } from '@/common/constants'
 import { TRole } from '@/common/types'
@@ -16,14 +16,14 @@ import { IFERole } from '@/common/interfaces/role.ts'
 import Flex from 'antd/es/flex'
 import MonroeSelect from '@/components/MonroeSelect.tsx'
 import { EmptySpace } from '@/pages/Protected/Users/components/index.tsx'
-import DeleteIcon from '@/assets/icons/delete.svg'
 import MasterTeamsMultipleSelectWithSearch from '@/components/MasterTeamsMultipleSelectWithSearch.tsx'
 import OperatorsInput from '@/pages/Protected/Users/components/OperatorsInput.tsx'
 import MonroeTooltip from '@/components/MonroeTooltip.tsx'
 import { AddRoleButton } from '@/pages/Protected/Seasons/components/Elements.tsx'
 import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import { colors } from '@/utils/colors.tsx'
-import { SVGIcon } from '@/components/SVGIcon.tsx'
+import { isAtLeast16YearsOld } from '@/utils'
+import { DeleteIconButton } from '@/components/DeleteIconButton.tsx'
 
 const MAX_CREATED_ROLES_BY_ADMIN = 6
 const MAX_CREATED_ROLES_BY_OPERATOR = 4
@@ -60,10 +60,12 @@ export const BulkEditRecordRoles = ({ record }: IProps) => {
    */
   const userRoles = (record: IBulkEditFEUser) => {
     const existingRoles = record.userRoles.map((role) => role.name)
+    const isUnder16 = record.birthDate ? !isAtLeast16YearsOld(record.birthDate) : true
 
     // return object with user's available roles
     // to use as select values
     const roleOptions: DefaultOptionType[] = ROLES.filter((initialRole) => {
+      if (isUnder16 && initialRole !== PLAYER_ROLE) return false
       if (isOperatorWithoutAdmin && [MASTER_ADMIN_ROLE, OPERATOR_ROLE].includes(initialRole)) return false
       return !existingRoles.includes(initialRole)
     }).map((role) => ({
@@ -274,12 +276,11 @@ export const BulkEditRecordRoles = ({ record }: IProps) => {
                 disabled={!canEdit || !canDelete}
               />
 
-              {(!canDelete || (isSameUser && role.name === MASTER_ADMIN_ROLE) || (isOperatorWithoutAdmin && role.name === MASTER_ADMIN_ROLE)) && (
-                <SVGIcon
+              {(canDelete || (isSameUser && role.name === MASTER_ADMIN_ROLE) || (isOperatorWithoutAdmin && role.name === MASTER_ADMIN_ROLE)) && (
+                <DeleteIconButton
                   color={colors.primary}
                   className="mg-l8 mg-r32"
                   onClick={() => canDelete && deleteRecordRole(record, role.name)}
-                  src={DeleteIcon}
                 />
               )}
             </Flex>
