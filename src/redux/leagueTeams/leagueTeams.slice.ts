@@ -75,7 +75,15 @@ export const leagueTeamsSlice = createSlice({
         state.deletedRecordsErrors = action.payload.items
       })
   .addMatcher(leagueTeamsApi.endpoints.leagueTeamsImportCSV.matchFulfilled, (state, action) => {
-    state.createdIds = action.payload.success
+    state.createdIds = action.payload.success.filter(lt => {
+      if ('id' in lt) {
+        return lt.id
+      }
+      if (lt['League Team Name'])
+        return lt['League Team Name']
+
+      return false
+    }).map(lt => lt?.id ? lt.id : lt['League Team Name'])
     state.duplicates = action.payload?.duplicates ? action.payload.duplicates.map(duplicatesMap) : []
     state.importCSVTableRecords = [
       ...(action.payload?.duplicates ? action.payload.duplicates.map(duplicatesTableMap) : []),

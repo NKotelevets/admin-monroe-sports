@@ -8,14 +8,16 @@ import { PATH_TO_LEAGUE_TEAM_IMPORT_INFO } from '@/common/constants/paths.ts'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { useLeagueTeamsImportCSVMutation } from '@/redux/leagueTeams/leagueTeams.api.ts'
+import { useTableContext } from '@/hooks/useTableContext.ts'
 
 export const ImportLeagueTeamButton = () => {
   const inputRef = useRef<HTMLInputElement | null>()
   const navigate = useNavigate()
 
+  const { setShowCreatedRecords } = useTableContext()
+
   const [fileKey, setFileKey] = useState('')
   const [importModalOptions, setImportModalOptions] = useState<IImportModalOptions>(DEFAULT_IMPORT_MODAL_OPTIONS)
-
   const [importLeagueTeamCSV] = useLeagueTeamsImportCSVMutation()
 
   const onCSVInputChange = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -68,7 +70,7 @@ export const ImportLeagueTeamButton = () => {
             filename={importModalOptions.filename}
             status={importModalOptions.status}
             errorMessage={importModalOptions.errorMessage}
-            showInList={alert}
+            showInList={() => setShowCreatedRecords(true)}
             redirectToImportInfo={() => {
               setImportModalOptions((prev) => ({ ...prev, isOpen: false }))
               navigate(PATH_TO_LEAGUE_TEAM_IMPORT_INFO)

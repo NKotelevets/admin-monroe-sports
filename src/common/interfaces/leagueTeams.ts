@@ -205,6 +205,7 @@ export interface IDELeagueTeamImportExisting {
 }
 
 export interface IBELeagueTeamImportNew {
+  id?: string
   'Division/Pool Name': string
   'League Team Name': string
   'League/Tourn Name': string
@@ -217,7 +218,7 @@ export interface IBELeagueTeamImportNew {
 export interface IBEImportLeagueTeamCSVResponse {
   status: TDeleteStatus
   errors?: IBEImportLeagueTeamCSVError[]
-  success: string[]
+  success: IBELeagueTeamImportNew[]
   duplicates?: IDuplicate<IBELeagueTeamImportNew, IDELeagueTeamImportExisting>[]
 }
 
@@ -280,7 +281,7 @@ export interface ILeagueTeamImportNew {
 export interface IFEImportLeagueTeamCSVResponse {
   status: TDeleteStatus
   errors?: IImportLeagueTeamCSVError[]
-  success: string[]
+  success: IBELeagueTeamImportNew[]
   duplicates?: TLeagueTeamDuplicate[]
 }
 
