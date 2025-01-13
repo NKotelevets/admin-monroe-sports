@@ -10,6 +10,7 @@ import PlusOutlined from '@ant-design/icons/lib/icons/PlusOutlined'
 import MonroeTooltip from '@/components/MonroeTooltip.tsx'
 import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 import { MASTER_ADMIN_ROLE, OPERATOR_ROLE } from '@/common/constants'
+import { isAtLeast16YearsOld } from '@/utils'
 
 const MAX_CREATED_ROLES_BY_ADMIN = 6
 const MAX_CREATED_ROLES_BY_OPERATOR = 4
@@ -76,19 +77,21 @@ export const AccordionRoleList = () => {
             expandIcon={() => <ReactSVG src={ShowAllIcon} />}
             accordion
           />
-          <MonroeTooltip text={tooltipText} width="220px" containerWidth="113px">
-            <AddEntityButton
+          {(values.birthDate && isAtLeast16YearsOld(values.birthDate) || !values.roles.length) && (
+            <MonroeTooltip text={tooltipText} width="220px" containerWidth="113px">
+              <AddEntityButton
 
-              disabled={!canAddEntity}
-              type="default"
-              icon={<PlusOutlined />}
-              iconPosition="start"
-              onClick={() => push(INITIAL_ROLE_DATA)}
-              className="w-auto"
-            >
-              Add Role
-            </AddEntityButton>
-          </MonroeTooltip>
+                disabled={!canAddEntity}
+                type="default"
+                icon={<PlusOutlined />}
+                iconPosition="start"
+                onClick={() => push(INITIAL_ROLE_DATA)}
+                className="w-auto"
+              >
+                Add Role
+              </AddEntityButton>
+            </MonroeTooltip>
+          )}
         </Flex>
       )}
     </FieldArray>
