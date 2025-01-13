@@ -273,6 +273,7 @@ export const BulkEditRecordRoles = ({ record }: IProps) => {
                 onChange={(newRole) => updateRecordRoles(record, role.name, newRole)}
                 className="w-170 c-p"
                 value={role.name}
+                notFoundContent="No other roles available to this user"
                 disabled={!canEdit || !canDelete}
               />
 

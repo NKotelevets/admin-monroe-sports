@@ -145,6 +145,7 @@ const PopulateRole: FC<IPopulateRoleProps> = (props) => {
                     })
                   }
                   options={options}
+                  notFoundContent="No other roles available to this user"
                   placeholder="Select role"
                   value={role.name || null}
                   renderInside
