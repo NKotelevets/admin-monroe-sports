@@ -32,6 +32,7 @@ interface IDuplicateReviewModalProps<NewData, ExistingData> {
   removeDuplicateByIndex?: IDuplicateModalControlsProps<NewData>['removeDuplicateByIndex']
   hideSkipButton?: boolean
   mainButtonText?: string
+  mainButtonDisabled?: boolean
   buttonSize?: number
 
   children(index: number): ReactElement
@@ -79,6 +80,7 @@ export const DuplicateReviewModal = <T, Y>(props: IDuplicateReviewModalProps<T, 
     error = false,
     hideSkipButton = false,
     mainButtonText = 'Replace',
+    mainButtonDisabled = false,
     buttonSize,
     removeDuplicateByIndex,
     children,
@@ -166,6 +168,7 @@ export const DuplicateReviewModal = <T, Y>(props: IDuplicateReviewModalProps<T, 
                 type="primary"
                 className="br-4"
                 width={buttonSize}
+                disabled={mainButtonDisabled}
                 onClick={!isLoading ? onUpdate : undefined}
               >
                 {isLoading ? <Spin indicator={<Indicator spin />} size="small" /> : mainButtonText}
