@@ -1,6 +1,6 @@
 import * as Yup from 'yup'
 
-import { BEST_RECORD_WINS, SINGLE_ELIMINATION_BRACKET, WINNING } from '@/common/constants/league'
+import { BEST_RECORD_WINS, WINNING } from '@/common/constants/league'
 import { IBracket } from '@/common/interfaces/bracket'
 import { FormikErrors, FormikTouched } from 'formik'
 
@@ -65,10 +65,6 @@ export const divisionValidationSchema = Yup.object<ICreateSeasonDivision[]>().sh
     .required(),
   brackets: Yup.array()
     .of(bracketSchema)
-    .when('playoffFormat', {
-      is: (value: string) => value === SINGLE_ELIMINATION_BRACKET,
-      then: (schema) => schema.required().min(1),
-    }),
 })
 
 export const seasonValidationSchema = Yup.object<ICreateSeasonFormValues>().shape({

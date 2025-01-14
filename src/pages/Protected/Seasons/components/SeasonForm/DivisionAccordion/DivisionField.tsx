@@ -7,7 +7,7 @@ import {
 } from '@/pages/Protected/Seasons/constants/formik.ts'
 import { useFormSummary } from '@/hooks/useFormSummary.tsx'
 import { FormSummary } from '@/components/FormSummary.tsx'
-import { Flex, Form, Input, Radio, Space, Typography } from 'antd'
+import { Flex, Form, Input, Radio, Space } from 'antd'
 import TextInput from '@/components/Inputs/TextInput.tsx'
 import InputWrapper from '@/components/Inputs/InputWrapper.tsx'
 import { BEST_RECORD_WINS, SINGLE_ELIMINATION_BRACKET } from '@/common/constants/league.ts'
@@ -59,7 +59,6 @@ export const DivisionField: React.FC<DivisionFormProps> = (props) => {
   const showDeleteButton = values?.divisions?.length > 1
   const hasErrors = !!division.errors
   const isByBracket = useMemo(() => division.values?.playoffFormat === SINGLE_ELIMINATION_BRACKET, [division.values?.playoffFormat])
-  const isBracketError = isByBracket && !division.values?.brackets?.length
   const canAddBracket = !division.errors?.subDivisions && !!division.values?.name
   const bracketsTooltipMessage = !canAddBracket
     ? `You can't create bracket when you don't have division or subdivision name`
@@ -179,7 +178,6 @@ export const DivisionField: React.FC<DivisionFormProps> = (props) => {
 
                           return <BracketItem key={`bracket-${idx}`} bracket={bracket} onEdit={onEdit} onDelete={onDelete} />
                         })}
-                        {isBracketError && <ErrorText>At least one bracket required</ErrorText>}
                       </BracketWrapper>
                     </Flex>
                   )}
@@ -243,12 +241,4 @@ const AddBracketButton = styled(Button)`
     margin-top: 8px;
     margin-bottom: 16px;
     font-size: 12px !important;
-`
-const ErrorText = styled(Typography)`
-    font-weight: 400;
-    font-size: 12px;
-    color: #bc261b;
-    padding: 0 24px;
-    position: relative;
-    top: -4px
 `
