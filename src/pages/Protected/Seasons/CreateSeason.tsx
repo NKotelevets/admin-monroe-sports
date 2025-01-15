@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { ReactElement, useEffect, useMemo, useState } from 'react'
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
 import { Page } from '@/layouts/Page'
 import { SeasonForm } from '@/pages/Protected/Seasons/components/SeasonForm'
@@ -12,7 +12,13 @@ import { PATH_TO_SEASONS } from '@/common/constants/paths.ts'
 import { useNavigate } from 'react-router-dom'
 import { useCreateSeasonMutation } from '@/redux/seasons/seasons.api.ts'
 
-const CreateSeason = () => {
+/**
+ * CreateSeason component manages the creation of a new season,
+ * including form initialization, submission, and redirection upon success.
+ *
+ * @returns {ReactElement} The rendered CreateSeason component.
+ */
+const CreateSeason = (): ReactElement => {
   const navigate = useNavigate()
 
   const { selectedLeague } = useSeasonSlice()
@@ -33,8 +39,16 @@ const CreateSeason = () => {
     setSelectedLeague(null)
   }, [])
 
+  /**
+   * Navigates back to the seasons list page.
+   */
   const goBack = () => navigate(PATH_TO_SEASONS)
 
+  /**
+   * Handles form submission to create a new season.
+   *
+   * @param {ICreateSeasonFormValues} values - The form values submitted by the user.
+   */
   const onSubmit = (values: ICreateSeasonFormValues) => {
     const createSeasonBody: IBECreateSeasonBody = {
       name: values.name,
@@ -84,6 +98,11 @@ const CreateSeason = () => {
     setSelectedLeague(null)
   }
 
+  /**
+   * Initial form values based on the selected league.
+   *
+   * @returns {ICreateSeasonFormValues} The initial form values for the season creation form.
+   */
   const initialValues: ICreateSeasonFormValues = useMemo(() => {
     if (!selectedLeague)
       return seasonInitialFormValues

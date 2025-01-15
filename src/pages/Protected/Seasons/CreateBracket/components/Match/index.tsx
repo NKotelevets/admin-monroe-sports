@@ -3,9 +3,9 @@ import { MatchComponentProps } from '@g-loot/react-tournament-brackets/dist/src/
 import { DefaultOptionType } from 'antd/es/select'
 import { FormikTouched, getIn, useFormikContext } from 'formik'
 import { FC } from 'react'
-import MonroeSelect from '@/components/MonroeSelect'
+import MonroeSelect from '@/components/MonroeSelect.tsx'
 
-import { IBracket, IMatch } from '@/common/interfaces/bracket'
+import { IBracket, IMatch, IParticipant } from '@/common/interfaces/bracket.ts'
 import {
   BottomTeamText,
   EmptyTeamWrapper,
@@ -14,10 +14,11 @@ import {
   TeamsWrapper,
   TopTeamText,
   VsTextWrapper
-} from './MatchElements'
+} from './MatchElements.tsx'
 import { Flex } from 'antd'
 import { MonroeBlueText } from '@/components/Elements'
 import { ICreateSeasonFormValues } from '@/pages/Protected/Seasons/constants/formik.ts'
+import { updateCurrentParticipant, updateMatches, updateMatchParticipants } from './utils.ts'
 
 interface IMatchProps {
   name: string
@@ -37,15 +38,13 @@ interface IMatchProps {
   matches?: FormikTouched<IMatch>[]
 }
 
-const MonroeSelectWrapper = styled(MonroeSelect)`
-    height: 42px;
-    width: 85px;
-
-    @media (width > 1660px) {
-        width: 102px;
-    }
-`
-
+/**
+ * The Match component displays an individual match within a tournament bracket.
+ * It handles participant updates, seed assignments, and subpool selections.
+ *
+ * @param {IMatchProps} props - The props for the Match component.
+ * @returns {JSX.Element} The rendered Match component.
+ */
 const Match: FC<IMatchProps> = (props) => {
   const {
     matchProps ,
@@ -75,49 +74,32 @@ const Match: FC<IMatchProps> = (props) => {
       ]
       : match.participants
 
-  const handleChange = (value: string, id: string, name: 'seed' | 'subDivision') => {
-    const currentParticipant = match.participants.find((p) => p.id === id)
-    if (!currentParticipant) return
+  /**
+   * Updates participant data and handles seed conflicts across match participants and brackets.
+   *
+   * @param {string} value - The new value to set for the participant.
+   * @param {string} id - The unique identifier of the participant being updated.
+   * @param {'seed' | 'subDivision'} attrName - The property being updated ('seed' or 'subDivision').
+   */
+  const handleChange = (value: string, id: string, attrName: 'seed' | 'subDivision') => {
+    const updatedParticipant = updateCurrentParticipant(
+      match.participants as IParticipant[],
+      id,
+      attrName,
+      value
+    )
 
-    const updatedParticipant = { ...currentParticipant, [name]: value }
-    const updatedParticipants = match.participants.map((p) => {
-      if (p.id === id) return updatedParticipant
+    if (!updatedParticipant) return // nothing was updated
 
-      if (name === 'seed' && p.seed === +value && p.id !== id)
-        return {
-          ...p,
-          seed: null,
-        }
-
-      return p
-    })
-
-    const updatedBrackets = brackets.map((b) => {
-      if (b.id === match.id) {
-        return {
-          ...match,
-          matchParticipants: updatedParticipants,
-        }
-      }
-
-      const updatedBracket = {
-        ...b,
-        matchParticipants: b.matchParticipants.map((p) => {
-          if (p.seed === +value) {
-            return {
-              ...p,
-              seed: null,
-            }
-          }
-
-          return p
-        }),
-      }
-
-      return updatedBracket
-    })
-
-    setNewBracketData((prev) => ({ ...prev, matches: updatedBrackets  } as IBracket))
+    const updatedParticipants = updateMatchParticipants(match as Partial<IMatch>, id, value, attrName)
+    const updatedBrackets = updateMatches(
+      brackets,
+      match as Partial<IMatch>,
+      updatedParticipants,
+      updatedParticipant,
+      value
+    )
+    setNewBracketData((prev) => ({ ...prev, matches: updatedBrackets } as IBracket))
   }
 
   return (
@@ -165,6 +147,7 @@ const Match: FC<IMatchProps> = (props) => {
                     />
                     <MonroeSelectWrapper
                       name="seed"
+                      disabled={!participant.subDivision}
                       placeholder="Seed #"
                       value={participant.seed ? `${participant.seed}` : null}
                       options={teamsOptions}
@@ -187,3 +170,13 @@ const Match: FC<IMatchProps> = (props) => {
 }
 
 export default Match
+
+// Styled Components
+const MonroeSelectWrapper = styled(MonroeSelect)`
+    height: 42px;
+    width: 85px;
+
+    @media (width > 1660px) {
+        width: 102px;
+    }
+`

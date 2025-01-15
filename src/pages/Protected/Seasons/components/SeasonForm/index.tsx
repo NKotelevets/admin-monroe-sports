@@ -77,7 +77,6 @@ export const SeasonForm = (props: TForm ): ReactElement => {
         setFieldValue,
         handleBlur,
         touched,
-        setFieldTouched,
         isValid
       }) => {
 
@@ -86,13 +85,7 @@ export const SeasonForm = (props: TForm ): ReactElement => {
 
             {showBracketPage && (
               <PageContent>
-                <CreateBracket
-                  setFieldValue={setFieldValue}
-                  values={values}
-                  handleBlur={handleBlur}
-                  touched={touched}
-                  setFieldTouched={setFieldTouched}
-                />
+                <CreateBracket />
               </PageContent>
             )}
 

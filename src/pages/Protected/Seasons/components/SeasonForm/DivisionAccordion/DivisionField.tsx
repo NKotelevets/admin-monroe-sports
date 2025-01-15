@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react'
-import { FieldArray, FormikErrors, useFormikContext } from 'formik'
+import { FieldArray, FieldArrayRenderProps, FormikErrors, useFormikContext } from 'formik'
 import {
   ICreateSeasonDivision,
   ICreateSeasonFormValues,
@@ -27,6 +27,13 @@ import { IFEDivision } from '@/common/interfaces/division.ts'
 
 const { TextArea } = Input
 
+/**
+ * The DivisionField component handles the rendering and management of division forms
+ * within a season form, including sub-forms for subdivisions and brackets.
+ *
+ * @param {DivisionFormProps} props - The properties for the DivisionField component.
+ * @returns {JSX.Element} The rendered DivisionField component.
+ */
 export const DivisionField: React.FC<DivisionFormProps> = (props) => {
   const { index, isOpened, arrayHelpers } = props
   const { setShowBracketPage, setIds, getErrorMessage } = useSeasonFormContext()
@@ -49,7 +56,6 @@ export const DivisionField: React.FC<DivisionFormProps> = (props) => {
     setFieldError
   } = useFormikContext<ICreateSeasonFormValues>()
 
-  // mapped values for better readability
   const division: IDivisionFormik = {
     values: values?.divisions?.[index],
     touched: touched.divisions?.[index],
@@ -88,6 +94,29 @@ export const DivisionField: React.FC<DivisionFormProps> = (props) => {
   }, [isDuplicateNames])
 
   const divisionLength = division.values?.subDivisions.length || 0
+
+  /**
+   * Handles the addition of a new bracket to the division.
+   *
+   * @param {FieldArrayRenderProps} innerArrayHelpers - Helpers provided by FieldArray.
+   * @returns {Function} Callback to add a new bracket.
+   */
+  const onAddBracket = (innerArrayHelpers: FieldArrayRenderProps) => {
+    return () => {
+      setShowBracketPage(true)
+      setPathToSubdivisionDataAndIndexes(`divisions[${index}]&${index}`)
+      setBracketIdx(division.values?.brackets?.length || 0)
+      setBracketMode('create')
+      innerArrayHelpers.push({
+        name: '',
+        subdivisionsNames: division.values?.subDivisions.map(sd => sd.name),
+        playoffTeams: 2,
+        matches: BRACKETS_OPTIONS[2]
+      })
+      setSelectedBracketId(null)
+    }
+  }
+
   if (!showForm) {
     return (
       <Box
@@ -189,19 +218,7 @@ export const DivisionField: React.FC<DivisionFormProps> = (props) => {
                       icon={<PlusOutlined />}
                       disabled={!canAddBracket}
                       iconPosition="start"
-                      onClick={() => {
-                        setShowBracketPage(true)
-                        setPathToSubdivisionDataAndIndexes(`divisions[${index}]&${index}`)
-                        setBracketIdx(division.values?.brackets?.length || 0)
-                        setBracketMode('create')
-                        innerArrayHelpers.push({
-                          name: '',
-                          subdivisionsNames: [],
-                          playoffTeams: 2,
-                          matches: BRACKETS_OPTIONS[2]
-                        })
-                        setSelectedBracketId(null)
-                      }}
+                      onClick={onAddBracket(innerArrayHelpers)}
                     >
                       Add Bracket
                     </AddBracketButton>
