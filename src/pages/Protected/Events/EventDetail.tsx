@@ -238,27 +238,27 @@ const EventDetail = () => {
             </Flex>
           </Row>
 
-          <Row className="mb-16">
-            <ViewText>Create By:</ViewText>
-            <Flex>
-              <Typography.Link underline href={`${PATH_TO_USERS}/${data.whoCreated}`}>
-                {data.whoCreated}
-              </Typography.Link>
-              <>&nbsp;&nbsp;</>
-              <CellText>{dayjs(data.createdAt).format('h:mm A, DD/MM/YYYY')}</CellText>
-            </Flex>
-          </Row>
+          {/*<Row className="mb-16">*/}
+          {/*  <ViewText>Create By:</ViewText>*/}
+          {/*  <Flex>*/}
+          {/*    <Typography.Link underline href={`${PATH_TO_USERS}/${data.whoCreated}`}>*/}
+          {/*      {data.whoCreated}*/}
+          {/*    </Typography.Link>*/}
+          {/*    <>&nbsp;&nbsp;</>*/}
+          {/*    <CellText>{dayjs(data.createdAt).format('h:mm A, DD/MM/YYYY')}</CellText>*/}
+          {/*  </Flex>*/}
+          {/*</Row>*/}
 
-          <Row className="mb-16">
-            <ViewText>Last update:</ViewText>
-            <Flex>
-              <Typography.Link underline href={`${PATH_TO_USERS}/${data.whoCreated}`}>
-                {data.whoCreated}
-              </Typography.Link>
-              <>&nbsp;&nbsp;</>
-              <CellText> {dayjs(data.updatedAt).format('h:mm A, DD/MM/YYYY')}</CellText>
-            </Flex>
-          </Row>
+          {/*<Row className="mb-16">*/}
+          {/*  <ViewText>Last update:</ViewText>*/}
+          {/*  <Flex>*/}
+          {/*    <Typography.Link underline href={`${PATH_TO_USERS}/${data.whoCreated}`}>*/}
+          {/*      {data.whoCreated}*/}
+          {/*    </Typography.Link>*/}
+          {/*    <>&nbsp;&nbsp;</>*/}
+          {/*    <CellText> {dayjs(data.updatedAt).format('h:mm A, DD/MM/YYYY')}</CellText>*/}
+          {/*  </Flex>*/}
+          {/*</Row>*/}
         </Flex>
       </Page>
     </>
