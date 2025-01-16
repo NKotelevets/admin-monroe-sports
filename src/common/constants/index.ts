@@ -22,3 +22,5 @@ export const PLAYER_ROLE = 'Player'
 export const COACH_ROLE = 'Coach'
 
 export const ROLES_WITH_TEAMS: TRole[] = [HEAD_COACH_ROLE, COACH_ROLE, PLAYER_ROLE, TEAM_ADMIN_ROLE]
+
+export const DEFAULT_ERROR_MESSAGE = `Something went wrong. Please, try again!`

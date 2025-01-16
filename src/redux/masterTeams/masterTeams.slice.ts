@@ -2,11 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { masterTeamsApi } from '@/redux/masterTeams/masterTeams.api'
 
-import {
-  IFEDuplicate,
-  IFEMasterTeam,
-  IImportMasterTeamCSVTableData
-} from '@/common/interfaces/masterTeams'
+import { IFEDuplicate, IFEMasterTeam, IImportMasterTeamCSVTableData } from '@/common/interfaces/masterTeams'
 import { duplicatesErrorMap, duplicatesMap, duplicatesTableMap } from '@/redux/masterTeams/mappers'
 import { IDeletingError } from '@/common/interfaces'
 
@@ -15,7 +11,7 @@ interface IMasterTeamsSliceState {
   limit: number
   offset: number
   total: number
-  ordering: string | null
+  ordering?: string | null
   createdIds: string[]
   deletedRecordsErrors: IDeletingError[]
   tableRecords: []
@@ -28,7 +24,7 @@ const masterTeamsSliceState: IMasterTeamsSliceState = {
   limit: 10,
   offset: 0,
   total: 0,
-  ordering: null,
+  ordering: undefined,
   deletedRecordsErrors: [],
   tableRecords: [],
   createdIds: [],
@@ -45,12 +41,15 @@ export const masterTeamsSlice = createSlice({
       action: PayloadAction<{
         limit: number
         offset: number
-        ordering: string | null
+        ordering?: string | null
       }>
     ) => {
       state.limit = action.payload.limit
       state.offset = action.payload.offset
       state.ordering = action.payload.ordering
+    },
+    setMasterTeams(state, action: PayloadAction<{ teams: IFEMasterTeam[] }>) {
+      state.masterTeams = action.payload.teams
     },
     resetCreatedIds: (state) => {
       state.createdIds = []

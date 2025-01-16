@@ -77,6 +77,7 @@ export interface IBEMasterTeam {
 }
 
 export interface IFEMasterTeam {
+  headCoach?: Omit<IFESimpleEntity, 'fullName'> & { firstName: string, lastName: string, phoneNumber?: string }
   id: string
   name: string
   headCoachId: string | null

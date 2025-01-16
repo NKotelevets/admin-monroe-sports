@@ -818,3 +818,17 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
 form .ant-divider {
   margin: 24px 0 12px !important;
 }
+
+.ant-table-filter-dropdown {
+  position: relative;
+  top: 10px;
+  left: 8px;
+}
+.ant-table-filter-dropdown-btns {
+  border-top: 0 !important;
+  margin-top: 8px !important;
+}
+
+.email-tag-selector .ant-select-selector{
+  padding: 4px 6px !important;
+}

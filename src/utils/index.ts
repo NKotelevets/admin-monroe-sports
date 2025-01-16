@@ -104,7 +104,7 @@ export const formatPhoneNumber = (phoneNumber: string | number) => {
  * @returns {string|null} - 'ascend' if sorting in ascending order, 'descend' if descending,
  *                          or null if no sorting is applied to the column.
  */
-export const getColumnSort = (sortParam: string, ordering: string | null): SortOrder | undefined => {
+export const getColumnSort = (sortParam: string, ordering?: string | null): SortOrder | undefined => {
   if (ordering === sortParam || ordering === `-${sortParam}`) {
     return ordering.startsWith('-') ? 'descend' : 'ascend'
   }
@@ -204,10 +204,20 @@ export const transformKeysToSnakeCase = <T, K>(obj: K): T => {
   return obj as unknown as T
 }
 
-// Helper function to convert camelCase to snake_case
-const toSnakeCase = (str: string): string =>
-  str.replace(/([A-Z])/g, '_$1').toLowerCase()
-
+/**
+ * Converts a camelCase string to snake_case, including inserting underscores before numbers.
+ *
+ * @param {string} str - The camelCase string to be converted.
+ *
+ * @returns {string} The converted snake_case string.
+ */
+const toSnakeCase = (str: string): string => {
+  return str
+    .replace(/([a-z])([A-Z])/g, '$1_$2') // Add underscore between lowercase and uppercase
+    .replace(/([a-zA-Z])([0-9])/g, '$1_$2') // Add underscore before numbers
+    .replace(/([0-9])([a-zA-Z])/g, '$1_$2') // Add underscore after numbers
+    .toLowerCase()
+}
 
 export const getTableSortField = <T,>(sorter:  SorterResult<T> | SorterResult<T>[], fieldMap: { [key: string]: string }) => {
   if (Array.isArray(sorter) || !sorter.order) return undefined
@@ -223,6 +233,44 @@ export const getTableSortField = <T,>(sorter:  SorterResult<T> | SorterResult<T>
 export const checkAmOrPm = (time: string) => {
   const hour = dayjs(time, 'HH:mm').hour() // Extract the hour
   return hour < 12 ? 'AM' : 'PM'
+}
+
+/**
+ * Removes properties with empty string (`""`) values from an object.
+ *
+ * This function takes an object as input and returns a new object where
+ * all properties with empty string (`""`) values are removed. It preserves
+ * the original types of the object's properties.
+ *
+ * @template T - The type of the input object.
+ * @param {T} obj - The input object from which empty string properties should be removed.
+ * @returns {{ [K in keyof T]: Exclude<T[K], ""> }} A new object without empty string values.
+ *
+ * @example
+ * const obj = { a: 1, b: "", c: "test", d: "" }
+ * const cleanedObj = removeEmptyStringAttributes(obj)
+ * console.log(cleanedObj) // Output: { a: 1, c: "test" }
+ */
+export const removeEmptyStringAttributes = <T extends object>(obj: T): {
+  [K in keyof T]: Exclude<T[K], ''>
+} => {
+  const result: Partial<{ [K in keyof T]: Exclude<T[K], ''> }> = {}
+
+  for (const key of Object.keys(obj) as Array<keyof T>) {
+    if (obj[key] !== '') {
+      result[key] = obj[key] as Exclude<T[typeof key], ''>
+    }
+  }
+
+  return result as { [K in keyof T]: Exclude<T[K], ''> }
+}
+
+export const scrollToTop = () => {
+  const scrollableElement = document.querySelector('.ant-layout-content div')
+
+  if (scrollableElement) {
+    scrollableElement.scrollTo({ top: 0, behavior: 'smooth' }) // Scroll to the top
+  }
 }
 
 // Function to compress data

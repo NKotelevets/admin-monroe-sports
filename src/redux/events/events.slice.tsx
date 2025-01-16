@@ -1,0 +1,56 @@
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { IDeletingError } from '@/common/interfaces'
+import { IEvent } from '@/common/interfaces/event.ts'
+import { eventsApi } from '@/redux/events/events.api.ts'
+
+type TInitialState = {
+  events: IEvent[]
+  limit: number
+  offset: number
+  total: number
+  ordering: string | null
+  createdIds: string[]
+  deletedRecordsErrors: IDeletingError[]
+  tableRecords: []
+  duplicates: []
+}
+
+const initialEventsState: TInitialState = {
+  events: [],
+  limit: 10,
+  offset: 0,
+  total: 0,
+  ordering: null,
+  deletedRecordsErrors: [],
+  tableRecords: [],
+  createdIds: [],
+  duplicates: []
+}
+
+export const eventsSlice = createSlice({
+  name: 'eventsSlice',
+  initialState: initialEventsState,
+  reducers: {
+    setPaginationParams: (
+      state,
+      action: PayloadAction<{
+        limit: number
+        offset: number
+        ordering: string | null
+      }>
+    ) => {
+      state.limit = action.payload.limit
+      state.offset = action.payload.offset
+      state.ordering = action.payload.ordering
+    },
+    resetCreatedIds: (state) => {
+      state.createdIds = []
+    }
+  },
+  extraReducers: (builder) =>
+    builder
+      .addMatcher(eventsApi.endpoints.listEvents.matchFulfilled, (state, action) => {
+        state.total = action.payload.count
+        state.events = action.payload.results
+      })
+})

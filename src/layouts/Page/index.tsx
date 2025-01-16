@@ -24,6 +24,9 @@ export interface IPageProps {
 
   subtitle?: string
   breadcrumbs?: IBreadcrumbs
+
+  className?: string
+
   controls?(): ReactElement
 }
 
@@ -40,7 +43,15 @@ export interface IPageProps {
  * </Page>
  */
 export const Page: FC<IPageProps> = (props: IPageProps): ReactElement => {
-  const { title, children, subtitle, breadcrumbs: initialBreadcrumbs, controls } = props
+  const {
+    title,
+    children,
+    subtitle,
+    className,
+    breadcrumbs: initialBreadcrumbs,
+    controls
+  } = props
+
   const [pageTitle, setPageTitle] = useState(title)
   const [breadcrumbs, setBreadcrumbs] = useState<IBreadcrumbs>(initialBreadcrumbs)
 
@@ -49,37 +60,37 @@ export const Page: FC<IPageProps> = (props: IPageProps): ReactElement => {
       pageTitle,
       breadcrumbs,
       setPageTitle,
-      setBreadcrumbs,
+      setBreadcrumbs
     }}>
-    <>
-      <div id="page-portal"></div>
-      <BaseLayout>
-        <>
-          <Helmet>
-            <title>Admin Panel | {pageTitle}</title>
-          </Helmet>
+      <>
+        <div id="page-portal"></div>
+        <BaseLayout>
+          <>
+            <Helmet>
+              <title>Admin Panel | {pageTitle}</title>
+            </Helmet>
 
-          <PageContainer>
-            {!!breadcrumbs && <Breadcrumb items={breadcrumbs} />}
+            <PageContainer className={className}>
+              {!!breadcrumbs && <Breadcrumb items={breadcrumbs} />}
 
-            <Header justify="space-between" align="flex-start" vertical={false}>
-              <PageInfo vertical>
-                <Title>{pageTitle}</Title>
-                {!!subtitle && <Subtitle>{subtitle}</Subtitle>}
-              </PageInfo>
+              <Header justify="space-between" align="flex-start" vertical={false}>
+                <PageInfo vertical>
+                  <Title>{pageTitle}</Title>
+                  {!!subtitle && <Subtitle>{subtitle}</Subtitle>}
+                </PageInfo>
 
-              <Controls>
-                {!!controls && controls()}
-              </Controls>
-            </Header>
+                <Controls>
+                  {!!controls && controls()}
+                </Controls>
+              </Header>
 
-          <Flex flex="1 1 auto" vertical>
-            {children}
-          </Flex>
-        </PageContainer>
+              <Flex flex="1 1 auto" vertical>
+                {children}
+              </Flex>
+            </PageContainer>
+          </>
+        </BaseLayout>
       </>
-    </BaseLayout>
-    </>
     </PageContext.Provider>
   )
 }

@@ -12,13 +12,16 @@ export const useTableSearch = (handleTableReset?: () => void) => {
 
   const getColumnSearchProps = <T, >(
     dataIndex: keyof T,
-    onFilter?: (value: boolean | React.Key, record: T) => boolean
+    onFilter?: (value: boolean | React.Key, record: T) => boolean,
+    filterLocally: boolean = true
   ): TableColumnType<T> => ({
     filterDropdown: (props) => (
       <FilterDropDown {...props} handleReset={handleReset} handleSearch={handleSearch} searchInput={searchInput} />
     ),
     filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1A1657' : '#BDBCC2' }} />,
     onFilter: (value, record) => {
+      if (!filterLocally) return true
+
       if (onFilter) {
         return onFilter(value, record)
       }

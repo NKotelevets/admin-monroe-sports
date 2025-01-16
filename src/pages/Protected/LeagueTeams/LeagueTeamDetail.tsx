@@ -36,7 +36,7 @@ const LeagueTeamDetail = () => {
   } = useGetLeagueTeamQuery({ id: params.id || '' }, { skip: !params.id })
 
   /**
-   * Redirects to the master teams list if there is an error fetching the team,
+   * Redirects to the league team list if there is an error fetching the team,
    * and displays an error notification.
    */
   useEffect(() => {

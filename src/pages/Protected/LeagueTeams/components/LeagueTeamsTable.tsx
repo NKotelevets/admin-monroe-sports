@@ -133,6 +133,7 @@ export const LeagueTeamsTable = (): ReactElement => {
 
   return (
     <MonroeTable<IFELeagueTeam>
+      objTerm='league teams'
       columns={columns}
       loading={isLoading || isFetching}
       dataSource={leagueTeams}

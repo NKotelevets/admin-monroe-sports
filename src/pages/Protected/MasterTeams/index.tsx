@@ -51,7 +51,9 @@ const MasterTeams = () => {
   }
 
   const renderControls = () => {
-    return <MasterTeamTableControls />
+    return (
+      <MasterTeamTableControls />
+    )
   }
 
   return (

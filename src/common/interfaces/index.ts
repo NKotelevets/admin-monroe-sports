@@ -1,7 +1,7 @@
 import { TImportStatus } from '@/common/types'
 import type { SorterResult } from 'antd/es/table/interface'
 import type { GetProp, TableProps } from 'antd'
-import { FormikConfig } from 'formik'
+import { FormikConfig, FormikHelpers } from 'formik'
 import { IUseMasterTeamExportCSVReturn } from '@/hooks/useExportScheduleCSV.ts'
 
 export interface IDetailedError {
@@ -64,7 +64,7 @@ export interface IFormProps<Body, FormValues> {
   initialValues?: FormValues
   isLoading?: boolean
 
-  onSubmit(body: Body): void
+  onSubmit(body: Body, formikHelpers?: FormikHelpers<FormValues>): void
 
   goBack(): void
 }

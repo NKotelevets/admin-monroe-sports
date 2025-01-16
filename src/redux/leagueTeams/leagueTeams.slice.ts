@@ -13,7 +13,7 @@ interface ILeagueTeamsSliceState {
   limit: number
   offset: number
   total: number
-  ordering: string | null
+  ordering?: string | null
   createdIds: string[]
   deletedRecordsErrors: IDeletingError[]
   tableRecords: []
@@ -26,7 +26,7 @@ const leagueTeamsSliceState: ILeagueTeamsSliceState = {
   limit: 10,
   offset: 0,
   total: 0,
-  ordering: null,
+  ordering: undefined,
   deletedRecordsErrors: [],
   tableRecords: [],
   importCSVTableRecords: [],
@@ -43,7 +43,7 @@ export const leagueTeamsSlice = createSlice({
       action: PayloadAction<{
         limit: number
         offset: number
-        ordering: string | null
+        ordering?: string | null
       }>,
     ) => {
       state.limit = action.payload.limit

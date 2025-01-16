@@ -149,6 +149,7 @@ const MasterTeamsTable = (): ReactElement => {
 
   return (
     <MonroeTable<IFEMasterTeam>
+      objTerm='master teams'
       columns={columns}
       pagination={masterTeams.length > 0 ? pagination : undefined}
       loading={isLoading || isFetching}

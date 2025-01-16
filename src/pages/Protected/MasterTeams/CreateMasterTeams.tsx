@@ -18,12 +18,26 @@ const BREAD_CRUMB_ITEMS = [
   { title: <MonroeBlueText>Create master team</MonroeBlueText> }
 ]
 
-const CreateMasterTeam = () => {
-  const navigation = useNavigate()
+type TCreateMasterTeamProps = {
+  embedded?: boolean
+  goBack?(response?: string): void
+  breadcrumbs?: { title: JSX.Element }[]
+}
+
+const CreateMasterTeam = (props: TCreateMasterTeamProps) => {
+  const { embedded, goBack: goBackParent, breadcrumbs } = props
   const { notify } = useNotification()
+
+  const navigation = useNavigate()
   const [createMasterTeam] = useCreateMasterTeamMutation()
 
-  const goBack = () => navigation(PATH_TO_MASTER_TEAMS)
+  const goBack = (response?: string) => {
+    if (goBackParent) {
+      return goBackParent(response)
+    }
+
+    navigation(PATH_TO_MASTER_TEAMS)
+  }
 
   const handleSubmit = (values: IPopulateMTRequest) => {
     createMasterTeam({
@@ -34,13 +48,22 @@ const CreateMasterTeam = () => {
       team_admins: values.team_admins
     })
       .unwrap()
-      .then(() => {
+      .then((response) => {
         notify(`Master Team "${values.name}" was created`, 'success')
-        goBack()
+        goBack(response.team_id)
       })
       .catch(error => {
         notify(error?.data?.details || error?.data?.error || DEFAULT_ERROR_MESSAGE, 'error')
       })
+  }
+
+  if (embedded) {
+    return (
+      <MasterTeamForm
+        onSubmit={handleSubmit}
+        goBack={goBackParent || goBack}
+      />
+    )
   }
 
   return (
@@ -51,7 +74,7 @@ const CreateMasterTeam = () => {
 
       <BaseLayout>
         <PageContainer vertical>
-          <Breadcrumb items={BREAD_CRUMB_ITEMS} />
+          <Breadcrumb items={breadcrumbs || BREAD_CRUMB_ITEMS} />
           <ProtectedPageTitle>Create Master Team</ProtectedPageTitle>
           <MasterTeamForm
             onSubmit={handleSubmit}
