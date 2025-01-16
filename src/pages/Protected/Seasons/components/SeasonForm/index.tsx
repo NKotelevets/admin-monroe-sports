@@ -77,7 +77,6 @@ export const SeasonForm = (props: TForm ): ReactElement => {
         setFieldValue,
         handleBlur,
         touched,
-        setFieldTouched,
         isValid
       }) => {
 
@@ -86,13 +85,7 @@ export const SeasonForm = (props: TForm ): ReactElement => {
 
             {showBracketPage && (
               <PageContent>
-                <CreateBracket
-                  setFieldValue={setFieldValue}
-                  values={values}
-                  handleBlur={handleBlur}
-                  touched={touched}
-                  setFieldTouched={setFieldTouched}
-                />
+                <CreateBracket />
               </PageContent>
             )}
 
@@ -175,8 +168,8 @@ export const SeasonForm = (props: TForm ): ReactElement => {
                       type="primary"
                       size="large"
                       loading={isLoading}
-                      disabled={!touched || !isValid}
-                      spinnerColor='#FFFFFF'
+                      disabled={!touched || !isValid || isLoading}
+                      // spinnerColor={}
                       onClick={handleSubmit as unknown as MouseEventHandler<HTMLElement>}
                     >
                       {title}

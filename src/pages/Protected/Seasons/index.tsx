@@ -55,6 +55,7 @@ const Seasons = () => {
   const deleteSeasonsText = deleteRecordsModalCount > 1 ? 'seasons' : 'season'
   const [fileKey, setFileKey] = useState('')
 
+
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
     setImportModalOptions(DEFAULT_IMPORT_MODAL_OPTIONS)
     const file = event.target.files?.[0]

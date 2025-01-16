@@ -189,19 +189,11 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
           content={
             <div>
               <p>
-                You are importing a file that contains at least one Subdivision with Playoff Format set as “Single
-                Elimination Bracket”.
+                You are importing a file that contains at least one Division with Playoff Format set as “Single Elimination Bracket”.
               </p>
 
               <p>
-                If you’re <span className="fw-600 mg-v20">updating a record</span>, only the Playoff change will be
-                discarded and will have to be done manually through the Edit Season screen.
-              </p>
-
-              <p>
-                If you’re <span className="fw-600">adding a new record</span>, it will be created with the Playoff
-                Format set as “Best Record Win“. Changing and adding brackets can be done through the corresponding Edit
-                Season screen.
+                The brackets will be created, but further editing should be done through the corresponding Edit Season screen.
               </p>
             </div>
           }

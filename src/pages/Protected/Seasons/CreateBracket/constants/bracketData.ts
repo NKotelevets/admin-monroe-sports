@@ -36,7 +36,7 @@ const ONE_TEAM: IParticipant[] = [
   },
 ]
 
-const twoTeamsBracket: IMatch[] = [
+export const twoTeamsBracket: IMatch[] = [
   {
     id: 1,
     nextMatchId: null,

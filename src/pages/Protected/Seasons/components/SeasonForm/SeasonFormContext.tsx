@@ -1,14 +1,23 @@
 import { createContext } from 'react'
 import { IFELeague } from '@/common/interfaces/league.ts'
 
+export type TSeedOptions = {
+  value: number
+  label: number
+  selected: boolean
+}
+
 export interface ISeasonFormContextProps {
   showBracketPage: boolean
   selectedLeague: IFELeague | null
+  seedOptionsPerSubdivision: TSeedOptions[][]
   ids: number[]
 
   setSelectedLeague(value: IFELeague): void
 
   setShowBracketPage(value: boolean): void
+
+  setSeedOptionsPerSubdivision: React.Dispatch<React.SetStateAction<TSeedOptions[][]>>
 
   setIds: React.Dispatch<React.SetStateAction<number[]>>
 

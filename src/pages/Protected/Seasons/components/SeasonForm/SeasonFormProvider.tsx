@@ -1,4 +1,4 @@
-import { SeasonFormContext } from '@/pages/Protected/Seasons/components/SeasonForm/SeasonFormContext.tsx'
+import { SeasonFormContext, TSeedOptions } from '@/pages/Protected/Seasons/components/SeasonForm/SeasonFormContext.tsx'
 import { ReactElement, useState } from 'react'
 import { IFELeague } from '@/common/interfaces/league.ts'
 
@@ -12,6 +12,7 @@ export const SeasonFormProvider = (props: ISeasonFormProviderProps) => {
 
   const [showBracketPage, setShowBracketPage] = useState(false)
   const [selectedLeague, setSelectedLeague] = useState<IFELeague | null>(null)
+  const [seedOptionsPerSubdivision, setSeedOptionsPerSubdivision] = useState<TSeedOptions[][]>([])
   const [ids, setIds] = useState<number[]>([])
 
   const getErrorMessage = (error?: string, touched?: boolean): string => {
@@ -31,6 +32,8 @@ export const SeasonFormProvider = (props: ISeasonFormProviderProps) => {
         setSelectedLeague,
         ids,
         setIds,
+        seedOptionsPerSubdivision,
+        setSeedOptionsPerSubdivision,
         getErrorMessage
       }}
     >

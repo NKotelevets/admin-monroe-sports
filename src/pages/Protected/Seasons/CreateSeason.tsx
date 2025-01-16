@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { ReactElement, useEffect, useMemo, useState } from 'react'
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
 import { Page } from '@/layouts/Page'
 import { SeasonForm } from '@/pages/Protected/Seasons/components/SeasonForm'
@@ -11,10 +11,20 @@ import { BEST_RECORD_WINS, POINTS } from '@/common/constants/league.ts'
 import { PATH_TO_SEASONS } from '@/common/constants/paths.ts'
 import { useNavigate } from 'react-router-dom'
 import { useCreateSeasonMutation } from '@/redux/seasons/seasons.api.ts'
+import { useNotification } from '@/hooks/useNotification.ts'
 
-const CreateSeason = () => {
+const DEFAULT_ERROR_MESSAGE = `Something went wrong. Please, try again!`
+
+/**
+ * CreateSeason component manages the creation of a new season,
+ * including form initialization, submission, and redirection upon success.
+ *
+ * @returns {ReactElement} The rendered CreateSeason component.
+ */
+const CreateSeason = (): ReactElement => {
   const navigate = useNavigate()
 
+  const { notify } = useNotification()
   const { selectedLeague } = useSeasonSlice()
   const {
     setIsCreateBracketPage,
@@ -33,8 +43,16 @@ const CreateSeason = () => {
     setSelectedLeague(null)
   }, [])
 
+  /**
+   * Navigates back to the seasons list page.
+   */
   const goBack = () => navigate(PATH_TO_SEASONS)
 
+  /**
+   * Handles form submission to create a new season.
+   *
+   * @param {ICreateSeasonFormValues} values - The form values submitted by the user.
+   */
   const onSubmit = (values: ICreateSeasonFormValues) => {
     const createSeasonBody: IBECreateSeasonBody = {
       name: values.name,
@@ -79,11 +97,20 @@ const CreateSeason = () => {
 
     createSeason(createSeasonBody)
       .unwrap()
-      .then(() => navigate(PATH_TO_SEASONS))
-
-    setSelectedLeague(null)
+      .then(() => {
+        navigate(PATH_TO_SEASONS)
+        setSelectedLeague(null)
+      })
+      .catch(error => {
+        notify(error?.data?.error || error?.data?.details || DEFAULT_ERROR_MESSAGE, 'error')
+      })
   }
 
+  /**
+   * Initial form values based on the selected league.
+   *
+   * @returns {ICreateSeasonFormValues} The initial form values for the season creation form.
+   */
   const initialValues: ICreateSeasonFormValues = useMemo(() => {
     if (!selectedLeague)
       return seasonInitialFormValues

@@ -69,11 +69,12 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
       ...getColumnSearchProps('name'),
       sortOrder: ordering?.includes('name') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
       render: (value, record) => {
-        const showIcon = record.divisions.flatMap((d) => d.subDivision?.filter((s) => s.changed)).length
+        // const importedWithoutBrackets = record.divisions.flatMap((d) => d.subDivision?.filter((s) => s.changed)).length
+        const createdWithoutBrackets = record.divisions.find(d => d.playoffFormat === 1 && !d.brackets.length)
 
         return (
           <Flex align="center" justify="flex-start">
-            {!!showIcon && (
+            {(!!createdWithoutBrackets) && (
               <div className="mg-r8">
                 <MonroeTooltip text="Season requires brackets setting." width="130px" containerWidth="auto">
                   <ReactSVG src={WarningIcon} />
