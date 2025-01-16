@@ -257,14 +257,14 @@ interface IImportUsersCSVError {
 export interface IBEImportUsersCSVResponse {
   status: TDeleteStatus
   errors: IImportUsersCSVError[]
-  success: string[]
+  success: IExtendedFEUser[]
   duplicates: IBEDuplicate[]
 }
 
 export interface IFEImportUsersCSVResponse {
   status: TDeleteStatus
   errors?: IImportUsersCSVError[]
-  success: string[]
+  success: IExtendedFEUser[]
   duplicates?: IFEDuplicate[]
 }
 

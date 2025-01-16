@@ -40,59 +40,66 @@ const UserDuplicateReview = (props: IDuplicateReviewProps): ReactElement => {
 
   const differences: Record<Partial<keyof IFENew>, boolean> = compareObjects(newUser, existing)
 
-  const renderImmutableInfo = useCallback(() => (
-    <>
-      <Flex className="mg-b16" vertical>
-        <ItemTitle is_changed={`false`}>Name:</ItemTitle>
-        <ItemValueStyle is_changed={`false`}>{existing.firstName} {existing.lastName}</ItemValueStyle>
-      </Flex>
-      <Flex className="mg-b16" vertical>
-        <ItemTitle is_changed={`false`}>Gender:</ItemTitle>
-        <ItemValueStyle
-          is_changed={`false`}>{existing.gender ? FULL_GENDER_NAMES[existing.gender as TGender] : '-'}</ItemValueStyle>
-      </Flex>
-      <Flex className="mg-b16" vertical>
-        <ItemTitle is_changed={`false`}>Email:</ItemTitle>
-        <ItemValueStyle is_changed={`false`}>{existing.email || '-'}</ItemValueStyle>
-      </Flex>
-      <Flex className="mg-b16" vertical>
-        <ItemTitle is_changed={`false`}>Birth Date:</ItemTitle>
-        <ItemValueStyle is_changed={`false`}>{existing.birthDateFormatted}</ItemValueStyle>
-      </Flex>
+  const renderImmutableInfo = useCallback((data: IFENew | IExtendedFEUser) => {
+    const renderGender = () => {
+      if (data.gender === undefined) return '-'
+      if (FULL_GENDER_NAMES[data.gender as TGender]) return FULL_GENDER_NAMES[data.gender as TGender]
+      return '-'
+    }
+    return (
+      <>
+        <Flex className="mg-b16" vertical>
+          <ItemTitle is_changed={`false`}>Name:</ItemTitle>
+          <ItemValueStyle is_changed={`false`}>{data.firstName} {data.lastName}</ItemValueStyle>
+        </Flex>
+        <Flex className="mg-b16" vertical>
+          <ItemTitle is_changed={`false`}>Gender:</ItemTitle>
+          <ItemValueStyle
+            is_changed={`false`}>{renderGender()}</ItemValueStyle>
+        </Flex>
+        <Flex className="mg-b16" vertical>
+          <ItemTitle is_changed={`false`}>Email:</ItemTitle>
+          <ItemValueStyle is_changed={`false`}>{data.email || '-'}</ItemValueStyle>
+        </Flex>
+        <Flex className="mg-b16" vertical>
+          <ItemTitle is_changed={`false`}>Birth Date:</ItemTitle>
+          <ItemValueStyle is_changed={`false`}>{data.birthDateFormatted}</ItemValueStyle>
+        </Flex>
 
-      <Flex className="mg-b16" vertical>
-        <ItemTitle is_changed={`false`}>Phone:</ItemTitle>
-        <ItemValueStyle
-          is_changed={`false`}>{existing.phoneNumber ? formatPhoneNumber(existing.phoneNumber) : '-'}</ItemValueStyle>
-      </Flex>
+        <Flex className="mg-b16" vertical>
+          <ItemTitle is_changed={`false`}>Phone:</ItemTitle>
+          <ItemValueStyle
+            is_changed={`false`}>{data.phoneNumber ? formatPhoneNumber(data.phoneNumber) : '-'}</ItemValueStyle>
+        </Flex>
 
-      <Flex className="mg-b16" vertical>
-        <ItemTitle is_changed={`false`}>Zip Code:</ItemTitle>
-        <ItemValueStyle is_changed={`false`}>{existing.zipCode || '-'}</ItemValueStyle>
-      </Flex>
+        <Flex className="mg-b16" vertical>
+          <ItemTitle is_changed={`false`}>Zip Code:</ItemTitle>
+          <ItemValueStyle is_changed={`false`}>{data.zipCode || '-'}</ItemValueStyle>
+        </Flex>
 
-      <Flex className="mg-b16" vertical>
-        <ItemTitle is_changed={`false`}>Current Roles:</ItemTitle>
-        {!existing.roles?.length && (
-          <ItemValueStyle is_changed={`false`}>-</ItemValueStyle>
-        )}
-        <RoleList roles={linkedRoles} />
-      </Flex>
-    </>
-  ), [duplicates, existing, linkedRoles, newRoles])
+        <Flex className="mg-b16" vertical>
+          <ItemTitle is_changed={`false`}>Current Roles:</ItemTitle>
+          {!existing.roles?.length && (
+            <ItemValueStyle is_changed={`false`}>-</ItemValueStyle>
+          )}
+          <RoleList roles={linkedRoles} />
+        </Flex>
+      </>
+    )
+  }, [duplicates, existing, linkedRoles, newRoles])
 
   return (
     <Flex className="w-790">
       <Container is_newUser={`false`}>
         <Title>Current</Title>
 
-        {renderImmutableInfo()}
+        {renderImmutableInfo(existing)}
       </Container>
 
       <Container is_newUser={`true`}>
         <Title>Imported</Title>
 
-        {renderImmutableInfo()}
+        {renderImmutableInfo(newUser)}
 
         {differences.roles && !!newRoles?.length && (
           <Flex className="mg-b16" vertical>

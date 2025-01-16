@@ -104,7 +104,7 @@ export const userSlice = createSlice({
         state.blockedUserErrors = action.payload.items
       })
       .addMatcher(userApi.endpoints.importUsersCSV.matchFulfilled, (state, action) => {
-        state.createdUsersIds = action.payload.success
+        state.createdUsersIds = action.payload.success.map(user => user.id)
         state.replacedImports = []
         state.duplicates = action.payload?.duplicates
           ? action.payload.duplicates.map((duplicate, idx) => ({
