@@ -36,7 +36,7 @@ const CustomSelect: FC<IMonroeSelectProps> = ({ renderInside = false, onBlur, cl
   />
 )
 
-const MonroeSelect = styled(CustomSelect)<{ is_add_option?: string; is_error?: string }>`
+const MonroeSelect = styled(CustomSelect)<{ is_add_option?: string; is_error?: string; notFoundContent?: string }>`
   & .ant-select-selector {
     border-color: ${(props) => (props.is_error === 'true' ? '#BC261B !important' : '#d8d7db !important')};
   }

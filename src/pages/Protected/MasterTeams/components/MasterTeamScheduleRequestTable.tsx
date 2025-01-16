@@ -2,7 +2,7 @@ import {
   useScheduleRequestTable
 } from '@/hooks/useScheduleRequestTable.tsx'
 import { useLazyGetScheduleRequestQuery } from '@/redux/masterTeams/masterTeams.api.ts'
-import { ReactElement, useContext, useEffect } from 'react'
+import { ReactElement, useContext, useEffect, useMemo } from 'react'
 import { TeamTabList } from '@/components/ScheduleRequest/TeamTabList.tsx'
 import { ScheduleContext } from '@/components/ScheduleRequest/ScheduleContext.ts'
 import Loader from '@/components/Loader.tsx'
@@ -34,7 +34,10 @@ export const MasterTeamScheduleRequestTable = (): ReactElement => {
   const { dates, selectedIds, selectedTabIndex } = useContext(ScheduleContext)
   const { columns, setTableData, data } = useScheduleRequestTable()
 
-  const [listScheduleRequest, { data: scheduleRequests, isLoading, isFetching }] = useLazyGetScheduleRequestQuery()
+  const [
+    listScheduleRequest,
+    { data: scheduleRequests, isLoading, isFetching }
+  ] = useLazyGetScheduleRequestQuery()
 
   // Fetches schedule for period and selected master team ids
   useEffect(() => {
@@ -54,17 +57,18 @@ export const MasterTeamScheduleRequestTable = (): ReactElement => {
     setTableData(scheduleRequests[selectedTabIndex])
   }, [scheduleRequests, selectedTabIndex])
 
+  const extraContent = useMemo(() => <AddMasterTeamDropdown />, [])
+
   if (!selectedIds || !dates) return <Loader />
 
   return (
     <>
       <TeamTabList
         data={scheduleRequests || []}
-        extraContent={<AddMasterTeamDropdown />}
+        extraContent={extraContent}
       />
       <TableStyled
         size="small"
-        // tableLayout='fixed'
         rowKey={(record) => record.time}
         loading={!data || isLoading || isFetching}
         virtual={false}

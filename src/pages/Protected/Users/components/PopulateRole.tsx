@@ -1,8 +1,7 @@
 import { Divider, Flex } from 'antd'
 import { DefaultOptionType } from 'antd/es/select'
-import { FormikErrors } from 'formik'
+import { FormikErrors, useFormikContext } from 'formik'
 import { ChangeEventHandler, FC, useEffect, useState } from 'react'
-import { ReactSVG } from 'react-svg'
 
 import OperatorsInput from '@/pages/Protected/Users/components/OperatorsInput'
 import { ICreateUserFormValues } from '@/pages/Protected/Users/constants/formik'
@@ -18,12 +17,16 @@ import { useUserSlice } from '@/redux/hooks/useUserSlice'
 
 import useIsActiveComponent from '@/hooks/useIsActiveComponent'
 
-import { MASTER_ADMIN_ROLE, OPERATOR_ROLE, TEAM_ADMIN_ROLE } from '@/common/constants'
+import { MASTER_ADMIN_ROLE, OPERATOR_ROLE, PLAYER_ROLE, TEAM_ADMIN_ROLE } from '@/common/constants'
 import { IIdName } from '@/common/interfaces'
 import { IFERole } from '@/common/interfaces/role'
 import { TRole } from '@/common/types'
 
 import DeleteIcon from '@/assets/icons/delete.svg'
+import { colors } from '@/utils/colors.tsx'
+import { SVGIcon } from '@/components/SVGIcon.tsx'
+import { isAtLeast16YearsOld } from '@/utils'
+import MonroeTooltip from '@/components/MonroeTooltip'
 
 interface IPopulateRoleProps {
   index: number
@@ -33,47 +36,53 @@ interface IPopulateRoleProps {
   setFieldValue: (
     field: string,
     value: string | IIdName[] | IFERole,
-    shouldValidate?: boolean,
+    shouldValidate?: boolean
   ) => Promise<void | FormikErrors<ICreateUserFormValues>>
   removeFn: (index: number) => void
   values: ICreateUserFormValues
   setFieldTouched: (
     field: string,
     isTouched?: boolean,
-    shouldValidate?: boolean,
+    shouldValidate?: boolean
   ) => Promise<void | FormikErrors<ICreateUserFormValues>>
   isSameUser?: boolean
 }
 
-const PopulateRole: FC<IPopulateRoleProps> = ({
-  index,
-  role,
-  errors,
-  setFieldValue,
-  removeFn,
-  values,
-  setFieldTouched,
-  isSameUser,
-}) => {
+const PopulateRole: FC<IPopulateRoleProps> = (props) => {
+  const {
+    index,
+    role,
+    errors,
+    setFieldValue,
+    removeFn,
+    setFieldTouched,
+    isSameUser
+  } = props
+
+  const { values, touched } = useFormikContext<ICreateUserFormValues>()
+
   const [isOpenedDetails, setIsOpenedDetails] = useState(index === 0 ? true : false)
   const { ref, isComponentVisible } = useIsActiveComponent(index === 0 ? true : false)
-  const isError = !!errors?.roles?.[index]
+  const isError = touched.roles ? !!errors?.roles?.[index] : false
   const { user } = useUserSlice()
   const isAdmin = user?.isSuperuser
   const selectedRoles = values.roles.map((role) => role.name)
+  const isUnder16 = values.birthDate ? !isAtLeast16YearsOld(values.birthDate) : true
   const options: DefaultOptionType[] = ROLES.filter((initialRole) => {
+    if (isUnder16 && initialRole !== PLAYER_ROLE) return false
     if (!isAdmin && initialRole === OPERATOR_ROLE) return false
     if (!isAdmin && initialRole === MASTER_ADMIN_ROLE) return false
-    if (!selectedRoles.includes(initialRole)) return true
-    return false
+    return !selectedRoles.includes(initialRole)
   }).map((role) => ({
     label: role,
-    value: role,
+    value: role
   }))
+
   const isRoleWithTeams = ARRAY_OF_ROLES_WITH_REQUIRED_LINKED_ENTITIES.includes(role.name as TRole)
   const isOperator = (role.name as TRole) === OPERATOR_ROLE
   const operator = values.roles.find((role) => role.name === OPERATOR_ROLE)?.linkedEntities?.[0] || { id: '', name: '' }
-  const isMissingName = !!(errors.roles?.[+index] as FormikErrors<IFERole>)?.name
+  const isMissingName = touched.roles?.[+index] ? !!(errors.roles?.[+index] as FormikErrors<IFERole>)?.name : false
+  const isMissingAge = !values.birthDate
   const isMissingEntities = !!(errors.roles?.[+index] as FormikErrors<IFERole>)?.linkedEntities
   const isHighestRoleOperator = isOperator && !user?.isSuperuser
 
@@ -108,9 +117,12 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
 
           {!([OPERATOR_ROLE, MASTER_ADMIN_ROLE].includes(role.name) && !isAdmin) &&
             !(isSameUser && role.name === MASTER_ADMIN_ROLE) && (
-              <div onClick={() => removeFn(index)}>
-                <ReactSVG src={DeleteIcon} />
-              </div>
+              <SVGIcon
+                color={colors.primary}
+                className="mg-l8 mg-r32"
+                onClick={() => removeFn(index)}
+                src={DeleteIcon}
+              />
             )}
         </Flex>
       )}
@@ -124,22 +136,25 @@ const PopulateRole: FC<IPopulateRoleProps> = ({
 
                 {isMissingName && <InputError>Role is required</InputError>}
               </Flex>
-              <MonroeSelect
-                onChange={(value) =>
-                  setFieldValue(`roles.${index}`, {
-                    name: value,
-                    linkedEntities: [],
-                  })
-                }
-                options={options}
-                placeholder="Select role"
-                value={role.name || null}
-                renderInside
-                className="w-full"
-                is_error={`${isMissingName}`}
-                onBlur={() => setFieldTouched(`roles.${index}.name`, true)}
-                disabled={(isHighestRoleOperator && role.name === OPERATOR_ROLE) || cannotDeleteTeamAdmin}
-              />
+              <MonroeTooltip text={isMissingAge ? `Please, fill user birthdate to start adding roles` : ''} width='200px'>
+                <MonroeSelect
+                  onChange={(value) =>
+                    setFieldValue(`roles.${index}`, {
+                      name: value,
+                      linkedEntities: []
+                    })
+                  }
+                  options={options}
+                  notFoundContent="No other roles available to this user"
+                  placeholder="Select role"
+                  value={role.name || null}
+                  renderInside
+                  className="w-full"
+                  is_error={`${isMissingName}`}
+                  onBlur={() => setFieldTouched(`roles.${index}.name`, true)}
+                  disabled={(isHighestRoleOperator && role.name === OPERATOR_ROLE) || cannotDeleteTeamAdmin || isMissingAge}
+                />
+              </MonroeTooltip>
             </div>
 
             {isRoleWithTeams && (

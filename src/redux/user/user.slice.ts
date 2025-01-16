@@ -25,6 +25,7 @@ interface IUserSliceState {
   editUsersErrors: IBulkEditError[]
   importCSVTableRecords: IImportUsersCSVTableData[]
   duplicates: IFEDuplicateWithIdx[]
+  replacedImports: number[]
 }
 
 const userSliceState: IUserSliceState = {
@@ -41,6 +42,7 @@ const userSliceState: IUserSliceState = {
   editUsersErrors: [],
   importCSVTableRecords: [],
   duplicates: [],
+  replacedImports: []
 }
 
 export const userSlice = createSlice({
@@ -71,6 +73,9 @@ export const userSlice = createSlice({
     setEditUsersErrors: (state, action: PayloadAction<IBulkEditError[]>) => {
       state.editUsersErrors = action.payload
     },
+    setReplacedImports: (state, action: PayloadAction<number>) => {
+      state.replacedImports = [...state.replacedImports, action.payload]
+    },
     removeDuplicate: (state, action: PayloadAction<number>) => {
       const remainingDuplicates = state.duplicates.filter((duplicate) => duplicate.idx !== action.payload)
       const remainingTableRecords = state.importCSVTableRecords.filter(
@@ -99,8 +104,8 @@ export const userSlice = createSlice({
         state.blockedUserErrors = action.payload.items
       })
       .addMatcher(userApi.endpoints.importUsersCSV.matchFulfilled, (state, action) => {
-        state.createdUsersIds = action.payload.success
-
+        state.createdUsersIds = action.payload.success.map(user => user.id)
+        state.replacedImports = []
         state.duplicates = action.payload?.duplicates
           ? action.payload.duplicates.map((duplicate, idx) => ({
               ...duplicate,

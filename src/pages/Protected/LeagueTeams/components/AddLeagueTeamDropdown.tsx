@@ -1,41 +1,34 @@
-import { IDropdownProps } from '@/components/Dropdown'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useLazyGetLeagueTeamsQuery } from '@/redux/leagueTeams/leagueTeams.api.ts'
-import { ScheduleContext } from '@/components/ScheduleRequest/ScheduleContext.ts'
 import useDebounceEffect from '@/hooks/useDebounceEffect.ts'
 import { AddTeamDropdown } from '@/components/ScheduleRequest/AddTeamDropdown.tsx'
+import { IFELeagueTeam } from '@/common/interfaces/leagueTeams.ts'
+import { TScheduleAdditionalData } from '@/common/types'
+import { ScheduleContext } from '@/components/ScheduleRequest/ScheduleContext.ts'
 
 export const AddLeagueTeamDropdown = () => {
-  const { selectedIds } = useContext(ScheduleContext)
-
   const [offset, setOffset] = useState(0)
   const [searchQuery, setSearchQuery] = useState('')
-  const [teams, setTeams] = useState<IDropdownProps['items']>([])
-  const [leagueTeamsList, { data, isLoading, isError, isFetching }] = useLazyGetLeagueTeamsQuery()
+  const [teams, setTeams] = useState<IFELeagueTeam[]>([])
+  const [
+    leagueTeamsList,
+    { data, isLoading, isError, isFetching }
+  ] = useLazyGetLeagueTeamsQuery()
 
-  /**
-   * Fetches first teams on mount
-   */
-  useEffect(() => {
-    leagueTeamsList({
-      limit: 10,
-      offset
-    })
-  }, [])
+  const {
+    navigateWithData,
+    additionalData,
+    dates
+  } = useContext(ScheduleContext)
+
 
   /**
    * Formats and accumulates fetched teams
    */
   useEffect(() => {
     if (!data) return
-
-    const teamOptions = data.results
-      .map(team => (
-        { label: team.name, value: team.id, disabled: selectedIds?.includes(team.id) }
-      ))
-
-    setTeams(prev => [...prev, ...teamOptions])
-  }, [data, selectedIds])
+    setTeams(prev => [...prev, ...data.results])
+  }, [data])
 
   /**
    * Handles search field with debounce
@@ -65,10 +58,36 @@ export const AddLeagueTeamDropdown = () => {
     setOffset(newOffset)
   }, [offset, searchQuery])
 
+  /**
+   * Handles adding team to list
+   * @param value
+   */
+  const onSubmit = useCallback((value: string) => {
+    const newTeam = teams.find(team => team.id === value)
+    const newAdditionalData = [...additionalData || [], {
+      id: newTeam?.id,
+      name: newTeam?.name,
+      masterTeamName: newTeam?.masterTeam?.name,
+      masterTeamId: newTeam?.masterTeam?.id,
+      leagueName: newTeam?.league.name
+    } as TScheduleAdditionalData]
+
+    navigateWithData(newAdditionalData, dates?.start, dates?.end)
+  }, [teams, dates])
+
+  const ids = useMemo(() => (
+    additionalData ? additionalData.map(addD => addD.id) : []
+  ), [additionalData])
+
+  const options = useMemo(() => teams.map(team => (
+    { label: `${team.name} ${team.league.name ? `(${team.league.name})` : ''}`, value: team.id, disabled: ids?.includes(team.id) }
+  )), [teams, ids])
+
 
   return (
     <AddTeamDropdown
-      teams={teams}
+      onSubmit={onSubmit}
+      teams={options}
       count={data?.count}
       isError={isError}
       isLoading={isLoading}

@@ -7,6 +7,8 @@ import { MonroeBlueText } from '@/components/Elements'
 import { ScheduleRequestControls } from '@/components/ScheduleRequest/ScheduleRequestControls.tsx'
 import { ScheduleProvider } from '@/components/ScheduleRequest/ScheduleProvider.tsx'
 import { useExportScheduleCSV } from '@/hooks/useExportScheduleCSV.ts'
+import { decompressData } from '@/utils'
+import { TScheduleAdditionalData } from '@/common/types'
 
 const BREAD_CRUMB_ITEMS = [
   { title: <a href={PATH_TO_MASTER_TEAMS}>Master Teams</a> },
@@ -25,6 +27,16 @@ const MasterTeamScheduleRequest = () => {
     return
   }
 
+  const data = decompressData(params.selectedIds)
+  const ids: string[] = []
+  let additionalData = undefined
+
+  if (data) {
+    const dt = data as TScheduleAdditionalData[]
+    ids.push(...dt.map(d => d.id))
+    additionalData = dt
+  }
+
   const renderControls = (): ReactElement => (
     <ScheduleRequestControls
       onExport={onExport}
@@ -36,7 +48,8 @@ const MasterTeamScheduleRequest = () => {
   return (
     <ScheduleProvider
       initialDates={params.range.split(',')}
-      initialSelectedIds={params.selectedIds.split(',')}
+      initialSelectedIds={ids}
+      additionalData={additionalData}
       pathToNavigate={PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST}
       pathToExport='availability/export'
     >

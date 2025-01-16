@@ -9,6 +9,8 @@ import { MonroeBlueText } from '@/components/Elements'
 import {
   LeagueTeamScheduleRequestTable
 } from '@/pages/Protected/LeagueTeams/components/LeagueTeamScheduleRequestTable.tsx'
+import { TScheduleAdditionalData } from '@/common/types'
+import { decompressData } from '@/utils'
 
 const BREAD_CRUMB_ITEMS = [
   { title: <a href={PATH_TO_LEAGUE_TEAMS}>League Teams</a> },
@@ -27,6 +29,16 @@ const LeagueTeamScheduleRequest = () => {
     return
   }
 
+  const data = decompressData(params.selectedIds)
+  const ids: string[] = []
+  let additionalData = undefined
+
+  if (data) {
+    const dt = data as TScheduleAdditionalData[]
+    ids.push(...dt.filter(d => d.masterTeamId).map(d => d.masterTeamId!))
+    additionalData = dt
+  }
+
   const renderControls = (): ReactElement => (
     <ScheduleRequestControls
       onExport={onExport}
@@ -38,7 +50,8 @@ const LeagueTeamScheduleRequest = () => {
   return (
     <ScheduleProvider
       initialDates={params.range.split(',')}
-      initialSelectedIds={params.selectedIds.split(',')}
+      initialSelectedIds={ids}
+      additionalData={additionalData}
       pathToNavigate={PATH_TO_LEAGUE_TEAM_SCHEDULE_REQUEST}
       pathToExport="availability/export-availability-for-league-team"
     >

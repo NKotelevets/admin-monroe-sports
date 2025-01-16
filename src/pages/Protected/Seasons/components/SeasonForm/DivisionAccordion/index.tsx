@@ -87,7 +87,7 @@ export const DivisionAccordion = () => {
 
 // Styled Components
 const DivisionsWrapper = styled.div`
-  margin-top: 12px
+    margin-top: 12px
 `
 const Accordion = styled(Collapse)`
     width: 352px;

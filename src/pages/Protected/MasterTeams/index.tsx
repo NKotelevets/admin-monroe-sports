@@ -5,17 +5,15 @@ import { useBulkDeleteMasterTeamsMutation, useMasterTeamsImportCSVMutation } fro
 import {
   PATH_TO_CREATE_MASTER_TEAM,
   PATH_TO_DELETING_INFO_MASTER_TEAMS,
-  PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST, PATH_TO_MASTER_TEAMS_IMPORT_INFO
+  PATH_TO_MASTER_TEAMS_IMPORT_INFO
 } from '@/common/constants/paths'
-import { ExportAvailability } from '@/components/ExportAvailability.tsx'
-import { ScheduleRequestButton } from '@/components/ScheduleRequest/ScheduleRequestButton.tsx'
-import { useExportScheduleCSV } from '@/hooks/useExportScheduleCSV.ts'
 import { TableProvider } from '@/components/Table/MonroeTable/TableProvider.tsx'
 import { TablePage } from '@/layouts/TablePage.tsx'
 import { useNotification } from '@/hooks/useNotification.ts'
 import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice.tsx'
 import { ImportButton } from '@/components/ImportButton.tsx'
 import { TDeleteStatus } from '@/common/types'
+import { MasterTeamTableControls } from '@/pages/Protected/MasterTeams/components/MasterTeamTableControls.tsx'
 
 const DELETE_TERMS = {
   singular: 'master team',
@@ -26,11 +24,10 @@ const MasterTeams = () => {
   const navigate = useNavigate()
 
   const { notify, info } = useNotification()
-  const { onExport, isLoading, status } = useExportScheduleCSV()
   const { total } = useMasterTeamsSlice()
 
-  const [bulkDeleteMT] = useBulkDeleteMasterTeamsMutation()
   const [importMasterTeamCSV] = useMasterTeamsImportCSVMutation()
+  const [bulkDeleteMT, { isLoading }] = useBulkDeleteMasterTeamsMutation()
 
   /**
    * Handles deletion of one or multiple master teams.
@@ -84,17 +81,7 @@ const MasterTeams = () => {
   const renderControls = () => {
     return (
       <>
-        <ScheduleRequestButton
-          pathToExport="availability/export"
-          exportFileName="master-teams-availability"
-          pathToSchedule={PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST}
-          onExport={{
-            call: onExport,
-            status,
-            isLoading
-          }}
-        />
-        <ExportAvailability pathToExport="availability/export" />
+        <MasterTeamTableControls />
         <ImportButton
           infoPath={PATH_TO_MASTER_TEAMS_IMPORT_INFO}
           onChange={onImport}

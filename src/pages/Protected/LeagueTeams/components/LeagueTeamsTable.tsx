@@ -24,7 +24,7 @@ type TFilterValueKey = 'name' | 'division' | 'subdivision' | 'league' | 'season'
  * @returns {ReactElement} The rendered Index component.
  */
 export const LeagueTeamsTable = (): ReactElement => {
-  const [listLeagueTeam] = useLazyGetLeagueTeamsQuery()
+  const [listLeagueTeam, { isLoading, isFetching }] = useLazyGetLeagueTeamsQuery()
   const { columns } = useLeagueTeamTable()
   const { notify } = useNotification()
 
@@ -135,6 +135,7 @@ export const LeagueTeamsTable = (): ReactElement => {
     <MonroeTable<IFELeagueTeam>
       objTerm='league teams'
       columns={columns}
+      loading={isLoading || isFetching}
       dataSource={leagueTeams}
       onChange={handleTableChange}
       pagination={pagination}

@@ -1,7 +1,6 @@
 import { Flex } from 'antd'
 import { FormikErrors, FormikTouched } from 'formik'
 import { FC, useEffect, useState } from 'react'
-import { ReactSVG } from 'react-svg'
 
 import MasterTeamRoleInput from '@/pages/Protected/MasterTeams/components/MasterTeamRoleInput'
 import { IMasterTeamRole, IPopulateMasterTeam } from '@/pages/Protected/MasterTeams/formik'
@@ -19,6 +18,8 @@ import useIsActiveComponent from '@/hooks/useIsActiveComponent'
 import { IFEUser } from '@/common/interfaces/user'
 
 import DeleteIcon from '@/assets/icons/delete.svg'
+import { colors } from '@/utils/colors.tsx'
+import { SVGIcon } from '@/components/SVGIcon.tsx'
 
 export interface IPopulateRoleProps {
   index: number
@@ -121,7 +122,11 @@ const PopulateEntity: FC<IPopulateRoleProps> = ({
                 setSelectedName('')
               }}
             >
-              <ReactSVG src={DeleteIcon} />
+              <SVGIcon
+                color={colors.primary}
+                className="mg-l8 mg-r32"
+                src={DeleteIcon}
+              />
             </div>
           </MonroeTooltip>
         </Flex>

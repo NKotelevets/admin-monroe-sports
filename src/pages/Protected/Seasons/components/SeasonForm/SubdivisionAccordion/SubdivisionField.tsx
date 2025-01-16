@@ -22,6 +22,7 @@ import { colors } from '@/utils/colors.tsx'
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined'
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice.ts'
 import MonroeModal from '@/components/MonroeModal.tsx'
+import { useSeasonFormContext } from '@/pages/Protected/Seasons/components/SeasonForm/UseSeasonFormContext.tsx'
 
 const { TextArea } = Input
 
@@ -36,6 +37,7 @@ interface SubDivisionFormProps {
 export const SubdivisionField: React.FC<SubDivisionFormProps> = (props) => {
   const { divisionIndex, subDivisionIndex, isOpened, arrayHelpers } = props
   const { showForm, setShowForm } = useFormSummary(isOpened)
+  const { getErrorMessage } = useSeasonFormContext()
   const { setIsDuplicateNames } = useSeasonSlice()
   const {
     values,
@@ -178,14 +180,14 @@ export const SubdivisionField: React.FC<SubDivisionFormProps> = (props) => {
           onChange={handleSubdivisionNameChange}
           value={subdivision.values?.name}
           errorPosition="bottom"
-          error={subdivision.touched?.name || nameError ? nameError || subdivision.errors?.name || '' : ''}
+          error={getErrorMessage(nameError || subdivision.errors?.name, subdivision.touched?.name || nameError)}
           onBlur={handleBlur(`${field}.name`)}
         />
 
         <InputWrapper
           label="Sub Division Description"
           errorPosition="bottom"
-          error={subdivision.touched?.description ? subdivision.errors?.description || '' : ''}
+          error={getErrorMessage(subdivision.errors?.description, subdivision.touched?.description)}
         >
           <TextArea
             name={`${field}.description`}
@@ -199,7 +201,7 @@ export const SubdivisionField: React.FC<SubDivisionFormProps> = (props) => {
         <InputWrapper
           label="Standings Format"
           errorPosition="bottom"
-          error={subdivision.touched?.standingsFormat ? subdivision.errors?.standingsFormat || '' : ''}
+          error={getErrorMessage(subdivision.errors?.standingsFormat, subdivision.touched?.standingsFormat)}
         >
           <RadioGroupContainer
             onChange={(e: RadioChangeEvent) => setFieldValue(`${field}.standingsFormat`, e.target.value)}
@@ -229,7 +231,7 @@ export const SubdivisionField: React.FC<SubDivisionFormProps> = (props) => {
         <InputWrapper
           label="Default Tiebreakers Format *"
           errorPosition="bottom"
-          error={subdivision.touched?.tiebreakersFormat ? subdivision.errors?.tiebreakersFormat || '' : ''}
+          error={getErrorMessage(subdivision.errors?.tiebreakersFormat, subdivision.touched?.tiebreakersFormat)}
         >
           <RadioGroupContainer
             onChange={(e: RadioChangeEvent) => setFieldValue(`${field}.tiebreakersFormat`, e.target.value)}

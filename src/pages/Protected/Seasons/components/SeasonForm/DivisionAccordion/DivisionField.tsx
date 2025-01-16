@@ -7,7 +7,7 @@ import {
 } from '@/pages/Protected/Seasons/constants/formik.ts'
 import { useFormSummary } from '@/hooks/useFormSummary.tsx'
 import { FormSummary } from '@/components/FormSummary.tsx'
-import { Flex, Form, Input, Radio, Space, Typography } from 'antd'
+import { Flex, Form, Input, Radio, Space } from 'antd'
 import TextInput from '@/components/Inputs/TextInput.tsx'
 import InputWrapper from '@/components/Inputs/InputWrapper.tsx'
 import { BEST_RECORD_WINS, SINGLE_ELIMINATION_BRACKET } from '@/common/constants/league.ts'
@@ -29,7 +29,7 @@ const { TextArea } = Input
 
 export const DivisionField: React.FC<DivisionFormProps> = (props) => {
   const { index, isOpened, arrayHelpers } = props
-  const { setShowBracketPage, setIds } = useSeasonFormContext()
+  const { setShowBracketPage, setIds, getErrorMessage } = useSeasonFormContext()
   const { showForm, setShowForm } = useFormSummary(isOpened)
   const {
     setBracketIdx,
@@ -59,7 +59,6 @@ export const DivisionField: React.FC<DivisionFormProps> = (props) => {
   const showDeleteButton = values?.divisions?.length > 1
   const hasErrors = !!division.errors
   const isByBracket = useMemo(() => division.values?.playoffFormat === SINGLE_ELIMINATION_BRACKET, [division.values?.playoffFormat])
-  const isBracketError = isByBracket && !division.values?.brackets?.length
   const canAddBracket = !division.errors?.subDivisions && !!division.values?.name
   const bracketsTooltipMessage = !canAddBracket
     ? `You can't create bracket when you don't have division or subdivision name`
@@ -70,7 +69,7 @@ export const DivisionField: React.FC<DivisionFormProps> = (props) => {
     .map((dN, idx, array) => (array.indexOf(dN) === idx ? false : dN))
     .filter((i) => i)
   const notUniqueNameErrorText = listOfDuplicatedNames.find((dN) => dN === division.values?.name) ? 'Name already exists' : ''
-  const isError = touched?.divisions?.[index] ? !!errors?.divisions?.[index] || isDuplicateNames : false
+  const isError = !!getErrorMessage(errors?.divisions?.[index] ? 'error' : '', !!touched?.divisions?.[index]) || isDuplicateNames
 
   useEffect(() => {
     if (notUniqueNameErrorText === 'Name already exists') {
@@ -121,18 +120,14 @@ export const DivisionField: React.FC<DivisionFormProps> = (props) => {
           name={`divisions[${index}].name`}
           onChange={handleChange(`divisions[${index}].name`)}
           value={division.values?.name || ''}
-          error={
-            touched?.divisions?.[index]
-              ? notUniqueNameErrorText || (errors?.divisions?.[index] as FormikErrors<IFEDivision>)?.name
-              : ''
-          }
+          error={getErrorMessage(notUniqueNameErrorText || (errors?.divisions?.[index] as FormikErrors<IFEDivision>)?.name,!!touched?.divisions?.[index])}
           onBlur={handleBlur(`divisions[${index}].name`)}
         />
 
         <InputWrapper
           label="Division/Pool description"
           errorPosition="bottom"
-          error={division.touched?.description ? division.errors?.description || '' : ''}
+          error={getErrorMessage(division.errors?.description || '', division.touched?.description)}
         >
           <TextArea
             name={`divisions[${index}].description`}
@@ -146,7 +141,7 @@ export const DivisionField: React.FC<DivisionFormProps> = (props) => {
         <RadioWrapper
           isBracket={isByBracket}
           label="Playoff Format *"
-          error={division.touched?.playoffFormat ? division.errors?.playoffFormat || '' : ''}
+          error={getErrorMessage(division.errors?.playoffFormat, division.touched?.playoffFormat)}
         >
           <Radio.Group
             name={`divisions[${index}].playoffFormat`}
@@ -183,7 +178,6 @@ export const DivisionField: React.FC<DivisionFormProps> = (props) => {
 
                           return <BracketItem key={`bracket-${idx}`} bracket={bracket} onEdit={onEdit} onDelete={onDelete} />
                         })}
-                        {isBracketError && <ErrorText>At least one bracket required</ErrorText>}
                       </BracketWrapper>
                     </Flex>
                   )}
@@ -247,12 +241,4 @@ const AddBracketButton = styled(Button)`
     margin-top: 8px;
     margin-bottom: 16px;
     font-size: 12px !important;
-`
-const ErrorText = styled(Typography)`
-    font-weight: 400;
-    font-size: 12px;
-    color: #bc261b;
-    padding: 0 24px;
-    position: relative;
-    top: -4px
 `

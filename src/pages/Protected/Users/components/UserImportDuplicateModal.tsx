@@ -8,6 +8,7 @@ import { TNewUser, TNewUserRoles } from '@/common/types/users.ts'
 import { useLazyGetMasterTeamsQuery } from '@/redux/masterTeams/masterTeams.api.ts'
 import { useBulkEditMutation } from '@/redux/user/user.api.ts'
 import { IDuplicate } from '@/common/interfaces'
+import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 
 type TUserDuplicate = Omit<IDuplicate<IFENew, IExtendedFEUser>, 'differences'>
 
@@ -55,6 +56,8 @@ interface IDuplicateReviewProps {
  */
 export const UserImportDuplicateModal = (props: IDuplicateReviewProps): ReactElement => {
   const { duplicates, selectedIndex, setSelectedIndex, removeDuplicate } = props
+  const { replacedImports, setReplacedImports } = useUserSlice()
+
   const [bulkEdit, { isLoading, isError, status, reset }] = useBulkEditMutation()
   const [getMasterTeams] = useLazyGetMasterTeamsQuery()
 
@@ -85,7 +88,7 @@ export const UserImportDuplicateModal = (props: IDuplicateReviewProps): ReactEle
     Promise.all(
       newRoles.map(async ({ role, teamName }) => {
         const teams = await getMasterTeams({
-          limit: 1, offset: 10, name: teamName
+          limit: 10, offset: 0, name: teamName
         }).unwrap()
 
         const team_id = teams.results.length > 0 ? teams.results[0].id : ''
@@ -104,8 +107,15 @@ export const UserImportDuplicateModal = (props: IDuplicateReviewProps): ReactEle
       roles: [...currentRoles, ...newRolesWithTeams]
     }
 
-    await bulkEdit([updateUserAsAdminBody])
+    const response = await bulkEdit([updateUserAsAdminBody]).unwrap()
+    if (response.success) {
+      setReplacedImports(selectedIndex)
+    }
   }, [duplicates, currentRoles, newRoles])
+
+  const isReplaced = useMemo(() => (
+    replacedImports?.includes(selectedIndex)
+  ), [replacedImports, selectedIndex])
 
   return (
     createPortal(
@@ -119,6 +129,8 @@ export const UserImportDuplicateModal = (props: IDuplicateReviewProps): ReactEle
         onChange={onChange}
         handleUpdate={onUpdate}
         removeDuplicateByIndex={onSkip}
+        mainButtonText={isReplaced ? 'Replaced' : 'Replace'}
+        mainButtonDisabled={isReplaced}
       >
         {(index: number) => (
           <UserDuplicateReview

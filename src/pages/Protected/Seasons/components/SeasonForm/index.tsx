@@ -3,7 +3,7 @@ import {
   seasonValidationSchema
 } from '@/pages/Protected/Seasons/constants/formik.ts'
 import { Form, Formik } from 'formik'
-import { MouseEventHandler, useEffect } from 'react'
+import { MouseEventHandler, ReactElement, useEffect } from 'react'
 import { CancelButton, MainContainer, PageContent } from '@/components/Elements'
 import CreateBracket from '@/pages/Protected/Seasons/CreateBracket/CreateBracket.tsx'
 import { DatePicker, Divider, Flex } from 'antd'
@@ -23,6 +23,7 @@ import { IBreadcrumbs } from '@/common/types'
 interface ISeasonFormProps {
   title: string
   breadcrumbs: IBreadcrumbs
+  validateOnMount?: boolean
   onSubmit(body: ICreateSeasonFormValues, ids: number[]): void
 }
 
@@ -40,9 +41,9 @@ type TForm = Omit<IFormProps<ICreateSeasonFormValues, ICreateSeasonFormValues>, 
  * @param {boolean} props.isLoading - Loading state for the submit button
  * @param {Function} props.goBack - Handler for the cancel button
  * @param {Function} props.onSubmit - Form submission handler
- * @returns {JSX.Element} Season form with fields for name, dates, and divisions
+ * @returns {ReactElement} Season form with fields for name, dates, and divisions
  */
-export const SeasonForm = (props: TForm ) => {
+export const SeasonForm = (props: TForm ): ReactElement => {
   const {
     title,
     breadcrumbs,
@@ -52,7 +53,7 @@ export const SeasonForm = (props: TForm ) => {
     goBack,
     onSubmit
   } = props
-  const { showBracketPage, ids } = useSeasonFormContext()
+  const { showBracketPage, ids, getErrorMessage } = useSeasonFormContext()
 
   const handleSubmit = (values: ICreateSeasonFormValues) => {
     !!onSubmit && onSubmit(values, ids)
@@ -112,7 +113,7 @@ export const SeasonForm = (props: TForm ) => {
                       onChange={handleChange('name')}
                       placeholder="Enter season"
                       label="Name *"
-                      error={touched.name ? errors.name : ''}
+                      error={getErrorMessage(errors.name, touched.name)}
                       onBlur={handleBlur('name')}
                     />
 
@@ -121,7 +122,7 @@ export const SeasonForm = (props: TForm ) => {
                     <InputWrapper
                       label="Start Date *"
                       errorPosition="top"
-                      error={touched.startDate ? errors.startDate : ''}
+                      error={getErrorMessage(errors.startDate, touched.startDate)}
                     >
                       <DatePicker
                         format="MMMM D, YYYY"
@@ -138,7 +139,7 @@ export const SeasonForm = (props: TForm ) => {
                     <InputWrapper
                       label="End Date *"
                       errorPosition="top"
-                      error={touched.expectedEndDate ? errors.expectedEndDate : ''}
+                      error={getErrorMessage(errors.expectedEndDate, touched.expectedEndDate)}
                     >
                       <DatePicker
                         format="MMMM D, YYYY"

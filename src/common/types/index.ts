@@ -58,3 +58,11 @@ export type TBulkDeleteResponse ={
   total: number
   success: number
 }
+
+export type TScheduleAdditionalData = {
+  id: string
+  name: string
+  masterTeamName?: string
+  masterTeamId?: string
+  leagueName?: string
+}

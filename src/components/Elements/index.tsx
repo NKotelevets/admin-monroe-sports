@@ -20,10 +20,11 @@ export const MonroeLinkText = styled(Typography)<{ underline?: boolean, inline?:
 `
 
 export const PageContainer = styled(Flex)`
-  padding: 16px 24px;
-  overflow: scroll !important;
-  height: 100%;
-  flex-direction: column;
+    padding: 16px 24px;
+    overflow: scroll !important;
+    height: 100%;
+    flex-direction: column;
+    min-width: 600px;
 `
 
 export const PageContent = styled(Flex)`

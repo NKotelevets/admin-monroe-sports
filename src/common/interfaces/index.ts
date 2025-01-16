@@ -44,6 +44,7 @@ export interface IAdditionalPhone {
 }
 
 type TTablePaginationConfig = Exclude<GetProp<TableProps, 'pagination'>, boolean>
+
 export interface ITableParams<T> {
   pagination?: TTablePaginationConfig
   sortField?: SorterResult<T>['field']
@@ -55,7 +56,7 @@ export interface IDuplicate<T, Y> {
   idx: number
   new: T
   existing: Y
-  differences?: { [key: string]: unknown } | object
+  differences?: { [K in keyof T]?: string }
 }
 
 export interface IFormProps<Body, FormValues> {
@@ -84,6 +85,8 @@ export interface IExportInfoProps {
   }
   exportFileName?: string
   exportFileExtension?: string
+
+  onShowSchedule?(selectedIds: string[], start: string, end: string): void
 }
 
 export interface IGetScheduleRequestParams {

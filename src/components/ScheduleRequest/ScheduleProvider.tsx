@@ -1,5 +1,9 @@
 import { ReactElement, useEffect, useState } from 'react'
 import { ScheduleContext, TScheduleDates } from '@/components/ScheduleRequest/ScheduleContext.ts'
+import { TScheduleAdditionalData } from '@/common/types'
+import { useNavigate } from 'react-router-dom'
+import { IScheduleRequest } from '@/common/interfaces'
+import { compressData } from '@/utils'
 
 /**
  * Props interface for the ScheduleProvider component.
@@ -37,6 +41,8 @@ interface IScheduleProviderProps {
    * The api endpoint to export schedule requests
    */
   pathToExport: string
+
+  additionalData?: TScheduleAdditionalData[]
 }
 
 /**
@@ -59,8 +65,11 @@ export const ScheduleProvider = (props: IScheduleProviderProps): ReactElement =>
     children,
     initialIndex = 0,
     pathToNavigate,
-    pathToExport
+    pathToExport,
+    additionalData
   } = props
+
+  const navigate = useNavigate()
 
   const [selectedTabIndex, setSelectedTabIndex] = useState(initialIndex)
   const [dates, setDates] = useState<TScheduleDates>(null)
@@ -79,6 +88,28 @@ export const ScheduleProvider = (props: IScheduleProviderProps): ReactElement =>
     }
   }, [initialSelectedIds])
 
+  /**
+   * Removes a team from the selected list by its index.
+   *
+   * @param {number} index - The index of the team to remove.
+   * @param {IScheduleRequest[]} data - List of Schedule Requests to filter.
+   */
+  const removeTeamByIndex = (index: number, data: IScheduleRequest[]): void => {
+    if (additionalData) {
+      const newAdditionalData = additionalData.filter((d) => d.masterTeamId !== data[index].teamId)
+      const b64 = compressData(newAdditionalData)
+
+      // setSelectedIds(newAdditionalData.map(d => d.id) || null)
+      navigate(`${pathToNavigate}/${dates?.start},${dates?.end}/${b64}`)
+      return
+    }
+  }
+
+  const navigateWithData = (data?: TScheduleAdditionalData[], start?: string, end?: string) => {
+    const b64 = compressData(data || additionalData!)
+    navigate(`${pathToNavigate}/${start || dates?.start},${end || dates?.end}/${b64}`)
+  }
+
   return (
     <ScheduleContext.Provider value={{
       dates,
@@ -88,7 +119,10 @@ export const ScheduleProvider = (props: IScheduleProviderProps): ReactElement =>
       pathToExport,
       setSelectedTabIndex,
       setDates,
-      setSelectedIds
+      setSelectedIds,
+      additionalData,
+      removeTeamByIndex,
+      navigateWithData
     }}>
       {children}
     </ScheduleContext.Provider>

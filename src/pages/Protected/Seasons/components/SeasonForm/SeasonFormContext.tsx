@@ -11,6 +11,8 @@ export interface ISeasonFormContextProps {
   setShowBracketPage(value: boolean): void
 
   setIds: React.Dispatch<React.SetStateAction<number[]>>
+
+  getErrorMessage(error?: string, touched?: boolean): string
 }
 
 export const SeasonFormContext = createContext<ISeasonFormContextProps>({} as ISeasonFormContextProps)

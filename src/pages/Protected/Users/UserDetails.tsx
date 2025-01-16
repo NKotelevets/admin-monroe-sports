@@ -232,7 +232,9 @@ const UserDetails = () => {
             </Flex>
 
             <Flex className="mb-16">
-              <ViewText>Roles:</ViewText>
+              <Flex>
+                <ViewText>Roles:</ViewText>
+              </Flex>
 
               <Flex vertical>
                 {data.isSuperuser && <ViewText className="mg-b8 w-250">Master Admin</ViewText>}

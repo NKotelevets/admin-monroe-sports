@@ -127,9 +127,9 @@ export const MonroeTable = <T extends object, >(props: TMonroeTableProps<T>): Re
         loading={isLoading}
         rowKey={(record) => record.id}
         pagination={pagination ? tableParams.pagination : undefined}
-        rowClassName={(record) => showCreated && createdIds.find((id) => {return id === record.id })
-          ? 'highlighted-row' : ''
-        }
+        rowClassName={(record) => showCreated && createdIds.find((id) => {
+          return id === record.id || id === record.name
+        }) ? 'highlighted-row' : ''}
         scroll={{
           x: 'scroll'
         }}

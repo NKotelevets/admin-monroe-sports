@@ -81,6 +81,7 @@ interface ITableContextType<T> {
 
   showCreatedRecords: boolean
   setShowCreatedRecords(value: boolean): void
+  onShowSchedule?(ids: string[], start: string, end: string): void
 
 }
 

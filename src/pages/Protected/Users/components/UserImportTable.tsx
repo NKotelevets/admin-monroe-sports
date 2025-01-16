@@ -34,7 +34,7 @@ export const UserImportTable = (): ReactElement => {
   const {
     importCSVTableRecords: records,
     duplicates,
-    removeDuplicate
+    removeDuplicate,
   } = useUserSlice()
 
   const {
