@@ -168,8 +168,8 @@ export const SeasonForm = (props: TForm ): ReactElement => {
                       type="primary"
                       size="large"
                       loading={isLoading}
-                      disabled={!touched || !isValid}
-                      spinnerColor='#FFFFFF'
+                      disabled={!touched || !isValid || isLoading}
+                      // spinnerColor={}
                       onClick={handleSubmit as unknown as MouseEventHandler<HTMLElement>}
                     >
                       {title}

@@ -11,6 +11,9 @@ import { BEST_RECORD_WINS, POINTS } from '@/common/constants/league.ts'
 import { PATH_TO_SEASONS } from '@/common/constants/paths.ts'
 import { useNavigate } from 'react-router-dom'
 import { useCreateSeasonMutation } from '@/redux/seasons/seasons.api.ts'
+import { useNotification } from '@/hooks/useNotification.ts'
+
+const DEFAULT_ERROR_MESSAGE = `Something went wrong. Please, try again!`
 
 /**
  * CreateSeason component manages the creation of a new season,
@@ -21,6 +24,7 @@ import { useCreateSeasonMutation } from '@/redux/seasons/seasons.api.ts'
 const CreateSeason = (): ReactElement => {
   const navigate = useNavigate()
 
+  const { notify } = useNotification()
   const { selectedLeague } = useSeasonSlice()
   const {
     setIsCreateBracketPage,
@@ -93,9 +97,13 @@ const CreateSeason = (): ReactElement => {
 
     createSeason(createSeasonBody)
       .unwrap()
-      .then(() => navigate(PATH_TO_SEASONS))
-
-    setSelectedLeague(null)
+      .then(() => {
+        navigate(PATH_TO_SEASONS)
+        setSelectedLeague(null)
+      })
+      .catch(error => {
+        notify(error?.data?.error || error?.data?.details || DEFAULT_ERROR_MESSAGE, 'error')
+      })
   }
 
   /**
