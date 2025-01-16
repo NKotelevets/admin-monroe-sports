@@ -2,7 +2,7 @@ import styled from '@emotion/styled'
 import { MatchComponentProps } from '@g-loot/react-tournament-brackets/dist/src/types'
 import { DefaultOptionType } from 'antd/es/select'
 import { FormikTouched, getIn, useFormikContext } from 'formik'
-import { FC } from 'react'
+import { ReactElement } from 'react'
 import MonroeSelect from '@/components/MonroeSelect.tsx'
 
 import { IBracket, IMatch, IParticipant } from '@/common/interfaces/bracket.ts'
@@ -43,11 +43,11 @@ interface IMatchProps {
  * It handles participant updates, seed assignments, and subpool selections.
  *
  * @param {IMatchProps} props - The props for the Match component.
- * @returns {JSX.Element} The rendered Match component.
+ * @returns {ReactElement} The rendered Match component.
  */
-const Match: FC<IMatchProps> = (props) => {
+const Match = (props: IMatchProps): ReactElement => {
   const {
-    matchProps ,
+    matchProps,
     name,
     options,
     teamsOptions,
@@ -56,7 +56,7 @@ const Match: FC<IMatchProps> = (props) => {
   } = props
   const {
     touched,
-    setFieldTouched,
+    setFieldTouched
   } = useFormikContext<ICreateSeasonFormValues>()
 
   const match = matchProps.match
@@ -142,7 +142,7 @@ const Match: FC<IMatchProps> = (props) => {
                         handleChange(value, `${+participant.id}`, 'subDivision')
                       }}
                       value={participant.subDivision ? `${participant.subDivision}` : ''}
-                      is_error={!participant.subDivision  && currentTouched.subdivision ? 'true' : 'false'}
+                      is_error={!participant.subDivision && currentTouched.subdivision ? 'true' : 'false'}
                       onBlur={() => setFieldTouched(`${fieldName}.subDivision`, true)}
                     />
                     <MonroeSelectWrapper
@@ -155,7 +155,7 @@ const Match: FC<IMatchProps> = (props) => {
                         setFieldTouched(`${fieldName}.seed`, true)
                         handleChange(value, `${+participant.id}`, 'seed')
                       }}
-                      is_error={!participant.seed  && currentTouched.seed ? 'true' : 'false'}
+                      is_error={!participant.seed && currentTouched.seed ? 'true' : 'false'}
                       onBlur={() => setFieldTouched(`${fieldName}.seed`, true)}
                     />
                   </Flex>

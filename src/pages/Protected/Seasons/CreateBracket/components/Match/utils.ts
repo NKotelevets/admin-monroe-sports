@@ -25,7 +25,9 @@ export const updateCurrentParticipant = (participants: IParticipant[], id: strin
   const currentParticipant = participants.find((participant) => participant.id === id)
   if (!currentParticipant) return
 
-  // Create a copy of the participant with the updated value
+  if (name === 'subdivision')
+    return { ...currentParticipant, [name]: value, seed: null }
+
   return { ...currentParticipant, [name]: value }
 }
 
@@ -47,7 +49,13 @@ export const updateMatchParticipants = (
   const currentParticipant = match?.matchParticipants?.find((p) => p.id === id) || []
   if (!currentParticipant) return match?.matchParticipants || []
 
-  const updatedParticipant = { ...currentParticipant, [name]: name === 'seed' ? +value : value }
+  let updatedParticipant = { ...currentParticipant, [name]: name === 'seed' ? +value : value }
+
+  if (name === 'seed') {
+    updatedParticipant  = { ...currentParticipant, seed: +value }
+  } else {
+    updatedParticipant  = { ...currentParticipant, subDivision: value, seed: null }
+  }
 
   return match?.matchParticipants?.map((participant) =>
     participant.id === id

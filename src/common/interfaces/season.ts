@@ -67,7 +67,7 @@ export interface IGetSeasonsResponse {
   seasons: IFESeason[]
 }
 
-interface IImportSeasonSuccess {
+export interface IImportSeasonSuccess {
   id: string
   name: string
   description: string
