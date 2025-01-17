@@ -17,6 +17,7 @@ import {
 import Loader from '@/components/Loader.tsx'
 import { MonroeBlueText } from '@/components/Elements'
 import { useNotification } from '@/hooks/useNotification.ts'
+import { SeasonFormControls } from '@/pages/Protected/Seasons/components/SeasonForm/SeasonFormControls.tsx'
 
 
 const EditSeason = () => {
@@ -184,6 +185,7 @@ const EditSeason = () => {
       <Page
         title="Edit Season"
         breadcrumbs={BREAD_CRUMB_ITEMS}
+        controls={() => <SeasonFormControls />}
       >
         <SeasonForm
           title="Edit Season"
