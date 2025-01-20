@@ -198,7 +198,7 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                   <ProtectedPageSubtitle>Repeats</ProtectedPageSubtitle>
                 </div>
                 <MainContainer>
-                   <Tooltip title={!values.date ? 'Please, choose the event date before setting repeats' : undefined}>
+                   <Tooltip autoAdjustOverflow >
                      <Select
                        label="Repeats *"
                        placeholder="Select repeat"
@@ -208,6 +208,7 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                        onChange={value => setFieldValue('repeats', value)}
                        onBlur={handleBlur('repeats')}
                        error={touched.repeats ? errors.repeats : undefined}
+                       tooltipTitle={!values.date ? 'Please, choose the event date to edit this field' : undefined}
                      />
                    </Tooltip>
 
