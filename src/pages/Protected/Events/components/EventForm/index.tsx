@@ -145,8 +145,8 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                       onBlur={handleBlur('date')}
                       value={values.date ? dayjs(values.date, 'YYYY-MM-DD') : null}
                       onChange={(value: Dayjs) => {
-                        handleChange('date')(value.format('YYYY-MM-DD'))
-                        setFieldValue('day', value.format('dddd'))
+                        setFieldValue('date',value ? value.format('YYYY-MM-DD'): value)
+                        setFieldValue('day', value ? value.format('dddd') : value)
                       }}
                       status={touched.date && errors.date ? 'error' : undefined}
                     />
