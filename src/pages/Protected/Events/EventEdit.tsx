@@ -16,6 +16,7 @@ import { eventInitialValues, eventType } from '@/common/constants/events.ts'
 import dayjs from 'dayjs'
 import { IFELeagueTeam } from '@/common/interfaces/leagueTeams.ts'
 import { IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
+import { useEventConflicts } from '@/pages/Protected/Events/hooks/useEventConflicts.tsx'
 
 const EventEdit = () => {
   const params = useParams<{ id: string }>()
@@ -25,6 +26,7 @@ const EventEdit = () => {
 
   const { notify } = useNotification()
   const { handleErrors } = useFieldErrors<IEventForm>()
+  const { handleConflicts } = useEventConflicts()
   const { data, isLoading, isError } = useGetEventQuery(
     { id: params?.id || '' },
     { skip: !params?.id }
@@ -32,8 +34,9 @@ const EventEdit = () => {
 
   const goBack = () => navigate(PATH_TO_EVENTS)
 
-  const onSubmit = (body: IEventForm, { setErrors }: FormikHelpers<IEventForm>) => {
+  const onSubmit = (body: IEventForm, formikHelpers: FormikHelpers<IEventForm>) => {
     const subscribers = body.eventSubscribers
+    const { setErrors } = formikHelpers
 
     const payload = {
       id: params.id!,
@@ -61,12 +64,9 @@ const EventEdit = () => {
         navigate(PATH_TO_EVENTS)
       })
       .catch(handleErrors(setErrors))
-      .catch(reason => {
-        if (reason?.conflicts) { // this is temporary, since conflicts task isn't ready yet
-          notify('Conflicts with other events were found', 'error')
-        } else {
-          notify(DEFAULT_ERROR_MESSAGE, 'error')
-        }
+      .catch(handleConflicts(onSubmit, body, formikHelpers))
+      .catch(() => {
+        notify(DEFAULT_ERROR_MESSAGE, 'error')
       })
   }
 
@@ -86,7 +86,7 @@ const EventEdit = () => {
   }
 
   const team1 = getTeamId(data.type, data.homeLeagueTeam, data.homeTeam)
-  const team2 = getTeamId(data.type, data.homeLeagueTeam, data.homeTeam)
+  const team2 = getTeamId(data.type, data.awayLeagueTeam, data.awayTeam)
 
   const initialValues = {
     ...eventInitialValues,

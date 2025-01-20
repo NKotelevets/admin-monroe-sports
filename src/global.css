@@ -832,3 +832,37 @@ form .ant-divider {
 .email-tag-selector .ant-select-selector{
   padding: 4px 6px !important;
 }
+
+
+/* styles.css */
+.ant-modal-content {
+  border-radius: 2px !important;
+  padding: 32px 32px 24px !important
+}
+
+.ant-modal-content .ant-modal-confirm-btns {
+  margin-top: 24px !important;
+}
+
+.ant-modal-content .ant-btn {
+  border-radius: 2px !important;
+  outline-color: #fabcb7 !important;
+  border-color: #1A1657D9;
+  color: #1A1657D9;
+}
+
+.ant-modal-content .ant-btn-outlined.ant-btn:hover {
+  color: #BC261B !important; /* Hover state background */
+  border-color: #BC261B !important; /* Hover state border */
+}
+
+.ant-modal-content .ant-btn-solid.ant-btn {
+  color: #FFFFFF !important;
+  background-color: #bc261b !important;
+  border-color: #BC261B !important; /* Hover state border */
+}
+
+.ant-modal-content .ant-btn-solid.ant-btn:hover {
+  color: #FFFFFF !important;
+  background-color: #BC261B !important;
+}
