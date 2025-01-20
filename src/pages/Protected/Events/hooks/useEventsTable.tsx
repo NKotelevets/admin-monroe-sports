@@ -188,10 +188,10 @@ export const useEventsTable = () => {
       dataIndex: 'type',
       width: '140px',
       filters: [
-        { text: 'Game', value: '0' },
-        { text: 'Practice', value: '2' },
-        { text: 'Playoff', value: '3' },
-        { text: 'Other event', value: '5' }
+        { text: 'Game', value: eventType.GAME },
+        { text: 'Practice', value: eventType.PRACTICE },
+        { text: 'Playoff', value: eventType.PLAYOFF },
+        { text: 'Other event', value: eventType.OTHER }
       ],
       filterIcon,
       render: (_, record) => <EventTypeTag type={record.type} />
