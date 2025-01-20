@@ -17,6 +17,7 @@ export interface IDropdownProps extends SelectProps {
   loading?: boolean
   helpText?: string
   debounceSearch?: boolean
+  notFoundMessage?: string
 
   buttonAction?(): void
 
@@ -41,6 +42,7 @@ const Select = (props: IDropdownProps) => {
     onSearch,
     helpText,
     debounceSearch = true,
+    notFoundMessage = `No options available.`,
     ...rest
   } = props
 
@@ -102,7 +104,12 @@ const Select = (props: IDropdownProps) => {
           placeholder="Select master team"
           dropdownRender={renderCustomItems}
           suffixIcon={<div className="ant-menu-submenu-arrow"></div>}
-          notFoundContent={<NotFoundContentList hidden={loading} message={`There's no match. Try a different name or create a league/tourn first.`} />}
+          notFoundContent={(
+            <NotFoundContentList
+              hidden={loading}
+              message={notFoundMessage}
+            />
+          )}
           {...rest}
         />
       </InputWrapper>

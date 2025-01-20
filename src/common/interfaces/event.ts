@@ -73,4 +73,7 @@ export interface IEventForm {
   season2Name?: string
   league1Name?: string
   league2Name?: string
+  division?: string
+  bracket?: number
+  game?: string
 }

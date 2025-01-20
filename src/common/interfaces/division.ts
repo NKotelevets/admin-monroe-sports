@@ -1,5 +1,3 @@
-import { IMatch } from '@/common/interfaces/bracket'
-
 interface IBEMatchParticipant {
   created_at?: string
   updated_at?: string
@@ -48,14 +46,32 @@ export interface IBESubdivision {
   changed: boolean
 }
 
-interface IFEBracket {
+export interface IFEMatch {
+  id?: string
+  bottomTeam: string
+  topTeam: string
+  bracket?: number
+  createdAt?: string
+  updatedAt?: string
+  gameNumber: number | string | null
+  matchIntegerId: number
+  isNotFirstRound: boolean
+  stage?: string | null
+  state?: null
+  startTime?: string | null
+  tournamentRoundText: string
+  nextMatchId: number | null
+  matchParticipants: IBEMatchParticipant[]
+}
+
+export interface IFEBracket {
   createdAt: string
   name: string
   numberOfTeams: number
   published: boolean
   subDivision: string[]
   updatedAt: string
-  matches: IMatch[]
+  matches: IFEMatch[]
   id?: number
 }
 

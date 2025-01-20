@@ -307,3 +307,32 @@ export const isAtLeast16YearsOld = (date: string): boolean  => {
 
   return !inputDate.isAfter(sixteenYearsAgo, 'day')
 }
+
+/**
+ * Removes duplicate objects from an array based on their `id` property.
+ *
+ * @template T - The type of the objects in the array, extending `{ id: string }`.
+ * @param {T[]} items - An array of objects to filter for uniqueness.
+ * @returns {T[]} A new array containing only unique objects, keeping the last occurrence of each `id`.
+ *
+ * @example
+ * const data = [
+ *   { id: "1", name: "Alice" },
+ *   { id: "2", name: "Bob" },
+ *   { id: "1", name: "Alice Duplicate" }
+ * ]
+ * const unique = makeUniqueById(data)
+ * console.log(unique)
+ * // Output:
+ * // [
+ * //   { id: "1", name: "Alice Duplicate" },
+ * //   { id: "2", name: "Bob" }
+ * // ]
+ */
+export function makeUniqueById<T extends { id: string }>(items: T[]): T[] {
+  const uniqueMap = new Map<string, T>()
+  for (const item of items) {
+    uniqueMap.set(item.id, item) // Overwrites duplicates by id
+  }
+  return Array.from(uniqueMap.values())
+}

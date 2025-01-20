@@ -132,23 +132,23 @@ export const useEventsTable = () => {
   }
 
   const columns: TColumns<IEvent> = [
-    // {
-    //   title: 'Day',
-    //   dataIndex: 'day',
-    //   width: '88px',
-    //   fixed: 'left',
-    //   filters: [
-    //     { text: 'Mon', value: 'monday' },
-    //     { text: 'Tue', value: 'tuesday' },
-    //     { text: 'Wed', value: 'wednesday' },
-    //     { text: 'Thu', value: 'thursday' },
-    //     { text: 'Fri', value: 'friday' },
-    //     { text: 'Sat', value: 'saturday' },
-    //     { text: 'Sun', value: 'sunday' }
-    //   ],
-    //   filterIcon,
-    //   render: (_, record) => record.day ? record.day.substring(0, 3) : dayjs(record.date, 'YYYY-MM-DD').format('ddd')
-    // },
+    {
+      title: 'Day',
+      dataIndex: 'day',
+      width: '88px',
+      fixed: 'left',
+      filters: [
+        { text: 'Mon', value: 'monday' },
+        { text: 'Tue', value: 'tuesday' },
+        { text: 'Wed', value: 'wednesday' },
+        { text: 'Thu', value: 'thursday' },
+        { text: 'Fri', value: 'friday' },
+        { text: 'Sat', value: 'saturday' },
+        { text: 'Sun', value: 'sunday' }
+      ],
+      filterIcon,
+      render: (_, record) => record.day ? record.day.substring(0, 3) : dayjs(record.date, 'YYYY-MM-DD').format('ddd')
+    },
     {
       title: 'Date',
       dataIndex: 'date',

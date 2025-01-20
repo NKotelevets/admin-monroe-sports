@@ -156,12 +156,12 @@ const EditSeason = () => {
             matchParticipants: match.matchParticipants?.map((p) => {
               return ({
                 id: p.id || '',
-                isEmpty: p.isEmpty,
-                subDivision: p.subDivision,
+                isEmpty: p.is_empty,
+                subDivision: p.sub_division,
                 seed: p.seed
               })
             }) || [],
-            primaryId: match.primaryId
+            primaryId: match.id
           }))
         })) || [],
         subDivisions: division.subDivision?.map((subdivision) => ({

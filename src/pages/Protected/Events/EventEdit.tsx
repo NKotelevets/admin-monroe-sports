@@ -77,7 +77,7 @@ const EventEdit = () => {
     { title: <MonroeBlueText>Event</MonroeBlueText> }
   ]
 
-  const getTeamId = (type: number, leagueTeam?: IFELeagueTeam, masterTeam?: IFEMasterTeam) => {
+  const getTeam = (type: number, leagueTeam?: IFELeagueTeam, masterTeam?: IFEMasterTeam) => {
     if (type === eventType.GAME || type === eventType.PLAYOFF) {
       return leagueTeam || { id: '', name: '' } as IFELeagueTeam
     }
@@ -85,8 +85,8 @@ const EventEdit = () => {
     return masterTeam || { id: '', name: '' } as IFEMasterTeam
   }
 
-  const team1 = getTeamId(data.type, data.homeLeagueTeam, data.homeTeam)
-  const team2 = getTeamId(data.type, data.homeLeagueTeam, data.homeTeam)
+  const team1 = getTeam(data.type, data.homeLeagueTeam, data.homeTeam)
+  const team2 = getTeam(data.type, data.awayLeagueTeam, data.awayTeam)
 
   const initialValues = {
     ...eventInitialValues,

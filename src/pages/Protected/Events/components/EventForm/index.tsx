@@ -33,6 +33,9 @@ import { useEventFormContext } from '@/pages/Protected/Events/hooks/useEventForm
 import { usePageContext } from '@/layouts/Page/context.ts'
 import { PATH_TO_EVENTS } from '@/common/constants/paths.ts'
 import { RelatedForms } from '@/pages/Protected/Events/components/EventForm/RelatedForms.tsx'
+import { PlayoffAdditionalFields } from '@/pages/Protected/Events/components/EventForm/PlayoffAdditionalFields.tsx'
+import { PlayoffForm } from '@/pages/Protected/Events/components/EventForm/PlayoffForm.tsx'
+import styled from '@emotion/styled'
 
 const editEventTypeOptions = eventTypeOptions
 const createEventTypeOptions = eventTypeOptions.slice(0, -1)
@@ -83,6 +86,8 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
           isValid,
           dirty
         }) => {
+        const isPlayoff = values.eventType === eventType.PLAYOFF
+        const showPlayoffType = initialValues && isPlayoff
 
         if (isAddingRelated) {
           return <RelatedForms />
@@ -100,7 +105,8 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     label="Type *"
                     placeholder="Select type"
                     value={values.eventType}
-                    options={initialValues ? editEventTypeOptions : createEventTypeOptions}
+                    disabled={isPlayoff}
+                    options={showPlayoffType ? editEventTypeOptions : createEventTypeOptions}
                     onChange={value => {
                       setFieldValue('eventType', value)
                       setFieldValue('team1Id', null)
@@ -109,6 +115,8 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     onBlur={handleBlur('eventType')}
                     error={touched.eventType ? errors.eventType : undefined}
                   />
+
+                  {isPlayoff && <PlayoffAdditionalFields />}
 
                   <InputWrapper
                     label="Event Description"
@@ -127,7 +135,7 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
 
               <Line />
 
-              <Flex>
+              <Section>
                 <div className="f-40">
                   <ProtectedPageSubtitle>Day & Time</ProtectedPageSubtitle>
                 </div>
@@ -180,7 +188,8 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                   <Select
                     label="Duration *"
                     placeholder="Select type"
-                    value={values.duration}
+                    disabled={isPlayoff}
+                    value={isPlayoff ? 60 : values.duration}
                     options={eventDurationOptions}
                     onChange={value => setFieldValue('duration', value)}
                     onBlur={handleBlur('duration')}
@@ -188,11 +197,11 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                   />
 
                 </MainContainer>
-              </Flex>
+              </Section>
 
               <Line />
 
-              <Flex>
+              <Section>
                 <div className="f-40">
                   <ProtectedPageSubtitle>Repeats</ProtectedPageSubtitle>
                 </div>
@@ -202,7 +211,11 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     placeholder="Select repeat"
                     value={values.repeats}
                     options={eventRepeatOptions}
-                    onChange={value => setFieldValue('repeats', value)}
+                    onChange={value => {
+                      setFieldValue('repeats', value)
+                      setFieldValue('endRepeat', undefined)
+                      setFieldTouched('endRepeat', false)
+                    }}
                     onBlur={handleBlur('repeats')}
                     error={touched.repeats ? errors.repeats : undefined}
                   />
@@ -224,11 +237,11 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     />
                   </InputWrapper>
                 </MainContainer>
-              </Flex>
+              </Section>
 
               <Line />
 
-              <Flex>
+              <Section>
                 <div className="f-40">
                   <ProtectedPageSubtitle>Location</ProtectedPageSubtitle>
                 </div>
@@ -253,23 +266,24 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     error={touched.subResources ? errors.subResources : undefined}
                   />
                 </MainContainer>
-              </Flex>
+              </Section>
 
               <Line />
 
-              <Flex>
+              <Section>
                 <div className="f-40">
                   <ProtectedPageSubtitle>Team(s)</ProtectedPageSubtitle>
                 </div>
                 <MainContainer>
                   {(values.eventType === eventType.PRACTICE || values.eventType === eventType.OTHER) && <PracticeForm />}
-                  {(values.eventType === eventType.GAME || values.eventType === eventType.PLAYOFF) && <GameForm />}
+                  {(values.eventType === eventType.GAME) && <GameForm />}
+                  {(values.eventType === eventType.PLAYOFF) && <PlayoffForm />}
                 </MainContainer>
-              </Flex>
+              </Section>
 
               <Line />
 
-              <Flex>
+              <Section>
                 <div className="f-40">
                   <ProtectedPageSubtitle>Event subscribers</ProtectedPageSubtitle>
                 </div>
@@ -284,11 +298,11 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     onBlur={() => setFieldTouched('eventSubscribers')}
                   />
                 </MainContainer>
-              </Flex>
+              </Section>
 
               <Line />
 
-              <Flex>
+              <Section>
                 <div className="f-40" />
                 <Flex>
                   <CancelButton type="default" onClick={goBack}>
@@ -304,7 +318,7 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     onClick={handleSubmit}
                   />
                 </Flex>
-              </Flex>
+              </Section>
             </PageContent>
           </Form>
         )
@@ -312,3 +326,8 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
     </Formik>
   )
 }
+
+// Styled Components
+const Section = styled(Flex)`
+    margin-top: 16px
+`
