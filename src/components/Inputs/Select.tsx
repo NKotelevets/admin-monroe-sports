@@ -8,6 +8,8 @@ import { LoadingOutlined, PlusOutlined } from '@ant-design/icons'
 import useDebounceEffect from '@/hooks/useDebounceEffect.ts'
 import { NotFoundContentList } from '@/components/NotFoundContentList.tsx'
 import InputWrapper from '@/components/Inputs/InputWrapper.tsx'
+import Tooltip from 'antd/es/tooltip'
+
 export interface IDropdownProps extends SelectProps {
   label: string | ReactElement
   buttonText?: string
@@ -16,6 +18,7 @@ export interface IDropdownProps extends SelectProps {
   isLast?: boolean
   loading?: boolean
   helpText?: string
+  tooltipTitle?: string
   debounceSearch?: boolean
 
   buttonAction?(): void
@@ -41,6 +44,7 @@ const Select = (props: IDropdownProps) => {
     onSearch,
     helpText,
     debounceSearch = true,
+    tooltipTitle,
     ...rest
   } = props
 
@@ -87,24 +91,30 @@ const Select = (props: IDropdownProps) => {
   }, [searchValue])
 
   return (
-    <Content vertical isLast={isLast} className='form'>
+    <Content vertical isLast={isLast} className="form">
       <InputWrapper
         label={labelComponent}
         helpText={helpText}
         error={error}
         errorPosition={errorPosition}
       >
-        <SelectStyled
-          virtual={false} // needed to use custom scroll bars, but might impact performance
-          status={fieldStatus}
-          onSearch={debounceSearch ? onSearching : onSearch}
-          onPopupScroll={handleScroll}
-          placeholder="Select master team"
-          dropdownRender={renderCustomItems}
-          suffixIcon={<div className="ant-menu-submenu-arrow"></div>}
-          notFoundContent={<NotFoundContentList hidden={loading} message={`There's no match. Try a different name or create a league/tourn first.`} />}
-          {...rest}
-        />
+        <Tooltip title={tooltipTitle}>
+          <SelectStyled
+            virtual={false} // needed to use custom scroll bars, but might impact performance
+            status={fieldStatus}
+            onSearch={debounceSearch ? onSearching : onSearch}
+            onPopupScroll={handleScroll}
+            placeholder="Select master team"
+            dropdownRender={renderCustomItems}
+            suffixIcon={<div className="ant-menu-submenu-arrow"></div>}
+            notFoundContent={(
+              <NotFoundContentList
+                hidden={loading}
+                message={`There's no match. Try a different name.`} />
+            )}
+            {...rest}
+          />
+        </Tooltip>
       </InputWrapper>
     </Content>
   )
@@ -125,13 +135,16 @@ const ButtonItem = styled(Button)`
     justify-content: flex-start;
     color: ${colors.secondaryText};
     padding: 4px 12px;
+
     &:hover {
         background-color: transparent !important;
     }
+
     &:hover > span {
         opacity: 0.8
     }
-    &>span {
+
+    & > span {
         color: ${colors.secondary}
     }
 `

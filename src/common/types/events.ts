@@ -75,3 +75,7 @@ export type TEventEditingPayload = {
   team_2_id?: string
   duration?: number
 }
+
+export type TEventConflictError = {
+  conflicts?: { title: string, details: string }[]
+}
