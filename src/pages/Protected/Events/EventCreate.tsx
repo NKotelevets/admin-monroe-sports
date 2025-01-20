@@ -41,7 +41,7 @@ const EventCreate = () => {
       time: body.time,
       location_id: body.locationId,
       court_or_field: body.courtOrField,
-      sub_resource: body.subResources,
+      sub_resources: body.subResources,
       repeats: body.repeats,
       endRepeat: body.endRepeat,
       ignore_conflicts: body.ignoreConflicts,
