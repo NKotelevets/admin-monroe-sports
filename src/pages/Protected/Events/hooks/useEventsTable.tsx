@@ -17,11 +17,12 @@ import { EventTypeTag } from '@/pages/Protected/Events/components/EventTypeTag.t
 import { Typography } from 'antd'
 import FilterFilled from '@ant-design/icons/lib/icons/FilterFilled'
 import { getIconColor } from '@/utils'
-import { DateFilterDropdown } from '@/components/Table/DateFilterDropdown.tsx'
 import { eventRepeatName, eventRepeatOptions, eventType } from '@/common/constants/events.ts'
 import { IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
 import { IFELeagueTeam } from '@/common/interfaces/leagueTeams.ts'
 import { IFESeason } from '@/common/interfaces/season.ts'
+import { DateRangeFilterDropdown } from '@/components/Table/DateRangeFilterDropdown.tsx'
+import MonroeFilter from '@/components/Table/MonroeFilter.tsx'
 
 const EMPTY_VALUE = `---`
 
@@ -132,23 +133,24 @@ export const useEventsTable = () => {
   }
 
   const columns: TColumns<IEvent> = [
-    // {
-    //   title: 'Day',
-    //   dataIndex: 'day',
-    //   width: '88px',
-    //   fixed: 'left',
-    //   filters: [
-    //     { text: 'Mon', value: 'monday' },
-    //     { text: 'Tue', value: 'tuesday' },
-    //     { text: 'Wed', value: 'wednesday' },
-    //     { text: 'Thu', value: 'thursday' },
-    //     { text: 'Fri', value: 'friday' },
-    //     { text: 'Sat', value: 'saturday' },
-    //     { text: 'Sun', value: 'sunday' }
-    //   ],
-    //   filterIcon,
-    //   render: (_, record) => record.day ? record.day.substring(0, 3) : dayjs(record.date, 'YYYY-MM-DD').format('ddd')
-    // },
+    {
+      title: 'Day',
+      dataIndex: 'day',
+      width: '88px',
+      fixed: 'left',
+      filters: [
+        { text: 'Mon', value: 'Monday' },
+        { text: 'Tue', value: 'Tuesday' },
+        { text: 'Wed', value: 'Wednesday' },
+        { text: 'Thu', value: 'Thursday' },
+        { text: 'Fri', value: 'Friday' },
+        { text: 'Sat', value: 'Saturday' },
+        { text: 'Sun', value: 'Sunday' }
+      ],
+      filterDropdown: props => <MonroeFilter {...props} />,
+      filterIcon,
+      render: (_, record) => record.day ? record.day.substring(0, 3) : dayjs(record.date, 'YYYY-MM-DD').format('ddd')
+    },
     {
       title: 'Date',
       dataIndex: 'date',
@@ -156,7 +158,7 @@ export const useEventsTable = () => {
       width: '144px',
       fixed: 'left',
       filterIcon,
-      filterDropdown: (props) => <DateFilterDropdown {...props} />,
+      filterDropdown: (props) => <DateRangeFilterDropdown {...props} />,
       onFilter: onFilterDate,
       render: (_, record) => (
         <Typography.Link href={`${PATH_TO_EVENTS}/${record.id}`}>
@@ -165,7 +167,7 @@ export const useEventsTable = () => {
       )
     },
     {
-      title: 'Start time',
+      title: 'Start Time',
       dataIndex: 'time',
       fixed: 'left',
       sorter: true,
@@ -177,22 +179,23 @@ export const useEventsTable = () => {
       )
     },
     {
-      title: 'End time',
+      title: 'End Time',
       dataIndex: 'time',
       sorter: true,
       width: '130px',
       render: (_, record) => dayjs(record.time, 'HH:mm:ss').add(record.duration, 'minute').format('hh:mm A')
     },
     {
-      title: 'Event type',
+      title: 'Event Type',
       dataIndex: 'type',
       width: '140px',
       filters: [
-        { text: 'Game', value: '0' },
-        { text: 'Practice', value: '2' },
-        { text: 'Playoff', value: '3' },
-        { text: 'Other event', value: '5' }
+        { text: 'Game', value: eventType.GAME },
+        { text: 'Practice', value: eventType.PRACTICE },
+        { text: 'Playoff', value: eventType.PLAYOFF },
+        { text: 'Other event', value: eventType.OTHER }
       ],
+      filterDropdown: props => <MonroeFilter {...props} />,
       filterIcon,
       render: (_, record) => <EventTypeTag type={record.type} />
     },
@@ -201,6 +204,7 @@ export const useEventsTable = () => {
       dataIndex: 'repeats',
       width: '140px',
       filters: eventRepeatOptions.map(option => ({ text: option.label, value: option.value })),
+      filterDropdown: props => <MonroeFilter {...props} />,
       filterIcon,
       render: (_, record) => eventRepeatName[parseInt(record.repeats || '0')]
     },

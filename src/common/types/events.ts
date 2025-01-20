@@ -52,7 +52,7 @@ export type TEventCreationPayload = {
   time: string
   location_id: string
   court_or_field: string
-  sub_resource: string
+  sub_resources: string
   ignore_conflicts: boolean
   team_1_id: string
   team_2_id: string
