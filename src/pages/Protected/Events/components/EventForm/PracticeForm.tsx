@@ -69,7 +69,7 @@ const MasterTeamSelect = (props: { fieldName: 'team1Id' | 'team2Id' }) => {
     const mt = masterTeamItems.find(mt => mt.id === values[fieldName] as string)
 
     if (!mt) {
-      getMasterTeam({id: values[fieldName]})
+      getMasterTeam({id: values[fieldName] as string})
       return
     }
 

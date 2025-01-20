@@ -78,7 +78,7 @@ const LeagueTeamSelect = (props: { fieldName: 'team1Id' | 'team2Id' }) => {
     const mt = leagueTeamItems.find(mt => mt.id === values[fieldName] as string)
 
     if (!mt && leagueTeamAdded === undefined) {
-      getLeagueTeam({ id: values[fieldName] })
+       getLeagueTeam({ id: values[fieldName] as string })
       return
     }
 

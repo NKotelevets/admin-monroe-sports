@@ -118,7 +118,7 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                   >
                     <TextArea
                       onChange={handleChange('eventDescription')}
-                      placeholder="Event description"
+                      placeholder="Enter description"
                       onBlur={handleBlur('eventDescription')}
                       value={values.eventDescription}
                     ></TextArea>
@@ -180,7 +180,7 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
 
                   <Select
                     label="Duration *"
-                    placeholder="Select type"
+                    placeholder="Select duration"
                     value={values.duration}
                     options={eventDurationOptions}
                     onChange={value => setFieldValue('duration', value)}
@@ -245,6 +245,7 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                   <TextInput
                     name="courtOrField"
                     label="Court / Field"
+                    placeholder='Enter court / field'
                     value={values.courtOrField}
                     onChange={handleChange('courtOrField')}
                     onBlur={handleBlur('courtOrField')}
@@ -255,6 +256,7 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     name="subResources"
                     label="Sub Resource"
                     value={values.subResources}
+                    placeholder='Enter sub resource'
                     onChange={handleChange('subResources')}
                     onBlur={handleBlur('subResources')}
                     error={touched.subResources ? errors.subResources : undefined}
