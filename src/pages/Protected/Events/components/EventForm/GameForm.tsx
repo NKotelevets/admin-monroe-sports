@@ -99,7 +99,7 @@ const LeagueTeamSelect = (props: { fieldName: 'team1Id' | 'team2Id' }) => {
         disabled={isDisabled}
         onLoadMore={loadMore}
         placeholder="Select team"
-        buttonText="Add league team"
+        buttonText="Add League Team"
         loading={isLoading || isFetching}
         value={values[fieldName]}
         buttonAction={() => {

@@ -82,7 +82,7 @@ const MasterTeamSelect = (props: { fieldName: 'team1Id' | 'team2Id' }) => {
         label="Team Name *"
         onLoadMore={loadMore}
         placeholder="Select team"
-        buttonText="Add master team"
+        buttonText="Add Master Team"
         loading={isLoading || isFetching}
         value={values[fieldName]}
         buttonAction={() => {
