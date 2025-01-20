@@ -106,7 +106,7 @@ export const eventsApi = createApi({
         }
 
         return ({
-          url: `games/admin-events/${body.id}`,
+          url: `games/admin-events/${body.id}/update-event`,
           method: 'PATCH',
           body
         })
