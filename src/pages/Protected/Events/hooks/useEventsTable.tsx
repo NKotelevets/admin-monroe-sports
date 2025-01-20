@@ -17,11 +17,11 @@ import { EventTypeTag } from '@/pages/Protected/Events/components/EventTypeTag.t
 import { Typography } from 'antd'
 import FilterFilled from '@ant-design/icons/lib/icons/FilterFilled'
 import { getIconColor } from '@/utils'
-import { DateFilterDropdown } from '@/components/Table/DateFilterDropdown.tsx'
 import { eventRepeatName, eventRepeatOptions, eventType } from '@/common/constants/events.ts'
 import { IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
 import { IFELeagueTeam } from '@/common/interfaces/leagueTeams.ts'
 import { IFESeason } from '@/common/interfaces/season.ts'
+import { DateRangeFilterDropdown } from '@/components/Table/DateRangeFilterDropdown.tsx'
 
 const EMPTY_VALUE = `---`
 
@@ -156,7 +156,7 @@ export const useEventsTable = () => {
       width: '144px',
       fixed: 'left',
       filterIcon,
-      filterDropdown: (props) => <DateFilterDropdown {...props} />,
+      filterDropdown: (props) => <DateRangeFilterDropdown {...props} />,
       onFilter: onFilterDate,
       render: (_, record) => (
         <Typography.Link href={`${PATH_TO_EVENTS}/${record.id}`}>
