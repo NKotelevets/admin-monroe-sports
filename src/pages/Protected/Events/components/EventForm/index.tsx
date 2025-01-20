@@ -33,6 +33,7 @@ import { useEventFormContext } from '@/pages/Protected/Events/hooks/useEventForm
 import { usePageContext } from '@/layouts/Page/context.ts'
 import { PATH_TO_EVENTS } from '@/common/constants/paths.ts'
 import { RelatedForms } from '@/pages/Protected/Events/components/EventForm/RelatedForms.tsx'
+import Tooltip from 'antd/es/tooltip'
 
 const editEventTypeOptions = eventTypeOptions
 const createEventTypeOptions = eventTypeOptions.slice(0, -1)
@@ -197,15 +198,18 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                   <ProtectedPageSubtitle>Repeats</ProtectedPageSubtitle>
                 </div>
                 <MainContainer>
-                  <Select
-                    label="Repeats *"
-                    placeholder="Select repeat"
-                    value={values.repeats}
-                    options={eventRepeatOptions}
-                    onChange={value => setFieldValue('repeats', value)}
-                    onBlur={handleBlur('repeats')}
-                    error={touched.repeats ? errors.repeats : undefined}
-                  />
+                   <Tooltip title={!values.date ? 'Please, choose the event date before setting repeats' : undefined}>
+                     <Select
+                       label="Repeats *"
+                       placeholder="Select repeat"
+                       value={values.repeats}
+                       disabled={!values.date}
+                       options={eventRepeatOptions}
+                       onChange={value => setFieldValue('repeats', value)}
+                       onBlur={handleBlur('repeats')}
+                       error={touched.repeats ? errors.repeats : undefined}
+                     />
+                   </Tooltip>
 
                   <InputWrapper
                     label="End Repeat *"
