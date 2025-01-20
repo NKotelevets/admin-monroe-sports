@@ -165,7 +165,7 @@ export const useEventsTable = () => {
       )
     },
     {
-      title: 'Start time',
+      title: 'Start Time',
       dataIndex: 'time',
       fixed: 'left',
       sorter: true,
@@ -177,14 +177,14 @@ export const useEventsTable = () => {
       )
     },
     {
-      title: 'End time',
+      title: 'End Time',
       dataIndex: 'time',
       sorter: true,
       width: '130px',
       render: (_, record) => dayjs(record.time, 'HH:mm:ss').add(record.duration, 'minute').format('hh:mm A')
     },
     {
-      title: 'Event type',
+      title: 'Event Type',
       dataIndex: 'type',
       width: '140px',
       filters: [
