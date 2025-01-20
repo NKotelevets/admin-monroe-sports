@@ -114,6 +114,7 @@ export const EventsTable = () => {
       limit: newLimit,
       ordering: getTableSortField<IEvent>(sorter, fieldMap),
       date: filters?.['date'] ? filters?.['date']?.join(',') :  undefined,
+      day: (filters?.['day']?.[0] as string) ?? undefined,
       leagueName: (filters?.['leagueName']?.[0] as string) ?? undefined,
       subResource: (filters?.['subResource']?.[0] as string) ?? undefined,
       team1name: (filters?.['homeTeam']?.[0] as string) ?? undefined,
