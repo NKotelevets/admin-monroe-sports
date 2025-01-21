@@ -40,7 +40,7 @@ const EventCreate = () => {
       court_or_field: body.courtOrField,
       sub_resource: body.subResources,
       repeats: body.repeats,
-      endRepeat: body.endRepeat,
+      repeatEndDate: body.endRepeat,
       ignore_conflicts: body.ignoreConflicts,
       team_1_id: body.team1Id,
       team_2_id: body.team2Id || null,
