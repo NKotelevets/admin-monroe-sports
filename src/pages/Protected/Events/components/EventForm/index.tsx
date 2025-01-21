@@ -169,10 +169,10 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                       placeholder="Select time"
                       value={values.time ? dayjs(values.time, 'HH:mm:ss') : null}
                       onChange={(value: Dayjs) => {
-                        setFieldValue('time', value.format('HH:mm:00'))
+                        setFieldValue('time', value ? value.format('HH:mm:00') : value)
                       }}
                       onOk={(value: Dayjs) => {
-                        setFieldValue('time', value.format('HH:mm:00'))
+                        setFieldValue('time', value ? value.format('HH:mm:00') : value)
                       }}
                       status={touched.time && errors.time ? 'error' : undefined}
                     />
