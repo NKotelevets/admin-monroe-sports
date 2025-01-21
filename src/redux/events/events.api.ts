@@ -13,6 +13,7 @@ import {
 import { IPaginationResponse } from '@/common/interfaces/api.ts'
 import { IEvent } from '@/common/interfaces/event.ts'
 import { eventType } from '@/common/constants/events.ts'
+import { stringify } from 'qs'
 
 const EVENTS_TAG = 'EVENTS'
 
@@ -30,8 +31,7 @@ export const eventsApi = createApi({
      */
     listEvents: builder.query<IPaginationResponse<IEvent[]>, TListEventRequestParams>({
       query: (params) => ({
-        url: 'games/admin-events',
-        params: transformKeysToSnakeCase(params)
+        url: `games/admin-events?${stringify(transformKeysToSnakeCase(params), { arrayFormat: 'repeat' })}`
       }),
       transformResponse: (response: TPaginatedEvents) => ({ ...transformKeysToCamelCase(response) }),
       providesTags: [EVENTS_TAG]

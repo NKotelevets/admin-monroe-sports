@@ -2,7 +2,7 @@ import { AccordionForm, TAccordionFormProps } from '@/components/AccordionForm'
 import TextInput from '@/components/Inputs/TextInput'
 import { useFormikContext } from 'formik'
 import { IEventForm } from '@/common/interfaces/event.ts'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Button } from '@/components/Button'
 import Select from '@/components/Inputs/Select.tsx'
 import { useMasterTeamPaginated } from '@/pages/Protected/MasterTeams/hooks/useMasterTeamPaginated.ts'
@@ -76,6 +76,16 @@ const MasterTeamSelect = (props: { fieldName: 'team1Id' | 'team2Id' }) => {
     setCurrentMT(mt)
   }, [masterTeamItems, values[fieldName], fieldName])
 
+  const teamOptions = useMemo(() => {
+    const list = masterTeamItems?.map(mt => ({ label: mt.name, value: mt.id }))
+
+    if (!isTeam1) {
+      return list.filter(mt => mt.value !== values['team1Id'])
+    }
+
+    return list.filter(mt => mt.value !== values['team2Id'])
+  }, [masterTeamItems, values['team1Id'], values['team2Id'], isTeam1])
+
   return (
     <>
       <Select
@@ -89,7 +99,7 @@ const MasterTeamSelect = (props: { fieldName: 'team1Id' | 'team2Id' }) => {
           setAddingMasterTeam(true)
           setTargetField(fieldName)
         }}
-        options={masterTeamItems?.map(mt => ({ label: mt.name, value: mt.id })) || []}
+        options={teamOptions || []}
         onChange={(value) => setFieldValue(fieldName, value)}
         error={touched[fieldName] ? errors[fieldName] : undefined}
         onBlur={() => setFieldTouched(fieldName)}

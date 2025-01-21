@@ -12,7 +12,7 @@ import { useFieldErrors } from '@/hooks/useFieldErrors.ts'
 import { FormikHelpers } from 'formik'
 import { DEFAULT_ERROR_MESSAGE } from '@/common/constants'
 import Loader from '@/components/Loader.tsx'
-import { eventInitialValues, eventType } from '@/common/constants/events.ts'
+import { eventInitialValues, eventType, repeatType } from '@/common/constants/events.ts'
 import dayjs from 'dayjs'
 import { IFELeagueTeam } from '@/common/interfaces/leagueTeams.ts'
 import { IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
@@ -97,7 +97,7 @@ const EventEdit = () => {
     day: data.day || dayjs(data.date, 'YYYY-MM-DD').format('dddd'),
     time: data.time,
     duration: data.duration || 30,
-    repeats: data.repeats ? parseInt(data.repeats) : 0,
+    repeats: data.repeats || repeatType.NO_REPEAT,
 
     locationId: data.location?.id || '',
     courtOrField: data.courtOrField,
