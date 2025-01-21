@@ -62,6 +62,15 @@ export const SingleEliminationBracketForm = (props: TSingleEliminationBracketFor
 
   if (!bracketData?.matches) return <></>
 
+  const matches = bracketData.matches.map((match, index) => {
+    return ({
+      ...match,
+      index,
+      primaryId: match.matchIntegerId,
+      participants: match.matchParticipants?.map((pt, idx) => ({ ...pt, index: idx, primaryId: idx })) || []
+    })
+  })
+
   return (
     <Wrapper vertical>
       <Flex className="mg-b24 w-330" vertical>
@@ -71,13 +80,7 @@ export const SingleEliminationBracketForm = (props: TSingleEliminationBracketFor
       <BracketWrapper>
         <SingleEliminationBracket
           theme={bracketTheme}
-          matches={bracketData.matches.map((match, index) => {
-            return ({
-              ...match,
-              index,
-              participants: match.matchParticipants?.map((pt, idx) => ({ ...pt, index: idx }))
-            })
-          })}
+          matches={matches}
           options={{
             style: {
               ...BRACKET_STYLES,

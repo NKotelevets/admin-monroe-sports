@@ -5,8 +5,11 @@ import { IDownloadStatus } from '@/common/interfaces'
 const DEFAULT_ERROR_MESSAGE = `Unable to export. Please, try again!`
 const DEFAULT_EMPTY_MESSAGE = `No content was found to export`
 
+type THeader = { [key: string]: unknown } | undefined
+
 interface IUseDownloadFileReturn {
-  download(url: string, fileName: string, fileExtension: string): void
+  download(url: string, fileName: string, fileExtension: string, method?: 'GET' | 'POST', headers?: THeader, body?: string): void
+
   isLoading: boolean
   status: IDownloadStatus | null
 }
@@ -47,17 +50,26 @@ export const useDownloadFile = (): IUseDownloadFileReturn => {
     })
   )
 
-  const download = (url: string, fileName: string, fileExtension: string) => {
+  const download = (
+    url: string,
+    fileName: string,
+    fileExtension: string,
+    method?: 'GET' | 'POST',
+    headers?: THeader,
+    body?: string
+  ) => {
     setIsLoading(true)
     setStatus(null)
 
     ;(async () => {
       try {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}${url}`, {
-          method: 'GET',
+          method: method || 'GET',
           headers: {
+            ...headers || {},
             Authorization: `Bearer ${access}`
-          }
+          },
+          body
         })
 
         if (!response.ok) {
