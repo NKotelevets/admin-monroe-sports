@@ -145,7 +145,7 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                       onBlur={handleBlur('date')}
                       value={values.date ? dayjs(values.date, 'YYYY-MM-DD') : null}
                       onChange={(value: Dayjs) => {
-                        setFieldValue('date',value ? value.format('YYYY-MM-DD'): value)
+                        setFieldValue('date', value ? value.format('YYYY-MM-DD') : value)
                         setFieldValue('day', value ? value.format('dddd') : value)
                       }}
                       status={touched.date && errors.date ? 'error' : undefined}
@@ -191,46 +191,48 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                 </MainContainer>
               </Flex>
 
-              <Line />
+              {values.eventType !== eventType.GAME && values.eventType !== eventType.PLAYOFF && (
+                <>
+                  <Line />
 
-              {(values.eventType !== eventType.GAME || values.eventType !== eventType.PLAYOFF) && (
-                <Flex>
-                  <div className="f-40">
-                    <ProtectedPageSubtitle>Repeats</ProtectedPageSubtitle>
-                  </div>
-                  <MainContainer>
-                    <Tooltip autoAdjustOverflow >
-                      <Select
-                        label="Repeats *"
-                        placeholder="Select repeat"
-                        value={values.repeats}
-                        disabled={!values.date}
-                        options={eventRepeatOptions}
-                        onChange={value => setFieldValue('repeats', value)}
-                        onBlur={handleBlur('repeats')}
-                        error={touched.repeats ? errors.repeats : undefined}
-                        tooltipTitle={!values.date ? 'Please, choose the event date to edit this field' : undefined}
-                      />
-                    </Tooltip>
+                  <Flex>
+                    <div className="f-40">
+                      <ProtectedPageSubtitle>Repeats</ProtectedPageSubtitle>
+                    </div>
+                    <MainContainer>
+                      <Tooltip autoAdjustOverflow>
+                        <Select
+                          label="Repeats *"
+                          placeholder="Select repeat"
+                          value={values.repeats}
+                          disabled={!values.date}
+                          options={eventRepeatOptions}
+                          onChange={value => setFieldValue('repeats', value)}
+                          onBlur={handleBlur('repeats')}
+                          error={touched.repeats ? errors.repeats : undefined}
+                          tooltipTitle={!values.date ? 'Please, choose the event date to edit this field' : undefined}
+                        />
+                      </Tooltip>
 
-                    <InputWrapper
-                      label="End Repeat *"
-                      errorPosition="top"
-                      error={touched.endRepeat ? errors.endRepeat : undefined}
-                    >
-                      <DatePicker
-                        format="MMMM D, YYYY"
-                        disabled={!values.date || values.repeats === 0}
-                        placeholder="Select end date"
-                        minDate={values.date ? dayjs(values.date, 'YYYY-MM-DD').add(1, 'day') : undefined}
-                        onBlur={handleBlur('endRepeat')}
-                        value={values.endRepeat ? dayjs(values.endRepeat, 'YYYY-MM-DD') : null}
-                        onChange={(value: Dayjs) => handleChange('endRepeat')(value.format('YYYY-MM-DD'))}
-                        status={touched.endRepeat && errors.endRepeat ? 'error' : undefined}
-                      />
-                    </InputWrapper>
-                  </MainContainer>
-                </Flex>
+                      <InputWrapper
+                        label="End Repeat *"
+                        errorPosition="top"
+                        error={touched.endRepeat ? errors.endRepeat : undefined}
+                      >
+                        <DatePicker
+                          format="MMMM D, YYYY"
+                          disabled={!values.date || values.repeats === 0}
+                          placeholder="Select end date"
+                          minDate={values.date ? dayjs(values.date, 'YYYY-MM-DD').add(1, 'day') : undefined}
+                          onBlur={handleBlur('endRepeat')}
+                          value={values.endRepeat ? dayjs(values.endRepeat, 'YYYY-MM-DD') : null}
+                          onChange={(value: Dayjs) => handleChange('endRepeat')(value.format('YYYY-MM-DD'))}
+                          status={touched.endRepeat && errors.endRepeat ? 'error' : undefined}
+                        />
+                      </InputWrapper>
+                    </MainContainer>
+                  </Flex>
+                </>
               )}
 
               <Line />
@@ -245,7 +247,7 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                   <TextInput
                     name="courtOrField"
                     label="Court / Field"
-                    placeholder='Enter court / field'
+                    placeholder="Enter court / field"
                     value={values.courtOrField}
                     onChange={handleChange('courtOrField')}
                     onBlur={handleBlur('courtOrField')}
@@ -256,7 +258,7 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     name="subResources"
                     label="Sub Resource"
                     value={values.subResources}
-                    placeholder='Enter sub resource'
+                    placeholder="Enter sub resource"
                     onChange={handleChange('subResources')}
                     onBlur={handleBlur('subResources')}
                     error={touched.subResources ? errors.subResources : undefined}
@@ -271,7 +273,8 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                   <ProtectedPageSubtitle>Team(s)</ProtectedPageSubtitle>
                 </div>
                 <MainContainer>
-                  {(values.eventType === eventType.PRACTICE || values.eventType === eventType.OTHER) && <PracticeForm />}
+                  {(values.eventType === eventType.PRACTICE || values.eventType === eventType.OTHER) &&
+                    <PracticeForm />}
                   {(values.eventType === eventType.GAME || values.eventType === eventType.PLAYOFF) && <GameForm />}
                 </MainContainer>
               </Flex>
