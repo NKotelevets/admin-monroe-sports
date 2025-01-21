@@ -23,7 +23,7 @@ import {
   eventInitialValues,
   eventRepeatOptions,
   eventType,
-  eventTypeOptions
+  eventTypeOptions, repeatType
 } from '@/common/constants/events'
 import { EmailTagsInput } from '@/components/Inputs/EmailTagsInput.tsx'
 import { PracticeForm } from './PracticeForm.tsx'
@@ -103,9 +103,22 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     value={values.eventType}
                     options={initialValues ? editEventTypeOptions : createEventTypeOptions}
                     onChange={value => {
+                      setFieldValue('team1Id', undefined)
+                      setFieldValue('team2Id', undefined)
+                      setFieldValue('repeats', undefined)
+                      setFieldValue('endRepeat', undefined)
+                      setFieldValue('duration', undefined)
+                      setFieldValue('season', undefined)
+                      setFieldValue('league', undefined)
+                      setFieldValue('team1Name', undefined)
+                      setFieldValue('team2Name', undefined)
+                      setFieldValue('coach1Name', undefined)
+                      setFieldValue('coach2Name', undefined)
+                      setFieldValue('season1Name', undefined)
+                      setFieldValue('season2Name', undefined)
+                      setFieldValue('league1Name', undefined)
+                      setFieldValue('league2Name', undefined)
                       setFieldValue('eventType', value)
-                      setFieldValue('team1Id', null)
-                      setFieldValue('team2Id', null)
                     }}
                     onBlur={handleBlur('eventType')}
                     error={touched.eventType ? errors.eventType : undefined}
@@ -221,7 +234,7 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                       >
                         <DatePicker
                           format="MMMM D, YYYY"
-                          disabled={!values.date || values.repeats === 0}
+                          disabled={!values.date || values.repeats === repeatType.NO_REPEAT}
                           placeholder="Select end date"
                           minDate={values.date ? dayjs(values.date, 'YYYY-MM-DD').add(1, 'day') : undefined}
                           onBlur={handleBlur('endRepeat')}

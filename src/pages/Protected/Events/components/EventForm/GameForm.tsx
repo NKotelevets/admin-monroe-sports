@@ -2,7 +2,7 @@ import { AccordionForm, TAccordionFormProps } from '@/components/AccordionForm'
 import TextInput from '@/components/Inputs/TextInput'
 import { useFormikContext } from 'formik'
 import { IEventForm } from '@/common/interfaces/event.ts'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Select from '@/components/Inputs/Select.tsx'
 import { VS } from '@/pages/Protected/Events/components/VS.tsx'
 import { useLeagueTeamPaginated } from '@/pages/Protected/LeagueTeams/hooks/useLeagueTeamPaginated.ts'
@@ -92,6 +92,16 @@ const LeagueTeamSelect = (props: { fieldName: 'team1Id' | 'team2Id' }) => {
     setCurrentLT(mt)
   }, [leagueTeamItems, values[fieldName], fieldName, leagueTeamAdded, isLoadingSingle])
 
+  const teamOptions = useMemo(() => {
+    const list = leagueTeamItems?.map(mt => ({ label: mt.name, value: mt.id }))
+
+    if (!isTeam1) {
+      return list.filter(lt => lt.value !== values['team1Id'])
+    }
+
+    return list.filter(lt => lt.value !== values['team2Id'])
+  }, [leagueTeamItems, values['team1Id'], values['team2Id'], isTeam1])
+
   return (
     <>
       <Select
@@ -106,7 +116,7 @@ const LeagueTeamSelect = (props: { fieldName: 'team1Id' | 'team2Id' }) => {
           setAddingLeagueTeam(true)
           setTargetField(fieldName)
         }}
-        options={leagueTeamItems?.map(mt => ({ label: mt.name, value: mt.id })) || []}
+        options={teamOptions || []}
         onChange={(value) => setFieldValue(fieldName, value)}
         error={touched[fieldName] ? errors[fieldName] : undefined}
         onBlur={() => setFieldTouched(fieldName)}

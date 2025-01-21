@@ -59,7 +59,7 @@ export interface IEventForm {
   courtOrField: string
   subResources: string
   ignoreConflicts: boolean
-  repeats?: number
+  repeats?: string
   endRepeat?: string
   team1Id?: string
   team2Id?: string
