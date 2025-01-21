@@ -43,6 +43,7 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
   const { isAddingRelated } = useEventFormContext()
   const { setPageTitle, setBreadcrumbs } = usePageContext()
 
+  const minDate = dayjs(new Date())
   const title = initialValues ? 'Edit' : 'Create'
 
   /**
@@ -154,12 +155,11 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     <DatePicker
                       format="MMMM D, YYYY"
                       placeholder="Select date"
-                      minDate={dayjs(new Date())}
-                      onBlur={handleBlur('date')}
+                      minDate={minDate}
                       value={values.date ? dayjs(values.date, 'YYYY-MM-DD') : null}
                       onChange={(value: Dayjs) => {
-                        setFieldValue('date', value ? value.format('YYYY-MM-DD') : value)
-                        setFieldValue('day', value ? value.format('dddd') : value)
+                        setFieldValue('date', value ? value.format('YYYY-MM-DD') : null)
+                        setFieldValue('day', value ? value.format('dddd') : null)
                       }}
                       status={touched.date && errors.date ? 'error' : undefined}
                     />
