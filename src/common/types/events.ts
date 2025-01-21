@@ -2,14 +2,15 @@ import { IPaginationResponse } from '@/common/interfaces/api.ts'
 import { NestedSnakeCase, TPagination } from '@/common/types/index.ts'
 import { IEvent } from '@/common/interfaces/event.ts'
 import { ILocation } from '@/common/interfaces/location.ts'
+import { FilterValue } from 'antd/es/table/interface'
 
 export type TPaginatedEvents = IPaginationResponse<NestedSnakeCase<IEvent>[]>
 
 export type TListEventRequestParams = {
   court?: string
   courtOrField?: string
-  date?: string
-  day?: string
+  date?: FilterValue
+  day?: FilterValue
   leagueName?: string
   limit?: number
   offset?: number
@@ -27,8 +28,8 @@ export type TListEventRequestParams = {
   team2Season?: string
   team2HeadCoach?: string
 
-  type?: string
-  repeats?: string
+  type?: FilterValue
+  repeats?: FilterValue
   location?: string
   locationName?: string
 }

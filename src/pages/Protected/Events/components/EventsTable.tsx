@@ -113,8 +113,8 @@ export const EventsTable = () => {
       offset: newOffset,
       limit: newLimit,
       ordering: getTableSortField<IEvent>(sorter, fieldMap),
-      date: filters?.['date'] ? filters?.['date']?.join(',') :  undefined,
-      day: filters?.['day'] ? filters?.['day']?.join(',') : undefined,
+      date: filters?.['date'] ? filters?.['date'] :  undefined,
+      day: filters?.['day'] ? filters?.['day'] as FilterValue : undefined,
       leagueName: (filters?.['leagueName']?.[0] as string) ?? undefined,
       subResource: (filters?.['subResource']?.[0] as string) ?? undefined,
       team1name: (filters?.['homeTeam']?.[0] as string) ?? undefined,
@@ -124,8 +124,8 @@ export const EventsTable = () => {
       team2Season: (filters?.['team2Season']?.[0] as string) ?? undefined,
       team2HeadCoach: (filters?.['team2HeadCoach']?.[0] as string) ?? undefined,
       court: (filters?.['courtOrField']?.[0] as string) ?? undefined,
-      type: (filters?.['type']?.join(',') as string) ?? undefined,
-      repeats: (filters?.['repeats']?.join(',') as string) ?? undefined,
+      type: filters?.['type'] ? filters?.['type'] : undefined,
+      repeats: filters?.['repeats'] ? filters?.['repeats'] : undefined,
       location: (filters?.['location']?.[0] as string) ?? undefined,
     }
 
