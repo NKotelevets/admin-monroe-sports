@@ -196,7 +196,6 @@ export const DivisionField: React.FC<DivisionFormProps> = (props) => {
                             if (bracket.id && setIds)
                               setIds((prev) => [...prev, bracket.id as number])
                           }
-
                           const onEdit = () => {
                             setShowBracketPage(true)
                             setPathToSubdivisionDataAndIndexes(`divisions[${index}]&${index}`)

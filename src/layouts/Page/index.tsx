@@ -73,7 +73,7 @@ export const Page: FC<IPageProps> = (props: IPageProps): ReactElement => {
             <PageContainer className={className}>
               {!!breadcrumbs && <Breadcrumb items={breadcrumbs} />}
 
-              <Header justify="space-between" align="flex-start" vertical={false}>
+              <Header justify="space-between" align="center" vertical={false}>
                 <PageInfo vertical>
                   <Title>{pageTitle}</Title>
                   {!!subtitle && <Subtitle>{subtitle}</Subtitle>}
@@ -96,20 +96,20 @@ export const Page: FC<IPageProps> = (props: IPageProps): ReactElement => {
 }
 
 const Header = styled(Flex)`
+  margin-bottom: 24px
 `
 const Controls = styled(Flex)`
-    margin-top: 8px;
+    margin-top: 0;
     display: grid;
     grid-gap: 8px;
     grid-auto-flow: column;
 `
 const PageInfo = styled(Flex)`
-    margin: 8px 0 24px;
+    margin: 0
 `
 const Title = styled(ProtectedPageTitle)`
-    margin: 0;
+    margin: 0 !important;
 `
 const Subtitle = styled(Description)`
-    margin: 0;
-    margin-top: 8px
+    margin: 8px 0 0;
 `

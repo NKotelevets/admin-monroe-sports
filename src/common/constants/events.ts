@@ -31,7 +31,7 @@ export const eventInitialValues = {
   league: undefined,
   season: undefined,
   repeats: 0,
-  endRepeat: '',
+  repeatEndDate: '',
   team1Name: undefined,
   team2Name: undefined,
   coach1Name: undefined,
@@ -61,13 +61,13 @@ export const eventDurationOptions = [
 export const validEventTypes = () => [eventType.GAME, eventType.PRACTICE, eventType.PLAYOFF, eventType.OTHER]
 
 export const eventRepeatOptions = [
-  { label: 'No repeat', value: 0 },
-  { label: 'Every day', value: 1 },
-  { label: 'Every week', value: 2 }
+  { label: 'No repeat', value: 'NO_REPEAT' },
+  { label: 'Every day', value: 'EVERY_DAY' },
+  { label: 'Every week', value: 'EVERY_WEEK' }
 ]
 
-export const eventRepeatName: { [key: number]: string } = {
-  0: 'No repeat',
-  1: 'Every day',
-  2: 'Every week'
+export const eventRepeatName: { [key: string]: string } = {
+  'NO_REPEAT': 'No repeat',
+  'EVERY_DAY': 'Every day',
+  'EVERY_WEEK': 'Every week'
 }
