@@ -41,6 +41,7 @@ import LeagueTeamImportInfo from '@/pages/Protected/LeagueTeams/LeagueTeamImport
 import EventCreate from '@/pages/Protected/Events/EventCreate.tsx'
 import EventEdit from '@/pages/Protected/Events/EventEdit.tsx'
 import EventDeletingInfo from '@/pages/Protected/Events/EventDeletingInfo.tsx'
+import EventBulkEdit from '@/pages/Protected/Events/EventBulkEdit.tsx'
 
 import InfoAlert from '@/components/InfoAlert'
 import Notification from '@/components/Notification'
@@ -84,7 +85,8 @@ import {
   PATH_TO_EDIT_LEAGUE_TEAM,
   PATH_TO_CREATE_EVENT,
   PATH_TO_EDIT_EVENT,
-  PATH_TO_DELETE_INFO_EVENTS
+  PATH_TO_DELETE_INFO_EVENTS,
+  PATH_TO_BULK_EDIT_EVENT
 } from '@/common/constants/paths'
 
 const Root = () => (
@@ -147,6 +149,7 @@ const Root = () => (
       <Route path={PATH_TO_CREATE_EVENT} element={<EventCreate />} />
       <Route path={`${PATH_TO_EVENTS}/:id`} element={<EventDetail />} />
       <Route path={`${PATH_TO_EDIT_EVENT}/:id`} element={<EventEdit />} />
+      <Route path={`${PATH_TO_BULK_EDIT_EVENT}`} element={<EventBulkEdit />} />
       <Route path={PATH_TO_DELETE_INFO_EVENTS} element={<EventDeletingInfo />} />
     </Routes>
   </AuthProvider>

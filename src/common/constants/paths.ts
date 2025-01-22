@@ -50,6 +50,7 @@ export const PATH_TO_CREATE_EVENT = '/events/create'
 export const PATH_TO_EDIT_EVENT = '/events/edit'
 export const PATH_TO_DELETE_INFO_EVENTS = '/events/delete-info'
 export const PATH_TO_EVENTS_IMPORT_INFO = '/events/import-info'
+export const PATH_TO_BULK_EDIT_EVENT = '/events/bulk-edit'
 
 // LOCATION
 export const PATH_TO_LOCATION = '/locations'
