@@ -1,6 +1,6 @@
 import * as yup from 'yup'
 import dayjs from 'dayjs'
-import { repeatType, validEventTypes } from '@/common/constants/events.ts'
+import { eventType, repeatType, validEventTypes } from '@/common/constants/events.ts'
 
 const validWeekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 export const validDurations = [30, 45, 60, 75, 90, 105, 120]
@@ -29,8 +29,8 @@ export const eventFormSchema = yup.object({
     .number()
     .required('Duration is required')
     .oneOf(validDurations, `Duration must be one of ${validDurations.join(', ')}`)
-    .when('eventType', ([eventType], schema) =>
-      eventType === 5 ? schema.oneOf([60], 'Duration must be 60 minutes for Playoff events') : schema
+    .when('eventType', ([evt], schema) =>
+      evt === eventType.PLAYOFF ? schema.oneOf([60], 'Duration must be 60 minutes for Playoff events') : schema
     ),
   locationId: yup.string().required('Location is required'),
   courtOrField: yup.string(),
@@ -45,12 +45,12 @@ export const eventFormSchema = yup.object({
   team2Id: yup
     .string()
     .nullable()
-    .when('eventType', ([eventType], schema) =>
-      eventType === 0 || eventType === 2 ? schema.required('Team 2 is required for this event type') : schema.optional()
+    .when('eventType', ([evt], schema) =>
+      evt === eventType.GAME || evt === eventType.PLAYOFF ? schema.required('Team 2 is required for this event type') : schema.optional()
     ),
   league: yup
     .string()
-    .when('eventType', ([eventType], schema) =>
-      eventType === 0 || eventType === 2 ? schema.required('League is required for this event type') : schema.optional()
+    .when('eventType', ([evt], schema) =>
+      evt === eventType.GAME || evt === eventType.PLAYOFF ? schema.required('League is required for this event type') : schema.optional()
     )
 })
