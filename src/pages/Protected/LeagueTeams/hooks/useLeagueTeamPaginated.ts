@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { IFELeagueTeam, IGetLeagueTeamsRequest } from '@/common/interfaces/leagueTeams.ts'
 import { useLeagueTeamsSlice } from '@/redux/hooks/useLeagueTeamsSlice.tsx'
 import { useLazyGetLeagueTeamQuery, useLazyGetLeagueTeamsQuery } from '@/redux/leagueTeams/leagueTeams.api'
+import { makeUniqueById } from '@/utils'
 
 type TLeagueTeamsPaginatedParams = {
   seasonId?: string
@@ -38,7 +39,7 @@ export const useLeagueTeamPaginated = (props: TLeagueTeamsPaginatedParams) => {
   // updates local league team list
   useEffect(() => {
     if (!data?.results) return
-    setLeagueTeamItems(mt => ([...mt, ...data.results]))
+    setLeagueTeamItems(mt => makeUniqueById([...mt, ...data.results]))
   }, [data])
 
   /**
@@ -47,7 +48,7 @@ export const useLeagueTeamPaginated = (props: TLeagueTeamsPaginatedParams) => {
    * @param item
    */
   const addItem = useCallback((item: IFELeagueTeam) => {
-    setLeagueTeamItems(list => [...list, item])
+    setLeagueTeamItems(list =>makeUniqueById([...list, item]))
   }, [])
 
 
