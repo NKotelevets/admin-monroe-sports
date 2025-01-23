@@ -123,6 +123,7 @@ export const masterTeamsApi = createApi({
         }) : undefined
 
         return ({
+          id: response?.id,
           name: response.name,
           coaches: response.coaches.map((coach) => ({
             id: coach.id,

@@ -296,11 +296,11 @@ export const useEventsTable = () => {
       sorter: true,
       width: '240px',
       ...getColumnSearchProps('location', () => true),
-      render: (_, record) => (
-        <Typography.Link onClick={navigateToLocation(record.location.id)}>
-          {record.location.name}
+      render: (_, record) =>  record.location ? (
+        <Typography.Link onClick={record.location?.id ? navigateToLocation(record.location?.id) : undefined}>
+          {record.location?.name}
         </Typography.Link>
-      )
+      ) : EMPTY_VALUE
     },
     {
       title: 'Court',
