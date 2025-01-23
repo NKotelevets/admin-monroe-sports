@@ -1,15 +1,19 @@
-import { AccordionForm, TAccordionFormProps } from '@/components/AccordionForm'
-import TextInput from '@/components/Inputs/TextInput'
 import { useFormikContext } from 'formik'
-import { IEventForm } from '@/common/interfaces/event.ts'
 import { useEffect, useMemo, useState } from 'react'
+
+import { VS } from '@/pages/Protected/Events/components/VS.tsx'
+import { useEventFormContext } from '@/pages/Protected/Events/hooks/useEventFormContext.ts'
+import { useMasterTeamPaginated } from '@/pages/Protected/MasterTeams/hooks/useMasterTeamPaginated.ts'
+
+import { AccordionForm, TAccordionFormProps } from '@/components/AccordionForm'
 import { Button } from '@/components/Button'
 import Select from '@/components/Inputs/Select.tsx'
-import { useMasterTeamPaginated } from '@/pages/Protected/MasterTeams/hooks/useMasterTeamPaginated.ts'
-import { VS } from '@/pages/Protected/Events/components/VS.tsx'
-import { IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
+import TextInput from '@/components/Inputs/TextInput'
+
 import { useLazyGetMasterTeamQuery } from '@/redux/masterTeams/masterTeams.api.ts'
-import { useEventFormContext } from '@/pages/Protected/Events/hooks/useEventFormContext.ts'
+
+import { IEventForm } from '@/common/interfaces/event.ts'
+import { IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
 
 type TFieldNames = 'team1Id' | 'team2Id'
 
@@ -18,16 +22,16 @@ export const PracticeForm = () => {
   const { values, errors } = useFormikContext<IEventForm>()
 
   const team2 = secondTeam || !!values.team2Id
-  const team = (key: string, fieldName: TFieldNames, label: string): TAccordionFormProps['items'] => (
-    [{
+  const team = (key: string, fieldName: TFieldNames, label: string): TAccordionFormProps['items'] => [
+    {
       key,
       label,
       children: <MasterTeamSelect fieldName={fieldName} />,
       title: values[fieldName === 'team1Id' ? 'team1Name' : 'team2Name'] || label,
       subtitle: values[fieldName === 'team1Id' ? 'coach1Name' : 'coach2Name'],
-      error: errors[fieldName]
-    }]
-  )
+      error: errors[fieldName],
+    },
+  ]
 
   return (
     <>
@@ -47,7 +51,7 @@ export const PracticeForm = () => {
 const MasterTeamSelect = (props: { fieldName: 'team1Id' | 'team2Id' }) => {
   const { fieldName } = props
   const { values, touched, errors, setFieldValue, setFieldTouched } = useFormikContext<IEventForm>()
-  const { masterTeamItems, loadMore, isLoading, isFetching } = useMasterTeamPaginated()
+  const { masterTeamItems, loadMore, isLoading, isFetching, addItem } = useMasterTeamPaginated()
   const { setAddingMasterTeam, setTargetField } = useEventFormContext()
 
   const [getMasterTeam] = useLazyGetMasterTeamQuery()
@@ -66,10 +70,20 @@ const MasterTeamSelect = (props: { fieldName: 'team1Id' | 'team2Id' }) => {
 
   useEffect(() => {
     if (!values[fieldName]) return
-    const mt = masterTeamItems.find(mt => mt.id === values[fieldName] as string)
+    const mt = masterTeamItems.find((mt) => mt.id === (values[fieldName] as string))
 
     if (!mt) {
-      getMasterTeam({id: values[fieldName] as string})
+      getMasterTeam({ id: values[fieldName] as string })
+        .unwrap()
+        .then((response) => {
+          const current = {
+            ...response,
+            headCoachFullName: response.headCoach.fullName,
+            id: values[fieldName] as string,
+          } as unknown as IFEMasterTeam
+          addItem(current)
+          setCurrentMT(current)
+        })
       return
     }
 
@@ -77,13 +91,13 @@ const MasterTeamSelect = (props: { fieldName: 'team1Id' | 'team2Id' }) => {
   }, [masterTeamItems, values[fieldName], fieldName])
 
   const teamOptions = useMemo(() => {
-    const list = masterTeamItems?.map(mt => ({ label: mt.name, value: mt.id }))
+    const list = masterTeamItems?.map((mt) => ({ label: mt.name, value: mt.id }))
 
     if (!isTeam1) {
-      return list.filter(mt => mt.value !== values['team1Id'])
+      return list.filter((mt) => mt.value !== values['team1Id'])
     }
 
-    return list.filter(mt => mt.value !== values['team2Id'])
+    return list.filter((mt) => mt.value !== values['team2Id'])
   }, [masterTeamItems, values['team1Id'], values['team2Id'], isTeam1])
 
   return (

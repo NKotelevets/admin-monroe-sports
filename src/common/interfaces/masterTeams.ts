@@ -124,6 +124,7 @@ export interface IBESimpleEntity {
 }
 
 export interface IBEMasterTeamDetails {
+  id?: string
   name: string
   head_coach: IBESimpleEntity
   team_admin: IBESimpleEntity
@@ -143,6 +144,7 @@ export interface IFESimpleEntity {
 }
 
 export interface IFEMasterTeamDetails {
+  id?: string
   name: string
   headCoach: IFESimpleEntity
   teamAdmin?: IFESimpleEntity

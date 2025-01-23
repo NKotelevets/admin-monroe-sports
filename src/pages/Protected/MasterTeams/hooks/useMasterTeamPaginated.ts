@@ -3,6 +3,7 @@ import { useLazyGetMasterTeamQuery, useLazyGetMasterTeamsQuery } from '@/redux/m
 import { IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
 import { IGetLeagueTeamsRequest } from '@/common/interfaces/leagueTeams.ts'
 import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice.tsx'
+import { makeUniqueById } from '@/utils'
 
 export const useMasterTeamPaginated = () => {
   const firstLoad = useRef(true)
@@ -34,7 +35,7 @@ export const useMasterTeamPaginated = () => {
   // updates local master team list
   useEffect(() => {
     if (!data?.results) return
-    setMasterTeamItems(mt => ([...mt, ...data.results]))
+    setMasterTeamItems(mt => makeUniqueById([...mt, ...data.results]))
   }, [data])
 
   /**
@@ -43,7 +44,7 @@ export const useMasterTeamPaginated = () => {
    * @param item
    */
   const addItem = useCallback((item: IFEMasterTeam) => {
-    setMasterTeamItems(list => [...list, item])
+    setMasterTeamItems(list => makeUniqueById([...list, item]))
   }, [])
 
 

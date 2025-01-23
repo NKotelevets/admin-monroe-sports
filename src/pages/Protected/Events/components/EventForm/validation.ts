@@ -1,6 +1,6 @@
 import * as yup from 'yup'
 import dayjs from 'dayjs'
-import { validEventTypes } from '@/common/constants/events.ts'
+import { repeatType, validEventTypes } from '@/common/constants/events.ts'
 
 const validWeekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 export const validDurations = [30, 45, 60, 75, 90, 105, 120]
@@ -37,10 +37,10 @@ export const eventFormSchema = yup.object({
   subResources: yup.string(),
   ignoreConflicts: yup.boolean(),
   team1Id: yup.string().required('Team 1 is required'),
-  repeats: yup.number(),
+  repeats: yup.string(),
   endRepeat: yup.string()
     .when('repeats', ([repeats], schema) =>
-      repeats > 0 ? schema.required('End repeat is requited when repeats is set') : schema.optional()
+      repeats !== repeatType.NO_REPEAT ? schema.required('End repeat is requited when repeats is set') : schema.optional()
     ),
   team2Id: yup
     .string()
