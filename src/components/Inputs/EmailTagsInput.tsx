@@ -1,5 +1,6 @@
 import Select, { IDropdownProps } from './Select'
 import { useState } from 'react'
+import styled from '@emotion/styled'
 
 /**
  * Props for the EmailTagsInput component.
@@ -66,7 +67,7 @@ export const EmailTagsInput = (props: TEmailTagsInputProps) => {
    * @param event - Keyboard event from the input field.
    */
   const onInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (['Enter', 'Meta'].includes(event.key)) {
+    if (['Enter', 'Meta', 'Tab'].includes(event.key)) {
       event.preventDefault()
       event.stopPropagation()
       return
@@ -95,7 +96,7 @@ export const EmailTagsInput = (props: TEmailTagsInputProps) => {
   }
 
   return (
-    <Select
+    <SelectStyled
       showSearch
       debounceSearch={false}
       searchValue={inputValue}
@@ -123,3 +124,10 @@ const styles = {
     display: 'none'
   }
 }
+
+const SelectStyled = styled(Select)`
+    width: 100%;
+    & .ant-select-selection-search {
+        margin-left: 5px !important;
+    }
+`
