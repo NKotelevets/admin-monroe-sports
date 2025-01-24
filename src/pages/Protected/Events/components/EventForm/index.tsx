@@ -106,7 +106,7 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     onChange={value => {
                       setFieldValue('team1Id', undefined)
                       setFieldValue('team2Id', undefined)
-                      setFieldValue('repeats', undefined)
+                      setFieldValue('repeats', repeatType.NO_REPEAT)
                       setFieldValue('endRepeat', undefined)
                       setFieldValue('duration', undefined)
                       setFieldValue('season', undefined)
