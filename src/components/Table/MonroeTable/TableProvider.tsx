@@ -32,6 +32,7 @@ export const TableProvider = <T,>({ children }: TableProviderProps): ReactElemen
   const [showAdditionalHeader, setShowAdditionalHeader] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showCreatedRecords, setShowCreatedRecords] = useState(false)
+  const [disableAllCheckBoxes, setDisableAllCheckBoxes] = useState(false)
   const [tableParams, setTableParams] = useState<ITableParams<T>>({
     pagination: {
       pageSizeOptions: [5, 10, 30, 50],
@@ -57,7 +58,9 @@ export const TableProvider = <T,>({ children }: TableProviderProps): ReactElemen
         tableParams,
         setTableParams,
         showCreatedRecords,
-        setShowCreatedRecords
+        setShowCreatedRecords,
+        disableAllCheckBoxes,
+        setDisableAllCheckBoxes
       }}
     >
       {children}

@@ -23,10 +23,10 @@ export const StyledTextArea = styled(TextArea)`
     height: 16px;
   }
 
-  @media (width > 1660px) {
-    font-size: 18px !important;
-    min-height: 40px !important;
-  }
+  //@media (width > 1660px) {
+  //  font-size: 18px !important;
+  //  min-height: 40px !important;
+  //}
 `
 
 export const StyledInput = styled(Input)<{ isError?: boolean }>`
@@ -78,13 +78,13 @@ export const StyledPasswordInput = styled(Input.Password)<{ is_error?: string }>
     height: 16px;
   }
 
-  @media (width > 1660px) {
-    font-size: 18px !important;
-    min-height: 40px !important;
-
-    & input {
-    }
-  }
+  //@media (width > 1660px) {
+  //  font-size: 18px !important;
+  //  min-height: 40px !important;
+  //
+  //  & input {
+  //  }
+  //}
 `
 
 export const InputError = styled(Typography)`
@@ -92,9 +92,9 @@ export const InputError = styled(Typography)`
   font-weight: 400 !important;
   color: #bc261b !important;
 
-  @media (width > 1660px) {
-    font-size: 16px !important;
-  }
+  //@media (width > 1660px) {
+  //  font-size: 16px !important;
+  //}
 `
 
 export const InputLabel = styled(Typography)`
@@ -102,7 +102,7 @@ export const InputLabel = styled(Typography)`
   font-weight: 400 !important;
   color: rgba(26, 22, 87, 0.85) !important;
 
-  @media (width > 1660px) {
-    font-size: 20px !important;
-  }
+  //@media (width > 1660px) {
+  //  font-size: 20px !important;
+  //}
 `

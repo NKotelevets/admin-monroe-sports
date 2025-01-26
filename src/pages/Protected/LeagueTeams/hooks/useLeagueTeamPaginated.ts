@@ -1,23 +1,24 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { IFELeagueTeam, IGetLeagueTeamsRequest } from '@/common/interfaces/leagueTeams.ts'
-import { useLeagueTeamsSlice } from '@/redux/hooks/useLeagueTeamsSlice.tsx'
+
 import { useLazyGetLeagueTeamQuery, useLazyGetLeagueTeamsQuery } from '@/redux/leagueTeams/leagueTeams.api'
+
 import { makeUniqueById } from '@/utils'
+
+import { IFELeagueTeam, IGetLeagueTeamsRequest } from '@/common/interfaces/leagueTeams.ts'
 
 type TLeagueTeamsPaginatedParams = {
   seasonId?: string
 }
+
 export const useLeagueTeamPaginated = (props: TLeagueTeamsPaginatedParams) => {
   const { seasonId } = props
 
   const firstLoad = useRef(true)
+  const filter = seasonId ? { season: seasonId } : {}
 
-  const {
-    setPaginationParams,
-    offset,
-    limit,
-    total
-  } = useLeagueTeamsSlice()
+  const [offset, setOffset] = useState(0)
+  const [limit] = useState(10)
+  const [total, setTotal] = useState(0)
 
   const [leagueTeamList, { isLoading, isFetching, data }] = useLazyGetLeagueTeamsQuery()
   const [getLeagueTeam, singleData] = useLazyGetLeagueTeamQuery()
@@ -25,21 +26,32 @@ export const useLeagueTeamPaginated = (props: TLeagueTeamsPaginatedParams) => {
 
   // fetches first batch of league teams
   useEffect(() => {
-    const filter = { season: seasonId }
-    const params = { limit: 10, offset: 0, ...filter }
+    if (firstLoad?.current) {
+      const params = { limit, offset, ...filter }
 
+      setLeagueTeamItems([])
+      setOffset(0)
+      setTotal(0)
 
-    setPaginationParams(params)
-    setLeagueTeamItems([])
-    leagueTeamList(params)
-    firstLoad.current = false
+      leagueTeamList(params)
+        .unwrap()
+        .then(
+          (response) => {
+            if (response?.count) {
+              setTotal(response.count)
+            }
+          })
+      firstLoad.current = false
+    }
   }, [seasonId])
-
 
   // updates local league team list
   useEffect(() => {
     if (!data?.results) return
-    setLeagueTeamItems(mt => makeUniqueById([...mt, ...data.results]))
+    setLeagueTeamItems((lt) => makeUniqueById([...lt, ...data.results]))
+    if (data.count !== undefined) {
+      setTotal(data.count)
+    }
   }, [data])
 
   /**
@@ -48,24 +60,19 @@ export const useLeagueTeamPaginated = (props: TLeagueTeamsPaginatedParams) => {
    * @param item
    */
   const addItem = useCallback((item: IFELeagueTeam) => {
-    setLeagueTeamItems(list =>makeUniqueById([...list, item]))
+    setLeagueTeamItems((list) => makeUniqueById([...list, item]))
   }, [])
-
 
   const loadMore = useCallback(() => {
     if (leagueTeamItems.length >= total) return
 
     const leagueTeamsRequestParams: IGetLeagueTeamsRequest = {
-      offset: offset + 10,
-      limit
+      offset: offset + limit,
+      limit,
     }
 
     leagueTeamList(leagueTeamsRequestParams)
-    setPaginationParams({
-      offset: leagueTeamsRequestParams.offset,
-      limit: leagueTeamsRequestParams.limit,
-      ordering: null
-    })
+    setOffset(leagueTeamsRequestParams.offset)
   }, [limit, offset, leagueTeamItems, total])
 
   return {
@@ -76,7 +83,6 @@ export const useLeagueTeamPaginated = (props: TLeagueTeamsPaginatedParams) => {
     loadMore,
     addItem,
     getLeagueTeam,
-    singleData
+    singleData,
   }
-
 }

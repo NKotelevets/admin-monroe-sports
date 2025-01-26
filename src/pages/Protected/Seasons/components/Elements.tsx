@@ -37,15 +37,15 @@ export const BracketNameWrapper = styled(Typography)`
   font-weight: 500;
   font-size: 14px;
 
-  @media (width > 1660px) {
-    font-size: 16px;
-  }
+  //@media (width > 1660px) {
+  //  font-size: 16px;
+  //}
 `
 
 export const IconsWrapper = styled(Flex)`
-  @media (width > 1660px) {
-    & svg {
-      transform: scale(1.2);
-    }
-  }
+  //@media (width > 1660px) {
+  //  & svg {
+  //    transform: scale(1.2);
+  //  }
+  //}
 `

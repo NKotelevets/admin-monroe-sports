@@ -17,6 +17,7 @@ interface ITextInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 's
   onBlur?: (e: React.FocusEvent<any>) => void
   errorPosition?: 'top' | 'bottom'
   className?: string
+  noMargin?: boolean
 }
 
 const TextInput: FC<ITextInputProps> = (props) => {
@@ -24,6 +25,7 @@ const TextInput: FC<ITextInputProps> = (props) => {
     label,
     error,
     errorPosition = 'top',
+    noMargin,
     ...rest
   } = props
 
@@ -32,7 +34,7 @@ const TextInput: FC<ITextInputProps> = (props) => {
   ), [label])
 
   return (
-    <InputWrapper label={labelComponent} errorPosition={errorPosition} error={error}>
+    <InputWrapper label={labelComponent} errorPosition={errorPosition} error={error} noMargin={noMargin}>
       <Input status={error ? 'error' : undefined} {...rest} />
     </InputWrapper>
   )

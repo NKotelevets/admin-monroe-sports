@@ -135,7 +135,9 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                       placeholder="Enter description"
                       onBlur={handleBlur('eventDescription')}
                       value={values.eventDescription}
-                    ></TextArea>
+                    >
+                      {values.eventDescription}
+                    </TextArea>
                   </InputWrapper>
                 </MainContainer>
               </Flex>

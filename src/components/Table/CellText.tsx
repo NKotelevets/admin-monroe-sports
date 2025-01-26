@@ -13,9 +13,9 @@ const StyledTypography = styled(Typography)<{ isLink: boolean }>`
   color: ${(props) => props.isLink ? 'rgba(62, 52, 202, 1)' : 'rgba(26, 22, 87, 0.85)'};
   cursor: ${(props) => props.isLink? 'pointer' : 'default'};
 
-  @media (width > 1660px) {
-    font-size: 16px;
-  }
+  //@media (width > 1660px) {
+  //  font-size: 16px;
+  //}
 `
 
 const CellText: FC<PropsWithChildren> = ({ children, isLink = false, onClick }) => (

@@ -3,6 +3,9 @@ import { TableProps } from 'antd/es/table/InternalTable'
 import { Dayjs } from 'dayjs'
 import { ReactElement } from 'react'
 import { IDeletingError } from '@/common/interfaces'
+import { ColumnGroupType } from 'antd/es/table/interface'
+import { ColumnType } from 'rc-table/lib/interface'
+import { FieldProps } from 'formik'
 
 export type TDeleteStatus = 'red' | 'green' | 'yellow'
 
@@ -66,3 +69,8 @@ export type TScheduleAdditionalData = {
   masterTeamId?: string
   leagueName?: string
 }
+
+export type TBulkEditTableColumns<T> = ((ColumnGroupType<T> | ColumnType<T>) & {
+  editable?: boolean
+  renderField?: (field: FieldProps['field'], meta: FieldProps['meta'], record?: T) => ReactElement
+} )[] | undefined

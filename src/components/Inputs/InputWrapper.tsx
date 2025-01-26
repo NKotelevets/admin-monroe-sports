@@ -14,6 +14,7 @@ export interface IInputWrapper extends Omit<InputHTMLAttributes<HTMLInputElement
   errorPosition?: 'top' | 'bottom'
   className?: string
   helpText?: string
+  noMargin?: boolean
   children: ReactElement
 }
 
@@ -56,8 +57,8 @@ const InputWrapper = React.memo((props: IInputWrapper) => {
 export default InputWrapper
 
 // Styled Components
-const Wrapper = styled.div<{ last?: boolean }>`
-    margin-bottom: ${({ last }) => last === true ? 0 : 12}px;
+const Wrapper = styled.div<{ last?: boolean; noMargin?: boolean }>`
+    margin-bottom: ${({ last, noMargin }) => last === true || noMargin === true ? 0 : 12}px;
 `
 const HelpText = styled(InputError)`
     margin-top: 4px;

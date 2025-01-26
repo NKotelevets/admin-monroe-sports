@@ -176,7 +176,7 @@ const MonroeSelectWrapper = styled(MonroeSelect)`
     height: 42px;
     width: 85px;
 
-    @media (width > 1660px) {
-        width: 102px;
-    }
+    //@media (width > 1660px) {
+    //    width: 102px;
+    //}
 `
