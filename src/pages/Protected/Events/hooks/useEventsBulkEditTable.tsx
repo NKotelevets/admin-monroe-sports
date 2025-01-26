@@ -82,12 +82,13 @@ export const useEventsBulkEditTable = () => {
       dataIndex: 'duration',
       width: '240px',
       editable: true,
-      renderField: (field, meta) => (
+      renderField: (field, meta, record) => (
         <Cell width={168}>
           <Select
             label=""
             noMargin
             placeholder="Select duration"
+            disabled={record?.type === eventType.PLAYOFF}
             value={field.value}
             options={eventDurationOptions}
             onChange={(value) => field.onChange({ target: { name: field.name, value: value } })}
