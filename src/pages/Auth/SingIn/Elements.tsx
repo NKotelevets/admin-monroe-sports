@@ -8,10 +8,10 @@ export const Wrapper = styled(Flex)`
   justify-content: flex-start;
   width: 400px;
 
-  @media (width > 1660px) {
-    width: 100%;
-    min-width: 600px;
-  }
+  //@media (width > 1660px) {
+  //  width: 100%;
+  //  min-width: 600px;
+  //}
 `
 
 export const Title = styled.h1`
@@ -20,9 +20,9 @@ export const Title = styled.h1`
   font-weight: 500;
   margin: 0;
 
-  @media (width > 1660px) {
-    font-size: 44px;
-  }
+  //@media (width > 1660px) {
+  //  font-size: 44px;
+  //}
 `
 
 export const Subtitle = styled(Typography)`
@@ -31,35 +31,35 @@ export const Subtitle = styled(Typography)`
   font-weight: 400;
   margin: 0;
 
-  @media (width > 1660px) {
-    font-size: 30px;
-  }
+  //@media (width > 1660px) {
+  //  font-size: 30px;
+  //}
 `
 
 export const CheckboxText = styled(Typography)`
   color: rgba(26, 22, 87, 0.85);
   margin-left: 8px;
 
-  @media (width > 1660px) {
-    font-size: 22px;
-  }
+  //@media (width > 1660px) {
+  //  font-size: 22px;
+  //}
 `
 
 export const SignInButton = styled(MonroeButton)`
   height: 40px;
 
-  @media (width > 1660px) {
-    font-size: 24px;
-    height: 60px;
-  }
+  //@media (width > 1660px) {
+  //  font-size: 24px;
+  //  height: 60px;
+  //}
 `
 
 export const ForgotPasswordWrapper = styled(Typography)`
   color: #3e34ca;
   margin-top: 5px;
 
-  @media (width > 1660px) {
-    font-size: 18px;
-  }
+  //@media (width > 1660px) {
+  //  font-size: 18px;
+  //}
 `
 

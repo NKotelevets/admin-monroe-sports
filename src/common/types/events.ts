@@ -1,8 +1,9 @@
-import { IPaginationResponse } from '@/common/interfaces/api.ts'
-import { NestedSnakeCase, TPagination } from '@/common/types/index.ts'
-import { IEvent } from '@/common/interfaces/event.ts'
-import { ILocation } from '@/common/interfaces/location.ts'
 import { FilterValue } from 'antd/es/table/interface'
+
+import { IPaginationResponse } from '@/common/interfaces/api.ts'
+import { IEvent } from '@/common/interfaces/event'
+import { ILocation } from '@/common/interfaces/location.ts'
+import { NestedSnakeCase, TPagination } from '@/common/types/index.ts'
 
 export type TPaginatedEvents = IPaginationResponse<NestedSnakeCase<IEvent>[]>
 
@@ -77,6 +78,23 @@ export type TEventEditingPayload = {
   duration?: number
 }
 
-export type TEventConflictError = {
-  conflicts?: { title: string, details: string }[]
+export type TEventBulkEditPayload = {
+  id: string
+  day: string
+  date: string
+  time: string
+  duration: number
+  location_id: string
+  court_or_field: string
+  sub_resource: string
+  description: string
+  team_1_id: string
+  team_2_id: string
 }
+
+export type TEventConflictError = {
+  conflicts?: { title: string; details: string }[]
+}
+
+export type TBulkEditEvent = Record<string, IEvent & { locationId: string; team1Id?: string; team2Id?: string }>
+export type TBulkEditEventForm = { events: TBulkEditEvent }

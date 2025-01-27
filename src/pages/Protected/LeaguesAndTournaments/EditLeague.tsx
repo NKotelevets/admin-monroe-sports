@@ -1,5 +1,6 @@
+import { InfoCircleOutlined } from '@ant-design/icons'
 import styled from '@emotion/styled'
-import { Breadcrumb, Flex, Typography } from 'antd'
+import { Breadcrumb, Divider, Flex, Typography } from 'antd'
 import Radio from 'antd/es/radio'
 import { Form, Formik, FormikHelpers } from 'formik'
 import { useCallback, useEffect } from 'react'
@@ -18,7 +19,6 @@ import {
 import {
   CancelButton,
   MonroeBlueText,
-  MonroeDivider,
   OptionTitle,
   PageContainer,
   PageContent,
@@ -28,7 +28,6 @@ import {
   RadioGroupLabel,
   RadioGroupLabelTooltip,
 } from '@/components/Elements'
-import MonroeInput from '@/components/Inputs/MonroeInput'
 import MonroeTextarea from '@/components/Inputs/MonroeTextarea'
 import Loader from '@/components/Loader'
 import MonroeButton from '@/components/MonroeButton'
@@ -46,6 +45,9 @@ import { PLAYOFFS_TEAMS_OPTIONS } from '@/common/constants/playoffsTeamsOptions'
 import { IFECreateLeagueBody } from '@/common/interfaces/league'
 
 import InfoCircleIcon from '@/assets/icons/info-circle.svg'
+import TextInput from '@/components/Inputs/TextInput.tsx'
+import Tooltip from 'antd/es/tooltip'
+import { colors } from '@/utils/colors.tsx'
 
 const DEFAULT_PLAYOFFS_TEAMS_VALUE = 4
 
@@ -74,6 +76,7 @@ const EditLeague = () => {
     type: currentData?.type === LEAGUE ? 0 : 1 || 0,
     welcomeNote: currentData?.welcomeNote || '',
     playoffsTeams: currentData?.playoffsTeams || 0,
+    minAttendance: currentData?.minAttendance || null,
   }
 
   const BREAD_CRUMB_ITEMS = [
@@ -120,6 +123,18 @@ const EditLeague = () => {
     if (!data && !isLoading && !isFetching) navigate(PATH_TO_LEAGUES)
   }, [isError, isLoading, data, isFetching])
 
+  const attendanceLabel = useCallback(() => {
+    const info = () => (
+      <Tooltip
+        overlayStyle={{ maxWidth: 216 }}
+        title="Minimum # of players per team requested to play. Can be changed when creating the event."
+      >
+        <Info color={colors.dim} />
+      </Tooltip>
+    )
+    return <OptionTitle className="pb-5"># Team Minimum Attendance {info()} *</OptionTitle>
+  }, [])
+
   return (
     <BaseLayout>
       <>
@@ -137,7 +152,7 @@ const EditLeague = () => {
 
             <PageContent>
               <Formik initialValues={initialFormValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
-                {({ values, handleChange, errors, handleSubmit, setFieldValue, handleBlur }) => {
+                {({ values, handleChange, errors, handleSubmit, setFieldValue, handleBlur, touched }) => {
                   const isEnabledButton = Object.keys(errors).length === 0 && values.name
 
                   return (
@@ -149,14 +164,14 @@ const EditLeague = () => {
 
                         <Flex className="w-352" vertical justify="flex-start">
                           <div className="mg-b8">
-                            <MonroeInput
+                            <TextInput
                               name="name"
+                              label="Name *"
                               value={values.name}
-                              onChange={handleChange}
                               placeholder="Enter league/tourn name"
-                              label={<OptionTitle>Name *</OptionTitle>}
-                              error={errors.name}
-                              onBlur={handleBlur}
+                              onChange={handleChange('name')}
+                              onBlur={handleBlur('name')}
+                              error={touched.name ? errors.name : undefined}
                             />
                           </div>
 
@@ -194,9 +209,9 @@ const EditLeague = () => {
                         </Flex>
                       </Flex>
 
-                      <MonroeDivider />
+                      <DividerStyled />
 
-                      <Flex>
+                      <Content>
                         <div className="f-40">
                           <ProtectedPageSubtitle>Default Formats</ProtectedPageSubtitle>
                         </div>
@@ -230,6 +245,20 @@ const EditLeague = () => {
                           </div>
 
                           <div className="mg-b8">
+                            <TextInput
+                              name="minAttendace"
+                              value={values.minAttendance || ''}
+                              label={attendanceLabel()}
+                              placeholder="Enter # min attendance per team"
+                              errorPosition="bottom"
+                              onChange={(value) => {
+                                const sanitizedValue = (value?.target?.value || '').replace(/\D/g, '')
+                                setFieldValue('minAttendance', sanitizedValue)
+                              }}
+                              onBlur={handleBlur('minAttendance')}
+                              error={touched.minAttendance ? errors.minAttendance : undefined}
+                            />
+
                             <OptionTitle>Default Standings Format *</OptionTitle>
                             <RadioGroupContainer
                               name="standingsFormat"
@@ -285,9 +314,9 @@ const EditLeague = () => {
                         </Flex>
 
                         <div />
-                      </Flex>
+                      </Content>
 
-                      <MonroeDivider />
+                      <DividerStyled />
 
                       <Flex>
                         <div className="f-40" />
@@ -319,3 +348,17 @@ const EditLeague = () => {
 }
 
 export default EditLeague
+
+// Styled Components
+const Content = styled(Flex)`
+  width: 352px;
+`
+const DividerStyled = styled(Divider)`
+    &.ant-divider {
+        margin: 28px 0 28px !important;
+    }
+`
+const Info = styled(InfoCircleOutlined)<{ color: string }>`
+  color: ${({ color }) => color};
+  font-size: 12px;
+`

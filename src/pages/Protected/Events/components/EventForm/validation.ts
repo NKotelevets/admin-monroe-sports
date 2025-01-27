@@ -53,4 +53,55 @@ export const eventFormSchema = yup.object({
     .when('eventType', ([evt], schema) =>
       evt === eventType.GAME || evt === eventType.PLAYOFF ? schema.required('League is required for this event type') : schema.optional()
     )
+    .when('eventType', ([eventType], schema) =>
+      eventType === 0 || eventType === 2
+        ? schema.required('League is required for this event type')
+        : schema.optional(),
+    ),
+})
+
+const eventSchema = yup.object().shape({
+  eventDescription: yup.string(),
+  date: yup
+    .string()
+    .required('Date is required')
+    .test('is-valid-date', 'Date must be a valid format', (value) => dayjs(value, 'YYYY-MM-DD', true).isValid()),
+  day: yup.string().required('Day is required').oneOf(validWeekdays, 'Day must be a valid weekday name (e.g., monday)'),
+  time: yup
+    .string()
+    .required('Time is required')
+    .test('is-valid-time', 'Time must be a valid format', (value) => dayjs(value, 'HH:mm:ss', true).isValid()),
+  duration: yup
+    .number()
+    .required('Duration is required')
+    .oneOf(validDurations, `Duration must be one of ${validDurations.join(', ')}`)
+    .when('eventType', ([eventType], schema) =>
+      eventType === 5 ? schema.oneOf([60], 'Duration must be 60 minutes for Playoff events') : schema,
+    ),
+  locationId: yup.string().required('Location is required'),
+  courtOrField: yup.string(),
+  subResources: yup.string(),
+  ignoreConflicts: yup.boolean(),
+  team1Id: yup.string().required('Team 1 is required'),
+  team2Id: yup
+    .string()
+    .nullable()
+    .when('eventType', ([eventType], schema) =>
+      eventType === 0 || eventType === 2
+        ? schema.required('Team 2 is required for this event type')
+        : schema.optional(),
+    ),
+})
+const eventsSchema = yup.lazy((value) =>
+  yup.object(
+    Object.keys(value || {}).reduce((acc, key) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      acc[key] = eventSchema // Apply the event schema to each dynamic key
+      return acc
+    }, {}),
+  ),
+)
+export const eventBulkEditForm = yup.object().shape({
+  events: eventsSchema,
 })

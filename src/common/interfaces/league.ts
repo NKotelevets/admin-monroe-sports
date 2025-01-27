@@ -35,6 +35,7 @@ export interface IFELeague<T = TLeagueTourn> extends ICommonLeagueFields {
   playoffFormat: TPlayOffFormat
   standingsFormat: TWinningPoints
   tiebreakersFormat: TWinningPoints
+  minAttendance: number | null
   playoffsTeams: number
   seasons: IIdName[] | string[]
 }
@@ -45,6 +46,7 @@ export interface IFECreateLeagueBody {
   playoffFormat: number
   standingsFormat: number
   tiebreakersFormat: number
+  minAttendance: number | null
   name: string
   description: string
   playoffsTeams: number
@@ -80,6 +82,7 @@ export interface INewLeague extends ICommonLeagueFields {
   playoffs_teams: number
   welcome_note: string
   league_seasons?: string[]
+  minAttendance?: number | null
 }
 
 export interface IImportLeagueDuplicates {

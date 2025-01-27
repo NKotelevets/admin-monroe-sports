@@ -75,7 +75,8 @@ export const MonroeTable = <T extends object, >(props: TMonroeTableProps<T>): Re
     showAdditionalHeader,
     setIsAllSelected,
     setShowAdditionalHeader,
-    isLoading
+    isLoading,
+    disableAllCheckBoxes
   } = useTableContext()
 
   const [tableParams, setTableParams] = useState<ITableParams<T>>({})
@@ -140,7 +141,10 @@ export const MonroeTable = <T extends object, >(props: TMonroeTableProps<T>): Re
             if (selected.length === pagination?.limit) setShowAdditionalHeader(true)
             if (selected.length < (pagination?.limit || 0)) setShowAdditionalHeader(false)
             setSelectedIds(selected as string[])
-          }
+          },
+          getCheckboxProps: () => ({
+            disabled: disableAllCheckBoxes
+          })
         }}
         onChange={onChange as TableProps['onChange']}
         {...rest}

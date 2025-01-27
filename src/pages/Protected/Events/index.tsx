@@ -7,6 +7,7 @@ import { useLeagueTeamsSlice } from '@/redux/hooks/useLeagueTeamsSlice.tsx'
 import { useEffect } from 'react'
 import { EventsTable } from '@/pages/Protected/Events/components/EventsTable.tsx'
 import { useBulkDeleteEventsMutation } from '@/redux/events/events.api.ts'
+import { EventTableControls } from '@/pages/Protected/Events/components/EventTableControls.tsx'
 
 const DEFAULT_DELETE_ERROR_MESSAGE = 'Something went wrong. Please, try again!'
 
@@ -66,7 +67,7 @@ const Events = () => {
         onDelete={onDelete}
         deleteTerm={DELETE_TERMS}
         isDeleting={isLoading}
-        // controls={() => <EventTableControls />}
+        controls={() => <EventTableControls />}
         maxSelection={total}
       >
         <EventsTable />

@@ -49,13 +49,13 @@ const MonroeSelect = styled(CustomSelect)<{ is_add_option?: string; is_error?: s
     color: rgba(189, 188, 194, 1);
   }
 
-  @media (width > 1660px) {
-    & .ant-select-selection-item {
-      font-size: 18px !important;
-    }
-
-    min-height: 40px !important;
-  }
+  //@media (width > 1660px) {
+  //  & .ant-select-selection-item {
+  //    font-size: 18px !important;
+  //  }
+  //
+  //  min-height: 40px !important;
+  //}
 `
 
 export default MonroeSelect

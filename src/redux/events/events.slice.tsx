@@ -13,6 +13,7 @@ type TInitialState = {
   deletedRecordsErrors: IDeletingError[]
   tableRecords: []
   duplicates: []
+  selectedRecordIds: string[]
 }
 
 const initialEventsState: TInitialState = {
@@ -24,7 +25,8 @@ const initialEventsState: TInitialState = {
   deletedRecordsErrors: [],
   tableRecords: [],
   createdIds: [],
-  duplicates: []
+  duplicates: [],
+  selectedRecordIds: []
 }
 
 export const eventsSlice = createSlice({
@@ -42,6 +44,9 @@ export const eventsSlice = createSlice({
       state.limit = action.payload.limit
       state.offset = action.payload.offset
       state.ordering = action.payload.ordering
+    },
+    setSelectedRecordIds: (state, action: PayloadAction<string[]>) => {
+      state.selectedRecordIds = action.payload
     },
     resetCreatedIds: (state) => {
       state.createdIds = []

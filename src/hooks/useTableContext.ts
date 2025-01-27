@@ -27,6 +27,12 @@ interface ITableContextType<T> {
    */
   showAdditionalHeader: boolean
 
+
+  /**
+   * Represents a flag indicating whether all checkboxes.
+   */
+  disableAllCheckBoxes: boolean
+
   /**
    * Loading state of the table, typically used for data fetching or processing.
    */
@@ -78,6 +84,13 @@ interface ITableContextType<T> {
    * @param action - A function that receives the previous state and returns the new state.
    */
   setTableParams: Dispatch<SetStateAction<ITableParams<T>>>
+
+  /**
+   * A state setter function used to enable or disable all checkboxes.
+   *
+   * @type {Dispatch<SetStateAction<boolean>>}
+   */
+  setDisableAllCheckBoxes: Dispatch<SetStateAction<boolean>>
 
   showCreatedRecords: boolean
   setShowCreatedRecords(value: boolean): void

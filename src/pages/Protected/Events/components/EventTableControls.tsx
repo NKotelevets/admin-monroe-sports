@@ -2,8 +2,10 @@ import { ImportButton } from '@/components/ImportButton'
 import { useImportEventsCSVMutation } from '@/redux/events/events.api'
 import { TDeleteStatus } from '@/common/types'
 import { PATH_TO_EVENTS_IMPORT_INFO } from '@/common/constants/paths.ts'
+import { EventBulkEditButton } from './EventBulkEditButton'
 
 export const EventTableControls = () => {
+
   const [importEvents] = useImportEventsCSVMutation()
 
   const onImport = (body: FormData) => {
@@ -25,6 +27,7 @@ export const EventTableControls = () => {
 
   return (
     <>
+      <EventBulkEditButton />
       <ImportButton
         fileName="file"
         infoPath={PATH_TO_EVENTS_IMPORT_INFO}

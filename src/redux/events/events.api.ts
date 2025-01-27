@@ -1,19 +1,22 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
+import { stringify } from 'qs'
+
+
 
 import baseQueryWithReAuth from '@/redux/reauthBaseQuery'
 
-import { TBulkDeleteResponse, TDeleteStatus } from '@/common/types'
+
+
 import { removeEmptyStringAttributes, transformKeysToCamelCase, transformKeysToSnakeCase } from '@/utils'
-import {
-  TEventCreationPayload,
-  TEventEditingPayload,
-  TListEventRequestParams,
-  TPaginatedEvents
-} from '@/common/types/events.ts'
+
+
+
+import { eventType } from '@/common/constants/events.ts'
 import { IPaginationResponse } from '@/common/interfaces/api.ts'
 import { IEvent } from '@/common/interfaces/event.ts'
-import { eventType } from '@/common/constants/events.ts'
-import { stringify } from 'qs'
+import { TBulkDeleteResponse, TDeleteStatus } from '@/common/types'
+import { TEventBulkEditPayload, TEventCreationPayload, TEventEditingPayload, TListEventRequestParams, TPaginatedEvents } from '@/common/types/events.ts'
+
 
 const EVENTS_TAG = 'EVENTS'
 
@@ -114,6 +117,23 @@ export const eventsApi = createApi({
       invalidatesTags: [EVENTS_TAG]
     }),
     /**
+     * Bulk Edit events
+     */
+    bulkEditEvents: builder.mutation<TBulkDeleteResponse, TEventBulkEditPayload[]>({
+      query: (body) => {
+        body = body.map(b => removeEmptyStringAttributes(b))
+
+        return ({
+          url: `games/admin-events/bulk-events-edit`,
+          method: 'POST',
+          body: {
+            events: body
+          }
+        })
+      },
+      invalidatesTags: [EVENTS_TAG]
+    }),
+    /**
      * Delete multiple events at once
      */
     bulkDeleteEvents: builder.mutation<TBulkDeleteResponse, string[]>({
@@ -145,6 +165,6 @@ export const {
   useImportEventsCSVMutation,
   useCreateEventMutation,
   useEditEventMutation,
-  useBulkDeleteEventsMutation
+  useBulkDeleteEventsMutation,
+  useBulkEditEventsMutation,
 } = eventsApi
-

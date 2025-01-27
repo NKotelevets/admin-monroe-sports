@@ -17,6 +17,7 @@ export interface IDropdownProps extends SelectProps {
   errorPosition?: 'top' | 'bottom'
   isLast?: boolean
   loading?: boolean
+  noMargin?: boolean
   helpText?: string
   tooltipTitle?: string
   debounceSearch?: boolean
@@ -45,6 +46,7 @@ const Select = (props: IDropdownProps) => {
     helpText,
     debounceSearch = true,
     tooltipTitle,
+    noMargin,
     ...rest
   } = props
 
@@ -54,7 +56,7 @@ const Select = (props: IDropdownProps) => {
 
   // label
   const labelComponent = useMemo(() => (
-    typeof label === 'string' ? <OptionTitle>{label}</OptionTitle> : label
+    typeof label === 'string' && !!label ? <OptionTitle>{label}</OptionTitle> : label
   ), [label])
 
   // render items with custom button and loading indicator
@@ -91,12 +93,13 @@ const Select = (props: IDropdownProps) => {
   }, [searchValue])
 
   return (
-    <Content vertical isLast={isLast} className="form">
+    <Content vertical isLast={isLast || noMargin}  className="form">
       <InputWrapper
+        noMargin={noMargin}
         label={labelComponent}
         helpText={helpText}
         error={error}
-        errorPosition={errorPosition}
+        errorPosition={label ? errorPosition : 'bottom'}
       >
         <Tooltip title={tooltipTitle}>
           <SelectStyled
