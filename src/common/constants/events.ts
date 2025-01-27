@@ -1,6 +1,6 @@
 import { validDurations } from '@/pages/Protected/Events/components/EventForm/validation.ts'
 
-export const eventType = {
+export const eventType: Record<string, number> = {
   GAME: 0,
   PRACTICE: 1,
   PLAYOFF: 2,

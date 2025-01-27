@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { IDeletingError } from '@/common/interfaces'
 import { IEvent } from '@/common/interfaces/event.ts'
 import { eventsApi } from '@/redux/events/events.api.ts'
+import { TEventImportErrors } from '@/common/types/events.ts'
 
 type TInitialState = {
   events: IEvent[]
@@ -14,6 +15,7 @@ type TInitialState = {
   tableRecords: []
   duplicates: []
   selectedRecordIds: string[]
+  importCSVTableRecords: TEventImportErrors[]
 }
 
 const initialEventsState: TInitialState = {
@@ -26,7 +28,8 @@ const initialEventsState: TInitialState = {
   tableRecords: [],
   createdIds: [],
   duplicates: [],
-  selectedRecordIds: []
+  selectedRecordIds: [],
+  importCSVTableRecords: []
 }
 
 export const eventsSlice = createSlice({
@@ -58,4 +61,8 @@ export const eventsSlice = createSlice({
         state.total = action.payload.count
         state.events = action.payload.results
       })
+      .addMatcher(eventsApi.endpoints.importEventsCSV.matchFulfilled, (state, action) => {
+        state.createdIds = action.payload.success.map(event => event.id)
+        state.importCSVTableRecords = action.payload?.errors
+      }),
 })
