@@ -21,7 +21,7 @@ import { useTableSearch } from '@/hooks/useTableSearch.tsx'
 
 import { getIconColor } from '@/utils'
 
-import { eventRepeatName, eventRepeatOptions, eventType } from '@/common/constants/events.ts'
+import { eventRepeatName, eventRepeatOptions, eventType, repeatType } from '@/common/constants/events.ts'
 import { PATH_TO_EDIT_EVENT, PATH_TO_EVENTS, PATH_TO_LOCATION } from '@/common/constants/paths.ts'
 import { IEvent } from '@/common/interfaces/event.ts'
 import { IFELeagueTeam } from '@/common/interfaces/leagueTeams.ts'
@@ -198,7 +198,7 @@ export const useEventsTable = () => {
       filters: eventRepeatOptions.map((option) => ({ text: option.label, value: option.value })),
       filterDropdown: (props) => <MonroeFilter {...props} />,
       filterIcon,
-      render: (_, record) => eventRepeatName[parseInt(record.repeats || '0')],
+      render: (_, record) => eventRepeatName[record.repeats || repeatType.NO_REPEAT],
     },
     {
       title: 'Status',
