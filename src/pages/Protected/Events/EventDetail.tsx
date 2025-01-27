@@ -12,7 +12,7 @@ import { Button } from '@/components/Button.tsx'
 import { EditOutlined } from '@ant-design/icons'
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined'
 import MonroeModal from '@/components/MonroeModal.tsx'
-import { eventRepeatName, eventTypeByValue } from '@/common/constants/events.ts'
+import { eventRepeatName, eventTypeByValue, repeatType } from '@/common/constants/events.ts'
 import CellText from '@/components/Table/CellText.tsx'
 import { Dot } from '../MasterTeams/components/SimpleEntityList'
 import dayjs from 'dayjs'
@@ -212,7 +212,7 @@ const EventDetail = () => {
           <Row className="mb-16">
             <ViewText>Repeats:</ViewText>
             <Flex vertical>
-              <CellText>{eventRepeatName[parseInt(data.repeats || '0')]}</CellText>
+              <CellText>{eventRepeatName[data.repeats || repeatType.NO_REPEAT]}</CellText>
             </Flex>
           </Row>
 
