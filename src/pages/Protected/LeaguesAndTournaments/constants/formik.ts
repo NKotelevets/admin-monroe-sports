@@ -8,6 +8,7 @@ export const validationSchema = Yup.object().shape({
   description: Yup.string(),
   welcomeNote: Yup.string(),
   playoffFormat: Yup.number().required('Default Playoff Format is required'),
+  minAttendance: Yup.number().required('Minimum Attendance is required'),
   standingsFormat: Yup.number().required('Default Standings Format is required'),
   tiebreakersFormat: Yup.number().required('Default Tiebreakers Format is required'),
   playoffsTeams: Yup.number().when('playoffFormat', {
@@ -25,5 +26,6 @@ export const initialFormValues: IFECreateLeagueBody = {
   playoffFormat: 0,
   standingsFormat: 0,
   tiebreakersFormat: 0,
+  minAttendance: null,
   playoffsTeams: 4,
 }
