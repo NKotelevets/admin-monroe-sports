@@ -46,7 +46,7 @@ const EventCreate = () => {
       repeatEndDate: body.endRepeat,
       ignore_conflicts: body.ignoreConflicts,
       team_1_id: body.team1Id,
-      team_2_id: body.team2Id || null,
+      team_2_id: body.team2Id || '',
       duration: body.duration
     } as TEventCreationPayload
 

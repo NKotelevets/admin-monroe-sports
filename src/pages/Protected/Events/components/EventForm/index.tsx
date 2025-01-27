@@ -43,7 +43,6 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
   const { isAddingRelated } = useEventFormContext()
   const { setPageTitle, setBreadcrumbs } = usePageContext()
 
-  const minDate = dayjs(new Date())
   const title = initialValues ? 'Edit' : 'Create'
 
   /**
@@ -106,7 +105,7 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     onChange={value => {
                       setFieldValue('team1Id', undefined)
                       setFieldValue('team2Id', undefined)
-                      setFieldValue('repeats', undefined)
+                      setFieldValue('repeats', repeatType.NO_REPEAT)
                       setFieldValue('endRepeat', undefined)
                       setFieldValue('duration', undefined)
                       setFieldValue('season', undefined)
@@ -157,7 +156,6 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     <DatePicker
                       format="MMMM D, YYYY"
                       placeholder="Select date"
-                      minDate={minDate}
                       value={values.date ? dayjs(values.date, 'YYYY-MM-DD') : null}
                       onChange={(value: Dayjs) => {
                         setFieldValue('date', value ? value.format('YYYY-MM-DD') : null)
@@ -239,7 +237,7 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                           disabled={!values.date || values.repeats === repeatType.NO_REPEAT}
                           placeholder="Select end date"
                           minDate={values.date ? dayjs(values.date, 'YYYY-MM-DD').add(1, 'day') : undefined}
-                          onBlur={handleBlur('endRepeat')}
+                          // onBlur={handleBlur('endRepeat')}
                           value={values.endRepeat ? dayjs(values.endRepeat, 'YYYY-MM-DD') : null}
                           onChange={(value: Dayjs) => handleChange('endRepeat')(value.format('YYYY-MM-DD'))}
                           status={touched.endRepeat && errors.endRepeat ? 'error' : undefined}

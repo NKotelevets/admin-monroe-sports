@@ -65,13 +65,21 @@ const LeagueTeamSelect = (props: { fieldName: 'team1Id' | 'team2Id' }) => {
   useEffect(() => {
     if (!currentLT) return
 
-    setFieldValue('league', currentLT.league?.id)
-    setFieldValue('season', currentLT.season?.id)
+    if (isTeam1) {
+      setFieldValue('league', currentLT.league?.id)
+      setFieldValue('season', currentLT.season?.id)
+      setFieldValue('team2Id', undefined)
+      setFieldValue('team2Name', undefined)
+      setFieldValue('coach2Name', undefined)
+      setFieldValue('season2Name', undefined)
+      setFieldValue('league2Name', undefined)
+    }
+
     setFieldValue(teamNameFiled, currentLT.name)
     setFieldValue(seasonNameFiled, currentLT.season?.name)
     setFieldValue(leagueNameFiled, currentLT.league?.name)
     setFieldValue(coachNameFiled, `${currentLT.headCoach?.firstName} ${currentLT.headCoach?.lastName}`)
-  }, [currentLT])
+  }, [currentLT, isTeam1])
 
   useEffect(() => {
     if (!values[fieldName] || isLoadingSingle) return
@@ -116,7 +124,7 @@ const LeagueTeamSelect = (props: { fieldName: 'team1Id' | 'team2Id' }) => {
           setAddingLeagueTeam(true)
           setTargetField(fieldName)
         }}
-        options={teamOptions || []}
+        options={[...teamOptions] || []}
         onChange={(value) => setFieldValue(fieldName, value)}
         error={touched[fieldName] ? errors[fieldName] : undefined}
         onBlur={() => setFieldTouched(fieldName)}
