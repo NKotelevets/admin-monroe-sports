@@ -1,13 +1,14 @@
-import { Tag } from 'antd'
 import { ReactElement } from 'react'
+
+import { Tag } from '@/components/Tag.tsx'
+
 import { eventType } from '@/common/constants/events.ts'
-import styled from '@emotion/styled'
 
 type TEventTypeTagProps = {
   type: number
 }
 
-type TColorMap = { color: string; name: string; bg: string; border: string }
+type TColorMap = { color: string; name: string }
 
 /**
  * EventTypeTag Component
@@ -42,39 +43,26 @@ export const EventTypeTag = (props: TEventTypeTagProps): ReactElement => {
 
   const typeMap: Record<number, TColorMap> = {
     [eventType.GAME]: {
-      bg: 'rgba(241, 250, 239, 1)',
-      border: 'rgba(158, 224, 148, 1)',
-      color: 'rgba(16, 177, 22, 1)',
-      name: 'Game'
+      color: 'green',
+      name: 'Game',
     },
     [eventType.PRACTICE]: {
-      bg: 'rgba(241, 240, 255, 1)',
-      border: 'rgba(164, 158, 255, 1)',
-      color: 'rgba(76, 65, 230, 1)',
-      name: 'Practice'
+      color: 'blue',
+      name: 'Practice',
     },
     [eventType.PLAYOFF]: {
-      bg: 'rgba(250, 250, 250, 1)',
-      border: 'rgba(216, 215, 219, 1)',
-      color: 'rgba(26, 22, 87, 0.85)',
-      name: 'Playoff'
+      color: 'gray',
+      name: 'Playoff',
     },
     [eventType.OTHER]: {
-      bg: 'rgba(255, 249, 235, 1)',
-      border: 'rgba(255, 215, 112, 1)',
-      color: 'rgba(163, 119, 5, 1)',
-      name: 'Other event' },
+      color: 'yellow',
+      name: 'Other event',
+    },
   }
 
   if (type in typeMap) {
-    return <TagStyled {...typeMap[type]}>{typeMap[type].name}</TagStyled>
+    return <Tag color={typeMap[type].color} title={typeMap[type].name} />
   }
 
-  return <TagStyled {...typeMap[type]}>{typeMap[5].name}</TagStyled>
+  return <Tag color={typeMap[type].color} title={typeMap[5].name} />
 }
-
-const TagStyled = styled(Tag)<TColorMap>`
-    background-color: ${({ bg }) => bg} !important;
-    color: ${({ color }) => color} !important;
-    border-color: ${({ border }) => border} !important;
-`

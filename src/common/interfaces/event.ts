@@ -12,6 +12,7 @@ export interface IRsvpAnswers {
 }
 
 export interface IEvent {
+  status?: string
   id: string
   homeTeam?: IFEMasterTeam
   awayTeam?: IFEMasterTeam

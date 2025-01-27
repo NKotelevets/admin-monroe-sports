@@ -60,10 +60,12 @@ const EditSeason = () => {
       start_date: format(new Date(values.startDate as unknown as string), 'yyyy-MM-dd'),
       expected_end_date: format(new Date(values.expectedEndDate as unknown as string), 'yyyy-MM-dd'),
       divisions: values.divisions.map((division) => ({
+        id: division.id || '',
         name: division.name,
         description: division.description,
         playoff_format: division.playoffFormat === BEST_RECORD_WINS ? 0 : 1,
         brackets: division?.brackets?.map((bracket) => ({
+          id: bracket.id || '',
           name: bracket.name,
           number_of_teams: bracket.playoffTeams,
           subdivision: bracket.subdivisionsNames,
@@ -86,6 +88,7 @@ const EditSeason = () => {
           }))
         })),
         sub_division: division.subDivisions.map((subdivision) => ({
+          id: subdivision.id || '',
           name: subdivision.name,
           description: subdivision.description,
           standings_format: subdivision.standingsFormat !== POINTS ? 0 : 1,
