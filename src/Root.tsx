@@ -88,8 +88,10 @@ import {
   PATH_TO_USERS,
   PATH_TO_USERS_BLOCKING_INFO,
   PATH_TO_USERS_BULK_EDIT,
-  PATH_TO_USERS_IMPORT_INFO,
+  PATH_TO_USERS_IMPORT_INFO, PATH_TO_LOCATIONS, PATH_TO_LOCATIONS_CREATE, PATH_TO_LOCATIONS_EDIT
 } from '@/common/constants/paths'
+import LocationCreate from '@/pages/Protected/Locations/LocationsCreate.tsx'
+import LocationsEdit from '@/pages/Protected/Locations/LocationsEdit.tsx'
 
 const Root = () => (
   <AuthProvider>
@@ -158,6 +160,12 @@ const Root = () => (
       <Route path={`${PATH_TO_BULK_EDIT_EVENT}`} element={<EventBulkEdit />} />
       <Route path={PATH_TO_DELETE_INFO_EVENTS} element={<EventDeletingInfo />} />
       <Route path={PATH_TO_EVENTS_IMPORT_INFO} element={<EventsImportInfo />} />
+
+      {/* Locations */}
+      <Route path={PATH_TO_LOCATIONS} element={<Events />} />
+      <Route path={PATH_TO_LOCATIONS_CREATE} element={<LocationCreate />} />
+      <Route path={`${PATH_TO_LOCATIONS_EDIT}/:id`} element={<LocationsEdit />} />
+      <Route path={`${PATH_TO_LOCATIONS}/:id`} element={<EventDetail />} />
     </Routes>
   </AuthProvider>
 )

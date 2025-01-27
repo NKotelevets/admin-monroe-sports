@@ -53,7 +53,10 @@ export const PATH_TO_EVENTS_IMPORT_INFO = '/events/import-info'
 export const PATH_TO_BULK_EDIT_EVENT = '/events/bulk-edit'
 
 // LOCATION
-export const PATH_TO_LOCATION = '/locations'
+export const PATH_TO_LOCATIONS = '/locations'
+export const PATH_TO_LOCATIONS_CREATE = '/locations/create'
+export const PATH_TO_LOCATIONS_EDIT = '/locations/edit'
+export const PATH_TO_LOCATIONS_IMPORT_INFO = '/locations/import-info'
 
 // REST
 export const PATH_TO_PLAYOFF_FORMAT = '/playoff-format'

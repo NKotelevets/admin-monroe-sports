@@ -7,7 +7,7 @@ import { MonroeBlueText } from '@/components/Elements'
 import { scrollToTop } from '@/utils'
 import CreateMasterTeams from '@/pages/Protected/MasterTeams/CreateMasterTeams.tsx'
 import LeagueTeamCreate from '@/pages/Protected/LeagueTeams/LeagueTeamCreate.tsx'
-import CreateLocation from '@/pages/Protected/Locations/CreateLocation.tsx'
+import CreateLocation from '@/pages/Protected/Locations/LocationsCreate.tsx'
 import { useLocation } from 'react-router-dom'
 
 export const RelatedForms = () => {

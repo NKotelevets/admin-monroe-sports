@@ -22,7 +22,7 @@ import { useTableSearch } from '@/hooks/useTableSearch.tsx'
 import { getIconColor } from '@/utils'
 
 import { eventRepeatName, eventRepeatOptions, eventType, repeatType } from '@/common/constants/events.ts'
-import { PATH_TO_EDIT_EVENT, PATH_TO_EVENTS, PATH_TO_LOCATION } from '@/common/constants/paths.ts'
+import { PATH_TO_EDIT_EVENT, PATH_TO_EVENTS, PATH_TO_LOCATIONS } from '@/common/constants/paths.ts'
 import { IEvent } from '@/common/interfaces/event.ts'
 import { IFELeagueTeam } from '@/common/interfaces/leagueTeams.ts'
 import { IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
@@ -62,7 +62,7 @@ export const useEventsTable = () => {
   }
 
   const navigateToLocation = useCallback((id: string) => {
-    return () => navigate(`${PATH_TO_LOCATION}/${id}`)
+    return () => navigate(`${PATH_TO_LOCATIONS}/${id}`)
   }, [])
 
   const filterIcon = useCallback((filtered: boolean) => <FilterFilled style={{ color: getIconColor(filtered) }} />, [])
