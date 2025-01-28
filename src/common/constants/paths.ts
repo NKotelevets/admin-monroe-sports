@@ -52,11 +52,12 @@ export const PATH_TO_DELETE_INFO_EVENTS = '/events/delete-info'
 export const PATH_TO_EVENTS_IMPORT_INFO = '/events/import-info'
 export const PATH_TO_BULK_EDIT_EVENT = '/events/bulk-edit'
 
-// LOCATION
+// LOCATIONS
 export const PATH_TO_LOCATIONS = '/locations'
 export const PATH_TO_LOCATIONS_CREATE = '/locations/create'
 export const PATH_TO_LOCATIONS_EDIT = '/locations/edit'
 export const PATH_TO_LOCATIONS_IMPORT_INFO = '/locations/import-info'
+export const PATH_TO_LOCATIONS_DELETE_INFO = '/locations/delete-info'
 
 // REST
 export const PATH_TO_PLAYOFF_FORMAT = '/playoff-format'

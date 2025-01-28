@@ -24,29 +24,31 @@ const MonroeFilter: FC<FilterDropdownProps> = (props) => {
 
   return (
     <Flex vertical className="p8">
-      <List
-        dataSource={filters}
-        renderItem={(item) => {
-          const isSelected = selectedKeys.includes(item.value as string)
+      <Scroll>
+        <List
+          dataSource={filters}
+          renderItem={(item) => {
+            const isSelected = selectedKeys.includes(item.value as string)
 
-          const handleChange = () => {
-            if (isSelected) {
-              const filteredKeys = selectedKeys.filter((selectedKey) => selectedKey !== (item.value as string))
+            const handleChange = () => {
+              if (isSelected) {
+                const filteredKeys = selectedKeys.filter((selectedKey) => selectedKey !== (item.value as string))
 
-              setSelectedKeys(filteredKeys)
-            } else {
-              setSelectedKeys([...selectedKeys, item.value as string])
+                setSelectedKeys(filteredKeys)
+              } else {
+                setSelectedKeys([...selectedKeys, item.value as string])
+              }
             }
-          }
 
-          return (
-            <Item>
-              <Checkbox checked={selectedKeys.includes(item.value as string)} onChange={handleChange} className="mg-r8" />
-              <TextWrapper is_selected={`${isSelected}`}>{item.text}</TextWrapper>
-            </Item>
-          )
-        }}
-      />
+            return (
+              <Item>
+                <Checkbox checked={selectedKeys.includes(item.value as string)} onChange={handleChange} className="mg-r8" />
+                <TextWrapper is_selected={`${isSelected}`}>{item.text}</TextWrapper>
+              </Item>
+            )
+          }}
+        />
+      </Scroll>
 
       <Footer align="center" justify="space-between">
         <Button
@@ -74,6 +76,12 @@ export default MonroeFilter
 
 const Footer = styled(Flex)`
     margin-top: 12px
+`
+const Scroll = styled(Flex)`
+    flex: 1;
+    max-height: 300px;
+    overflow-y: scroll;
+    overflow-x: hidden;
 `
 const Item = styled(Flex)`
     padding: 4px

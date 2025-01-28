@@ -1,86 +1,100 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { AutoComplete, Input } from 'antd';
-import { useJsApiLoader } from '@react-google-maps/api';
+import { Autocomplete, Libraries, LoadScript } from '@react-google-maps/api'
+import Input from 'antd/es/input/Input'
+import { useRef, useState } from 'react'
+import InputWrapper, { IInputWrapper } from '@/components/Inputs/InputWrapper.tsx'
 
-interface GoogleAutocompleteProps {
-  name: string;
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  error?: string;
-  onBlur?: () => void;
+type TResultValueProps = {
+  address: string
+  city?: string
+  state?: string
+  country?: string
+  postalCode?: string
+  lat: number
+  lng: number
 }
 
-const GoogleAutocomplete: React.FC<GoogleAutocompleteProps> = ({
-  name,
-  label,
-  value,
-  onChange,
-  error,
-  onBlur,
-}) => {
-  const [options, setOptions] = useState<{ value: string }[]>([]);
-  const autocompleteServiceRef = useRef<google.maps.places.AutocompleteService | null>(null);
+type TGoogleAutocompleteInputProps = {
+  onChange: (value: TResultValueProps) => void
+  initialValue?: string
+} & Omit<IInputWrapper, 'onChange' | 'value' | 'children'>
 
-  // Load Google Maps JS API
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: 'YOUR_GOOGLE_MAPS_API_KEY', // Replace with your API key
-    libraries: ['places'],
-  });
+const RESULT_FIELDS = ['geometry.location', 'address_components']
+const LIBS = ['places'] as Libraries
+const OPTIONS = {
+  componentRestrictions: { country: 'us' }, // Restrict to USA
+  types: ['address'], // Restrict to street addresses
+}
 
-  // Initialize the AutocompleteService once the API is loaded
-  useEffect(() => {
-    if (isLoaded && !autocompleteServiceRef.current) {
-      autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
+export const GoogleAutocompleteInput = (props: TGoogleAutocompleteInputProps) => {
+  const { onChange, placeholder, initialValue, ...rest } = props
+
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null)
+  const [localField, setLocalField] = useState(initialValue || '')
+  const [previousValue, setPreviousValue] = useState(initialValue || '')
+
+  // Helper function to extract specific component
+  const getAddressComponent = (place: google.maps.places.PlaceResult, type: string, useShortName = false) => {
+    const component = place?.address_components?.find((c) => c.types.includes(type))
+    return component ? (useShortName ? component.short_name : component.long_name) : null
+  }
+
+  const handlePlaceChanged = () => {
+    if (autocompleteRef.current) {
+      const place = autocompleteRef.current.getPlace()
+
+      const streetName = getAddressComponent(place, 'route') || ''
+      const streetNumber = getAddressComponent(place, 'street_number') || ''
+      const neighborhood = getAddressComponent(place, 'sublocality_level_1') || ''
+      const city = getAddressComponent(place, 'administrative_area_level_2') || ''
+      const state = getAddressComponent(place, 'administrative_area_level_1', true) || ''
+      const country = getAddressComponent(place, 'country') || ''
+      const postalCode = getAddressComponent(place, 'postal_code') || ''
+
+      // Extract relevant information from the selected place
+      const formattedAddress = `${streetName}${neighborhood ? `, ${neighborhood}` : ''}${streetNumber ? ` – ${streetNumber}` : ''}`
+      const location = place.geometry?.location
+
+      // updates local field with selected address
+      setLocalField(formattedAddress || '')
+
+      if (formattedAddress && location) {
+        onChange({
+          address: formattedAddress,
+          lat: location.lat(),
+          lng: location.lng(),
+          city,
+          state,
+          country,
+          postalCode,
+        })
+        setPreviousValue(formattedAddress || '')
+      }
     }
-  }, [isLoaded]);
-
-  const handleSearch = (searchText: string) => {
-    if (autocompleteServiceRef.current && searchText) {
-      autocompleteServiceRef.current.getPlacePredictions(
-        { input: searchText },
-        (predictions, status) => {
-          if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
-            setOptions(
-              predictions.map((prediction) => ({
-                value: prediction.description,
-              }))
-            );
-          }
-        }
-      );
-    } else {
-      setOptions([]);
-    }
-  };
-
-  const handleSelect = (selectedValue: string) => {
-    onChange(selectedValue);
-  };
+  }
 
   return (
-    <div>
-      <label htmlFor={name} style={{ display: 'block', marginBottom: 4 }}>
-        {label}
-      </label>
-      <AutoComplete
-        value={value}
-        onSearch={handleSearch}
-        placeholder="Start typing an address..."
-        onSelect={handleSelect}
-        onChange={onChange}
-        options={options}
-        style={{ width: '100%' }}
-      >
-        <Input
-          id={name}
-          onBlur={onBlur}
-          status={error ? 'error' : ''}
-        />
-      </AutoComplete>
-      {error && <div style={{ color: 'red', marginTop: 4 }}>{error}</div>}
-    </div>
-  );
-};
-
-export default GoogleAutocomplete;
+    <InputWrapper {...rest}>
+      <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_LOCATION_API_KEY || ''} libraries={LIBS}>
+        <Autocomplete
+          onLoad={(autocomplete) => {
+            autocompleteRef.current = autocomplete
+          }}
+          onPlaceChanged={handlePlaceChanged}
+          fields={RESULT_FIELDS}
+          options={OPTIONS}
+        >
+          <Input
+            name="new-password"
+            placeholder={placeholder || 'Enter your address'}
+            value={localField}
+            onChange={(event) => {
+              setLocalField(event.target.value)
+            }}
+            onBlur={() => setLocalField(previousValue)}
+            autoComplete="new-password"
+          />
+        </Autocomplete>
+      </LoadScript>
+    </InputWrapper>
+  )
+}

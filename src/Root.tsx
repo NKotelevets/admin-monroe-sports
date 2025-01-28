@@ -88,10 +88,17 @@ import {
   PATH_TO_USERS,
   PATH_TO_USERS_BLOCKING_INFO,
   PATH_TO_USERS_BULK_EDIT,
-  PATH_TO_USERS_IMPORT_INFO, PATH_TO_LOCATIONS, PATH_TO_LOCATIONS_CREATE, PATH_TO_LOCATIONS_EDIT
+  PATH_TO_USERS_IMPORT_INFO,
+  PATH_TO_LOCATIONS,
+  PATH_TO_LOCATIONS_CREATE,
+  PATH_TO_LOCATIONS_EDIT,
+  PATH_TO_LOCATIONS_DELETE_INFO
 } from '@/common/constants/paths'
 import LocationCreate from '@/pages/Protected/Locations/LocationsCreate.tsx'
 import LocationsEdit from '@/pages/Protected/Locations/LocationsEdit.tsx'
+import Locations from '@/pages/Protected/Locations/Locations.tsx'
+import LocationsDetail from '@/pages/Protected/Locations/LocationsDetail.tsx'
+import LocationsDeleteInfo from '@/pages/Protected/Locations/LocationsDeleteInfo.tsx'
 
 const Root = () => (
   <AuthProvider>
@@ -162,10 +169,11 @@ const Root = () => (
       <Route path={PATH_TO_EVENTS_IMPORT_INFO} element={<EventsImportInfo />} />
 
       {/* Locations */}
-      <Route path={PATH_TO_LOCATIONS} element={<Events />} />
+      <Route path={PATH_TO_LOCATIONS} element={<Locations />} />
       <Route path={PATH_TO_LOCATIONS_CREATE} element={<LocationCreate />} />
       <Route path={`${PATH_TO_LOCATIONS_EDIT}/:id`} element={<LocationsEdit />} />
-      <Route path={`${PATH_TO_LOCATIONS}/:id`} element={<EventDetail />} />
+      <Route path={`${PATH_TO_LOCATIONS}/:id`} element={<LocationsDetail />} />
+      <Route path={`${PATH_TO_LOCATIONS_DELETE_INFO}`} element={<LocationsDeleteInfo />} />
     </Routes>
   </AuthProvider>
 )

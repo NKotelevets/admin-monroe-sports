@@ -5,8 +5,10 @@ import baseQueryWithReAuth from '@/redux/reauthBaseQuery.ts'
 import { transformKeysToCamelCase, transformKeysToSnakeCase } from '@/utils'
 
 import { ILocation } from '@/common/interfaces/location.ts'
-import { TListLocationRequest, TListLocationResponse } from '@/common/types/events'
-import { TLocationForm } from '@/common/types/location.ts'
+import { TListLocationResponse } from '@/common/types/events'
+import { TListLocationRequestParams, TLocationForm } from '@/common/types/location.ts'
+import { TBulkDeleteResponse } from '@/common/types'
+import { stringify } from 'qs'
 
 const LOCATIONS_TAG = 'LOCATIONS'
 
@@ -21,16 +23,15 @@ export const locationsApi = createApi({
      * Queries the `games/locations` endpoint with the given parameters, transforms the
      * response keys to camelCase format, and returns the formatted response.
      *
-     * @param {TListLocationRequest} params - The request parameters used to filter the locations.
+     * @param {TListLocationRequestParams} params - The request parameters used to filter the locations.
      * @returns {TListLocationResponse} The transformed response containing the list of locations.
      *
      * This query provides a cache tag defined by `LOCATIONS_TAG` that can be used for invalidation
      * or refetching purposes.
      */
-    listLocation: builder.query<TListLocationResponse, TListLocationRequest>({
+    listLocation: builder.query<TListLocationResponse, TListLocationRequestParams>({
       query: (params) => ({
-        url: `games/locations`,
-        params,
+        url: `games/locations?${stringify(transformKeysToSnakeCase(params), { arrayFormat: 'repeat' })}`
       }),
       transformResponse: (response: TListLocationResponse) => transformKeysToCamelCase(response),
       providesTags: [LOCATIONS_TAG],
@@ -87,9 +88,26 @@ export const locationsApi = createApi({
      */
     editLocation: builder.mutation<ILocation, { id: string; body: TLocationForm }>({
       query: ({ id, body }) => ({
-        url: `games/locations${id}`,
-        method: 'POST',
+        url: `games/locations/${id}`,
+        method: 'PUT',
         body: transformKeysToSnakeCase(body),
+      }),
+      invalidatesTags: [LOCATIONS_TAG],
+    }),
+    deleteLocations: builder.mutation<void, string>({
+      query: (id) => ({
+        url: `games/locations/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: [LOCATIONS_TAG],
+    }),
+    bulkDeleteLocations: builder.mutation<TBulkDeleteResponse, string[]>({
+      query: (ids) => ({
+        url: 'games/locations/bulk-delete',
+        body: {
+          ids,
+        },
+        method: 'POST',
       }),
       invalidatesTags: [LOCATIONS_TAG],
     }),
@@ -102,4 +120,6 @@ export const {
   useLazyGetLocationQuery,
   useCreateLocationMutation,
   useEditLocationMutation,
+  useDeleteLocationsMutation,
+  useBulkDeleteLocationsMutation
 } = locationsApi

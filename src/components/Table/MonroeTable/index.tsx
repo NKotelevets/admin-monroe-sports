@@ -132,7 +132,7 @@ export const MonroeTable = <T extends object, >(props: TMonroeTableProps<T>): Re
           return id === record.id || id === record.name
         }) ? 'highlighted-row' : ''}
         scroll={{
-          x: 'scroll'
+          x: 'max-content'
         }}
         rowSelection={{
           type: 'checkbox',

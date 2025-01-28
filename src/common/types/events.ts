@@ -5,6 +5,7 @@ import { IEvent } from '@/common/interfaces/event'
 import { ILocation } from '@/common/interfaces/location.ts'
 import { NestedSnakeCase, TDeleteStatus, TPagination } from '@/common/types/index.ts'
 
+
 export type TPaginatedEvents = IPaginationResponse<NestedSnakeCase<IEvent>[]>
 
 export type TListEventRequestParams = {
@@ -36,10 +37,6 @@ export type TListEventRequestParams = {
 }
 
 export type TEventFilter = keyof TListEventRequestParams
-
-export type TListLocationRequest = {
-  search?: string
-} & Partial<TPagination>
 
 export type TListLocationResponse = {
   results: ILocation[]

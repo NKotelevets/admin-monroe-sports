@@ -63,6 +63,7 @@ export interface IFormProps<Body, FormValues> {
   validationSchema?: FormikConfig<FormValues>['validationSchema']
   initialValues?: FormValues
   isLoading?: boolean
+  isEditing?: boolean
 
   onSubmit(body: Body, formikHelpers?: FormikHelpers<FormValues>): void
 

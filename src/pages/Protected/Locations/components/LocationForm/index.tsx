@@ -1,15 +1,19 @@
-import { IFormProps } from '@/common/interfaces'
-import { Form, Formik, FormikHelpers } from 'formik'
-import { CancelButton, Line, MainContainer, PageContent, ProtectedPageSubtitle } from '@/components/Elements'
 import { Flex } from 'antd'
-import TextInput from '@/components/Inputs/TextInput.tsx'
-import { locationInitialValues } from '@/common/constants/location.ts'
-import MonroeButton from '@/components/MonroeButton.tsx'
+import { Form, Formik, FormikHelpers } from 'formik'
+
 import { locationFormValidateSchema } from '@/pages/Protected/Locations/components/LocationForm/validation.ts'
+
+import { CancelButton, Line, MainContainer, PageContent, ProtectedPageSubtitle } from '@/components/Elements'
+import { GoogleAutocompleteInput } from '@/components/Inputs/GoogleAutocompleteInput.tsx'
+import TextInput from '@/components/Inputs/TextInput.tsx'
+import MonroeButton from '@/components/MonroeButton.tsx'
+
+import { locationInitialValues } from '@/common/constants/location.ts'
+import { IFormProps } from '@/common/interfaces'
 import { TLocationForm } from '@/common/types/location.ts'
 
 export const LocationForm = (props: IFormProps<TLocationForm, TLocationForm>) => {
-  const { initialValues, validationSchema, onSubmit, goBack, isLoading } = props
+  const { initialValues, validationSchema, isEditing, onSubmit, goBack, isLoading } = props
 
   const handleSubmit = (values: TLocationForm, formikHelpers?: FormikHelpers<TLocationForm>) => {
     onSubmit(values, formikHelpers)
@@ -24,19 +28,9 @@ export const LocationForm = (props: IFormProps<TLocationForm, TLocationForm>) =>
       validateOnChange
       validateOnBlur
     >
-      {({
-          values,
-          handleChange,
-          handleSubmit,
-          errors,
-          handleBlur,
-          touched,
-          isValid,
-          dirty
-        }) => {
-
+      {({ values, handleChange, handleSubmit, errors, handleBlur, touched, isValid, dirty, setFieldValue }) => {
         return (
-          <Form onSubmit={handleSubmit} className="league-teams">
+          <Form onSubmit={handleSubmit} autoComplete="off" className="league-teams">
             <PageContent>
               <Flex>
                 <div className="f-40">
@@ -46,6 +40,7 @@ export const LocationForm = (props: IFormProps<TLocationForm, TLocationForm>) =>
                   <TextInput
                     name="name"
                     label="Location name *"
+                    placeholder='Enter location name'
                     value={values.name}
                     onChange={handleChange('name')}
                     error={touched.name ? errors.name : undefined}
@@ -61,18 +56,26 @@ export const LocationForm = (props: IFormProps<TLocationForm, TLocationForm>) =>
                   <ProtectedPageSubtitle>Address</ProtectedPageSubtitle>
                 </div>
                 <MainContainer>
-                  <TextInput
+                  <GoogleAutocompleteInput
                     name="address"
                     label="Address *"
-                    value={values.address}
-                    onChange={handleChange('address')}
+                    initialValue={values.address}
+                    placeholder="Enter address"
                     error={touched.address ? errors.address : undefined}
-                    onBlur={handleBlur('address')}
+                    onChange={(result) => {
+                      setFieldValue('address', result.address, true)
+                      setFieldValue('zipCode', result.postalCode, true)
+                      setFieldValue('state', result.state, true)
+                      setFieldValue('city', result.city, true)
+                      setFieldValue('latitude', Math.round(result.lat * 1e6) / 1e6, true)
+                      setFieldValue('longitude', Math.round(result.lng * 1e6) / 1e6, true)
+                    }}
                   />
+
                   <TextInput
-                    name="zipcode"
+                    name="zipCode"
                     label="Zip Code"
-                    // disabled
+                    disabled
                     maxLength={5}
                     value={values.zipCode}
                     onChange={handleChange('zipCode')}
@@ -82,7 +85,7 @@ export const LocationForm = (props: IFormProps<TLocationForm, TLocationForm>) =>
                   <TextInput
                     name="state"
                     label="State"
-                    // disabled
+                    disabled
                     value={values.state}
                     onChange={handleChange('state')}
                     error={touched.state ? errors.state : undefined}
@@ -91,7 +94,7 @@ export const LocationForm = (props: IFormProps<TLocationForm, TLocationForm>) =>
                   <TextInput
                     name="city"
                     label="City"
-                    // disabled
+                    disabled
                     value={values.city}
                     onChange={handleChange('city')}
                     error={touched.city ? errors.city : undefined}
@@ -113,7 +116,7 @@ export const LocationForm = (props: IFormProps<TLocationForm, TLocationForm>) =>
                     type="primary"
                     className="h-40"
                     isLoading={isLoading}
-                    isDisabled={!dirty || !isValid}
+                    isDisabled={(isEditing && !dirty) || !isValid}
                     label="Create Location"
                     onClick={handleSubmit}
                   />
@@ -122,7 +125,6 @@ export const LocationForm = (props: IFormProps<TLocationForm, TLocationForm>) =>
             </PageContent>
           </Form>
         )
-
       }}
     </Formik>
   )
