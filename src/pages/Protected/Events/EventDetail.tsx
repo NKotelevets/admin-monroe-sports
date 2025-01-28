@@ -1,6 +1,6 @@
 import { Page } from '@/layouts/Page'
 import { useCallback, useEffect, useState } from 'react'
-import { PATH_TO_EDIT_EVENT, PATH_TO_EVENTS, PATH_TO_LOCATION, PATH_TO_USERS } from '@/common/constants/paths.ts'
+import { PATH_TO_EDIT_EVENT, PATH_TO_EVENTS, PATH_TO_LOCATIONS, PATH_TO_USERS } from '@/common/constants/paths.ts'
 import { MonroeBlueText, ViewText } from '@/components/Elements'
 import { Flex, Row, Typography } from 'antd'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -193,7 +193,7 @@ const EventDetail = () => {
           <Row className="mb-16">
             <ViewText>Location:</ViewText>
             <Flex vertical={false} align="center">
-              <Typography.Link href={`${PATH_TO_LOCATION}/${data.location.id}`}>{data.location.name}</Typography.Link>
+              <Typography.Link href={`${PATH_TO_LOCATIONS}/${data.location.id}`}>{data.location.name}</Typography.Link>
               {!!data.courtOrField && (
                 <>
                   <Dot />
