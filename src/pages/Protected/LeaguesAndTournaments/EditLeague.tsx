@@ -216,7 +216,7 @@ const EditLeague = () => {
                           <ProtectedPageSubtitle>Default Formats</ProtectedPageSubtitle>
                         </div>
 
-                        <Flex vertical justify="flex-start">
+                        <Flex vertical justify="flex-start" className='w-352'>
                           <div className="mg-b8">
                             <OptionTitle>Default Playoff Format *</OptionTitle>
                             <RadioGroupContainer
@@ -351,7 +351,6 @@ export default EditLeague
 
 // Styled Components
 const Content = styled(Flex)`
-  width: 352px;
 `
 const DividerStyled = styled(Divider)`
     &.ant-divider {
