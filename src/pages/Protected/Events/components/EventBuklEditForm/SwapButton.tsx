@@ -25,6 +25,13 @@ const SWAP_MESSAGE = `To swap the data, check only 2 events`
 export const SwapButton = (props: TBulkEditTableControlsProps): ReactElement => {
   const { selectedIds, values, setFieldValue, validateForm } = props
 
+  /**
+   * Handles the swapping of specific fields between two events in the event list.
+   *
+   * This function swaps predefined fields (e.g., date, time, duration, etc.)
+   * between two events identified by their selection IDs and updates the
+   * corresponding event values in the form. After swapping, it triggers form validation.
+   */
   const onSwap = () => {
     if (selectedIds.length === 2) {
       let firstEvent = values.events[selectedIds[0] as string]

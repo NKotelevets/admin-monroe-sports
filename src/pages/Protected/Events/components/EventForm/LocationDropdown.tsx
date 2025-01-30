@@ -105,7 +105,7 @@ export const LocationDropdown = React.memo((props: TLocationDropdownProps) => {
         placeholder="Select location"
         optionFilterProp="label"
         value={locationValue}
-        onChange={handleChange('locationId')}
+        onChange={handleChange(fieldName)}
         onLoadMore={!endReached ? onLoadMore : undefined}
         options={locations.map(mt => ({ label: mt.name, value: mt.id }))}
         buttonAction={() => setAddingLocation(true)}

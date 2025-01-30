@@ -212,7 +212,7 @@ export const useEventsBulkEditTable = () => {
     {
       title: 'Sub Resources',
       width: '240px',
-      dataIndex: 'subResources',
+      dataIndex: 'subResource',
       editable: true,
       renderField: (field, meta) => (
         <TextInput

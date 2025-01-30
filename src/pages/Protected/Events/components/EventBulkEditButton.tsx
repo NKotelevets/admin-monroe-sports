@@ -7,6 +7,7 @@ import { useTableContext } from '@/hooks/useTableContext.ts'
 
 import { PATH_TO_BULK_EDIT_EVENT } from '@/common/constants/paths.ts'
 import { useNavigate } from 'react-router-dom'
+import EditOutlined from '@ant-design/icons/lib/icons/EditOutlined'
 
 export const EventBulkEditButton = () => {
   const { selectedIds } = useTableContext()
@@ -19,5 +20,5 @@ export const EventBulkEditButton = () => {
 
   if (selectedIds.length < 2) return <></>
 
-  return <Button onClick={() => navigate(PATH_TO_BULK_EDIT_EVENT)}>Bulk Edit</Button>
+  return <Button icon={<EditOutlined/>} onClick={() => navigate(PATH_TO_BULK_EDIT_EVENT)}>Bulk Edit</Button>
 }
