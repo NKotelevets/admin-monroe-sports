@@ -61,7 +61,7 @@ const LogIn = () => {
           onSubmit={onSubmit}
         >
           {({ values, errors, touched, isValid, handleChange, handleBlur, handleSubmit, setFieldValue }) => (
-            <FormStyled onSubmit={handleSubmit}>
+            <FormStyled autoComplete='off' onSubmit={handleSubmit}>
               <TextInput
                 preset="app"
                 type="email"
@@ -87,7 +87,7 @@ const LogIn = () => {
                 iconRender={renderEyeIcon}
               />
 
-              <Checkbox style={{ width: 90 }} onChange={(value) => setFieldValue('keepSignedIn', value.target.value)}>
+              <Checkbox style={{ width: 90, alignSelf: 'flex-start', textAlign: 'left', display: 'flex',marginBottom: 16}} onChange={(value) => setFieldValue('keepSignedIn', value.target.value)}>
                 Checkbox
               </Checkbox>
 
