@@ -2,6 +2,12 @@ export const PATH_TO_SIGN_IN = '/sign-in'
 
 export const PATH_TO_HOME = '/'
 
+// PUBLIC ACCOUNT PAGES
+export const PATH_TO_ACCOUNT_LOGIN = '/login'
+export const PATH_TO_ACCOUNT_SIGNUP = '/signup'
+export const PATH_TO_ACCOUNT_REQUEST_RESET_PASSWORD = '/account/request-reset-password'
+export const PATH_TO_ACCOUNT_RESET_PASSWORD = '/account/reset-password'
+
 // LEAGUES & TOURNAMENTS PAGES
 export const PATH_TO_LEAGUES = '/leagues-and-tournaments'
 export const PATH_TO_LEAGUE_PAGE = '/leagues-and-tournaments'

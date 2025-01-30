@@ -64,7 +64,7 @@ const MonroeHeader = () => {
   return (
     <StyledHeader>
       <Flex className="w-256" justify="center">
-        <ReactSVG src={LogotypeIcon} />
+        <ReactSVG src={LogotypeIcon} style={styles.logo} />
       </Flex>
 
       <Flex align="center">
@@ -99,3 +99,11 @@ const MonroeHeader = () => {
 }
 
 export default MonroeHeader
+
+// Styled
+const styles = {
+  logo: {
+    width: 77,
+    height: 32,
+  },
+}

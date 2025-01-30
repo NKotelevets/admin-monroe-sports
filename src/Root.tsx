@@ -1,5 +1,8 @@
 import { Route, Routes } from 'react-router-dom'
 
+import LogIn from '@/pages/Account/LogIn/LogIn.tsx'
+import RequestPasswordReset from '@/pages/Account/RequestPasswordReset/RequestPasswordReset.tsx'
+import ResetPassword from '@/pages/Account/ResetPassword/ResetPassword.tsx'
 import SignIn from '@/pages/Auth/SingIn'
 import Events from '@/pages/Protected/Events'
 import EventBulkEdit from '@/pages/Protected/Events/EventBulkEdit.tsx'
@@ -21,6 +24,11 @@ import EditLeague from '@/pages/Protected/LeaguesAndTournaments/EditLeague'
 import LeagueDetails from '@/pages/Protected/LeaguesAndTournaments/LeagueDetails'
 import LeaguesDeletingInfo from '@/pages/Protected/LeaguesAndTournaments/LeaguesDeletingInfo'
 import LeaguesImportInfo from '@/pages/Protected/LeaguesAndTournaments/LeaguesImportInfo'
+import Locations from '@/pages/Protected/Locations/Locations.tsx'
+import LocationCreate from '@/pages/Protected/Locations/LocationsCreate.tsx'
+import LocationsDeleteInfo from '@/pages/Protected/Locations/LocationsDeleteInfo.tsx'
+import LocationsDetail from '@/pages/Protected/Locations/LocationsDetail.tsx'
+import LocationsEdit from '@/pages/Protected/Locations/LocationsEdit.tsx'
 import MasterTeams from '@/pages/Protected/MasterTeams'
 import CreateMasterTeam from '@/pages/Protected/MasterTeams/CreateMasterTeams'
 import EditMasterTeam from '@/pages/Protected/MasterTeams/EditMasterTeam'
@@ -50,6 +58,9 @@ import Notification from '@/components/Notification'
 import AuthProvider from '@/utils/AuthProvider'
 
 import {
+  PATH_TO_ACCOUNT_LOGIN,
+  PATH_TO_ACCOUNT_REQUEST_RESET_PASSWORD,
+  PATH_TO_ACCOUNT_RESET_PASSWORD,
   PATH_TO_BULK_EDIT_EVENT,
   PATH_TO_BULK_EDIT_USER_ERRORS,
   PATH_TO_CREATE_EVENT,
@@ -76,6 +87,10 @@ import {
   PATH_TO_LEAGUE_TEAMS,
   PATH_TO_LEAGUE_TEAM_IMPORT_INFO,
   PATH_TO_LEAGUE_TEAM_SCHEDULE_REQUEST,
+  PATH_TO_LOCATIONS,
+  PATH_TO_LOCATIONS_CREATE,
+  PATH_TO_LOCATIONS_DELETE_INFO,
+  PATH_TO_LOCATIONS_EDIT,
   PATH_TO_MASTER_TEAMS,
   PATH_TO_MASTER_TEAMS_IMPORT_INFO,
   PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST,
@@ -89,16 +104,7 @@ import {
   PATH_TO_USERS_BLOCKING_INFO,
   PATH_TO_USERS_BULK_EDIT,
   PATH_TO_USERS_IMPORT_INFO,
-  PATH_TO_LOCATIONS,
-  PATH_TO_LOCATIONS_CREATE,
-  PATH_TO_LOCATIONS_EDIT,
-  PATH_TO_LOCATIONS_DELETE_INFO
 } from '@/common/constants/paths'
-import LocationCreate from '@/pages/Protected/Locations/LocationsCreate.tsx'
-import LocationsEdit from '@/pages/Protected/Locations/LocationsEdit.tsx'
-import Locations from '@/pages/Protected/Locations/Locations.tsx'
-import LocationsDetail from '@/pages/Protected/Locations/LocationsDetail.tsx'
-import LocationsDeleteInfo from '@/pages/Protected/Locations/LocationsDeleteInfo.tsx'
 
 const Root = () => (
   <AuthProvider>
@@ -107,6 +113,11 @@ const Root = () => (
 
     <Routes>
       <Route path={PATH_TO_SIGN_IN} element={<SignIn />} />
+
+      {/* ACCOUNT PAGES */}
+      <Route path={PATH_TO_ACCOUNT_LOGIN} element={<LogIn />} />
+      <Route path={PATH_TO_ACCOUNT_REQUEST_RESET_PASSWORD} element={<RequestPasswordReset />} />
+      <Route path={`${PATH_TO_ACCOUNT_RESET_PASSWORD}/:token`} element={<ResetPassword />} />
 
       {/* LEAGUES & TOURNAMENTS PAGES */}
       <Route path={PATH_TO_CREATE_LEAGUE} element={<CreateLeague />} />

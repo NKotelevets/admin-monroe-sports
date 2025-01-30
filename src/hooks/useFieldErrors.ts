@@ -1,5 +1,6 @@
 import { FormikHelpers } from 'formik'
 import { useEffect, useState } from 'react'
+
 import { useNotification } from '@/hooks/useNotification.ts'
 
 const DEFAULT_ERROR_MESSAGE = 'Something went wrong. Please, try again!'
@@ -13,25 +14,29 @@ interface TErrorReason<T> {
   }
 }
 
-export const useFieldErrors = <T extends object, >() => {
+export const useFieldErrors = <T extends object>(showNotification?: boolean) => {
   const [nonFieldErrors, setNonFieldErrors] = useState<string[] | string | undefined>(undefined)
   const { notify } = useNotification()
 
   useEffect(() => {
-    if (!nonFieldErrors) return
+    if (!nonFieldErrors || showNotification === false) return
     const errorMessage = Array.isArray(nonFieldErrors) ? nonFieldErrors : [nonFieldErrors]
 
     notify(errorMessage.join(', '), 'error')
-  }, [nonFieldErrors])
+  }, [nonFieldErrors, showNotification])
 
   const handleErrors = (setErrors: FormikHelpers<T>['setErrors'], callback?: () => void) => {
     return ({ data: reason }: TErrorReason<T>) => {
-
       if (!reason?.code && !reason?.message && !reason?.details && !reason?.error) {
         throw reason
       }
 
-      if (reason?.code === 'invalid_input' && typeof reason?.details === 'object' && Object.keys(reason.details as T).length) {
+      setNonFieldErrors(undefined)
+      if (
+        reason?.code === 'invalid_input' &&
+        typeof reason?.details === 'object' &&
+        Object.keys(reason.details as T).length
+      ) {
         setErrors && setErrors(reason.details as T)
       }
 
@@ -42,7 +47,7 @@ export const useFieldErrors = <T extends object, >() => {
       // if, for some reason, there is no field errors we
       // show the error message itself
       if (!reason?.code || reason?.code !== 'invalid_input') {
-        setNonFieldErrors(reason?.message || reason?.details as string || reason?.error || DEFAULT_ERROR_MESSAGE)
+        setNonFieldErrors(reason?.message || (reason?.details as string) || reason?.error || DEFAULT_ERROR_MESSAGE)
       }
 
       callback && callback()
@@ -51,6 +56,6 @@ export const useFieldErrors = <T extends object, >() => {
 
   return {
     handleErrors,
-    nonFieldErrors
+    nonFieldErrors,
   }
 }
