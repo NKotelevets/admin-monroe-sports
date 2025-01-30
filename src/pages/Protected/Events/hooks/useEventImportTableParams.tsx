@@ -96,7 +96,7 @@ export const useEventImportInfoTableParams = () => {
     },
     {
       title: 'Status',
-      dataIndex: 'status',
+      dataIndex: 'type',
       width: '132px',
       filters: [
         { text: 'Conflict', value: 'Conflict' },
