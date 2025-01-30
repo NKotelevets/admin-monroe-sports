@@ -53,6 +53,7 @@ export const eventsApi = createApi({
         let url = 'games/admin-events/create-practice-event'
 
         body = removeEmptyStringAttributes(body)
+        body = transformKeysToSnakeCase(body)
 
         switch (body.event_type) {
           case eventType.PRACTICE:
@@ -94,6 +95,7 @@ export const eventsApi = createApi({
     editEvent: builder.mutation<void, TEventEditingPayload>({
       query: (body) => {
         body = removeEmptyStringAttributes(body)
+        body = transformKeysToSnakeCase(body)
 
         switch (body.event_type) {
           case eventType.GAME || eventType.PLAYOFF:
@@ -119,6 +121,7 @@ export const eventsApi = createApi({
     bulkEditEvents: builder.mutation<TBulkDeleteResponse, TEventBulkEditPayload[]>({
       query: (body) => {
         body = body.map((b) => removeEmptyStringAttributes(b))
+        body = transformKeysToSnakeCase(body)
 
         return {
           url: `games/admin-events/bulk-events-edit`,
