@@ -203,8 +203,8 @@ export const useEventsTable = () => {
     {
       title: 'Status',
       dataIndex: 'status',
-      sorter: true,
       width: '115px',
+      ...getColumnSearchProps('status'),
       render: (_, record) =>
         record.status ? <StatusTag type={record.status as 'No' | 'Yes' | 'Maybe'} title={record.status} /> : '---',
     },
