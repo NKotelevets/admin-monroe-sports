@@ -115,6 +115,7 @@ export const EventsTable = () => {
       ordering: getTableSortField<IEvent>(sorter, fieldMap),
       date: filters?.['date'] ? filters?.['date'] :  undefined,
       day: filters?.['day'] ? filters?.['day'] as FilterValue : undefined,
+      status: filters?.['status'] ? filters?.['status'] as FilterValue : undefined,
       leagueName: (filters?.['leagueName']?.[0] as string) ?? undefined,
       subResource: (filters?.['subResource']?.[0] as string) ?? undefined,
       team1name: (filters?.['homeTeam']?.[0] as string) ?? undefined,

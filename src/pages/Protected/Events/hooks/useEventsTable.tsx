@@ -204,7 +204,13 @@ export const useEventsTable = () => {
       title: 'Status',
       dataIndex: 'status',
       width: '115px',
-      ...getColumnSearchProps('status'),
+      filters: [
+        { text: 'Yes', value: 'Yes' },
+        { text: 'No', value: 'No' },
+        { text: 'Pending', value: 'Maybe' },
+      ],
+      filterDropdown: (props) => <MonroeFilter {...props} />,
+      filterIcon,
       render: (_, record) =>
         record.status ? <StatusTag type={record.status as 'No' | 'Yes' | 'Maybe'} title={record.status} /> : '---',
     },

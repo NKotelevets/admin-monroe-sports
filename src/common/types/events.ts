@@ -32,6 +32,7 @@ export type TListEventRequestParams = {
 
   type?: FilterValue
   repeats?: FilterValue
+  status?: FilterValue
   location?: string
   locationName?: string
 }
