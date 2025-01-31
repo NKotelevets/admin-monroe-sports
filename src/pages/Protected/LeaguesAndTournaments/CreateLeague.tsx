@@ -81,6 +81,7 @@ const CreateLeague = () => {
       tiebreakers_format: tiebreakersFormat,
       welcome_note: welcomeNote,
       playoffs_teams: playoffsTeams,
+      min_attendance: values.minAttendance ? +values.minAttendance : null,
       ...rest,
     })
       .unwrap()

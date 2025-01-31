@@ -19,6 +19,7 @@ export const leagueResponseMapper = (league: IBELeague) => ({
   standingsFormat: league.standings_format === 0 ? WINNING : POINTS,
   tiebreakersFormat: league.tiebreakers_format === 0 ? WINNING : POINTS,
   playoffsTeams: league.playoffs_teams,
+  minAttendance: league.min_attendance,
   welcomeNote: league.welcome_note,
   seasons: league.league_seasons.map((season) => ({
     id: season.id,

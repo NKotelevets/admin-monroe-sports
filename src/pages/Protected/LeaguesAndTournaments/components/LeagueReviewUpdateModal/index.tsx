@@ -90,6 +90,7 @@ const LeagueReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx
       playoffs_teams: normalizedNewRecord.playoffsTeams,
       standings_format: normalizedNewRecord.standingsFormat !== POINTS ? 0 : 1,
       tiebreakers_format: normalizedNewRecord.tiebreakersFormat !== POINTS ? 0 : 1,
+      min_attendance: normalizedNewRecord.minAttendance ? normalizedNewRecord.minAttendance : 1,
       type: normalizedNewRecord.type === LEAGUE ? 0 : 1,
       welcome_note: normalizedNewRecord.welcomeNote,
     }
