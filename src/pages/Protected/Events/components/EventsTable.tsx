@@ -102,6 +102,8 @@ export const EventsTable = () => {
       subResource: 'sub_resource',
       team1Name: 'team_1_name',
       team2Name: 'team_2_name',
+      team1Season: 'team_1_season_name',
+      team2Season: 'team_2_season_name',
       location: 'location_name',
       courtNumber: 'court_number',
       homeTeam: 'team_1_name',

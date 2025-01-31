@@ -141,7 +141,11 @@ export const useEventsTable = () => {
       ],
       filterDropdown: (props) => <MonroeFilter {...props} />,
       filterIcon,
-      render: (_, record) => (record.day ? record.day.substring(0, 3) : dayjs(record.date, 'YYYY-MM-DD').format('ddd')),
+      render: (_, record) => {
+        if (record.day) return record.day.substring(0, 3)
+        if (record.date) return dayjs(record.date, 'YYYY-MM-DD').format('ddd')
+        return 'Pending date'
+      },
     },
     {
       title: 'Date',
@@ -154,7 +158,7 @@ export const useEventsTable = () => {
       onFilter: onFilterDate,
       render: (_, record) => (
         <Typography.Link href={`${PATH_TO_EVENTS}/${record.id}`}>
-          {dayjs(record.date, 'YYYY-MM-DD').format('MM/DD/YYYY')}
+          {record.date ? dayjs(record.date, 'YYYY-MM-DD').format('MM/DD/YYYY') : 'Pending date'}
         </Typography.Link>
       ),
     },
@@ -166,7 +170,7 @@ export const useEventsTable = () => {
       width: '130px',
       render: (_, record) => (
         <Typography.Link href={`${PATH_TO_EVENTS}/${record.id}`}>
-          {dayjs(record.time, 'HH:mm:ss').format('hh:mm A')}
+          {record.time ? dayjs(record.time, 'HH:mm:ss').format('hh:mm A') : 'Pending date'}
         </Typography.Link>
       ),
     },
@@ -175,7 +179,7 @@ export const useEventsTable = () => {
       dataIndex: 'time',
       sorter: true,
       width: '130px',
-      render: (_, record) => dayjs(record.time, 'HH:mm:ss').add(record.duration, 'minute').format('hh:mm A'),
+      render: (_, record) => record.time ? dayjs(record.time, 'HH:mm:ss').add(record.duration, 'minute').format('hh:mm A') : 'Pending date' ,
     },
     {
       title: 'Event Type',
