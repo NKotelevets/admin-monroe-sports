@@ -63,20 +63,21 @@ const EditLeague = () => {
   const params = useParams<{ id: string }>()
   const leagueId = params.id || ''
   const { setAppNotification } = useAppSlice()
-  const { data, currentData, isError, isLoading, isFetching } = useGetLeagueQuery(leagueId, {
+  const { data, isError, isLoading, isFetching } = useGetLeagueQuery(leagueId, {
     skip: !leagueId,
     refetchOnMountOrArgChange: true,
   })
+
   const initialFormValues: IFECreateLeagueBody = {
-    description: currentData?.description || '',
-    name: currentData?.name || '',
-    playoffFormat: (currentData?.playoffFormat === BEST_RECORD_WINS ? 0 : 1) || 0,
-    standingsFormat: currentData?.standingsFormat === WINNING ? 0 : 1 || 0,
-    tiebreakersFormat: currentData?.tiebreakersFormat === WINNING ? 0 : 1 || 0,
-    type: currentData?.type === LEAGUE ? 0 : 1 || 0,
-    welcomeNote: currentData?.welcomeNote || '',
-    playoffsTeams: currentData?.playoffsTeams || 0,
-    minAttendance: currentData?.minAttendance || null,
+    description: data?.description || '',
+    name: data?.name || '',
+    playoffFormat: (data?.playoffFormat === BEST_RECORD_WINS ? 0 : 1) || 0,
+    standingsFormat: data?.standingsFormat === WINNING ? 0 : 1 || 0,
+    tiebreakersFormat: data?.tiebreakersFormat === WINNING ? 0 : 1 || 0,
+    type: data?.type === LEAGUE ? 0 : 1 || 0,
+    welcomeNote: data?.welcomeNote || '',
+    playoffsTeams: data?.playoffsTeams || 0,
+    minAttendance: data?.minAttendance ? `${data?.minAttendance}` as string : null,
   }
 
   const BREAD_CRUMB_ITEMS = [
@@ -105,6 +106,7 @@ const EditLeague = () => {
         tiebreakers_format: tiebreakersFormat,
         welcome_note: welcomeNote,
         playoffs_teams: playoffsTeams || DEFAULT_PLAYOFFS_TEAMS_VALUE,
+        min_attendance: values.minAttendance ? +values.minAttendance : null,
         ...rest,
       },
     })
@@ -219,7 +221,7 @@ const EditLeague = () => {
                         <Flex vertical justify="flex-start" className='w-352'>
                           <div className="mg-b8">
                             <TextInput
-                              name="minAttendace"
+                              name="minAttendance"
                               value={values.minAttendance || ''}
                               label={attendanceLabel()}
                               placeholder="Enter # min attendance per team"

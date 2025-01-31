@@ -19,6 +19,7 @@ export interface IBELeague extends ICommonLeagueFields {
   playoffs_teams: number
   welcome_note: string
   league_seasons: IBESeason[]
+  min_attendance: number | null
 }
 
 export interface IBECreateLeagueBody extends Omit<IBELeague, 'id' | 'updated_at' | 'created_at' | 'league_seasons'> {
@@ -46,7 +47,7 @@ export interface IFECreateLeagueBody {
   playoffFormat: number
   standingsFormat: number
   tiebreakersFormat: number
-  minAttendance: number | null
+  minAttendance: number | string | null
   name: string
   description: string
   playoffsTeams: number
