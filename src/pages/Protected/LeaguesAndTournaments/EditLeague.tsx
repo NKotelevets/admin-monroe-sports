@@ -218,6 +218,20 @@ const EditLeague = () => {
 
                         <Flex vertical justify="flex-start" className='w-352'>
                           <div className="mg-b8">
+                            <TextInput
+                              name="minAttendace"
+                              value={values.minAttendance || ''}
+                              label={attendanceLabel()}
+                              placeholder="Enter # min attendance per team"
+                              errorPosition="bottom"
+                              onChange={(value) => {
+                                const sanitizedValue = (value?.target?.value || '').replace(/\D/g, '')
+                                setFieldValue('minAttendance', sanitizedValue)
+                              }}
+                              onBlur={handleBlur('minAttendance')}
+                              error={touched.minAttendance ? errors.minAttendance : undefined}
+                            />
+
                             <OptionTitle>Default Playoff Format *</OptionTitle>
                             <RadioGroupContainer
                               name="playoffFormat"
@@ -245,19 +259,6 @@ const EditLeague = () => {
                           </div>
 
                           <div className="mg-b8">
-                            <TextInput
-                              name="minAttendace"
-                              value={values.minAttendance || ''}
-                              label={attendanceLabel()}
-                              placeholder="Enter # min attendance per team"
-                              errorPosition="bottom"
-                              onChange={(value) => {
-                                const sanitizedValue = (value?.target?.value || '').replace(/\D/g, '')
-                                setFieldValue('minAttendance', sanitizedValue)
-                              }}
-                              onBlur={handleBlur('minAttendance')}
-                              error={touched.minAttendance ? errors.minAttendance : undefined}
-                            />
 
                             <OptionTitle>Default Standings Format *</OptionTitle>
                             <RadioGroupContainer
