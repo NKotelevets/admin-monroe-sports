@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { ReactElement } from 'react'
 
 import { Link } from '@/components/Link.tsx'
 
@@ -10,7 +11,14 @@ const {
   Styles: { Title, Text, Subtitle, Body },
 } = Layout
 
-export const RequestSent = (props: { tryAgain: () => void }) => {
+/**
+ * Displays a message indicating password recovery instructions were sent to the user's email.
+ *
+ * @param {Object} props - Component properties.
+ * @param {function(): void} props.tryAgain - Callback function invoked when the user chooses to resend the email.
+ * @returns {ReactElement} A UI component with instructions and an option to retry sending the email.
+ */
+export const RequestSent = (props: { tryAgain: () => void }): ReactElement => {
   const { tryAgain } = props
 
   return (
@@ -39,10 +47,10 @@ const Illustration = styled.img`
   }
 `
 const FootNote = styled(Text)`
-    width: 350px;
-    position: absolute;
-    bottom: 60px;
-    @media (max-width: 360px) {
-        width: 100%;
-    }
+  width: 350px;
+  position: absolute;
+  bottom: 60px;
+  @media (max-width: 360px) {
+    width: 100%;
+  }
 `

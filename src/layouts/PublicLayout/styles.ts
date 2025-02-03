@@ -1,12 +1,13 @@
 // Styled Components
 import styled from '@emotion/styled'
-import { Button, Typography } from 'antd'
+import { Button as Btn, Typography } from 'antd'
 import { Form } from 'formik'
 
 import { colors } from '@/utils/colors.tsx'
 
 const Body = styled.div<{ centered?: boolean }>`
   display: flex;
+  width: 100%;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -21,6 +22,7 @@ const Body = styled.div<{ centered?: boolean }>`
 const Title = styled(Typography.Title)`
   font-size: 32px !important;
   color: rgba(29, 30, 34, 1) !important;
+  font-weight: 500 !important;
 
   @media (max-width: 768px) {
     font-size: 24px !important;
@@ -49,18 +51,20 @@ const FormStyled = styled(Form)`
     padding: 0;
   }
 `
-const LargeButton = styled(Button)`
+const LargeButton = styled(Btn)<{ danger?: boolean; type?: string }>`
   padding: 16px 26px;
   height: 56px;
   width: 100%;
-  border-radius: 8px;
+  border-radius: 8px !important;
   font-size: 18px !important;
   font-weight: 500 !important;
+  color: ${({ danger }) => (danger ? `${colors.primary} !important` : undefined)};
+  border-color: ${({ danger }) => (danger ? `${colors.primary} !important` : undefined)};
 
   &:disabled {
-    color: #fff !important;
+    color: ${({ type }) => (type !== 'primary' ? colors.primary : '#fff')} !important;
     border-color: ${colors.primary} !important;
-    background: ${colors.primary} !important;
+    background: ${({ type }) => (type === 'primary' ? colors.primary : '#fff')} !important;
     opacity: 0.5 !important;
   }
 `
@@ -70,7 +74,8 @@ const Text = styled(Typography.Text)`
   display: block;
   text-align: center;
   color: ${colors.grayText} !important;
-    line-height: 24px;
+  line-height: 24px;
+  border-radius: 8px;
 `
 
 export const Layout = { Body, Title, Subtitle, FormStyled, LargeButton, Text }

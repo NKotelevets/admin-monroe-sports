@@ -53,7 +53,7 @@ const MonroeHeader = () => {
     {
       key: 'log-out',
       label: (
-        <Space onClick={onLogOut}>
+        <Space onClick={() => onLogOut()}>
           <ReactSVG src={LogOutIcon} />
           <MonroeErrorText>Log out</MonroeErrorText>
         </Space>

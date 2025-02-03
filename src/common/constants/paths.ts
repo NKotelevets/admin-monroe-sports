@@ -2,11 +2,16 @@ export const PATH_TO_SIGN_IN = '/sign-in'
 
 export const PATH_TO_HOME = '/'
 
+export const PATH_TO_DOWNLOAD_SCREEN = '/download-the-app'
+export const PATH_TO_TERMS = '/terms-of-use'
+export const PATH_TO_PRIVACY = '/privacy-policy'
+
 // PUBLIC ACCOUNT PAGES
-export const PATH_TO_ACCOUNT_LOGIN = '/login'
-export const PATH_TO_ACCOUNT_SIGNUP = '/signup'
-export const PATH_TO_ACCOUNT_REQUEST_RESET_PASSWORD = '/account/request-reset-password'
-export const PATH_TO_ACCOUNT_RESET_PASSWORD = '/account/reset-password'
+export const PATH_TO_ACCOUNT_LOGIN = '/accounts/login'
+export const PATH_TO_ACCOUNT_SIGNUP = '/accounts/signup'
+export const PATH_TO_ACCOUNT_REQUEST_RESET_PASSWORD = '/accounts/request-reset-password'
+export const PATH_TO_ACCOUNT_RESET_PASSWORD = '/accounts/reset-password'
+export const PATH_TO_ACCOUNT_INVITATIONS = '/accounts/invitations'
 
 // LEAGUES & TOURNAMENTS PAGES
 export const PATH_TO_LEAGUES = '/leagues-and-tournaments'
@@ -84,4 +89,4 @@ export const PROTECTED_PAGES = [
   PATH_TO_GROUPS,
 ]
 
-export const AUTH_PAGES = [PATH_TO_SIGN_IN]
+export const AUTH_PAGES = [PATH_TO_SIGN_IN, PATH_TO_ACCOUNT_LOGIN]

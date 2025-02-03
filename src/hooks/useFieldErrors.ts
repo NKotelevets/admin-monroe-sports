@@ -14,10 +14,32 @@ interface TErrorReason<T> {
   }
 }
 
+/**
+ * A custom hook to manage and handle field errors with optional error notifications.
+ *
+ * @template T - A generic type parameter extending an object.
+ * @param {boolean} [showNotification] - A flag to determine whether to show error notifications. Defaults to false.
+ * @returns {{
+ *   handleErrors: (setErrors: FormikHelpers<T>['setErrors'], callback?: () => void) => (params: { data: TErrorReason<T> }) => void,
+ *   nonFieldErrors: string[] | string | undefined
+ * }} An object containing the `handleErrors` function for managing errors and `nonFieldErrors` for non-field-specific error messages.
+ */
 export const useFieldErrors = <T extends object>(showNotification?: boolean) => {
   const [nonFieldErrors, setNonFieldErrors] = useState<string[] | string | undefined>(undefined)
   const { notify } = useNotification()
 
+  /**
+   * Displays a notification with error messages if applicable.
+   *
+   * Checks if `nonFieldErrors` exists and `showNotification` is true.
+   * If valid, converts `nonFieldErrors` into an array (if not already),
+   * joins the error messages with a comma, and triggers the `notify` function
+   * with the combined error message and 'error' type.
+   *
+   * @param {Array|string} nonFieldErrors - The non-field error message(s) to display.
+   * @param {boolean} showNotification - Flag indicating whether to show the notification.
+   * @param {Function} notify - Callback function for displaying notifications.
+   */
   useEffect(() => {
     if (!nonFieldErrors || showNotification === false) return
     const errorMessage = Array.isArray(nonFieldErrors) ? nonFieldErrors : [nonFieldErrors]
@@ -25,6 +47,14 @@ export const useFieldErrors = <T extends object>(showNotification?: boolean) => 
     notify(errorMessage.join(', '), 'error')
   }, [nonFieldErrors, showNotification])
 
+  /**
+   * Handles form submission errors by processing error details and updating state variables accordingly.
+   *
+   * @template T - The type of the form data.
+   * @param {FormikHelpers<T>['setErrors']} setErrors - Function to set field-level errors in the form.
+   * @param {Function} [callback] - Optional callback function to be executed after handling errors.
+   * @returns {Function} A function that takes an error reason object and processes the error.
+   */
   const handleErrors = (setErrors: FormikHelpers<T>['setErrors'], callback?: () => void) => {
     return ({ data: reason }: TErrorReason<T>) => {
       if (!reason?.code && !reason?.message && !reason?.details && !reason?.error) {

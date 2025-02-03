@@ -2,7 +2,7 @@ import { RequestSent } from './RequestSent.tsx'
 import { requestResetPasswordSchema } from './validation'
 import { notification } from 'antd'
 import { Formik, FormikHelpers } from 'formik'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import TextInput from '@/components/Inputs/TextInput.tsx'
 import { Link } from '@/components/Link.tsx'
@@ -12,6 +12,7 @@ import { Layout } from '@/layouts/PublicLayout'
 import { useRequestResetPasswordMutation } from '@/redux/account/account.api.ts'
 
 import { useFieldErrors } from '@/hooks/useFieldErrors.ts'
+import { useLogout } from '@/hooks/useLogout.ts'
 
 import { PATH_TO_ACCOUNT_LOGIN } from '@/common/constants/paths.ts'
 
@@ -60,7 +61,12 @@ const RequestPasswordReset = () => {
   const [api, contextHolder] = notification.useNotification()
   const [emailSent, setEmailSent] = useState(false)
 
+  const { onLogOut } = useLogout()
   const { handleErrors, nonFieldErrors } = useFieldErrors<TResetPasswordForm>(false)
+
+  useEffect(() => {
+    onLogOut(false)
+  }, [])
 
   /**
    * Handles the form submission process for resetting a password.

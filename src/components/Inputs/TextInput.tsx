@@ -1,7 +1,7 @@
 import { Input, InputProps } from 'antd'
 import { PasswordProps, SearchProps, TextAreaProps } from 'antd/es/input'
 import { GroupProps } from 'antd/es/input/Group'
-import { CSSProperties, ChangeEventHandler, FC, InputHTMLAttributes, ReactNode } from 'react'
+import { CSSProperties, ChangeEventHandler, InputHTMLAttributes, ReactNode } from 'react'
 
 import InputWrapper from '@/components/Inputs/InputWrapper.tsx'
 
@@ -27,7 +27,21 @@ interface ITextInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 's
 
 type X = ITextInputProps & GroupProps & InputProps & PasswordProps & SearchProps & TextAreaProps
 
-const TextInput: FC<X> = (props) => {
+/**
+ * TextInput is a functional component for rendering input fields with support for various presets, types, and styles.
+ *
+ * @param {Object} props The properties for the TextInput component.
+ * @param {string} [props.label] The label to be displayed for the input field.
+ * @param {string} [props.error] The error message to display when the input is invalid.
+ * @param {('top'|'bottom')} [props.errorPosition='top'] The position of the error message.
+ * @param {boolean} [props.noMargin] Determines if the default margin should be removed.
+ * @param {string} [props.preset] The preset styling option for the input ('app' or custom).
+ * @param {string} [props.type] The type for the input field (e.g., 'text', 'password').
+ * @param {Object} [props.style] Custom style to be applied to the input field.
+ * @param {Function} [props.bottomAccessory] A function rendering additional UI elements below the input.
+ * @param {Object} [props.rest] Additional properties to pass to the input element.
+ */
+const TextInput = (props: X) => {
   const { label, error, errorPosition = 'top', noMargin, preset, type, style, bottomAccessory, ...rest } = props
 
   const finalStyle = preset === 'app' ? styles.input : style
@@ -36,7 +50,7 @@ const TextInput: FC<X> = (props) => {
     <InputWrapper preset={preset} label={label} errorPosition={errorPosition} error={error} noMargin={noMargin}>
       <>
         {type !== 'password' ? (
-          <Input status={error ? 'error' : undefined} {...rest} style={finalStyle} />
+          <Input status={error ? 'error' : undefined} type={type} {...rest} style={finalStyle} />
         ) : (
           <Input.Password status={error ? 'error' : undefined} {...rest} style={finalStyle} />
         )}

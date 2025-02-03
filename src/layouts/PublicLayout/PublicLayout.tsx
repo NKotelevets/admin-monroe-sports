@@ -81,23 +81,23 @@ const Nav = styled(Header)`
     position: absolute;
 `
 const Section = styled(Header)<{ centered?: boolean }>`
-  max-width: 1160px;
-  width: 100%;
-  margin: 0 auto;
-  background: transparent;
-  line-height: 0 !important;
-  height: 100%;
-  display: flex;
-  justify-content: ${({ centered }) => (centered ? 'center' : 'flex-start')};
-  align-items: ${({ centered }) => (centered ? 'center' : 'flex-start')};
+    max-width: 1160px;
+    width: 100%;
+    margin: 0 auto;
+    background: transparent;
+    line-height: 0 !important;
+    height: 100%;
+    display: flex;
+    justify-content: ${({ centered }) => (centered ? 'center' : 'flex-start')};
+    align-items: ${({ centered }) => (centered ? 'center' : 'flex-start')};
 
-  @media (max-width: 768px) {
-    & svg {
-      width: 95px;
+    @media (max-width: 768px) {
+        & svg {
+            width: 95px;
+        }
+
+        padding: 0 22px;
     }
-
-    padding: 0 22px;
-  }
 `
 const Footer = styled(FT)`
   text-align: center;
