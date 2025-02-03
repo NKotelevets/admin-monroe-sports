@@ -132,6 +132,9 @@ export const getFEUserRecord = (user: IExtendedBEUser): IExtendedFEUser => ({
       id: s.id,
       firstName: s.first_name,
       lastName: s.last_name,
+      photoS3Url: s.photo_s3_url,
+      birthDate: s.birth_date,
+      gender: s.gender
     })) || null,
   invitations: user.invitations,
 })

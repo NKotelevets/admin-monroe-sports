@@ -1,9 +1,10 @@
-import { Flex } from 'antd'
-import React, { CSSProperties, ReactNode, InputHTMLAttributes, useMemo, ReactElement } from 'react'
-
-import { InputError } from '@/components/Inputs/InputElements'
-import { OptionTitle } from '@/components/Elements'
 import styled from '@emotion/styled'
+import { Flex } from 'antd'
+import React, { CSSProperties, InputHTMLAttributes, ReactElement, ReactNode, useMemo } from 'react'
+
+import { OptionTitle } from '@/components/Elements'
+import { InputError } from '@/components/Inputs/InputElements'
+
 import { colors } from '@/utils/colors.tsx'
 
 export interface IInputWrapper extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
@@ -16,51 +17,69 @@ export interface IInputWrapper extends Omit<InputHTMLAttributes<HTMLInputElement
   helpText?: string
   noMargin?: boolean
   children: ReactElement
+  preset?: 'default' | 'app'
 }
 
-const InputWrapper = React.memo((props: IInputWrapper) => {
-  const {
-    label,
-    error,
-    errorPosition = 'top',
-    children,
-    helpText,
-    ...rest
-  } = props
-  const errorOnTop = errorPosition === 'top'
+const InputWrapper = React.memo(
+  (props: IInputWrapper) => {
+    const { label, error, errorPosition = 'top', children, helpText, preset, ...rest } = props
+    const errorOnTop = errorPosition === 'top'
 
-  const labelComponent = useMemo(() => (
-    typeof label === 'string' ? <OptionTitle className="pb-5">{label}</OptionTitle> : label
-  ), [label])
+    const finalStyle = preset === 'app' ? styles.label : undefined
 
-  return (
-    <Wrapper {...rest}>
-      {label && (
-        <Flex vertical={false} justify="space-between" align="center">
-          {labelComponent}
-          {error && errorOnTop && <InputError>{error}</InputError>}
-        </Flex>
-      )}
-      {children}
-      {error && !errorOnTop && <InputError>{error}</InputError>}
-      {helpText && <HelpText>{helpText}</HelpText>}
+    const labelComponent = useMemo(() => {
+      if (typeof label === 'string' && preset !== 'app')
+        return (
+          <OptionTitle className="pb-5" style={finalStyle}>
+            {label}
+          </OptionTitle>
+        )
 
-    </Wrapper>
-  )
-}, (prev,next) => {
-  return (
-    prev.error === next.error
-    && prev.children === next.children
-  )
-})
+      if (typeof label === 'string' && preset === 'app') return <AppLabel>{label}</AppLabel>
+      return label
+    }, [label, preset])
+
+    return (
+      <Wrapper {...rest}>
+        {label && (
+          <Flex vertical={false} justify="space-between" align="center">
+            {labelComponent}
+            {error && errorOnTop && <InputError>{error}</InputError>}
+          </Flex>
+        )}
+        {children}
+        {error && !errorOnTop && <InputError>{error}</InputError>}
+        {helpText && <HelpText>{helpText}</HelpText>}
+      </Wrapper>
+    )
+  },
+  (prev, next) => {
+    return prev.error === next.error && prev.children === next.children
+  },
+)
 
 export default InputWrapper
 
+const styles = {
+  label: {
+    color: colors.blackText,
+    fontWeight: 400,
+  },
+}
+
 // Styled Components
 const Wrapper = styled.div<{ last?: boolean; noMargin?: boolean }>`
-    margin-bottom: ${({ last, noMargin }) => last === true || noMargin === true ? 0 : 12}px;
+  margin-bottom: ${({ last, noMargin }) => (last === true || noMargin === true ? 0 : 12)}px;
 `
 const HelpText = styled(InputError)`
-    margin-top: 4px;
-    color: ${colors.dim} !important;
+  margin-top: 4px;
+  color: ${colors.dim} !important;
+`
+const AppLabel = styled.div`
+  color: ${colors.blackText};
+  font-size: 14px;
+  display: block;
+  font-weight: 400;
+  line-height: 22px;
+  padding: 5px 0;
 `

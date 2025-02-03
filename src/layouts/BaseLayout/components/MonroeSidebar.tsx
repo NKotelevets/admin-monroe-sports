@@ -23,7 +23,6 @@ import {
   PATH_TO_EDIT_SEASON,
   PATH_TO_EDIT_USER,
   PATH_TO_EVENTS,
-  PATH_TO_GROUPS,
   PATH_TO_LEAGUES,
   PATH_TO_LEAGUE_TEAMS,
   PATH_TO_LOCATIONS,
@@ -37,11 +36,9 @@ import {
 
 import UserIcon from '@/assets/icons/header/user.svg'
 import MonroeIcon from '@/assets/icons/monroe.svg'
-import GroupsIcon from '@/assets/icons/sidebar/groups.svg'
 import LeagueIcon from '@/assets/icons/sidebar/league.svg'
 import MapIcon from '@/assets/icons/sidebar/map.svg'
 import ScheduleIcon from '@/assets/icons/sidebar/schedule.svg'
-import StandingsIcon from '@/assets/icons/sidebar/standings.svg'
 import TeamsIcon from '@/assets/icons/sidebar/t-shirt.svg'
 
 const siderStyle: CSSProperties = {
@@ -159,24 +156,24 @@ const MonroeSidebar = () => {
         { key: PATH_TO_SEASONS, label: 'Seasons', onClick: () => navigateTo(PATH_TO_SEASONS) },
       ],
     },
-    {
-      key: STANDINGS_DISPLAY_KEY,
-      label: 'Standings Display',
-      icon: <ReactSVG src={StandingsIcon} style={{ marginLeft: '5px' }} />,
-      children: [
-        {
-          key: PATH_TO_PLAYOFF_FORMAT,
-          label: 'Playoff Format',
-          onClick: () => navigateTo(PATH_TO_PLAYOFF_FORMAT),
-        },
-        {
-          key: PATH_TO_STANDINGS_FORMAT,
-          label: 'Standings Format',
-          onClick: () => navigateTo(PATH_TO_STANDINGS_FORMAT),
-        },
-        { key: PATH_TO_TIEBREAKERS, label: 'Tiebreakers', onClick: () => navigateTo(PATH_TO_TIEBREAKERS) },
-      ],
-    },
+    // {
+    //   key: STANDINGS_DISPLAY_KEY,
+    //   label: 'Standings Display',
+    //   icon: <ReactSVG src={StandingsIcon} style={{ marginLeft: '5px' }} />,
+    //   children: [
+    //     {
+    //       key: PATH_TO_PLAYOFF_FORMAT,
+    //       label: 'Playoff Format',
+    //       onClick: () => navigateTo(PATH_TO_PLAYOFF_FORMAT),
+    //     },
+    //     {
+    //       key: PATH_TO_STANDINGS_FORMAT,
+    //       label: 'Standings Format',
+    //       onClick: () => navigateTo(PATH_TO_STANDINGS_FORMAT),
+    //     },
+    //     { key: PATH_TO_TIEBREAKERS, label: 'Tiebreakers', onClick: () => navigateTo(PATH_TO_TIEBREAKERS) },
+    //   ],
+    // },
     {
       key: PATH_TO_EVENTS,
       label: 'Events',
@@ -201,18 +198,18 @@ const MonroeSidebar = () => {
       ),
       onClick: () => navigateTo(PATH_TO_LOCATIONS),
     },
-    {
-      key: PATH_TO_GROUPS,
-      label: 'Groups',
-      icon: (
-        <ReactSVG
-          className={location.pathname === PATH_TO_GROUPS ? 'red-icon' : ''}
-          src={GroupsIcon}
-          style={{ marginLeft: '5px' }}
-        />
-      ),
-      onClick: () => navigateTo(PATH_TO_GROUPS),
-    },
+    // {
+    //   key: PATH_TO_GROUPS,
+    //   label: 'Groups',
+    //   icon: (
+    //     <ReactSVG
+    //       className={location.pathname === PATH_TO_GROUPS ? 'red-icon' : ''}
+    //       src={GroupsIcon}
+    //       style={{ marginLeft: '5px' }}
+    //     />
+    //   ),
+    //   onClick: () => navigateTo(PATH_TO_GROUPS),
+    // },
   ]
 
   const handleBeforeUnloadEvent = (e: BeforeUnloadEvent) => {

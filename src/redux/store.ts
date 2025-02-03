@@ -19,6 +19,8 @@ import { leagueTeamsApi } from '@/redux/leagueTeams/leagueTeams.api.ts'
 import { eventsReducer } from '@/redux/events/events.reducer.ts'
 import { locationsReducer } from '@/redux/locations/locations.reducer.ts'
 import { locationsApi } from '@/redux/locations/locations.api.ts'
+import { accountApi } from '@/redux/account/account.api.ts'
+import { accountReducer } from '@/redux/account/account.reducer.ts'
 
 const createNoopStorage = () => {
   return {
@@ -52,6 +54,7 @@ const rootReducer = combineReducers({
   ...leagueTeamsReducer,
   ...eventsReducer,
   ...locationsReducer,
+  ...accountReducer,
   [appSlice.name]: appSlice.reducer,
 })
 
@@ -74,6 +77,7 @@ const store = configureStore({
       leagueTeamsApi.middleware,
       eventsApi.middleware,
       locationsApi.middleware,
+      accountApi.middleware,
     ]),
 })
 

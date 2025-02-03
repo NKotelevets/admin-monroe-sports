@@ -874,3 +874,30 @@ form .ant-divider {
 .custom-dropdown ul{
   margin-top: 0 !important;
 }
+
+.public-layout .ant-checkbox-inner {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 0;
+}
+
+.public-layout :where(.css-dev-only-do-not-override-ftg7lt).ant-checkbox-checked .ant-checkbox-inner:after {
+  left: 7px !important;
+}
+
+.public-layout .ant-checkbox .ant-checkbox-inner {
+  background-color: #FFF !important;
+  border: 1px solid #BC261B !important;
+}
+
+.public-layout .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #BC261B !important;
+}
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  transition: background-color 5000s ease-in-out 0s;
+  -webkit-box-shadow: 0 0 0px 1000px rgb(245, 244, 244) inset;
+}

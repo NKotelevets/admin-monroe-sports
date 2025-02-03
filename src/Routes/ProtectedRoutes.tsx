@@ -16,38 +16,43 @@ import LeagueTeamEdit from '@/pages/Protected/LeagueTeams/LeagueTeamEdit.tsx'
 import LeagueTeamImportInfo from '@/pages/Protected/LeagueTeams/LeagueTeamImportInfo.tsx'
 import LeagueTeamScheduleRequest from '@/pages/Protected/LeagueTeams/LeagueTeamScheduleRequest.tsx'
 import LeaguesAndTournaments from '@/pages/Protected/LeaguesAndTournaments'
-import CreateLeague from '@/pages/Protected/LeaguesAndTournaments/CreateLeague'
-import EditLeague from '@/pages/Protected/LeaguesAndTournaments/EditLeague'
-import LeagueDetails from '@/pages/Protected/LeaguesAndTournaments/LeagueDetails'
-import LeaguesDeletingInfo from '@/pages/Protected/LeaguesAndTournaments/LeaguesDeletingInfo'
-import LeaguesImportInfo from '@/pages/Protected/LeaguesAndTournaments/LeaguesImportInfo'
+import CreateLeague from '@/pages/Protected/LeaguesAndTournaments/CreateLeague.tsx'
+import EditLeague from '@/pages/Protected/LeaguesAndTournaments/EditLeague.tsx'
+import LeagueDetails from '@/pages/Protected/LeaguesAndTournaments/LeagueDetails.tsx'
+import LeaguesDeletingInfo from '@/pages/Protected/LeaguesAndTournaments/LeaguesDeletingInfo.tsx'
+import LeaguesImportInfo from '@/pages/Protected/LeaguesAndTournaments/LeaguesImportInfo.tsx'
+import Locations from '@/pages/Protected/Locations/Locations.tsx'
+import LocationCreate from '@/pages/Protected/Locations/LocationsCreate.tsx'
+import LocationsDeleteInfo from '@/pages/Protected/Locations/LocationsDeleteInfo.tsx'
+import LocationsDetail from '@/pages/Protected/Locations/LocationsDetail.tsx'
+import LocationsEdit from '@/pages/Protected/Locations/LocationsEdit.tsx'
 import MasterTeams from '@/pages/Protected/MasterTeams'
-import CreateMasterTeam from '@/pages/Protected/MasterTeams/CreateMasterTeams'
-import EditMasterTeam from '@/pages/Protected/MasterTeams/EditMasterTeam'
-import MasterTeamDetails from '@/pages/Protected/MasterTeams/MasterTeamDetails'
+import CreateMasterTeam from '@/pages/Protected/MasterTeams/CreateMasterTeams.tsx'
+import EditMasterTeam from '@/pages/Protected/MasterTeams/EditMasterTeam.tsx'
+import MasterTeamDetails from '@/pages/Protected/MasterTeams/MasterTeamDetails.tsx'
 import MasterTeamImportInfo from '@/pages/Protected/MasterTeams/MasterTeamImportInfo.tsx'
 import MasterTeamScheduleRequest from '@/pages/Protected/MasterTeams/MasterTeamScheduleRequest.tsx'
-import MasterTeamsDeletingInfo from '@/pages/Protected/MasterTeams/MasterTeamsDeletingInfo'
+import MasterTeamsDeletingInfo from '@/pages/Protected/MasterTeams/MasterTeamsDeletingInfo.tsx'
 import Seasons from '@/pages/Protected/Seasons'
-import CreateSeason from '@/pages/Protected/Seasons/CreateSeason'
-import EditSeason from '@/pages/Protected/Seasons/EditSeason'
-import SeasonDetails from '@/pages/Protected/Seasons/SeasonDetails'
-import SeasonsDeletingInfo from '@/pages/Protected/Seasons/SeasonsDeletingInfo'
-import SeasonsImportInfo from '@/pages/Protected/Seasons/SeasonsImportInfo'
+import CreateSeason from '@/pages/Protected/Seasons/CreateSeason.tsx'
+import EditSeason from '@/pages/Protected/Seasons/EditSeason.tsx'
+import SeasonDetails from '@/pages/Protected/Seasons/SeasonDetails.tsx'
+import SeasonsDeletingInfo from '@/pages/Protected/Seasons/SeasonsDeletingInfo.tsx'
+import SeasonsImportInfo from '@/pages/Protected/Seasons/SeasonsImportInfo.tsx'
 import Users from '@/pages/Protected/Users'
-import BlockingInfo from '@/pages/Protected/Users/BlockingInfo'
-import BulkEditErrors from '@/pages/Protected/Users/BulkUpdateErrors'
-import CreateUser from '@/pages/Protected/Users/CreateUser'
-import EditUser from '@/pages/Protected/Users/EditUser'
-import OperatorOnboarding from '@/pages/Protected/Users/OperatorOnboarding'
-import UserDetails from '@/pages/Protected/Users/UserDetails'
-import UsersBulkEdit from '@/pages/Protected/Users/UsersBulkEdit'
-import UsersImportInfo from '@/pages/Protected/Users/UsersImportInfo'
+import BlockingInfo from '@/pages/Protected/Users/BlockingInfo.tsx'
+import BulkEditErrors from '@/pages/Protected/Users/BulkUpdateErrors.tsx'
+import CreateUser from '@/pages/Protected/Users/CreateUser.tsx'
+import EditUser from '@/pages/Protected/Users/EditUser.tsx'
+import OperatorOnboarding from '@/pages/Protected/Users/OperatorOnboarding.tsx'
+import UserDetails from '@/pages/Protected/Users/UserDetails.tsx'
+import UsersBulkEdit from '@/pages/Protected/Users/UsersBulkEdit.tsx'
+import UsersImportInfo from '@/pages/Protected/Users/UsersImportInfo.tsx'
 
-import InfoAlert from '@/components/InfoAlert'
-import Notification from '@/components/Notification'
+import InfoAlert from '@/components/InfoAlert.tsx'
+import Notification from '@/components/Notification.tsx'
 
-import AuthProvider from '@/utils/AuthProvider'
+import AuthProvider from '@/utils/AuthProvider.tsx'
 
 import {
   PATH_TO_BULK_EDIT_EVENT,
@@ -76,6 +81,10 @@ import {
   PATH_TO_LEAGUE_TEAMS,
   PATH_TO_LEAGUE_TEAM_IMPORT_INFO,
   PATH_TO_LEAGUE_TEAM_SCHEDULE_REQUEST,
+  PATH_TO_LOCATIONS,
+  PATH_TO_LOCATIONS_CREATE,
+  PATH_TO_LOCATIONS_DELETE_INFO,
+  PATH_TO_LOCATIONS_EDIT,
   PATH_TO_MASTER_TEAMS,
   PATH_TO_MASTER_TEAMS_IMPORT_INFO,
   PATH_TO_MASTER_TEAM_SCHEDULE_REQUEST,
@@ -89,22 +98,12 @@ import {
   PATH_TO_USERS_BLOCKING_INFO,
   PATH_TO_USERS_BULK_EDIT,
   PATH_TO_USERS_IMPORT_INFO,
-  PATH_TO_LOCATIONS,
-  PATH_TO_LOCATIONS_CREATE,
-  PATH_TO_LOCATIONS_EDIT,
-  PATH_TO_LOCATIONS_DELETE_INFO
-} from '@/common/constants/paths'
-import LocationCreate from '@/pages/Protected/Locations/LocationsCreate.tsx'
-import LocationsEdit from '@/pages/Protected/Locations/LocationsEdit.tsx'
-import Locations from '@/pages/Protected/Locations/Locations.tsx'
-import LocationsDetail from '@/pages/Protected/Locations/LocationsDetail.tsx'
-import LocationsDeleteInfo from '@/pages/Protected/Locations/LocationsDeleteInfo.tsx'
+} from '@/common/constants/paths.ts'
 
-const Root = () => (
+export const ProtectedRoutes = () => (
   <AuthProvider>
     <Notification />
     <InfoAlert />
-
     <Routes>
       <Route path={PATH_TO_SIGN_IN} element={<SignIn />} />
 
@@ -177,5 +176,3 @@ const Root = () => (
     </Routes>
   </AuthProvider>
 )
-
-export default Root

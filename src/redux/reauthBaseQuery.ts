@@ -13,7 +13,9 @@ const baseQuery = fetchBaseQuery({
   baseUrl,
   prepareHeaders: (headers, api) => {
     const state = api.getState() as TRootState
-    headers.set('authorization', `Bearer ${state.authSlice.access}`)
+    if (state.authSlice.access) {
+      headers.set('authorization', `Bearer ${state.authSlice.access}`)
+    }
     return headers
   },
 })
@@ -71,4 +73,3 @@ const baseQueryWithReAuth: BaseQueryFn<FetchArgs, unknown, FetchBaseQueryError> 
 }
 
 export default baseQueryWithReAuth
-
