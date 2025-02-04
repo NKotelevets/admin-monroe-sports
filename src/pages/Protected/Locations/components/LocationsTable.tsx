@@ -2,7 +2,7 @@ import type { TableProps } from 'antd'
 import type { FilterValue } from 'antd/es/table/interface'
 import { useEffect, useMemo } from 'react'
 
-import { useLocationsTable } from '@/pages/Protected/Locations/useLocationsTable.tsx'
+import { useLocationsTable } from '@/pages/Protected/Locations/hooks/useLocationsTable.tsx'
 
 import { MonroeTable } from '@/components/Table/MonroeTable'
 import { showTotal } from '@/components/Table/utils.tsx'

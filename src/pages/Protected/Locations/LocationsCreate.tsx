@@ -38,6 +38,15 @@ const LocationCreate = (props: TScreenProps) => {
   const navigate = useNavigate()
   const [createLocation] = useCreateLocationMutation()
 
+  /**
+   * Navigates back to a previous location or to a default location.
+   *
+   * If `goBackParent` is defined, it calls `goBackParent` with an optional response.
+   * Otherwise, it navigates to a predefined default path.
+   *
+   * @param {string} [response] - Optional response data to pass to `goBackParent`.
+   * @returns {void}
+   */
   const goBack = (response?: string) => {
     if (goBackParent) {
       return goBackParent(response)
@@ -46,6 +55,12 @@ const LocationCreate = (props: TScreenProps) => {
     navigate(PATH_TO_LOCATIONS)
   }
 
+  /**
+   * Handles the submission of the location form.
+   *
+   * @param {TLocationForm} body - The form data submitted by the user.
+   * @param {FormikHelpers<TLocationForm>} helpers - Formik helper functions, including error handling utilities.
+   */
   const onSubmit = (body: TLocationForm, { setErrors }: FormikHelpers<TLocationForm>) => {
     createLocation(body)
       .unwrap()

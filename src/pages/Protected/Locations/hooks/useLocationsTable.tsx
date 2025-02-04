@@ -1,7 +1,7 @@
 import FilterFilled from '@ant-design/icons/lib/icons/FilterFilled'
 import { Typography } from 'antd'
 import Flex from 'antd/es/flex'
-import { useCallback, useEffect } from 'react'
+import { ReactElement, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
@@ -25,6 +25,14 @@ import { TColumns } from '@/common/types'
 import DeleteIcon from '@/assets/icons/delete.svg'
 import EditIcon from '@/assets/icons/edit.svg'
 
+/**
+ * Generates and returns the configuration for a locations table.
+ *
+ * @function
+ * @name useLocationsTable
+ * @description This function configures columns and behaviors for a table displaying locations data. It includes capabilities such as filtering, searching, and rendering actions for each record. The function makes use of dependencies like `useTableSearch`, `useTableContext`, and `useUserSlice`. It also has logic to manage user permissions for deletion.
+ * @returns {Object} An object containing the table columns configuration.
+ */
 export const useLocationsTable = () => {
   const navigate = useNavigate()
   const { user } = useUserSlice()
@@ -37,7 +45,16 @@ export const useLocationsTable = () => {
     setSelectedIds([])
   }, [])
 
-  const filterIcon = useCallback((filtered: boolean) => <FilterFilled style={{ color: getIconColor(filtered) }} />, [])
+  /**
+   * A memoized callback function that renders a filter icon.
+   * The icon's color is determined by the provided filtered state.
+   *
+   * @function
+   * @name filterIcon
+   * @param {boolean} filtered - Indicates if the filter is applied.
+   * @returns {ReactElement} The styled filter icon.
+   */
+  const filterIcon = useCallback((filtered: boolean): ReactElement => <FilterFilled style={{ color: getIconColor(filtered) }} />, [])
 
   const columns: TColumns<ILocation> = [
     {
@@ -74,14 +91,19 @@ export const useLocationsTable = () => {
       key: 'address',
       ...getColumnSearchProps('address'),
       width: 356,
-      render: (_, record) => <Typography.Text ellipsis copyable>{record.address}</Typography.Text>,
+      render: (_, record) => (
+        <Typography.Text ellipsis copyable>
+          {record.address}
+        </Typography.Text>
+      ),
     },
 
     {
       title: 'Zip Code',
-      dataIndex: 'zip',
+      dataIndex: 'zipCode',
       key: 'zip',
       width: 98,
+      ...getColumnSearchProps('zipCode'),
     },
     {
       title: 'Actions',
