@@ -2,12 +2,13 @@ import { Cell } from '../components/EventBuklEditForm/Cell.ts'
 import { DatePicker, TimePicker } from 'antd'
 import Flex from 'antd/es/flex'
 import dayjs, { Dayjs } from 'dayjs'
+import { useFormikContext } from 'formik'
 import { ReactSVG } from 'react-svg'
 
-import { LocationDropdown } from '@/pages/Protected/Events/components/EventForm/LocationDropdown.tsx'
-import { EventTypeTag } from '@/pages/Protected/Events/components/EventTypeTag.tsx'
 import { LeagueTeamSelect } from '@/pages/Protected/Events/components/EventBuklEditForm/LeagueTeamSelect.tsx'
 import { MasterTeamSelect } from '@/pages/Protected/Events/components/EventBuklEditForm/MasterTeamSelect.tsx'
+import { LocationDropdown } from '@/pages/Protected/Events/components/EventForm/LocationDropdown.tsx'
+import { EventTypeTag } from '@/pages/Protected/Events/components/EventTypeTag.tsx'
 import { DeleteWrapper } from '@/pages/Protected/LeagueTeams/components/DeleteWrapper.ts'
 
 import InputWrapper from '@/components/Inputs/InputWrapper.tsx'
@@ -19,11 +20,22 @@ import { useTableContext } from '@/hooks/useTableContext.ts'
 import { eventDurationOptions, eventType } from '@/common/constants/events.ts'
 import { IEvent } from '@/common/interfaces/event.ts'
 import { TBulkEditTableColumns } from '@/common/types'
+import { TBulkEditEventForm } from '@/common/types/events.ts'
 
 import DeleteIcon from '@/assets/icons/delete.svg'
 
+/**
+ * Custom hook to provide configuration for the bulk edit table of events.
+ *
+ * This hook defines the columns and their behaviors for the events bulk edit table, including rendering logic,
+ * data manipulation, and interaction handling. Each column configuration supports features like editing,
+ * rendering with custom components, and handling field values using form context.
+ *
+ * @return Configuration object containing the columns for the events bulk edit table.
+ */
 export const useEventsBulkEditTable = () => {
   const { setSelectedIds, setSingleDeleting } = useTableContext<IEvent>()
+  const { setFieldValue } = useFormikContext<TBulkEditEventForm>()
 
   const columns: TBulkEditTableColumns<IEvent> = [
     {
@@ -33,8 +45,12 @@ export const useEventsBulkEditTable = () => {
       width: '88px',
       editable: true,
       renderField: (field) => (
-        <>{field.value ? dayjs(field.value, 'YYYY-MM-DD').format('dddd').substring(0, 3) : dayjs(field.value, 'YYYY-MM-DD').format('dddd')}</>
-      )
+        <>
+          {field.value
+            ? dayjs(field.value, 'YYYY-MM-DD').format('dddd').substring(0, 3)
+            : dayjs(field.value, 'YYYY-MM-DD').format('dddd')}
+        </>
+      ),
     },
     {
       title: 'Date',
@@ -42,15 +58,16 @@ export const useEventsBulkEditTable = () => {
       width: '198px',
       editable: true,
       renderField: (field, meta) => (
-        <InputWrapper noMargin errorPosition="top" error={meta.touched ? meta.error : undefined} style={{ width: 198 }}>
+        <InputWrapper noMargin errorPosition="bottom" error={meta.error} style={{ width: 198 }}>
           <DatePicker
             format="MMMM D, YYYY"
             placeholder="Select date"
             value={field.value ? dayjs(field.value, 'YYYY-MM-DD') : null}
-            onChange={(date) =>
-              field.onChange({ target: { name: field.name, value: date ? date.format('YYYY-MM-DD') : null } })
-            }
-            status={meta.touched && meta.error ? 'error' : undefined}
+            onChange={(date) => {
+              setFieldValue(field.name.replace('date', 'day'), date ? date.format('dddd') : null)
+              return field.onChange({ target: { name: field.name, value: date ? date.format('YYYY-MM-DD') : null } })
+            }}
+            status={meta.error ? 'error' : undefined}
           />
         </InputWrapper>
       ),
@@ -61,7 +78,7 @@ export const useEventsBulkEditTable = () => {
       width: '198px',
       editable: true,
       renderField: (field, meta) => (
-        <InputWrapper noMargin errorPosition="top" error={meta.touched ? meta.error : undefined} style={{ width: 198 }}>
+        <InputWrapper noMargin errorPosition="bottom" error={meta.error} style={{ width: 198 }}>
           <TimePicker
             format="hh:mm A"
             placeholder="Select time"
@@ -72,7 +89,7 @@ export const useEventsBulkEditTable = () => {
             onOk={(value: Dayjs) => {
               field.onChange({ target: { name: field.name, value: value ? value.format('HH:mm:00') : value } })
             }}
-            status={meta.touched && meta.error ? 'error' : undefined}
+            status={meta.error ? 'error' : undefined}
           />
         </InputWrapper>
       ),
@@ -115,7 +132,13 @@ export const useEventsBulkEditTable = () => {
       editable: true,
       renderField: (field) => (
         <Cell width={210}>
-          <LocationDropdown hideLabel noMargin fieldName={field.name} />
+          <LocationDropdown
+            noMargin
+            hideLabel
+            validateOnMount
+            showAddButton={false}
+            fieldName={field.name}
+          />
         </Cell>
       ),
     },
@@ -131,7 +154,7 @@ export const useEventsBulkEditTable = () => {
               noMargin
               fieldName={field.name}
               isTeam1={true}
-              touched={form.touched}
+              touched={true}
               error={form.error}
             />
           ) : (
@@ -139,7 +162,7 @@ export const useEventsBulkEditTable = () => {
               noMargin
               fieldName={field.name}
               isTeam1={true}
-              touched={form.touched}
+              touched={true}
               error={form.error}
             />
           )}
@@ -158,7 +181,7 @@ export const useEventsBulkEditTable = () => {
               noMargin
               fieldName={field.name}
               isTeam1={false}
-              touched={form.touched}
+              touched={true}
               error={form.error}
             />
           ) : (

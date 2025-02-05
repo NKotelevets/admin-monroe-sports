@@ -255,7 +255,7 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                   <ProtectedPageSubtitle>Location</ProtectedPageSubtitle>
                 </div>
                 <MainContainer>
-                  <LocationDropdown />
+                  <LocationDropdown  />
 
                   <TextInput
                     name="courtOrField"

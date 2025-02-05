@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { getIn, useFormikContext } from 'formik'
 import Select from '@/components/Inputs/Select.tsx'
 import { IEventForm } from '@/common/interfaces/event.ts'
@@ -11,6 +11,8 @@ type TLocationDropdownProps = {
   fieldName?: string
   hideLabel?: boolean
   noMargin?: boolean
+  validateOnMount?: boolean
+  showAddButton?: boolean
 }
 
 /**
@@ -35,7 +37,7 @@ type TLocationDropdownProps = {
  * @returns {React.Element} Rendered dropdown UI for location selection and related fields.
  */
 export const LocationDropdown = React.memo((props: TLocationDropdownProps) => {
-  const { fieldName, hideLabel, noMargin } = props
+  const { fieldName, hideLabel, noMargin, validateOnMount = false, showAddButton = true } = props
   const { setAddingLocation } = useEventFormContext()
 
   const {
@@ -53,10 +55,9 @@ export const LocationDropdown = React.memo((props: TLocationDropdownProps) => {
 
   const field = fieldName || 'locationId'
 
-  const locationValue = useMemo(() => getIn(values, field), [values, field])
-  const locationError = useMemo(() => getIn(errors, field), [values, field])
-  const locationTouched = useMemo(() => getIn(touched, field), [values, field])
-
+  const locationValue = getIn(values, field)
+  const locationError = getIn(errors, field)
+  const locationTouched = getIn(touched, field)
 
   /**
    * Updates selected location
@@ -105,13 +106,13 @@ export const LocationDropdown = React.memo((props: TLocationDropdownProps) => {
         placeholder="Select location"
         optionFilterProp="label"
         value={locationValue}
-        onChange={handleChange(fieldName)}
+        onChange={handleChange(field)}
         onLoadMore={!endReached ? onLoadMore : undefined}
         options={locations.map(mt => ({ label: mt.name, value: mt.id }))}
-        buttonAction={() => setAddingLocation(true)}
+        buttonAction={showAddButton ? () => setAddingLocation(true) : undefined}
         buttonText="Add location"
-        error={locationTouched ? locationError as string : ''}
-        onBlur={handleBlur('locationId')}
+        error={validateOnMount || locationTouched ? locationError as string : ''}
+        onBlur={handleBlur(field)}
       />
     </>
   )

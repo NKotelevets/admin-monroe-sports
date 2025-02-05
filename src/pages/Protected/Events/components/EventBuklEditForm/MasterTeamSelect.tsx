@@ -22,6 +22,7 @@ type TMasterTeamSelectProps = {
 /**
  * A functional React component used for selecting a "Master Team" from a list of teams.
  * It integrates with Formik for form state management and utilizes a paginated data loading mechanism for team data.
+ * Ideally this should be refactored so we can have a single master team selector to the whole project.
  *
  * @param {TMasterTeamSelectProps} props - The props for the MasterTeamSelect component.
  * @returns {ReactElement} - A Select component for choosing a team from the available master team options.
@@ -92,7 +93,10 @@ export const MasterTeamSelect = (props: TMasterTeamSelectProps): ReactElement =>
         loading={isLoading || isFetching}
         value={fieldValue}
         options={teamOptions || []}
-        onChange={(value) => setFieldValue(fieldName, value)}
+        onChange={(value) => {
+          setFieldValue(fieldName, value)
+          setFieldValue(isTeam1 ? fieldName.replace('team1Id','team1IdName') : fieldName.replace('team2Id','team2IdName'), teamOptions.find(team => team.value === value)!.label)
+        }}
         error={touched ? error : undefined}
         onBlur={() => setFieldTouched(fieldName)}
         errorPosition="bottom"

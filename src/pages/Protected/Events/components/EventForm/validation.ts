@@ -75,8 +75,8 @@ const eventSchema = yup.object().shape({
     .number()
     .required('Duration is required')
     .oneOf(validDurations, `Duration must be one of ${validDurations.join(', ')}`)
-    .when('eventType', ([eventType], schema) =>
-      eventType === 5 ? schema.oneOf([60], 'Duration must be 60 minutes for Playoff events') : schema,
+    .when('type', ([type], schema) =>
+      type === eventType.PLAYOFF ? schema.oneOf([60], 'Duration must be 60 minutes for Playoff events') : schema,
     ),
   locationId: yup.string().required('Location is required'),
   courtOrField: yup.string(),
@@ -86,9 +86,9 @@ const eventSchema = yup.object().shape({
   team2Id: yup
     .string()
     .nullable()
-    .when('eventType', ([eventType], schema) =>
-      eventType === 0 || eventType === 2
-        ? schema.required('Team 2 is required for this event type')
+    .when('type', ([type], schema) =>
+      type === eventType.GAME || type === eventType.PLAYOFF
+        ? schema.required('Team 2 is required')
         : schema.optional(),
     ),
 })
@@ -102,6 +102,6 @@ const eventsSchema = yup.lazy((value) =>
     }, {}),
   ),
 )
-export const eventBulkEditForm = yup.object().shape({
+export const eventBulkEditFormSchema = yup.object().shape({
   events: eventsSchema,
 })

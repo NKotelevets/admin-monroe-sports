@@ -41,3 +41,5 @@ export const INVITE_TYPE_NAMED = {
   TEAM_ADMIN: INVITE_TYPE[7],
   MASTER_ADMIN: INVITE_TYPE[8],
 }
+
+export const EMPTY_VALUE = '---'
