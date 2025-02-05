@@ -10,6 +10,7 @@ import { IPaginationResponse } from '@/common/interfaces/api.ts'
 import { IEvent } from '@/common/interfaces/event.ts'
 import { TBulkDeleteResponse } from '@/common/types'
 import {
+  TBulkEditResponseRaw,
   TEventBulkEditPayload,
   TEventCreationPayload,
   TEventEditingPayload,
@@ -118,8 +119,8 @@ export const eventsApi = createApi({
     /**
      * Bulk Edit events
      */
-    bulkEditEvents: builder.mutation<TBulkDeleteResponse, TEventBulkEditPayload[]>({
-      query: (body) => {
+    bulkEditEvents: builder.mutation<TBulkEditResponseRaw, { events: TEventBulkEditPayload[], ignoreConflicts: boolean }>({
+      query: ({ events: body, ignoreConflicts }) => {
         body = body.map((b) => removeEmptyStringAttributes(b))
         body = transformKeysToSnakeCase(body)
 
@@ -128,6 +129,7 @@ export const eventsApi = createApi({
           method: 'POST',
           body: {
             events: body,
+            ignore_conflicts: ignoreConflicts
           },
         }
       },

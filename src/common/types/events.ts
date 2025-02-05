@@ -5,7 +5,6 @@ import { IEvent } from '@/common/interfaces/event'
 import { ILocation } from '@/common/interfaces/location.ts'
 import { NestedSnakeCase, TDeleteStatus, TPagination } from '@/common/types/index.ts'
 
-
 export type TPaginatedEvents = IPaginationResponse<NestedSnakeCase<IEvent>[]>
 
 export type TListEventRequestParams = {
@@ -94,7 +93,16 @@ export type TEventConflictError = {
   conflicts?: { title: string; details: string }[]
 }
 
-export type TBulkEditEvent = Record<string, IEvent & { locationId: string; team1Id?: string; team2Id?: string }>
+export type TBulkEditEvent = Record<
+  string,
+  IEvent & {
+    locationId: string
+    team1Id?: string
+    team2Id?: string
+    team1IdName?: string
+    team2IdName?: string
+  }
+>
 export type TBulkEditEventForm = { events: TBulkEditEvent }
 
 export type TEventImport = {
@@ -151,4 +159,21 @@ export type TEventImportTable = {
   status: TDeleteStatus
   success: IEvent[]
   errors: TEventImportErrors[]
+}
+
+export type TBulkEditResponseRaw = {
+  failed: { id: string; error: string | string[]; type: string }[]
+  success_rows: IEvent[]
+  status: TDeleteStatus
+  total: number
+  success: number
+}
+
+export type TBulkEditResponse = Omit<TBulkEditResponseRaw, 'failed'> & {
+  failed: { id: string; errors: string[]; type: string }[]
+}
+
+export type TEventWithStatus = IEvent & {
+  status: string
+  errors?: string[]
 }
