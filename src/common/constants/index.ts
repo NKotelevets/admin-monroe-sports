@@ -42,4 +42,4 @@ export const INVITE_TYPE_NAMED = {
   MASTER_ADMIN: INVITE_TYPE[8],
 }
 
-export const EMPTY_VALUE = '---'
+export const EMPTY_VALUE = '--- '
