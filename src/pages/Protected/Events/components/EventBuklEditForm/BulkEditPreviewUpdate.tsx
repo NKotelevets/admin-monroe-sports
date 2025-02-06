@@ -6,7 +6,7 @@ import { ReactElement, useCallback, useEffect, useMemo } from 'react'
 
 import { BulkEditPreviewControls } from '@/pages/Protected/Events/components/EventBuklEditForm/BulkEditPreviewControls.tsx'
 import { EventTypeTag } from '@/pages/Protected/Events/components/EventTypeTag.tsx'
-import { useEventBulkEdit } from '@/pages/Protected/Events/hooks/useEventBulkEdit.ts'
+import { useEventBulkEditContext } from '@/pages/Protected/Events/hooks/useEventBulkEditContext.ts'
 
 import { MonroeTable } from '@/components/Table/MonroeTable'
 
@@ -38,7 +38,7 @@ export const BulkEditPreviewUpdate = () => {
   const { selectedIds: selectedTableIds } = useTableContext()
   const { values, setFieldValue, isValid, dirty, validateForm } = useFormikContext<TBulkEditEventForm>()
   const { setControls, setPageTitle } = usePageContext()
-  const { setShowPreviewUpdate, initialValues } = useEventBulkEdit()
+  const { setShowPreviewUpdate, initialValues } = useEventBulkEditContext()
 
   /**
    * Sets up the preview controls for bulk edit and updates the page title.

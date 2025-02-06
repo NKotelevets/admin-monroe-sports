@@ -5,6 +5,12 @@ import styled from '@emotion/styled'
 import { ExportPlayoffButton } from '../ExportPlayoffButton'
 import { PopulateBracketsButton } from '@/pages/Protected/Seasons/components/PopulateBracketsButton.tsx'
 
+/**
+ * SeasonFormControls is a functional component that displays action controls
+ * for managing playoff brackets in a season form. It conditionally renders
+ * buttons for exporting playoff data and populating brackets based on the
+ * current page context and state.
+ */
 export const SeasonFormControls = () => {
   const { showBracketPage } = useSeasonFormContext()
 

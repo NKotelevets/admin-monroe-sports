@@ -1,7 +1,7 @@
 import { Button } from 'antd'
 import { useNavigate } from 'react-router-dom'
 
-import { useEventBulkEdit } from '@/pages/Protected/Events/hooks/useEventBulkEdit.ts'
+import { useEventBulkEditContext } from '@/pages/Protected/Events/hooks/useEventBulkEditContext.ts'
 
 import { useBulkEditEventsMutation } from '@/redux/events/events.api.ts'
 
@@ -47,7 +47,7 @@ export const SaveBulkEditButton = (props: TSaveBulkEditButtonProps) => {
 
   const navigate = useNavigate()
   const [bulkEditEvents, { isLoading }] = useBulkEditEventsMutation()
-  const { setShowPreviewUpdate } = useEventBulkEdit()
+  const { setShowPreviewUpdate } = useEventBulkEditContext()
 
   /**
    * Handles the save operation for bulk editing events.

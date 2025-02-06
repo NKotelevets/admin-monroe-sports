@@ -35,7 +35,7 @@ import { PATH_TO_EVENTS } from '@/common/constants/paths.ts'
 import { RelatedForms } from '@/pages/Protected/Events/components/EventForm/RelatedForms.tsx'
 import { PlayoffAdditionalFields } from '@/pages/Protected/Events/components/EventForm/PlayoffAdditionalFields.tsx'
 import { PlayoffForm } from '@/pages/Protected/Events/components/EventForm/PlayoffForm.tsx'
-// import styled from '@emotion/styled'
+import styled from '@emotion/styled'
 import Tooltip from 'antd/es/tooltip'
 
 const editEventTypeOptions = eventTypeOptions
@@ -151,7 +151,7 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
 
               <Line />
 
-              <Flex>
+              <Section>
                 <div className="f-40">
                   <ProtectedPageSubtitle>Day & Time</ProtectedPageSubtitle>
                 </div>
@@ -211,13 +211,13 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                   />
 
                 </MainContainer>
-              </Flex>
+              </Section>
 
               {values.eventType !== eventType.GAME && values.eventType !== eventType.PLAYOFF && (
                 <>
                   <Line />
 
-                  <Flex>
+                  <Section>
                     <div className="f-40">
                       <ProtectedPageSubtitle>Repeats</ProtectedPageSubtitle>
                     </div>
@@ -253,13 +253,13 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                         />
                       </InputWrapper>
                     </MainContainer>
-                  </Flex>
+                  </Section>
                 </>
               )}
 
               <Line />
 
-              <Flex>
+              <Section>
                 <div className="f-40">
                   <ProtectedPageSubtitle>Location</ProtectedPageSubtitle>
                 </div>
@@ -286,11 +286,11 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     error={touched.subResources ? errors.subResources : undefined}
                   />
                 </MainContainer>
-              </Flex>
+              </Section>
 
               <Line />
 
-              <Flex>
+              <Section>
                 <div className="f-40">
                   <ProtectedPageSubtitle>Team(s)</ProtectedPageSubtitle>
                 </div>
@@ -300,11 +300,11 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                   {(values.eventType === eventType.GAME) && <GameForm />}
                   {(values.eventType === eventType.PLAYOFF) && <PlayoffForm />}
                 </MainContainer>
-              </Flex>
+              </Section>
 
               <Line />
 
-              <Flex>
+              <Section>
                 <div className="f-40">
                   <ProtectedPageSubtitle>Event subscribers</ProtectedPageSubtitle>
                 </div>
@@ -319,11 +319,11 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     onBlur={() => setFieldTouched('eventSubscribers')}
                   />
                 </MainContainer>
-              </Flex>
+              </Section>
 
               <Line />
 
-              <Flex>
+              <Section>
                 <div className="f-40" />
                 <Flex>
                   <CancelButton type="default" onClick={goBack}>
@@ -339,7 +339,7 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     onClick={handleSubmit}
                   />
                 </Flex>
-              </Flex>
+              </Section>
             </PageContent>
           </Form>
         )
@@ -349,6 +349,6 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
 }
 
 // Styled Components
-// const Section = styled(Flex)`
-//     margin-top: 16px
-// `
+const Section = styled(Flex)`
+    margin-top: 16px
+`

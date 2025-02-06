@@ -1,14 +1,35 @@
-import { IFELeagueTeam, IFESimpleEntity } from '@/common/interfaces/leagueTeams.ts'
 import { IFEDivision, IFESubdivision } from '@/common/interfaces/division.ts'
-import { IFESeason } from '@/common/interfaces/season.ts'
-import { IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
+import { IFELeague } from '@/common/interfaces/league.ts'
+import { IFELeagueTeam, IFESimpleEntity } from '@/common/interfaces/leagueTeams.ts'
 import { ILocation } from '@/common/interfaces/location.ts'
+import { IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
+import { IFESeason } from '@/common/interfaces/season.ts'
 
 export interface IRsvpAnswers {
   going: number
   notGoing: number
   maybe: number
   noReply: number
+}
+
+export interface IPlayoffInfo {
+  id: string
+  league: IFELeague
+  season: IFESeason
+  division: IFEDivision | null
+  subdivision: string | null
+  subdivisionOrPool1: IFESubdivision | null
+  subdivisionOrPool2: IFESubdivision | null
+  updatedAt: string
+  createdAt: string
+  playoffStep: string
+  gameNumber: number
+  seed1: number
+  seed2: number
+  possible: boolean
+  bracket: number
+  game: string
+  match: string
 }
 
 export interface IEvent {
@@ -24,7 +45,7 @@ export interface IEvent {
   season?: IFESeason
   division?: IFEDivision
   subDivision?: IFESubdivision
-  playoffInfo?: string
+  playoffInfo?: IPlayoffInfo
   homeLeagueTeam?: IFELeagueTeam
   awayLeagueTeam?: IFELeagueTeam
   updatedAt: string
@@ -46,7 +67,7 @@ export interface IEvent {
   subResource: string
   minAttendance: number
   whoCreated?: string
-  league?: string
+  league?: string | IFELeague
 }
 
 export interface IEventForm {

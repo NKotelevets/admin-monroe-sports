@@ -1,7 +1,7 @@
 import EventBulkEditContext from '../components/EventBuklEditForm/EventBulkEditContext.tsx'
 import { useContext } from 'react'
 
-export const useEventBulkEdit = () => {
+export const useEventBulkEditContext = () => {
   const context = useContext(EventBulkEditContext)
 
   if (!context) {
