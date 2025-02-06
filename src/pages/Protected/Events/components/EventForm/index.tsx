@@ -277,13 +277,13 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                   />
 
                   <TextInput
-                    name="subResources"
+                    name="subResource"
                     label="Sub Resource"
-                    value={values.subResources}
+                    value={values.subResources || values.subResource || ''}
                     placeholder="Enter sub resource"
-                    onChange={handleChange('subResources')}
-                    onBlur={handleBlur('subResources')}
-                    error={touched.subResources ? errors.subResources : undefined}
+                    onChange={handleChange('subResource')}
+                    onBlur={handleBlur('subResource')}
+                    error={touched.subResource ? errors.subResource : undefined}
                   />
                 </MainContainer>
               </Section>

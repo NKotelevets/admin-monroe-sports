@@ -80,7 +80,8 @@ export interface IEventForm {
   duration: number | null
   locationId?: string
   courtOrField: string
-  subResources: string
+  subResources?: string
+  subResource?: string
   ignoreConflicts: boolean
   repeats?: string
   endRepeat?: string

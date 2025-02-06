@@ -94,6 +94,7 @@ const EventEdit = () => {
     eventSubscribers: data.eventSubscribers?.split(',') || [],
     eventType: data.type,
     date: data.date,
+
     eventDescription: data.eventDescription || '',
     day: data.day || dayjs(data.date, 'YYYY-MM-DD').format('dddd'),
     time: data.time,
