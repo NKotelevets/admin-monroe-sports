@@ -12,7 +12,7 @@ const DesignConfigProvider: FC<{ children: ReactNode }> = ({ children }) => (
         colorTextDisabled: colors.dim,
         borderRadius: 2,
         fontFamily: 'Inter, sans-serif',
-        colorError: colors.primary
+        colorError: colors.primary,
       },
       components: {
         Tabs: {
@@ -34,7 +34,7 @@ const DesignConfigProvider: FC<{ children: ReactNode }> = ({ children }) => (
         },
         Tooltip: {
           borderRadius: 2,
-          colorBgSpotlight: 'rgba(62, 62, 72, 0.75)'
+          colorBgSpotlight: '#62636D'
         },
         Input: {
           hoverBorderColor: colors.dim,
@@ -69,6 +69,9 @@ const DesignConfigProvider: FC<{ children: ReactNode }> = ({ children }) => (
           colorPrimary: colors.primary,
           controlItemBgActive: 'rgba(244, 244, 245, 1)',
           controlItemBgActiveHover: 'rgba(234, 234, 235, 1)'
+        },
+        Modal: {
+
         }
       }
     }}

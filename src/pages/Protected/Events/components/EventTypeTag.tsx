@@ -1,10 +1,14 @@
-import { Tag } from 'antd'
 import { ReactElement } from 'react'
+
+import { Tag } from '@/components/Tag.tsx'
+
 import { eventType } from '@/common/constants/events.ts'
 
 type TEventTypeTagProps = {
   type: number
 }
+
+type TColorMap = { color: string; name: string }
 
 /**
  * EventTypeTag Component
@@ -37,16 +41,28 @@ type TEventTypeTagProps = {
 export const EventTypeTag = (props: TEventTypeTagProps): ReactElement => {
   const { type } = props
 
-  const typeMap: Record<number, { color: string; name: string }> = {
-    [eventType.GAME]: { color: 'green', name: 'Game' },
-    [eventType.PRACTICE]: { color: 'blue', name: 'Practice' },
-    [eventType.PLAYOFF]: { color: 'default', name: 'Playoff' },
-    [eventType.OTHER]: { color: 'yellow', name: 'Other event' },
+  const typeMap: Record<number, TColorMap> = {
+    [eventType.GAME]: {
+      color: 'green',
+      name: 'Game',
+    },
+    [eventType.PRACTICE]: {
+      color: 'blue',
+      name: 'Practice',
+    },
+    [eventType.PLAYOFF]: {
+      color: 'gray',
+      name: 'Playoff',
+    },
+    [eventType.OTHER]: {
+      color: 'yellow',
+      name: 'Other event',
+    },
   }
 
   if (type in typeMap) {
-    return <Tag color={typeMap[type].color}>{typeMap[type].name}</Tag>
+    return <Tag color={typeMap[type].color} title={typeMap[type].name} />
   }
 
-  return <Tag color={typeMap[5].color}>{typeMap[5].name}</Tag>
+  return <Tag color={typeMap[type].color} title={typeMap[5].name} />
 }

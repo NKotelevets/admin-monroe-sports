@@ -22,9 +22,9 @@ const PageContainer = styled(Flex)`
 
   width: 352px;
 
-  @media (width > 1660px) {
-    width: 600px;
-  }
+  //@media (width > 1660px) {
+  //  width: 600px;
+  //}
 `
 
 const Wrapper = styled(Flex)<{ is_error: string }>`
@@ -37,9 +37,9 @@ const Wrapper = styled(Flex)<{ is_error: string }>`
 
   padding: 1px 4px;
 
-  @media (width > 1660px) {
-    min-height: 40px;
-  }
+  //@media (width > 1660px) {
+  //  min-height: 40px;
+  //}
 `
 
 const ListItem = styled.li`
@@ -93,9 +93,9 @@ const SearchInput = styled.input<{ width: string }>`
     box-shadow: none;
   }
 
-  @media (width > 1660px) {
-    font-size: 16px;
-  }
+  //@media (width > 1660px) {
+  //  font-size: 16px;
+  //}
 `
 
 const TeamNameWrapper = styled.li`
@@ -115,9 +115,9 @@ const SelectTeamText = styled(Typography)`
   color: rgb(189, 188, 194);
   padding: 0 8px;
 
-  @media (width > 1660px) {
-    font-size: 16px;
-  }
+  //@media (width > 1660px) {
+  //  font-size: 16px;
+  //}
 `
 
 const DEFAULT_LIMIT_RECORDS = 20

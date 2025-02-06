@@ -1,10 +1,16 @@
 import { validDurations } from '@/pages/Protected/Events/components/EventForm/validation.ts'
 
-export const eventType = {
+export const eventType: Record<string, number> = {
   GAME: 0,
   PRACTICE: 1,
   PLAYOFF: 2,
   OTHER: 5
+}
+
+export const repeatType = {
+  NO_REPEAT: 'NO_REPEAT',
+  EVERY_DAY: 'EVERY_DAY',
+  EVERY_WEEK: 'EVERY_WEEK',
 }
 
 export const eventTypeByValue: { [key: number]: string } = {
@@ -22,16 +28,16 @@ export const eventInitialValues = {
   day: '',
   time: '',
   duration: null,
-  locationId: '',
+  locationId: undefined,
   courtOrField: '',
   subResources: '',
   ignoreConflicts: false,
-  team1Id: '',
-  team2Id: '',
-  league: '',
-  season: '',
-  repeats: 0,
-  endRepeat: '',
+  team1Id: undefined,
+  team2Id: undefined,
+  league: undefined,
+  season: undefined,
+  repeats: repeatType.NO_REPEAT,
+  repeatEndDate: '',
   team1Name: undefined,
   team2Name: undefined,
   coach1Name: undefined,
@@ -65,13 +71,13 @@ export const eventDurationOptions = [
 export const validEventTypes = () => [eventType.GAME, eventType.PRACTICE, eventType.PLAYOFF, eventType.OTHER]
 
 export const eventRepeatOptions = [
-  { label: 'No repeat', value: 0 },
-  { label: 'Every day', value: 1 },
-  { label: 'Every week', value: 2 }
+  { label: 'No repeat', value: repeatType.NO_REPEAT },
+  { label: 'Every day', value: repeatType.EVERY_DAY },
+  { label: 'Every week', value: repeatType.EVERY_WEEK }
 ]
 
-export const eventRepeatName: { [key: number]: string } = {
-  0: 'No repeat',
-  1: 'Every day',
-  2: 'Every week'
+export const eventRepeatName: { [key: string]: string } = {
+  [repeatType.NO_REPEAT]: 'No repeat',
+  [repeatType.EVERY_DAY]: 'Every day',
+  [repeatType.EVERY_WEEK]: 'Every week'
 }

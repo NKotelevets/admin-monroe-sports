@@ -2,6 +2,17 @@ export const PATH_TO_SIGN_IN = '/sign-in'
 
 export const PATH_TO_HOME = '/'
 
+export const PATH_TO_DOWNLOAD_SCREEN = '/download-the-app'
+export const PATH_TO_TERMS = '/terms-of-use'
+export const PATH_TO_PRIVACY = '/privacy-policy'
+
+// PUBLIC ACCOUNT PAGES
+export const PATH_TO_ACCOUNT_LOGIN = '/accounts/login'
+export const PATH_TO_ACCOUNT_SIGNUP = '/accounts/signup'
+export const PATH_TO_ACCOUNT_REQUEST_RESET_PASSWORD = '/accounts/request-reset-password'
+export const PATH_TO_ACCOUNT_RESET_PASSWORD = '/accounts/reset-password'
+export const PATH_TO_ACCOUNT_INVITATIONS = '/accounts/invitations'
+
 // LEAGUES & TOURNAMENTS PAGES
 export const PATH_TO_LEAGUES = '/leagues-and-tournaments'
 export const PATH_TO_LEAGUE_PAGE = '/leagues-and-tournaments'
@@ -50,9 +61,14 @@ export const PATH_TO_CREATE_EVENT = '/events/create'
 export const PATH_TO_EDIT_EVENT = '/events/edit'
 export const PATH_TO_DELETE_INFO_EVENTS = '/events/delete-info'
 export const PATH_TO_EVENTS_IMPORT_INFO = '/events/import-info'
+export const PATH_TO_BULK_EDIT_EVENT = '/events/bulk-edit'
 
-// LOCATION
-export const PATH_TO_LOCATION = '/locations'
+// LOCATIONS
+export const PATH_TO_LOCATIONS = '/locations'
+export const PATH_TO_LOCATIONS_CREATE = '/locations/create'
+export const PATH_TO_LOCATIONS_EDIT = '/locations/edit'
+export const PATH_TO_LOCATIONS_IMPORT_INFO = '/locations/import-info'
+export const PATH_TO_LOCATIONS_DELETE_INFO = '/locations/delete-info'
 
 // REST
 export const PATH_TO_PLAYOFF_FORMAT = '/playoff-format'
@@ -73,4 +89,4 @@ export const PROTECTED_PAGES = [
   PATH_TO_GROUPS,
 ]
 
-export const AUTH_PAGES = [PATH_TO_SIGN_IN]
+export const AUTH_PAGES = [PATH_TO_SIGN_IN, PATH_TO_ACCOUNT_LOGIN]

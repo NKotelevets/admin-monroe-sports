@@ -1,6 +1,6 @@
 import { Page } from '@/layouts/Page'
 import { useCallback, useEffect, useState } from 'react'
-import { PATH_TO_EDIT_EVENT, PATH_TO_EVENTS, PATH_TO_LOCATION, PATH_TO_USERS } from '@/common/constants/paths.ts'
+import { PATH_TO_EDIT_EVENT, PATH_TO_EVENTS, PATH_TO_LOCATIONS, PATH_TO_USERS } from '@/common/constants/paths.ts'
 import { MonroeBlueText, ViewText } from '@/components/Elements'
 import { Flex, Row, Typography } from 'antd'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -12,7 +12,7 @@ import { Button } from '@/components/Button.tsx'
 import { EditOutlined } from '@ant-design/icons'
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined'
 import MonroeModal from '@/components/MonroeModal.tsx'
-import { eventRepeatName, eventTypeByValue } from '@/common/constants/events.ts'
+import { eventRepeatName, eventTypeByValue, repeatType } from '@/common/constants/events.ts'
 import CellText from '@/components/Table/CellText.tsx'
 import { Dot } from '../MasterTeams/components/SimpleEntityList'
 import dayjs from 'dayjs'
@@ -20,7 +20,7 @@ import { getTeam, getTeamAdmin, getTeamHeadCoach, getTeamUrl } from '@/pages/Pro
 import styled from '@emotion/styled'
 import { colors } from '@/utils/colors.tsx'
 import { IFESimpleEntity, ITeamAdmin } from '@/common/interfaces/masterTeams.ts'
-import { IEvent } from '@/common/interfaces/event.ts'
+import { IRsvpAnswers } from '@/common/interfaces/event.ts'
 
 type TTeamDataProps = {
   title: string
@@ -35,7 +35,7 @@ type TTeamDataProps = {
 type TTeamProps = {
   last?: boolean
   team: {
-    rsvp: IEvent['rsvpAnswers']
+    rsvp: IRsvpAnswers
     id?: string
     name?: string
     url: string,
@@ -121,7 +121,7 @@ const EventDetail = () => {
     name: team1?.name,
     url: getTeamUrl(data),
     teamAdmin: getTeamAdmin(data, team1),
-    rsvp: data.rsvpAnswers,
+    rsvp: data.homeTeamRsvpAnswers,
     coach: getTeamHeadCoach({
       event: data,
       masterTeam: data.homeTeam,
@@ -134,7 +134,7 @@ const EventDetail = () => {
     name: team2?.name,
     url: getTeamUrl(data),
     teamAdmin: getTeamAdmin(data, team2),
-    rsvp: data.rsvpAnswers,
+    rsvp: data.awayTeamRsvpAnswers,
     coach: getTeamHeadCoach({
       event: data,
       masterTeam: data.awayTeam,
@@ -193,7 +193,7 @@ const EventDetail = () => {
           <Row className="mb-16">
             <ViewText>Location:</ViewText>
             <Flex vertical={false} align="center">
-              <Typography.Link href={`${PATH_TO_LOCATION}/${data.location.id}`}>{data.location.name}</Typography.Link>
+              <Typography.Link href={`${PATH_TO_LOCATIONS}/${data.location.id}`}>{data.location.name}</Typography.Link>
               {!!data.courtOrField && (
                 <>
                   <Dot />
@@ -212,7 +212,7 @@ const EventDetail = () => {
           <Row className="mb-16">
             <ViewText>Repeats:</ViewText>
             <Flex vertical>
-              <CellText>{eventRepeatName[parseInt(data.repeats || '0')]}</CellText>
+              <CellText>{eventRepeatName[data.repeats || repeatType.NO_REPEAT]}</CellText>
             </Flex>
           </Row>
 

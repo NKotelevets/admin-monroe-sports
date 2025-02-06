@@ -1,14 +1,16 @@
-import { Helmet } from 'react-helmet'
-import { PageContainer, ProtectedPageTitle } from '@/components/Elements'
-import { Flex } from 'antd'
-import BaseLayout from '@/layouts/BaseLayout'
-import { FC, ReactElement, useState } from 'react'
+import { IPageContext, PageContext } from './context'
 import styled from '@emotion/styled'
-import { PageContext } from './context'
+import { Flex } from 'antd'
 import Breadcrumb from 'antd/es/breadcrumb'
-import { Description } from '@/components/Elements/deletingBlockingInfoElements.tsx'
-import { IBreadcrumbs } from '@/common/types'
+import { FC, ReactElement, useState } from 'react'
+import { Helmet } from 'react-helmet'
 
+import { PageContainer, ProtectedPageTitle } from '@/components/Elements'
+import { Description } from '@/components/Elements/deletingBlockingInfoElements.tsx'
+
+import BaseLayout from '@/layouts/BaseLayout'
+
+import { IBreadcrumbs } from '@/common/types'
 
 /**
  * Interface representing the props for the Page component.
@@ -43,25 +45,23 @@ export interface IPageProps {
  * </Page>
  */
 export const Page: FC<IPageProps> = (props: IPageProps): ReactElement => {
-  const {
-    title,
-    children,
-    subtitle,
-    className,
-    breadcrumbs: initialBreadcrumbs,
-    controls
-  } = props
+  const { title, children, subtitle, className, breadcrumbs: initialBreadcrumbs, controls: initialControls } = props
 
   const [pageTitle, setPageTitle] = useState(title)
   const [breadcrumbs, setBreadcrumbs] = useState<IBreadcrumbs>(initialBreadcrumbs)
+  const [controls, setControls] = useState<ReactElement | undefined>(undefined)
 
   return (
-    <PageContext.Provider value={{
-      pageTitle,
-      breadcrumbs,
-      setPageTitle,
-      setBreadcrumbs
-    }}>
+    <PageContext.Provider
+      value={{
+        pageTitle,
+        breadcrumbs,
+        setPageTitle,
+        setBreadcrumbs,
+        controls,
+        setControls: setControls as IPageContext['setControls'],
+      }}
+    >
       <>
         <div id="page-portal"></div>
         <BaseLayout>
@@ -79,9 +79,7 @@ export const Page: FC<IPageProps> = (props: IPageProps): ReactElement => {
                   {!!subtitle && <Subtitle>{subtitle}</Subtitle>}
                 </PageInfo>
 
-                <Controls>
-                  {!!controls && controls()}
-                </Controls>
+                <Controls>{controls ? controls : !!initialControls && initialControls()}</Controls>
               </Header>
 
               <Flex flex="1 1 auto" vertical>
@@ -96,20 +94,20 @@ export const Page: FC<IPageProps> = (props: IPageProps): ReactElement => {
 }
 
 const Header = styled(Flex)`
-  margin-bottom: 24px
+  margin-bottom: 24px;
 `
 const Controls = styled(Flex)`
-    margin-top: 0;
-    display: grid;
-    grid-gap: 8px;
-    grid-auto-flow: column;
+  margin-top: 0;
+  display: grid;
+  grid-gap: 8px;
+  grid-auto-flow: column;
 `
 const PageInfo = styled(Flex)`
-    margin: 0
+  margin: 0;
 `
 const Title = styled(ProtectedPageTitle)`
-    margin: 0 !important;
+  margin: 0 !important;
 `
 const Subtitle = styled(Description)`
-    margin: 8px 0 0;
+  margin: 8px 0 0;
 `

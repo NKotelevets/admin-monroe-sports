@@ -1,3 +1,5 @@
+import { IMatch } from '@/common/interfaces/bracket'
+
 interface IBEMatchParticipant {
   created_at?: string
   updated_at?: string
@@ -71,7 +73,7 @@ export interface IFEBracket {
   published: boolean
   subDivision: string[]
   updatedAt: string
-  matches: IFEMatch[]
+  matches: IMatch[]
   id?: number
 }
 

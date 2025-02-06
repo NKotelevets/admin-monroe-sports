@@ -70,3 +70,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment file
+.env

@@ -1,21 +1,25 @@
-import { useNotification } from '@/hooks/useNotification.ts'
-import { useLazyListEventsQuery } from '@/redux/events/events.api.ts'
-import { useEffect, useMemo } from 'react'
-import { MonroeTable } from '@/components/Table/MonroeTable'
-import { IEvent } from '@/common/interfaces/event.ts'
-import type { FilterValue } from 'antd/es/table/interface'
-import type { TableProps } from 'antd'
-import { TEventFilter, TListEventRequestParams } from '@/common/types/events.ts'
 import { useEventsTable } from '../hooks/useEventsTable'
-import { useEventsSlice } from '@/redux/hooks/useEventsSlice'
-import { useTableContext } from '@/hooks/useTableContext.ts'
-import { showTotal } from '@/components/Table/utils.tsx'
-import { getTableSortField } from '@/utils'
 import styled from '@emotion/styled'
+import type { TableProps } from 'antd'
+import type { FilterValue } from 'antd/es/table/interface'
+import { useEffect, useMemo } from 'react'
+
+import { MonroeTable } from '@/components/Table/MonroeTable'
+import { showTotal } from '@/components/Table/utils.tsx'
+
+import { useLazyListEventsQuery } from '@/redux/events/events.api.ts'
+import { useEventsSlice } from '@/redux/hooks/useEventsSlice'
+
+import { useNotification } from '@/hooks/useNotification.ts'
+import { useTableContext } from '@/hooks/useTableContext.ts'
+
+import { getTableSortField } from '@/utils'
 import { colors } from '@/utils/colors.tsx'
 
-const ERROR_LOADING_EVENTS_MESSAGE = `Could not load events. Please, try again!`
+import { IEvent } from '@/common/interfaces/event.ts'
+import { TEventFilter, TListEventRequestParams } from '@/common/types/events.ts'
 
+const ERROR_LOADING_EVENTS_MESSAGE = `Could not load events. Please, try again!`
 
 export const EventsTable = () => {
   const [listEvents, { isLoading, isFetching }] = useLazyListEventsQuery()
@@ -30,7 +34,8 @@ export const EventsTable = () => {
     total,
     setPaginationParams,
     createdIds,
-    resetCreatedIds
+    resetCreatedIds,
+    setBulkEditRecords,
   } = useEventsSlice()
 
   const {
@@ -39,13 +44,15 @@ export const EventsTable = () => {
     showCreatedRecords,
     setIsLoading,
     setSelectedIds,
-    setShowAdditionalHeader
+    setShowAdditionalHeader,
+    selectedIds,
   } = useTableContext<IEvent>()
 
-  const pagination = useMemo(
-    () => ({ offset, ordering, limit, total }),
-    [offset, ordering, limit, total]
-  )
+  const pagination = useMemo(() => ({ offset, ordering, limit, total }), [offset, ordering, limit, total])
+
+  useEffect(() => {
+    setBulkEditRecords(events.filter(event => selectedIds.includes(event.id)) || [])
+  }, [selectedIds])
 
   /**
    * Fetches events when the component mounts.
@@ -77,20 +84,15 @@ export const EventsTable = () => {
    * @param {TFilter} filters - The filters applied to the table, mapped by filter keys.
    * @param sorter - The sorter configuration for sorting table data.
    */
-  const handleTableChange: TableProps<IEvent>['onChange'] = (
-    pagination,
-    filters: TFilter,
-    sorter
-  ) => {
-    const newOffset =
-      (pagination?.current && (pagination?.current - 1) * (pagination?.pageSize || 10)) || 0
+  const handleTableChange: TableProps<IEvent>['onChange'] = (pagination, filters: TFilter, sorter) => {
+    const newOffset = (pagination?.current && (pagination?.current - 1) * (pagination?.pageSize || 10)) || 0
     const newLimit = pagination?.pageSize || 10
 
     setTableParams({
       pagination: {
         ...pagination,
-        showTotal
-      }
+        showTotal,
+      },
     })
 
     if (!isAllSelected) {
@@ -102,18 +104,22 @@ export const EventsTable = () => {
       subResource: 'sub_resource',
       team1Name: 'team_1_name',
       team2Name: 'team_2_name',
+      team1Season: 'team_1_season_name',
+      team2Season: 'team_2_season_name',
       location: 'location_name',
       courtNumber: 'court_number',
       homeTeam: 'team_1_name',
       awayTeam: 'team_2_name',
-      league: 'league_name'
+      league: 'league_name',
     }
 
     const leagueTeamsRequestParams: TListEventRequestParams = {
       offset: newOffset,
       limit: newLimit,
       ordering: getTableSortField<IEvent>(sorter, fieldMap),
-      date: (filters?.['date']?.[0] as string) ?? undefined,
+      date: filters?.['date'] ? filters?.['date'] : undefined,
+      day: filters?.['day'] ? (filters?.['day'] as FilterValue) : undefined,
+      status: filters?.['status'] ? (filters?.['status'] as FilterValue) : undefined,
       leagueName: (filters?.['leagueName']?.[0] as string) ?? undefined,
       subResource: (filters?.['subResource']?.[0] as string) ?? undefined,
       team1name: (filters?.['homeTeam']?.[0] as string) ?? undefined,
@@ -123,8 +129,8 @@ export const EventsTable = () => {
       team2Season: (filters?.['team2Season']?.[0] as string) ?? undefined,
       team2HeadCoach: (filters?.['team2HeadCoach']?.[0] as string) ?? undefined,
       court: (filters?.['courtOrField']?.[0] as string) ?? undefined,
-      type: (filters?.['type']?.join(',') as string) ?? undefined,
-      repeats: (filters?.['repeats']?.join(',') as string) ?? undefined,
+      type: filters?.['type'] ? filters?.['type'] : undefined,
+      repeats: filters?.['repeats'] ? filters?.['repeats'] : undefined,
       location: (filters?.['location']?.[0] as string) ?? undefined,
     }
 
@@ -133,13 +139,13 @@ export const EventsTable = () => {
     setPaginationParams({
       offset: leagueTeamsRequestParams.offset || 0,
       limit: leagueTeamsRequestParams.limit || 10,
-      ordering: leagueTeamsRequestParams.ordering || null
+      ordering: leagueTeamsRequestParams.ordering || null,
     })
   }
 
   return (
     <TableStyled
-      objTerm='events'
+      objTerm="events"
       columns={columns}
       dataSource={events}
       onChange={handleTableChange}
@@ -153,6 +159,6 @@ export const EventsTable = () => {
 
 const TableStyled = styled(MonroeTable<IEvent>)`
   & tbody .ant-table-column-sort {
-      background-color: ${colors.secondaryLight} !important;
+    background-color: ${colors.secondaryLight} !important;
   }
 `

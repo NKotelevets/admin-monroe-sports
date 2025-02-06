@@ -2,12 +2,13 @@ import { SeasonSelect } from '@/components/Inputs/SeasonSelect.tsx'
 import { useFormikContext } from 'formik'
 import { IEventForm } from '@/common/interfaces/event.ts'
 import { useEffect, useMemo, useState } from 'react'
-import { IFEBracket, IFEDivision, IFEMatch } from '@/common/interfaces/division.ts'
+import { IFEBracket, IFEDivision } from '@/common/interfaces/division.ts'
 import { LeagueSelect } from '@/components/Inputs/LeagueSelect'
 import { IFELeague } from '@/common/interfaces/league.ts'
 import Select from '@/components/Inputs/Select.tsx'
 import { IFESeason } from '@/common/interfaces/season.ts'
 import { useEventFormContext } from '@/pages/Protected/Events/hooks/useEventFormContext.ts'
+import { IMatch } from '@/common/interfaces/bracket.ts'
 
 export const PlayoffAdditionalFields = () => {
   const { setDivisionsAvailable } = useEventFormContext()
@@ -23,7 +24,7 @@ export const PlayoffAdditionalFields = () => {
   const [currentLeague, setCurrentLeague] = useState<IFELeague | undefined>(undefined)
   const [divisionList, setDivisionList] = useState<IFEDivision[]>([])
   const [bracketList, setBracketList] = useState<IFEBracket[]>([])
-  const [matchList, setMatchList] = useState<IFEMatch[]>([])
+  const [matchList, setMatchList] = useState<IMatch[]>([])
 
   useEffect(() => {
     if(!values.division || !divisionList.length) return

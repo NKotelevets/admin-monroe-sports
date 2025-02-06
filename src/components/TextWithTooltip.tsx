@@ -7,9 +7,9 @@ const StyledTypography = styled(Typography)<{ is_regular_text: string }>`
   color: ${(props) => (props.is_regular_text === 'true' ? 'rgba(26, 22, 87, 0.85)' : '#3E34CA')};
   cursor: ${(props) => (props.is_regular_text === 'true' ? 'default' : 'pointer')};
 
-  @media (width > 1660px) {
-    font-size: 16px;
-  }
+  //@media (width > 1660px) {
+  //  font-size: 16px;
+  //}
 `
 
 interface ITitleWithTooltipProps {

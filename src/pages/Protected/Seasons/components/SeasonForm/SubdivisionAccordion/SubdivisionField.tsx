@@ -79,7 +79,7 @@ export const SubdivisionField: React.FC<SubDivisionFormProps> = (props) => {
     }
   }, [notUniqueNameErrorText])
 
-  const handleSubdivisionNameChange = async (event: ChangeEvent<HTMLInputElement>) => {
+  const handleSubdivisionNameChange = async (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const newSubdivisionName = event.target.value
     const oldSubdivisionName = subdivision.values.name
 
@@ -177,7 +177,7 @@ export const SubdivisionField: React.FC<SubDivisionFormProps> = (props) => {
           label="Sub Division Name"
           name={`${field}.name`}
           placeholder="Enter name"
-          onChange={handleSubdivisionNameChange}
+          onChange={(event) => void handleSubdivisionNameChange(event)}
           value={subdivision.values?.name}
           errorPosition="bottom"
           error={getErrorMessage(nameError || subdivision.errors?.name, subdivision.touched?.name || nameError)}

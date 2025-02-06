@@ -1,6 +1,6 @@
 import Flex from 'antd/es/flex'
 import { FormikTouched, useFormikContext } from 'formik'
-import { FocusEvent, ReactElement, useCallback, useEffect, useState } from 'react'
+import { FocusEvent, ReactElement, useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import { BRACKETS_OPTIONS } from '@/pages/Protected/Seasons/CreateBracket/constants/bracketData'
@@ -38,7 +38,7 @@ import { Divider } from 'antd'
  * @returns {ReactElement} The rendered CreateBracket component.
  */
 const CreateBracket = (): ReactElement => {
-  const { setShowBracketPage } = useSeasonFormContext()
+  const { setShowBracketPage, setData, bracketData, setBracketData } = useSeasonFormContext()
   const {
     values,
     setFieldValue,
@@ -54,16 +54,20 @@ const CreateBracket = (): ReactElement => {
     bracketMode
   } = useSeasonSlice()
 
+  const [isValid, setIsValid] = useState(false)
   const [namePrefix, divisionIndex] = pathToSubdivisionDataAndIndexes.split('&')
   const subdivisionValues = values.divisions[+divisionIndex]
 
   const location = useLocation()
   const isEditPage = location.pathname.includes(PATH_TO_EDIT_SEASON)
   const pageTitle = !isEditPage ? (bracketMode === 'create' ? 'Create Bracket' : 'Edit Bracket') : 'Edit Bracket'
-
-  const [isValid, setIsValid] = useState(false)
-  const [bracketData, setBracketData] = useState<IBracket>(subdivisionValues.brackets?.[bracketIdx] || {} as IBracket)
   const bracketTouchedFields = touched?.divisions?.[+divisionIndex]?.brackets?.[+bracketIdx] as FormikTouched<IBracket>
+  const fistLoad = useRef<boolean>(true)
+
+  useEffect(() => {
+    if (fistLoad?.current)
+      setBracketData(subdivisionValues.brackets?.[bracketIdx] || {} as IBracket)
+  }, [subdivisionValues.brackets?.[bracketIdx], fistLoad?.current])
 
   /**
    * Sets the breadcrumbs and page title on component mount and updates.
@@ -89,6 +93,12 @@ const CreateBracket = (): ReactElement => {
 
     bracketTouchedFields?.name && validateSchema()
   }, [bracketData, bracketTouchedFields])
+
+  useEffect(() => {
+    if (!isEditPage || !values) return
+
+    setData(values)
+  }, [values, isEditPage])
 
   /**
    * Cancels the bracket creation or editing process and resets state as needed.
@@ -153,7 +163,7 @@ const CreateBracket = (): ReactElement => {
               placeholder="Enter bracket name"
               className="h-32"
               label={<OptionTitle>Bracket Name *</OptionTitle>}
-              error={bracketTouchedFields?.name ? (!bracketData.name.length ? 'Bracket Name is required' : '') : ''}
+              error={bracketTouchedFields?.name ? (!bracketData?.name?.length ? 'Bracket Name is required' : '') : ''}
               onBlur={handleBlur}
             />
           </div>
@@ -172,6 +182,7 @@ const CreateBracket = (): ReactElement => {
       </Flex>
 
       <Divider />
+
 
       <SingleEliminationBracketForm
         bracketData={bracketData}

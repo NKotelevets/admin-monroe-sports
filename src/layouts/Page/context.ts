@@ -1,11 +1,13 @@
-import { createContext, ReactElement, useContext } from 'react'
+import React, { createContext, ReactElement, useContext } from 'react'
 import { IBreadcrumbs } from '@/common/types'
 
-interface IPageContext {
+export interface IPageContext {
   setBreadcrumbs: React.Dispatch<React.SetStateAction<IBreadcrumbs>>
   setPageTitle: React.Dispatch<React.SetStateAction<string>>
   pageTitle: string
   breadcrumbs: { title: ReactElement }[] | undefined
+  controls?: (() => ReactElement) | ReactElement
+  setControls: (control: ReactElement) => ReactElement
 }
 
 /**

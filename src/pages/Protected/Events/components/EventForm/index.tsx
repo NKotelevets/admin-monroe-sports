@@ -23,7 +23,7 @@ import {
   eventInitialValues,
   eventRepeatOptions,
   eventType,
-  eventTypeOptions
+  eventTypeOptions, repeatType
 } from '@/common/constants/events'
 import { EmailTagsInput } from '@/components/Inputs/EmailTagsInput.tsx'
 import { PracticeForm } from './PracticeForm.tsx'
@@ -35,7 +35,8 @@ import { PATH_TO_EVENTS } from '@/common/constants/paths.ts'
 import { RelatedForms } from '@/pages/Protected/Events/components/EventForm/RelatedForms.tsx'
 import { PlayoffAdditionalFields } from '@/pages/Protected/Events/components/EventForm/PlayoffAdditionalFields.tsx'
 import { PlayoffForm } from '@/pages/Protected/Events/components/EventForm/PlayoffForm.tsx'
-import styled from '@emotion/styled'
+// import styled from '@emotion/styled'
+import Tooltip from 'antd/es/tooltip'
 
 const editEventTypeOptions = eventTypeOptions
 const createEventTypeOptions = eventTypeOptions.slice(0, -1)
@@ -108,9 +109,22 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     disabled={isPlayoff}
                     options={showPlayoffType ? editEventTypeOptions : createEventTypeOptions}
                     onChange={value => {
+                      setFieldValue('team1Id', undefined)
+                      setFieldValue('team2Id', undefined)
+                      setFieldValue('repeats', repeatType.NO_REPEAT)
+                      setFieldValue('endRepeat', undefined)
+                      setFieldValue('duration', undefined)
+                      setFieldValue('season', undefined)
+                      setFieldValue('league', undefined)
+                      setFieldValue('team1Name', undefined)
+                      setFieldValue('team2Name', undefined)
+                      setFieldValue('coach1Name', undefined)
+                      setFieldValue('coach2Name', undefined)
+                      setFieldValue('season1Name', undefined)
+                      setFieldValue('season2Name', undefined)
+                      setFieldValue('league1Name', undefined)
+                      setFieldValue('league2Name', undefined)
                       setFieldValue('eventType', value)
-                      setFieldValue('team1Id', null)
-                      setFieldValue('team2Id', null)
                     }}
                     onBlur={handleBlur('eventType')}
                     error={touched.eventType ? errors.eventType : undefined}
@@ -125,17 +139,19 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                   >
                     <TextArea
                       onChange={handleChange('eventDescription')}
-                      placeholder="Event description"
+                      placeholder="Enter description"
                       onBlur={handleBlur('eventDescription')}
                       value={values.eventDescription}
-                    ></TextArea>
+                    >
+                      {values.eventDescription}
+                    </TextArea>
                   </InputWrapper>
                 </MainContainer>
               </Flex>
 
               <Line />
 
-              <Section>
+              <Flex>
                 <div className="f-40">
                   <ProtectedPageSubtitle>Day & Time</ProtectedPageSubtitle>
                 </div>
@@ -148,12 +164,10 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     <DatePicker
                       format="MMMM D, YYYY"
                       placeholder="Select date"
-                      minDate={dayjs(new Date())}
-                      onBlur={handleBlur('date')}
                       value={values.date ? dayjs(values.date, 'YYYY-MM-DD') : null}
                       onChange={(value: Dayjs) => {
-                        handleChange('date')(value.format('YYYY-MM-DD'))
-                        setFieldValue('day', value.format('dddd'))
+                        setFieldValue('date', value ? value.format('YYYY-MM-DD') : null)
+                        setFieldValue('day', value ? value.format('dddd') : null)
                       }}
                       status={touched.date && errors.date ? 'error' : undefined}
                     />
@@ -176,10 +190,10 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                       placeholder="Select time"
                       value={values.time ? dayjs(values.time, 'HH:mm:ss') : null}
                       onChange={(value: Dayjs) => {
-                        setFieldValue('time', value.format('HH:mm:00'))
+                        setFieldValue('time', value ? value.format('HH:mm:00') : value)
                       }}
                       onOk={(value: Dayjs) => {
-                        setFieldValue('time', value.format('HH:mm:00'))
+                        setFieldValue('time', value ? value.format('HH:mm:00') : value)
                       }}
                       status={touched.time && errors.time ? 'error' : undefined}
                     />
@@ -187,9 +201,9 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
 
                   <Select
                     label="Duration *"
-                    placeholder="Select type"
                     disabled={isPlayoff}
                     value={isPlayoff ? 60 : values.duration}
+                    placeholder="Select duration"
                     options={eventDurationOptions}
                     onChange={value => setFieldValue('duration', value)}
                     onBlur={handleBlur('duration')}
@@ -197,60 +211,65 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                   />
 
                 </MainContainer>
-              </Section>
+              </Flex>
+
+              {values.eventType !== eventType.GAME && values.eventType !== eventType.PLAYOFF && (
+                <>
+                  <Line />
+
+                  <Flex>
+                    <div className="f-40">
+                      <ProtectedPageSubtitle>Repeats</ProtectedPageSubtitle>
+                    </div>
+                    <MainContainer>
+                      <Tooltip autoAdjustOverflow>
+                        <Select
+                          label="Repeats *"
+                          placeholder="Select repeat"
+                          value={values.repeats}
+                          disabled={!values.date}
+                          options={eventRepeatOptions}
+                          onChange={value => setFieldValue('repeats', value)}
+                          onBlur={handleBlur('repeats')}
+                          error={touched.repeats ? errors.repeats : undefined}
+                          tooltipTitle={!values.date ? 'Please, choose the event date to edit this field' : undefined}
+                        />
+                      </Tooltip>
+
+                      <InputWrapper
+                        label="End Repeat *"
+                        errorPosition="top"
+                        error={touched.endRepeat ? errors.endRepeat : undefined}
+                      >
+                        <DatePicker
+                          format="MMMM D, YYYY"
+                          disabled={!values.date || values.repeats === repeatType.NO_REPEAT}
+                          placeholder="Select end date"
+                          minDate={values.date ? dayjs(values.date, 'YYYY-MM-DD').add(1, 'day') : undefined}
+                          // onBlur={handleBlur('endRepeat')}
+                          value={values.endRepeat ? dayjs(values.endRepeat, 'YYYY-MM-DD') : null}
+                          onChange={(value: Dayjs) => handleChange('endRepeat')(value.format('YYYY-MM-DD'))}
+                          status={touched.endRepeat && errors.endRepeat ? 'error' : undefined}
+                        />
+                      </InputWrapper>
+                    </MainContainer>
+                  </Flex>
+                </>
+              )}
 
               <Line />
 
-              <Section>
-                <div className="f-40">
-                  <ProtectedPageSubtitle>Repeats</ProtectedPageSubtitle>
-                </div>
-                <MainContainer>
-                  <Select
-                    label="Repeats *"
-                    placeholder="Select repeat"
-                    value={values.repeats}
-                    options={eventRepeatOptions}
-                    onChange={value => {
-                      setFieldValue('repeats', value)
-                      setFieldValue('endRepeat', undefined)
-                      setFieldTouched('endRepeat', false)
-                    }}
-                    onBlur={handleBlur('repeats')}
-                    error={touched.repeats ? errors.repeats : undefined}
-                  />
-
-                  <InputWrapper
-                    label="End Repeat *"
-                    errorPosition="top"
-                    error={touched.endRepeat ? errors.endRepeat : undefined}
-                  >
-                    <DatePicker
-                      format="MMMM D, YYYY"
-                      disabled={!values.date || values.repeats === 0}
-                      placeholder="Select end date"
-                      minDate={values.date ? dayjs(values.date, 'YYYY-MM-DD').add(1, 'day') : undefined}
-                      onBlur={handleBlur('endRepeat')}
-                      value={values.endRepeat ? dayjs(values.endRepeat, 'YYYY-MM-DD') : null}
-                      onChange={(value: Dayjs) => handleChange('endRepeat')(value.format('YYYY-MM-DD'))}
-                      status={touched.endRepeat && errors.endRepeat ? 'error' : undefined}
-                    />
-                  </InputWrapper>
-                </MainContainer>
-              </Section>
-
-              <Line />
-
-              <Section>
+              <Flex>
                 <div className="f-40">
                   <ProtectedPageSubtitle>Location</ProtectedPageSubtitle>
                 </div>
                 <MainContainer>
-                  <LocationDropdown />
+                  <LocationDropdown  />
 
                   <TextInput
                     name="courtOrField"
                     label="Court / Field"
+                    placeholder="Enter court / field"
                     value={values.courtOrField}
                     onChange={handleChange('courtOrField')}
                     onBlur={handleBlur('courtOrField')}
@@ -261,29 +280,31 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     name="subResources"
                     label="Sub Resource"
                     value={values.subResources}
+                    placeholder="Enter sub resource"
                     onChange={handleChange('subResources')}
                     onBlur={handleBlur('subResources')}
                     error={touched.subResources ? errors.subResources : undefined}
                   />
                 </MainContainer>
-              </Section>
+              </Flex>
 
               <Line />
 
-              <Section>
+              <Flex>
                 <div className="f-40">
                   <ProtectedPageSubtitle>Team(s)</ProtectedPageSubtitle>
                 </div>
                 <MainContainer>
-                  {(values.eventType === eventType.PRACTICE || values.eventType === eventType.OTHER) && <PracticeForm />}
+                  {(values.eventType === eventType.PRACTICE || values.eventType === eventType.OTHER) &&
+                    <PracticeForm />}
                   {(values.eventType === eventType.GAME) && <GameForm />}
                   {(values.eventType === eventType.PLAYOFF) && <PlayoffForm />}
                 </MainContainer>
-              </Section>
+              </Flex>
 
               <Line />
 
-              <Section>
+              <Flex>
                 <div className="f-40">
                   <ProtectedPageSubtitle>Event subscribers</ProtectedPageSubtitle>
                 </div>
@@ -298,11 +319,11 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     onBlur={() => setFieldTouched('eventSubscribers')}
                   />
                 </MainContainer>
-              </Section>
+              </Flex>
 
               <Line />
 
-              <Section>
+              <Flex>
                 <div className="f-40" />
                 <Flex>
                   <CancelButton type="default" onClick={goBack}>
@@ -318,7 +339,7 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     onClick={handleSubmit}
                   />
                 </Flex>
-              </Section>
+              </Flex>
             </PageContent>
           </Form>
         )
@@ -328,6 +349,6 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
 }
 
 // Styled Components
-const Section = styled(Flex)`
-    margin-top: 16px
-`
+// const Section = styled(Flex)`
+//     margin-top: 16px
+// `

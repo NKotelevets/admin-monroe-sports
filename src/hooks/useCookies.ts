@@ -1,6 +1,6 @@
 import { useCookies as useReactCookie } from 'react-cookie'
 
-type TCookieName = 'accessToken' | 'refreshToken'
+export type TCookieName = 'accessToken' | 'refreshToken'
 
 const MONTH_MILLISECONDS = 2592000
 
@@ -11,7 +11,7 @@ const COOKIE_SETTINGS = {
   maxAge: MONTH_MILLISECONDS,
 }
 
-const COOKIES_LIST: TCookieName[] = ['accessToken', 'refreshToken']
+const COOKIES_LIST: TCookieName[] = ['accessToken', 'refreshToken',]
 
 export const useCookies = () => {
   const [cookies, setCookie, removeCookie] = useReactCookie(COOKIES_LIST)

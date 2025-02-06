@@ -13,31 +13,32 @@ import { useUserSlice } from '@/redux/hooks/useUserSlice'
 
 import {
   PATH_TO_CREATE_LEAGUE,
+  PATH_TO_CREATE_LEAGUE_TEAM,
   PATH_TO_CREATE_MASTER_TEAM,
   PATH_TO_CREATE_SEASON,
   PATH_TO_CREATE_USER,
   PATH_TO_EDIT_LEAGUE,
+  PATH_TO_EDIT_LEAGUE_TEAM,
   PATH_TO_EDIT_MASTER_TEAM,
   PATH_TO_EDIT_SEASON,
   PATH_TO_EDIT_USER,
   PATH_TO_EVENTS,
-  PATH_TO_GROUPS,
   PATH_TO_LEAGUES,
   PATH_TO_LEAGUE_TEAMS,
+  PATH_TO_LOCATIONS,
   PATH_TO_MASTER_TEAMS,
   PATH_TO_PLAYOFF_FORMAT,
   PATH_TO_SEASONS,
   PATH_TO_STANDINGS_FORMAT,
   PATH_TO_TIEBREAKERS,
-  PATH_TO_USERS, PATH_TO_EDIT_LEAGUE_TEAM, PATH_TO_CREATE_LEAGUE_TEAM
+  PATH_TO_USERS,
 } from '@/common/constants/paths'
 
 import UserIcon from '@/assets/icons/header/user.svg'
 import MonroeIcon from '@/assets/icons/monroe.svg'
-import GroupsIcon from '@/assets/icons/sidebar/groups.svg'
 import LeagueIcon from '@/assets/icons/sidebar/league.svg'
+import MapIcon from '@/assets/icons/sidebar/map.svg'
 import ScheduleIcon from '@/assets/icons/sidebar/schedule.svg'
-import StandingsIcon from '@/assets/icons/sidebar/standings.svg'
 import TeamsIcon from '@/assets/icons/sidebar/t-shirt.svg'
 
 const siderStyle: CSSProperties = {
@@ -60,6 +61,7 @@ const LEAGUE_AND_TOURN_KEY = 'league-and-tourn-key'
 const STANDINGS_DISPLAY_KEY = 'standings-display-key'
 const TEAMS_KEY = 'teams-key'
 const USERS_KEY = 'users'
+const LOCATIONS_KEY = 'locations'
 
 const MonroeSidebar = () => {
   const location = useLocation()
@@ -81,6 +83,7 @@ const MonroeSidebar = () => {
   const isUsersPage = pathname.includes(PATH_TO_USERS)
   const isMasterTeamsPage = pathname.includes(PATH_TO_MASTER_TEAMS)
   const isLeagueTeamsPage = pathname.includes(PATH_TO_LEAGUE_TEAMS)
+  const isLocationsPage = pathname.includes(PATH_TO_LOCATIONS)
 
   const { setIsCreateBracketPage, setSelectedBracketId } = useSeasonSlice()
 
@@ -88,12 +91,10 @@ const MonroeSidebar = () => {
     if ([PATH_TO_MASTER_TEAMS, PATH_TO_LEAGUE_TEAMS].includes(pathname)) return TEAMS_KEY
 
     if (isLeagueTournamentPage || isSeasonsPage) return LEAGUE_AND_TOURN_KEY
-
     if (isUsersPage) return USERS_KEY
-
     if (isMasterTeamsPage) return TEAMS_KEY
-
     if (isLeagueTeamsPage) return TEAMS_KEY
+    if (isLocationsPage) return LOCATIONS_KEY
 
     if ([PATH_TO_PLAYOFF_FORMAT, PATH_TO_STANDINGS_FORMAT, PATH_TO_TIEBREAKERS].includes(pathname))
       return STANDINGS_DISPLAY_KEY
@@ -103,12 +104,10 @@ const MonroeSidebar = () => {
 
   const getDefaultSelectedKeys = () => {
     if (isLeagueTournamentPage) return PATH_TO_LEAGUES
-
     if (isSeasonsPage) return PATH_TO_SEASONS
-
     if (isMasterTeamsPage) return PATH_TO_MASTER_TEAMS
-
     if (isLeagueTeamsPage) return PATH_TO_LEAGUE_TEAMS
+    if (isLocationsPage) return PATH_TO_LOCATIONS
 
     return ''
   }
@@ -157,24 +156,24 @@ const MonroeSidebar = () => {
         { key: PATH_TO_SEASONS, label: 'Seasons', onClick: () => navigateTo(PATH_TO_SEASONS) },
       ],
     },
-    {
-      key: STANDINGS_DISPLAY_KEY,
-      label: 'Standings Display',
-      icon: <ReactSVG src={StandingsIcon} style={{ marginLeft: '5px' }} />,
-      children: [
-        {
-          key: PATH_TO_PLAYOFF_FORMAT,
-          label: 'Playoff Format',
-          onClick: () => navigateTo(PATH_TO_PLAYOFF_FORMAT),
-        },
-        {
-          key: PATH_TO_STANDINGS_FORMAT,
-          label: 'Standings Format',
-          onClick: () => navigateTo(PATH_TO_STANDINGS_FORMAT),
-        },
-        { key: PATH_TO_TIEBREAKERS, label: 'Tiebreakers', onClick: () => navigateTo(PATH_TO_TIEBREAKERS) },
-      ],
-    },
+    // {
+    //   key: STANDINGS_DISPLAY_KEY,
+    //   label: 'Standings Display',
+    //   icon: <ReactSVG src={StandingsIcon} style={{ marginLeft: '5px' }} />,
+    //   children: [
+    //     {
+    //       key: PATH_TO_PLAYOFF_FORMAT,
+    //       label: 'Playoff Format',
+    //       onClick: () => navigateTo(PATH_TO_PLAYOFF_FORMAT),
+    //     },
+    //     {
+    //       key: PATH_TO_STANDINGS_FORMAT,
+    //       label: 'Standings Format',
+    //       onClick: () => navigateTo(PATH_TO_STANDINGS_FORMAT),
+    //     },
+    //     { key: PATH_TO_TIEBREAKERS, label: 'Tiebreakers', onClick: () => navigateTo(PATH_TO_TIEBREAKERS) },
+    //   ],
+    // },
     {
       key: PATH_TO_EVENTS,
       label: 'Events',
@@ -188,17 +187,29 @@ const MonroeSidebar = () => {
       onClick: () => navigateTo(PATH_TO_EVENTS),
     },
     {
-      key: PATH_TO_GROUPS,
-      label: 'Groups',
+      key: PATH_TO_LOCATIONS,
+      label: 'Locations',
       icon: (
         <ReactSVG
-          className={location.pathname === PATH_TO_GROUPS ? 'red-icon' : ''}
-          src={GroupsIcon}
+          className={location.pathname === PATH_TO_LOCATIONS ? 'red-icon' : ''}
+          src={MapIcon}
           style={{ marginLeft: '5px' }}
         />
       ),
-      onClick: () => navigateTo(PATH_TO_GROUPS),
+      onClick: () => navigateTo(PATH_TO_LOCATIONS),
     },
+    // {
+    //   key: PATH_TO_GROUPS,
+    //   label: 'Groups',
+    //   icon: (
+    //     <ReactSVG
+    //       className={location.pathname === PATH_TO_GROUPS ? 'red-icon' : ''}
+    //       src={GroupsIcon}
+    //       style={{ marginLeft: '5px' }}
+    //     />
+    //   ),
+    //   onClick: () => navigateTo(PATH_TO_GROUPS),
+    // },
   ]
 
   const handleBeforeUnloadEvent = (e: BeforeUnloadEvent) => {

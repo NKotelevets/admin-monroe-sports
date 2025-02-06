@@ -12,10 +12,11 @@ import { useFieldErrors } from '@/hooks/useFieldErrors.ts'
 import { FormikHelpers } from 'formik'
 import { DEFAULT_ERROR_MESSAGE } from '@/common/constants'
 import Loader from '@/components/Loader.tsx'
-import { eventInitialValues, eventType } from '@/common/constants/events.ts'
+import { eventInitialValues, eventType, repeatType } from '@/common/constants/events.ts'
 import dayjs from 'dayjs'
 import { IFELeagueTeam } from '@/common/interfaces/leagueTeams.ts'
 import { IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
+import { useEventConflicts } from '@/pages/Protected/Events/hooks/useEventConflicts.tsx'
 
 const EventEdit = () => {
   const params = useParams<{ id: string }>()
@@ -25,6 +26,7 @@ const EventEdit = () => {
 
   const { notify } = useNotification()
   const { handleErrors } = useFieldErrors<IEventForm>()
+  const { handleConflicts } = useEventConflicts()
   const { data, isLoading, isError } = useGetEventQuery(
     { id: params?.id || '' },
     { skip: !params?.id }
@@ -32,8 +34,9 @@ const EventEdit = () => {
 
   const goBack = () => navigate(PATH_TO_EVENTS)
 
-  const onSubmit = (body: IEventForm, { setErrors }: FormikHelpers<IEventForm>) => {
+  const onSubmit = (body: IEventForm, formikHelpers: FormikHelpers<IEventForm>) => {
     const subscribers = body.eventSubscribers
+    const { setErrors } = formikHelpers
 
     const payload = {
       id: params.id!,
@@ -47,7 +50,7 @@ const EventEdit = () => {
       court_or_field: body.courtOrField,
       sub_resource: body.subResources,
       repeats: body.repeats,
-      endRepeat: body.endRepeat,
+      repeatEndDate: body.endRepeat,
       ignore_conflicts: body.ignoreConflicts,
       team_1_id: body.team1Id,
       team_2_id: body.team2Id || null,
@@ -61,12 +64,9 @@ const EventEdit = () => {
         navigate(PATH_TO_EVENTS)
       })
       .catch(handleErrors(setErrors))
-      .catch(reason => {
-        if (reason?.conflicts) { // this is temporary, since conflicts task isn't ready yet
-          notify('Conflicts with other events were found', 'error')
-        } else {
-          notify(DEFAULT_ERROR_MESSAGE, 'error')
-        }
+      .catch(handleConflicts(onSubmit, body, formikHelpers))
+      .catch(() => {
+        notify(DEFAULT_ERROR_MESSAGE, 'error')
       })
   }
 
@@ -77,7 +77,7 @@ const EventEdit = () => {
     { title: <MonroeBlueText>Event</MonroeBlueText> }
   ]
 
-  const getTeam = (type: number, leagueTeam?: IFELeagueTeam, masterTeam?: IFEMasterTeam) => {
+  const getTeamId = (type: number, leagueTeam?: IFELeagueTeam, masterTeam?: IFEMasterTeam) => {
     if (type === eventType.GAME || type === eventType.PLAYOFF) {
       return leagueTeam || { id: '', name: '' } as IFELeagueTeam
     }
@@ -85,8 +85,8 @@ const EventEdit = () => {
     return masterTeam || { id: '', name: '' } as IFEMasterTeam
   }
 
-  const team1 = getTeam(data.type, data.homeLeagueTeam, data.homeTeam)
-  const team2 = getTeam(data.type, data.awayLeagueTeam, data.awayTeam)
+  const team1 = getTeamId(data.type, data.homeLeagueTeam, data.homeTeam)
+  const team2 = getTeamId(data.type, data.awayLeagueTeam, data.awayTeam)
 
   const initialValues = {
     ...eventInitialValues,
@@ -97,7 +97,7 @@ const EventEdit = () => {
     day: data.day || dayjs(data.date, 'YYYY-MM-DD').format('dddd'),
     time: data.time,
     duration: data.duration || 30,
-    repeats: data.repeats ? parseInt(data.repeats) : 0,
+    repeats: data.repeats || repeatType.NO_REPEAT,
 
     locationId: data.location?.id || '',
     courtOrField: data.courtOrField,

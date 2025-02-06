@@ -14,6 +14,7 @@ import {
   ILeagueBulkDeleteResponse,
 } from '@/common/interfaces/league'
 import { leagueResponseMapper } from './mapper'
+import { transformKeysToSnakeCase } from '@/utils'
 
 const LEAGUE_TAG = 'LEAGUE_TAG'
 
@@ -46,7 +47,7 @@ export const leaguesApi = createApi({
       query: (body) => ({
         url: 'teams/leagues',
         method: 'POST',
-        body,
+        body: transformKeysToSnakeCase(body),
       }),
       invalidatesTags: [LEAGUE_TAG],
     }),
@@ -54,7 +55,7 @@ export const leaguesApi = createApi({
       query: ({ id, body }) => ({
         url: `teams/leagues/${id}`,
         method: 'PATCH',
-        body,
+        body: transformKeysToSnakeCase(body),
       }),
       invalidatesTags: [LEAGUE_TAG],
     }),
@@ -86,7 +87,7 @@ export const leaguesApi = createApi({
       query: (body) => ({
         url: 'teams/leagues/bulk-update',
         method: 'POST',
-        body,
+        body: transformKeysToSnakeCase(body),
       }),
     }),
     importLeaguesCSV: builder.mutation<IImportLeagueResponse, FormData>({

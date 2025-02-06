@@ -7,21 +7,21 @@ import { useEventFormContext } from '@/pages/Protected/Events/hooks/useEventForm
 import { FormSummary } from '@/components/FormSummary.tsx'
 import { Box } from '@/components/Elements'
 import styled from '@emotion/styled'
-import { IFEMatch } from '@/common/interfaces/division.ts'
+import { IMatch } from '@/common/interfaces/bracket.ts'
 
 
 export const PlayoffForm = () => {
   const { values } = useFormikContext<IEventForm>()
   const { divisionsAvailable } = useEventFormContext()
 
-  const [currentGame, setCurrentGame] = useState<IFEMatch | null>(null)
+  const [currentGame, setCurrentGame] = useState<IMatch | null>(null)
 
   useEffect(() => {
     if (!values.game) return
 
     const find = divisionsAvailable?.flatMap(division => division.brackets)
       ?.flatMap(bracket => bracket.matches)
-      ?.find(match => match.id === values.game)
+      ?.find(match => match.gameNumber === values.game)
 
     if (!find) return
 

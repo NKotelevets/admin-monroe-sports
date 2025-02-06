@@ -47,9 +47,9 @@ export const ProtectedPageSubtitle = styled(Typography)`
   margin-right: 32px;
   width: 300px;
 
-  @media (width > 1660px) {
-    font-size: 20px;
-  }
+  //@media (width > 1660px) {
+  //  font-size: 20px;
+  //}
 `
 
 export const ProtectedPageSubtitleDescription = styled(Typography)`
@@ -57,10 +57,10 @@ export const ProtectedPageSubtitleDescription = styled(Typography)`
   font-size: 12px;
   width: 300px;
 
-  @media (width > 1660px) {
-    font-size: 16px;
-    width: 500px;
-  }
+  //@media (width > 1660px) {
+  //  font-size: 16px;
+  //  width: 500px;
+  //}
 `
 
 export const OptionTitle = styled(Typography)`
@@ -69,9 +69,9 @@ export const OptionTitle = styled(Typography)`
   line-height: 22px;
   padding: 5px 0;
 
-  @media (width > 1660px) {
-    font-size: 16px;
-  }
+  //@media (width > 1660px) {
+  //  font-size: 16px;
+  //}
 `
 
 export const BracketWrapper = styled(Flex)`
@@ -156,10 +156,10 @@ export const SearchLeagueInput = styled(MonroeInput)<{ is_error?: string }>`
     border-color: rgba(136, 135, 145, 1) !important;
   }
 
-  @media (width > 1660px) {
-    font-size: 18px !important;
-    min-height: 40px !important;
-  }
+  //@media (width > 1660px) {
+  //  font-size: 18px !important;
+  //  min-height: 40px !important;
+  //}
 `
 
 export const SearchSelectIconWrapper = styled.div<{ isComponentVisible: boolean }>`
@@ -175,9 +175,9 @@ export const Accordion = styled(Collapse)`
   background-color: transparent;
   margin-bottom: 24px;
 
-  @media (width > 1660px) {
-    width: 600px;
-  }
+  //@media (width > 1660px) {
+  //  width: 600px;
+  //}
 `
 
 export const MonroeDivider = styled.div`
@@ -190,10 +190,10 @@ export const MonroeDatePicker = styled(DatePicker)<{ is_error?: string }>`
   font-size: 18px !important;
   border-color: ${(props) => (props.is_error === 'true' ? '#BC261B' : '#d8d7db')};
 
-  @media (width > 1660px) {
-    min-height: 40px !important;
-    font-size: 18px !important;
-  }
+  //@media (width > 1660px) {
+  //  min-height: 40px !important;
+  //  font-size: 18px !important;
+  //}
 `
 
 export const MonroeSecondaryButton = styled(Button)`
@@ -275,9 +275,9 @@ export const MainContainer = styled(Flex)`
   flex-direction: column;
   width: 352px;
 
-  @media (width > 1660px) {
-    width: 600px;
-  }
+  //@media (width > 1660px) {
+  //  width: 600px;
+  //}
 `
 
 export const AccordionHeader = styled(Typography)<{ is_add_margin?: string }>`

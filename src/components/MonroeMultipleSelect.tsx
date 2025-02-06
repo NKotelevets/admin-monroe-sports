@@ -42,15 +42,15 @@ const MonroeMultipleSelect = styled(CustomSelect)<{ is_error?: string }>`
     border-color: ${(props) => (props.is_error === 'true' ? '#BC261B !important' : '#d8d7db !important')};
   }
 
-  @media (width > 1660px) {
-    & .ant-checkbox-wrapper span {
-      font-size: 18px !important;
-    }
-
-    &.ant-select .ant-select-selector {
-      min-height: 40px !important;
-    }
-  }
+  //@media (width > 1660px) {
+  //  & .ant-checkbox-wrapper span {
+  //    font-size: 18px !important;
+  //  }
+  //
+  //  &.ant-select .ant-select-selector {
+  //    min-height: 40px !important;
+  //  }
+  //}
 `
 
 export default MonroeMultipleSelect

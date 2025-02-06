@@ -40,6 +40,7 @@ export const AccordionForm = (props: TAccordionFormProps) => {
   return (
     <AccordionStyled
       accordion
+      destroyInactivePanel={true}
       size="small"
       bordered={false}
       expandIconPosition="end"

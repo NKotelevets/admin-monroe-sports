@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { useFormikContext } from 'formik'
+import { getIn, useFormikContext } from 'formik'
 import Select from '@/components/Inputs/Select.tsx'
 import { IEventForm } from '@/common/interfaces/event.ts'
 import { useLocationPaginated } from '@/pages/Protected/Events/hooks/useLocationPaginated.tsx'
@@ -7,6 +7,13 @@ import { useLazyGetLocationQuery } from '@/redux/locations/locations.api.ts'
 import { useEventFormContext } from '@/pages/Protected/Events/hooks/useEventFormContext.ts'
 import { ILocation } from '@/common/interfaces/location.ts'
 
+type TLocationDropdownProps = {
+  fieldName?: string
+  hideLabel?: boolean
+  noMargin?: boolean
+  validateOnMount?: boolean
+  showAddButton?: boolean
+}
 
 /**
  * LocationDropdown is a functional component that renders a dropdown menu
@@ -29,7 +36,8 @@ import { ILocation } from '@/common/interfaces/location.ts'
  *
  * @returns {React.Element} Rendered dropdown UI for location selection and related fields.
  */
-export const LocationDropdown = React.memo(() => {
+export const LocationDropdown = React.memo((props: TLocationDropdownProps) => {
+  const { fieldName, hideLabel, noMargin, validateOnMount = false, showAddButton = true } = props
   const { setAddingLocation } = useEventFormContext()
 
   const {
@@ -45,35 +53,41 @@ export const LocationDropdown = React.memo(() => {
   const [locationGet, { data: locationAdded, isLoading: isLoadingSingle }] = useLazyGetLocationQuery()
   const [selectedLocation, setSelectedLocation] = useState<ILocation | null>(null)
 
+  const field = fieldName || 'locationId'
+
+  const locationValue = getIn(values, field)
+  const locationError = getIn(errors, field)
+  const locationTouched = getIn(touched, field)
+
   /**
    * Updates selected location
    */
   useEffect(() => {
-    if (values.locationId) {
-      const locationIndex = locations.findIndex(location => location.id === values.locationId)
+    if (locationValue) {
+      const locationIndex = locations.findIndex(location => location.id === locationValue)
       setSelectedLocation(locations[locationIndex])
     }
-  }, [values.locationId, locations])
+  }, [locationValue, locations])
 
   /**
    * Fetches location by id (when editing) and created location
    * inside this flow (by hitting "add location" button)
    */
   useEffect(() => {
-    const checkLocation = selectedLocation !== null && selectedLocation?.id === values.locationId
+    const checkLocation = selectedLocation !== null && selectedLocation?.id === locationValue
 
-    if (!values.locationId || selectedLocation || checkLocation || isLoadingSingle) return
-    const mt = locations.findIndex(mt => mt.id === values.locationId)
+    if (!locationValue || selectedLocation || checkLocation || isLoadingSingle) return
+    const mt = locations.findIndex(mt => mt.id === locationValue)
 
     if (mt < 0 && locationAdded === undefined) {
-      locationGet({ id: values.locationId })
+      locationGet({ id: locationValue })
       return
     }
 
     if (mt < 0 && locationAdded) {
       addItem(locationAdded as ILocation)
     }
-  }, [values.locationId, locations, selectedLocation, locationAdded, isLoadingSingle])
+  }, [locationValue, locations, selectedLocation, locationAdded, isLoadingSingle])
 
   /**
    * Triggers loadMore from hook if end is not reached yet
@@ -86,18 +100,19 @@ export const LocationDropdown = React.memo(() => {
     <>
       <Select
         showSearch
+        noMargin={noMargin}
         loading={isLoading || isFetching}
-        label="Location *"
+        label={hideLabel ? '' : 'Location *'}
         placeholder="Select location"
         optionFilterProp="label"
-        value={values.locationId}
-        onChange={handleChange('locationId')}
+        value={locationValue}
+        onChange={handleChange(field)}
         onLoadMore={!endReached ? onLoadMore : undefined}
         options={locations.map(mt => ({ label: mt.name, value: mt.id }))}
-        buttonAction={() => setAddingLocation(true)}
+        buttonAction={showAddButton ? () => setAddingLocation(true) : undefined}
         buttonText="Add location"
-        error={touched.locationId ? errors.locationId as string : ''}
-        onBlur={handleBlur('locationId')}
+        error={validateOnMount || locationTouched ? locationError as string : ''}
+        onBlur={handleBlur(field)}
       />
     </>
   )

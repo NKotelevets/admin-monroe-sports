@@ -13,6 +13,7 @@ import {
   IImportSeasonsResponse,
 } from '@/common/interfaces/season'
 import { transformKeysToCamelCase, transformKeysToSnakeCase } from '@/utils'
+import { TPopulateBracketsBody } from '@/common/types/season.ts'
 
 const SEASON_TAG = 'SEASON_TAG'
 
@@ -64,7 +65,6 @@ export const seasonsApi = createApi({
       }),
       invalidatesTags: [SEASON_TAG],
     }),
-
     updateSeason: builder.mutation<void, { id: string, body: IBECreateSeasonBody }>({
       query: ({ id, body }) => ({
         url: 'teams/seasons/' + id,
@@ -72,7 +72,6 @@ export const seasonsApi = createApi({
         method: 'PUT',
       }),
     }),
-
     getSeasonDetails: builder.query<IFESeason, string>({
       query: (id) => ({
         url: `teams/seasons/${id}`,
@@ -83,7 +82,6 @@ export const seasonsApi = createApi({
         {...transformKeysToCamelCase(response)}
       ),
     }),
-
     getSeasonBEDetails: builder.query<IBESeason, string>({
       query: (id) => ({
         url: `teams/seasons/${id}`,
@@ -105,6 +103,13 @@ export const seasonsApi = createApi({
         },
       }),
     }),
+    populateBrackets: builder.mutation<void, {id: number, body: TPopulateBracketsBody}>({
+      query: ({ id, body }) => ({
+        url: `teams/brackets/${id}/populate-bracket`,
+        method: 'POST',
+        body: transformKeysToSnakeCase(body),
+      }),
+    })
   }),
 })
 
@@ -118,6 +123,7 @@ export const {
   useGetSeasonDetailsQuery,
   useLazyGetSeasonDetailsQuery,
   useCreateSeasonMutation,
+  usePopulateBracketsMutation,
   useGetSeasonBEDetailsQuery,
   useLazyGetSeasonBEDetailsQuery,
   useBulkDeleteBracketsMutation,

@@ -11,6 +11,7 @@ import { useNotification } from '@/hooks/useNotification.ts'
 import { useFieldErrors } from '@/hooks/useFieldErrors.ts'
 import { FormikHelpers } from 'formik'
 import { DEFAULT_ERROR_MESSAGE } from '@/common/constants'
+import { useEventConflicts } from '@/pages/Protected/Events/hooks/useEventConflicts.tsx'
 
 const BREAD_CRUMB_ITEMS = [
   { title: <a href={PATH_TO_EVENTS}>Events</a> },
@@ -22,12 +23,14 @@ const EventCreate = () => {
   const [createEvent] = useCreateEventMutation()
 
   const { notify } = useNotification()
+  const { handleConflicts } = useEventConflicts()
   const { handleErrors } = useFieldErrors<IEventForm>()
 
   const goBack = () => navigate(PATH_TO_EVENTS)
 
-  const onSubmit = (body: IEventForm, { setErrors }: FormikHelpers<IEventForm>) => {
+  const onSubmit = (body: IEventForm, formikHelpers: FormikHelpers<IEventForm>) => {
     const subscribers = body.eventSubscribers
+    const { setErrors } = formikHelpers
 
     const payload = {
       event_type: body.eventType,
@@ -40,10 +43,10 @@ const EventCreate = () => {
       court_or_field: body.courtOrField,
       sub_resource: body.subResources,
       repeats: body.repeats,
-      endRepeat: body.endRepeat,
+      repeatEndDate: body.endRepeat,
       ignore_conflicts: body.ignoreConflicts,
       team_1_id: body.team1Id,
-      team_2_id: body.team2Id || null,
+      team_2_id: body.team2Id || '',
       duration: body.duration
     } as TEventCreationPayload
 
@@ -54,12 +57,9 @@ const EventCreate = () => {
         navigate(PATH_TO_EVENTS)
       })
       .catch(handleErrors(setErrors))
-      .catch(reason => {
-        if (reason?.conflicts) { // this is temporary, since conflicts task isn't ready yet
-          notify('Conflicts with other events were found', 'error')
-        } else {
-          notify(DEFAULT_ERROR_MESSAGE, 'error')
-        }
+      .catch(handleConflicts(onSubmit, body, formikHelpers))
+      .catch(() => {
+        notify(DEFAULT_ERROR_MESSAGE, 'error')
       })
   }
 

@@ -1,14 +1,18 @@
 import { IIdName } from '@/common/interfaces'
+import { IBEMasterTeam, IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
 import { IFERole } from '@/common/interfaces/role'
 import { TDeleteStatus, TErrorDuplicate, TGender, TRole } from '@/common/types'
-import { IBEMasterTeam } from '@/common/interfaces/masterTeams.ts'
 
-interface IInvite {
+export interface IInvite {
   created_at: string
   id: string
   invite_type: number
   is_admin_invite: boolean
+  inviter: IFEUser | null
   visible: boolean
+  children: IChildren[]
+  email: string
+  team: IFEMasterTeam | null
 }
 
 export interface IBEUser {
@@ -81,6 +85,7 @@ export interface IRole {
   team_id?: string
   operator_id?: string
 }
+
 export interface ICreateUserAsAdminRequestBody {
   first_name: string
   last_name: string
@@ -92,6 +97,7 @@ export interface ICreateUserAsAdminRequestBody {
   roles: IRole[]
   team?: string
 }
+
 export interface ICreateUserAsAdmin {
   firstName: string
   lastName: string
@@ -138,7 +144,9 @@ interface IBESupervised {
   id: string
   first_name: string
   last_name: string
-  // Contain other fields
+  photo_s3_url: string | null
+  birth_date: string | null
+  gender: number | null
 }
 
 export interface IExtendedBEUser extends IBEUser {
@@ -158,6 +166,9 @@ export interface IChildren {
   id: string
   firstName: string
   lastName: string
+  photoS3Url: string | null
+  birthDate: string | null
+  gender: number | null
 }
 
 export interface IExtendedFEUser extends IFEUser {
@@ -165,6 +176,7 @@ export interface IExtendedFEUser extends IFEUser {
   asPlayer: IAsEntity | null
   operator: IOperator | null
   asHeadCoach: IIdName[] | null
+  asSupervisor?: IFEUser[] | null
   asTeamAdmin: IBEMasterTeam[] | IIdName[] | null
   birthDateFormatted: string
   isChild: boolean

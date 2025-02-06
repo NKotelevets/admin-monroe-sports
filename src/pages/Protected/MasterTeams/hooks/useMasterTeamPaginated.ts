@@ -2,17 +2,14 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLazyGetMasterTeamQuery, useLazyGetMasterTeamsQuery } from '@/redux/masterTeams/masterTeams.api.ts'
 import { IFEMasterTeam } from '@/common/interfaces/masterTeams.ts'
 import { IGetLeagueTeamsRequest } from '@/common/interfaces/leagueTeams.ts'
-import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice.tsx'
+import { makeUniqueById } from '@/utils'
 
 export const useMasterTeamPaginated = () => {
   const firstLoad = useRef(true)
 
-  const {
-    setPaginationParams,
-    offset,
-    limit,
-    total,
-  } = useMasterTeamsSlice()
+  const [offset, setOffset] = useState(0)
+  const [limit] = useState(10)
+  const [total, setTotal] = useState(0)
 
   const [masterTeamList, { isLoading, isFetching, data }] = useLazyGetMasterTeamsQuery()
   const [getMasterTeam, singleData] = useLazyGetMasterTeamQuery()
@@ -21,9 +18,8 @@ export const useMasterTeamPaginated = () => {
   // fetches first batch of master teams
   useEffect(() => {
     if (firstLoad.current) {
-      const params = { limit: 10, offset: 0 }
+      const params = { limit, offset }
 
-      setPaginationParams(params)
       setMasterTeamItems([])
       masterTeamList(params)
       firstLoad.current = false
@@ -31,10 +27,13 @@ export const useMasterTeamPaginated = () => {
   }, [])
 
 
-  // updates local master team list
+  // updates  master team list
   useEffect(() => {
     if (!data?.results) return
-    setMasterTeamItems(mt => ([...mt, ...data.results]))
+    setMasterTeamItems(mt => makeUniqueById([...mt, ...data.results]))
+    if (data.count !== undefined) {
+      setTotal(data.count)
+    }
   }, [data])
 
   /**
@@ -43,7 +42,7 @@ export const useMasterTeamPaginated = () => {
    * @param item
    */
   const addItem = useCallback((item: IFEMasterTeam) => {
-    setMasterTeamItems(list => [...list, item])
+    setMasterTeamItems(list => makeUniqueById([...list, item]))
   }, [])
 
 
@@ -51,16 +50,12 @@ export const useMasterTeamPaginated = () => {
     if (masterTeamItems.length >= total) return
 
     const leagueTeamsRequestParams: IGetLeagueTeamsRequest = {
-      offset: offset + 10,
-      limit
+      offset: offset + limit,
+      limit: limit
     }
 
     masterTeamList(leagueTeamsRequestParams)
-    setPaginationParams({
-      offset: leagueTeamsRequestParams.offset,
-      limit: leagueTeamsRequestParams.limit,
-      ordering: null
-    })
+    setOffset(leagueTeamsRequestParams.offset)
   }, [limit, offset, masterTeamItems, total])
 
   return {

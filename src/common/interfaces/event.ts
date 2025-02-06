@@ -12,13 +12,15 @@ export interface IRsvpAnswers {
 }
 
 export interface IEvent {
+  status?: string
   id: string
   homeTeam?: IFEMasterTeam
   awayTeam?: IFEMasterTeam
   location: ILocation
   coachHomeTeam?: IFESimpleEntity
   coachAwayTeam?: IFESimpleEntity
-  rsvpAnswers: IRsvpAnswers
+  homeTeamRsvpAnswers: IRsvpAnswers
+  awayTeamRsvpAnswers: IRsvpAnswers
   season?: IFESeason
   division?: IFEDivision
   subDivision?: IFESubdivision
@@ -55,14 +57,14 @@ export interface IEventForm {
   day: string
   time: string
   duration: number | null
-  locationId: string
+  locationId?: string
   courtOrField: string
   subResources: string
   ignoreConflicts: boolean
-  repeats?: number
+  repeats?: string
   endRepeat?: string
-  team1Id: string
-  team2Id: string
+  team1Id?: string
+  team2Id?: string
   league?: string
   season?: string
   team1Name?: string

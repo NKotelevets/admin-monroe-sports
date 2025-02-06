@@ -57,6 +57,7 @@ const LeagueReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx
     playoffsTeams: newData.playoffs_teams,
     seasons: newData.league_seasons as string[],
     description: newData.description,
+    minAttendance: newData.minAttendance || 0,
   }
 
   const existingRecordFullData: TNormalizedRecord = {
@@ -69,6 +70,7 @@ const LeagueReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx
     playoffsTeams: duplicateData.playoffs_teams,
     seasons: duplicateData.league_seasons,
     description: duplicateData.description,
+    minAttendance: newData.minAttendance || 0,
   }
 
   const objectsDifferences: Record<Partial<keyof IFELeague>, boolean> = compareObjects(
@@ -88,6 +90,7 @@ const LeagueReviewUpdateModal: FC<{ idx: number; onClose: () => void }> = ({ idx
       playoffs_teams: normalizedNewRecord.playoffsTeams,
       standings_format: normalizedNewRecord.standingsFormat !== POINTS ? 0 : 1,
       tiebreakers_format: normalizedNewRecord.tiebreakersFormat !== POINTS ? 0 : 1,
+      min_attendance: normalizedNewRecord.minAttendance ? normalizedNewRecord.minAttendance : 1,
       type: normalizedNewRecord.type === LEAGUE ? 0 : 1,
       welcome_note: normalizedNewRecord.welcomeNote,
     }
