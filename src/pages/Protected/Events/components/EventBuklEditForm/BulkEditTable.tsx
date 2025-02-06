@@ -7,7 +7,7 @@ import { BulkEditPreviewUpdate } from '@/pages/Protected/Events/components/Event
 import { BulkEditTableControls } from '@/pages/Protected/Events/components/EventBuklEditForm/BulkEditTableControls.tsx'
 import { eventBulkEditFormSchema, validDurations } from '@/pages/Protected/Events/components/EventForm/validation.ts'
 import { useDeleteEvent } from '@/pages/Protected/Events/hooks/useDeleteEvent.ts'
-import { useEventBulkEdit } from '@/pages/Protected/Events/hooks/useEventBulkEdit.ts'
+import { useEventBulkEditContext } from '@/pages/Protected/Events/hooks/useEventBulkEditContext.ts'
 import { useEventsBulkEditTable } from '@/pages/Protected/Events/hooks/useEventsBulkEditTable.tsx'
 
 import { MonroeTable } from '@/components/Table/MonroeTable'
@@ -40,7 +40,7 @@ import { TBulkEditEvent, TBulkEditEventForm } from '@/common/types/events.ts'
 export const BulkEditTable = (): ReactElement => {
   useDeleteEvent()
   const { bulkEditRecords: selectedEvents } = useEventsSlice()
-  const { setInitialValues } = useEventBulkEdit()
+  const { setInitialValues } = useEventBulkEditContext()
 
   /**
    * Initializes the bulk edit event data by transforming and reducing the selected events.
@@ -126,7 +126,7 @@ const TableForm = () => {
   const { setSelectedIds, setDisableAllCheckBoxes, selectedIds: selectedTableIds } = useTableContext()
   const { values, setFieldValue, isValid, dirty, validateForm } = useFormikContext<TBulkEditEventForm>()
   const { setControls, setPageTitle } = usePageContext()
-  const { showPreviewUpdate } = useEventBulkEdit()
+  const { showPreviewUpdate } = useEventBulkEditContext()
 
   const selectedEvents = useMemo(() => events.filter((event) => selectedIds.includes(event.id)), [events, selectedIds])
 

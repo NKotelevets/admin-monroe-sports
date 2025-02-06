@@ -17,6 +17,7 @@ type TLeagueTeamSelectProps = {
   error?: string
   noMargin?: boolean
   label?: string
+  disabled?: boolean
 }
 
 /**
@@ -57,7 +58,7 @@ type TLeagueTeamSelectProps = {
  * A dropdown component ready to be integrated into a form where users can select a specific league team.
  */
 export const LeagueTeamSelect = (props: TLeagueTeamSelectProps) => {
-  const { fieldName, isTeam1, error, touched, label, noMargin } = props
+  const { fieldName, isTeam1, error, touched, label, noMargin, disabled = false } = props
   const { values, setFieldValue, setFieldTouched } = useFormikContext<IEventForm>()
 
   // const isDisabled = !isTeam1 && !values.season
@@ -150,7 +151,7 @@ export const LeagueTeamSelect = (props: TLeagueTeamSelectProps) => {
       <Select
         noMargin={noMargin}
         label={label || ''}
-        // disabled={isDisabled}
+        disabled={disabled}
         onLoadMore={loadMore}
         placeholder="Select team"
         loading={isLoading || isFetching}

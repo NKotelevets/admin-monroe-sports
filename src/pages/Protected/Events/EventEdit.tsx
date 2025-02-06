@@ -93,18 +93,21 @@ const EventEdit = () => {
 
     eventType: data.type,
     date: data.date,
-    eventDescription: data.eventDescription,
+    eventDescription: data.eventDescription || '',
     day: data.day || dayjs(data.date, 'YYYY-MM-DD').format('dddd'),
     time: data.time,
     duration: data.duration || 30,
     repeats: data.repeats || repeatType.NO_REPEAT,
 
     locationId: data.location?.id || '',
-    courtOrField: data.courtOrField,
-    subResource: data.subResource,
+    courtOrField: data.courtOrField || '',
+    subResource: data.subResource || '',
 
-    season: data.season?.id || '',
-    league: data.league || '',
+    season: data.playoffInfo?.season?.id || data.season?.id || '',
+    league: typeof data.league === 'string' ? data.league : data.league?.id || '',
+    division: data.playoffInfo?.division?.id || data.division?.id || '',
+    bracket: data.playoffInfo?.bracket || '',
+    game: data.playoffInfo?.match ?? '',
 
     team1Id: team1.id,
     team1Name: team1.name,

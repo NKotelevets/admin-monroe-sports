@@ -39,8 +39,10 @@ export const PopulateBracketsButton = () => {
         notify('Bracket successfully populated', 'success')
       })
       .catch(async (error) => {
-        if (error.status === '409' && error.data.details) {
-          const result = await handleBracketIssues(error.data.details)
+        const errorMessage = error.data?.details || error.data?.detail
+
+        if (error.status >= 400 && error.status < 500) {
+          const result = await handleBracketIssues(errorMessage)
           if (result.ignore) {
             handlePopulateBrackets({games: result.games, score: result.score})
           }

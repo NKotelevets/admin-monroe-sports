@@ -69,8 +69,8 @@ const CreateSeason = (): ReactElement => {
           subdivision: bracket.subdivisionsNames,
           published: false,
           matches: bracket.matches.map((match) => ({
-            top_team: match?.topTeam || '',
-            bottom_team: match?.bottomTeam || '',
+            top_team: match?.topTeam as string || '',
+            bottom_team: match?.bottomTeam as string || '',
             next_match_id: match.nextMatchId,
             tournament_round_text: match?.tournamentRoundText || '',
             is_not_first_round: !!match.isNotFirstRound,

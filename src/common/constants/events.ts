@@ -45,7 +45,11 @@ export const eventInitialValues = {
   season1Name: undefined,
   season2Name: undefined,
   league1Name: undefined,
-  league2Name: undefined
+  league2Name: undefined,
+  division: undefined,
+  bracket: undefined,
+  game: undefined,
+
 }
 
 export const eventTypeOptions = [

@@ -1,5 +1,5 @@
 import { IIdName } from '@/common/interfaces'
-import { IBESeason } from '@/common/interfaces/season'
+import { IBESeason, IFESeason } from '@/common/interfaces/season'
 import { TDeleteStatus, TErrorDuplicate } from '@/common/types'
 import { TLeagueTourn, TPlayOffFormat, TWinningPoints } from '@/common/types/league'
 
@@ -38,7 +38,7 @@ export interface IFELeague<T = TLeagueTourn> extends ICommonLeagueFields {
   tiebreakersFormat: TWinningPoints
   minAttendance: number | null
   playoffsTeams: number
-  seasons: IIdName[] | string[]
+  seasons: IFESeason[] | IIdName[] | string[]
 }
 
 export interface IFECreateLeagueBody {

@@ -3,7 +3,7 @@ import { Button } from 'antd'
 import { ReactElement } from 'react'
 
 import { SaveBulkEditButton } from '@/pages/Protected/Events/components/EventForm/SaveBulkEditButton.tsx'
-import { useEventBulkEdit } from '@/pages/Protected/Events/hooks/useEventBulkEdit.ts'
+import { useEventBulkEditContext } from '@/pages/Protected/Events/hooks/useEventBulkEditContext.ts'
 
 /**
  * Component representing the controls for the bulk edit preview mode.
@@ -15,7 +15,7 @@ import { useEventBulkEdit } from '@/pages/Protected/Events/hooks/useEventBulkEdi
  */
 export const BulkEditPreviewControls = (props: TBulkEditTableControlsProps): ReactElement => {
   const { values, forceUpdate, selectedIds, resetForm } = props
-  const { setShowPreviewUpdate } = useEventBulkEdit()
+  const { setShowPreviewUpdate } = useEventBulkEditContext()
 
   return (
     <>

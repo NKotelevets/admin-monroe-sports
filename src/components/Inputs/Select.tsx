@@ -21,6 +21,7 @@ export interface IDropdownProps extends SelectProps {
   helpText?: string
   tooltipTitle?: string
   debounceSearch?: boolean
+  notFoundMessage?: string
 
   buttonAction?(): void
 
@@ -45,6 +46,7 @@ const Select = (props: IDropdownProps) => {
     onSearch,
     helpText,
     debounceSearch = true,
+    notFoundMessage = `No options available.`,
     tooltipTitle,
     noMargin,
     ...rest
@@ -113,7 +115,7 @@ const Select = (props: IDropdownProps) => {
             notFoundContent={(
               <NotFoundContentList
                 hidden={loading}
-                message={`There's no match. Try a different name.`} />
+                message={notFoundMessage} />
             )}
             {...rest}
           />

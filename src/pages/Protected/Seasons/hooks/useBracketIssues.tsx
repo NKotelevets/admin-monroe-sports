@@ -2,8 +2,8 @@ import { Modal } from 'antd'
 
 export const useBracketIssues = () => {
 
-  const handleBracketIssues = async (error: string) => {
-    if (error.includes('score')) {
+  const handleBracketIssues = async (error?: string) => {
+    if (error?.includes('score')) {
       const ignore = await new Promise<boolean>((resolve) => {
         Modal.confirm({
           title: 'Playoff phase is not ready',
@@ -21,7 +21,7 @@ export const useBracketIssues = () => {
       }
     }
 
-    if (error.includes('game')) {
+    if (error?.includes('game')) {
       const ignore =  await new Promise<boolean>((resolve) => {
         Modal.confirm({
           title: 'Playoff phase is not ready',

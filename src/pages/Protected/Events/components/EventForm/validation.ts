@@ -1,26 +1,25 @@
-import * as yup from 'yup'
 import dayjs from 'dayjs'
+import * as yup from 'yup'
+
 import { eventType, repeatType, validEventTypes } from '@/common/constants/events.ts'
 
 const validWeekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 export const validDurations = [30, 45, 60, 75, 90, 105, 120]
 
 export const eventFormSchema = yup.object({
-  eventType: yup.number().test(
-    'is-valid-type',
-    'Invalid event type',
-    (value) => value !== undefined ? validEventTypes().includes(value) : false
-  ).required(),
+  eventType: yup
+    .number()
+    .test('is-valid-type', 'Invalid event type', (value) =>
+      value !== undefined ? validEventTypes().includes(value) : false,
+    )
+    .required(),
   eventDescription: yup.string(),
   eventSubscribers: yup.array().nullable().of(yup.string()),
   date: yup
     .string()
     .required('Date is required')
     .test('is-valid-date', 'Date must be a valid format', (value) => dayjs(value, 'YYYY-MM-DD', true).isValid()),
-  day: yup
-    .string()
-    .required('Day is required')
-    .oneOf(validWeekdays, 'Day must be a valid weekday name (e.g., monday)'),
+  day: yup.string().required('Day is required').oneOf(validWeekdays, 'Day must be a valid weekday name (e.g., monday)'),
   time: yup
     .string()
     .required('Time is required')
@@ -30,28 +29,37 @@ export const eventFormSchema = yup.object({
     .required('Duration is required')
     .oneOf(validDurations, `Duration must be one of ${validDurations.join(', ')}`)
     .when('eventType', ([evt], schema) =>
-      evt === eventType.PLAYOFF ? schema.oneOf([60], 'Duration must be 60 minutes for Playoff events') : schema
+      evt === eventType.PLAYOFF ? schema.oneOf([60], 'Duration must be 60 minutes for Playoff events') : schema,
     ),
   locationId: yup.string().required('Location is required'),
   courtOrField: yup.string(),
   subResources: yup.string(),
   ignoreConflicts: yup.boolean(),
-  team1Id: yup.string().required('Team 1 is required'),
-  repeats: yup.string(),
-  endRepeat: yup.string()
-    .when('repeats', ([repeats], schema) =>
-      repeats !== repeatType.NO_REPEAT ? schema.required('End repeat is requited when repeats is set') : schema.optional()
-    ),
+  team1Id: yup.string().when('type', ([type], schema) => {
+    if (type === eventType.PLAYOFF) return schema.optional()
+    return schema.required('Team 1 is required')
+  }),
   team2Id: yup
     .string()
     .nullable()
-    .when('eventType', ([evt], schema) =>
-      evt === eventType.GAME || evt === eventType.PLAYOFF ? schema.required('Team 2 is required for this event type') : schema.optional()
+    .when('type', ([type], schema) => {
+      if (type === eventType.GAME) return schema.required('Team 2 is required')
+      return schema.optional()
+    }),
+  repeats: yup.string(),
+  endRepeat: yup
+    .string()
+    .when('repeats', ([repeats], schema) =>
+      repeats !== repeatType.NO_REPEAT
+        ? schema.required('End repeat is requited when repeats is set')
+        : schema.optional(),
     ),
   league: yup
     .string()
     .when('eventType', ([evt], schema) =>
-      evt === eventType.GAME || evt === eventType.PLAYOFF ? schema.required('League is required for this event type') : schema.optional()
+      evt === eventType.GAME || evt === eventType.PLAYOFF
+        ? schema.required('League is required for this event type')
+        : schema.optional(),
     )
     .when('eventType', ([eventType], schema) =>
       eventType === 0 || eventType === 2
@@ -82,15 +90,17 @@ const eventSchema = yup.object().shape({
   courtOrField: yup.string(),
   subResources: yup.string(),
   ignoreConflicts: yup.boolean(),
-  team1Id: yup.string().required('Team 1 is required'),
+  team1Id: yup.string().when('type', ([type], schema) => {
+    if (type === eventType.PLAYOFF) return schema.optional()
+    return schema.required('Team 1 is required')
+  }),
   team2Id: yup
     .string()
     .nullable()
-    .when('type', ([type], schema) =>
-      type === eventType.GAME || type === eventType.PLAYOFF
-        ? schema.required('Team 2 is required')
-        : schema.optional(),
-    ),
+    .when('type', ([type], schema) => {
+      if (type === eventType.GAME) return schema.required('Team 2 is required')
+      return schema.optional()
+    }),
 })
 const eventsSchema = yup.lazy((value) =>
   yup.object(

@@ -74,8 +74,8 @@ const EditSeason = () => {
           matches: bracket.matches.map((match) => ({
             id: match.primaryId,
             match_integer_id: match.matchIntegerId!,
-            top_team: match?.topTeam || '',
-            bottom_team: match?.bottomTeam || '',
+            top_team: match?.topTeam as string || '',
+            bottom_team: match?.bottomTeam as string || '',
             next_match_id: match.nextMatchId,
             tournament_round_text: match?.tournamentRoundText || '',
             is_not_first_round: !!match.isNotFirstRound,

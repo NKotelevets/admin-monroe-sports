@@ -1,3 +1,5 @@
+import { IFELeagueTeam } from '@/common/interfaces/leagueTeams.ts'
+
 export interface IParticipant {
   id: string
   isEmpty: boolean
@@ -15,8 +17,8 @@ export interface IMatch {
   isNotFirstRound?: boolean
   gameNumber: number | string | null
   startTime: string
-  topTeam?: string
-  bottomTeam?: string
+  topTeam?: string | IFELeagueTeam
+  bottomTeam?: string | IFELeagueTeam
   matchParticipants: IParticipant[]
   primaryId?: string
   stage?: string

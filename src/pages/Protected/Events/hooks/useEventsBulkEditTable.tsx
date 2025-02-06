@@ -152,6 +152,7 @@ export const useEventsBulkEditTable = () => {
           {record?.type === eventType.GAME || record?.type === eventType.PLAYOFF ? (
             <LeagueTeamSelect
               noMargin
+              disabled={record?.type === eventType.PLAYOFF}
               fieldName={field.name}
               isTeam1={true}
               touched={true}
@@ -179,6 +180,7 @@ export const useEventsBulkEditTable = () => {
           {record?.type === eventType.GAME || record?.type === eventType.PLAYOFF ? (
             <LeagueTeamSelect
               noMargin
+              disabled={record?.type === eventType.PLAYOFF}
               fieldName={field.name}
               isTeam1={false}
               touched={true}

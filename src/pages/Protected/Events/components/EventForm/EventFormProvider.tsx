@@ -2,6 +2,7 @@ import { ReactElement, useEffect, useState } from 'react'
 import { IFELeagueTeam } from '@/common/interfaces/leagueTeams.ts'
 import { EventFormContext, TEventTeamName } from '@/pages/Protected/Events/components/EventForm/EventFormContext.ts'
 import { ILocation } from '@/common/interfaces/location.ts'
+import { IFEDivision } from '@/common/interfaces/division.ts'
 
 export type TEventFormProviderProps = {
   children: ReactElement
@@ -20,6 +21,7 @@ export const EventFormProvider = (props: TEventFormProviderProps) => {
 
   const [isAddingRelated, setIsAddingRelated] = useState(false)
   const [targetField, setTargetField] = useState<TEventTeamName | undefined>(undefined)
+  const [divisionsAvailable, setDivisionsAvailable] = useState<IFEDivision[] | undefined>(undefined)
 
   useEffect(() => {
     if (addingMasterTeam || addingLeagueTeam || addingLocation) {
@@ -47,6 +49,8 @@ export const EventFormProvider = (props: TEventFormProviderProps) => {
         isAddingRelated,
         targetField,
         setTargetField,
+        divisionsAvailable,
+        setDivisionsAvailable,
       }}
     >
       {children}
