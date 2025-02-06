@@ -25,24 +25,36 @@ export type TGetTeamDisplayNameProps = {
  * @param {Object} values.leagueTeam - The league team object containing name and other details.
  * @return {string} The name of the team to be displayed or a fallback value ('---').
  */
-export const getEventTeamName = (values: TGetTeamDisplayNameProps): string => {
+export const getEventTeamName = (values: TGetTeamDisplayNameProps): { id?: string, name?: string } => {
   const { event, masterTeam, leagueTeam } = values
 
   // if event is GAME, league team name is displayed
   if (event.type === eventType.GAME) {
-    return leagueTeam?.name || '---'
+    return {
+      id: leagueTeam?.id,
+      name: leagueTeam?.name
+    }
   }
 
   // if event is PLAYOFF and brackets are populated, league team name is displayed
   if (event.type === eventType.PLAYOFF && event.playoffInfo) {
-    return leagueTeam?.name || '---'
+    return {
+      id: leagueTeam?.id,
+      name: leagueTeam?.name
+    }
   }
 
   // if event is PLAYOFF and brackets aren't populated, subdivision name is displayed
   if (event.type === eventType.PLAYOFF && !event.playoffInfo) {
-    return event.subDivision?.name || '---' // FIXME: this should be checked when working with playoffs
+    return {
+      id: event?.season?.id,
+      name: event.subDivision?.name
+    }
   }
 
   // if event is OTHER or PRACTICE, master team name is displayed
-  return masterTeam?.name || '---'
+  return {
+    id:masterTeam?.id,
+    name: masterTeam?.name
+  }
 }
