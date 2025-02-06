@@ -91,6 +91,7 @@ const EventEdit = () => {
   const initialValues = {
     ...eventInitialValues,
 
+    eventSubscribers: data.eventSubscribers?.split(',') || [],
     eventType: data.type,
     date: data.date,
     eventDescription: data.eventDescription || '',
