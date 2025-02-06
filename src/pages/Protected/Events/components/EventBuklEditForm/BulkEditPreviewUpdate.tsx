@@ -263,7 +263,7 @@ export const BulkEditPreviewUpdate = () => {
             masterTeam: oldRecord.homeTeam,
             leagueTeam: oldRecord.homeLeagueTeam,
             league: oldRecord.season,
-          })
+          }).name || ''
           return renderCustomCell(oldValue, newValue, wasChanged('team1Id', index) ? record?.errors : undefined)
         },
       },
@@ -279,11 +279,11 @@ export const BulkEditPreviewUpdate = () => {
           const newValue = getEventSeasonName({
             event: newRecord,
             leagueTeam: newRecord.homeLeagueTeam,
-          })
+          }).name || ''
           const oldValue = getEventSeasonName({
             event: oldRecord,
             leagueTeam: oldRecord.homeLeagueTeam,
-          })
+          }).name || ''
           return renderCustomCell(oldValue, newValue, wasChanged('team1Season', index) ? record?.errors : undefined)
         },
       },
@@ -302,7 +302,7 @@ export const BulkEditPreviewUpdate = () => {
             masterTeam: oldRecord.awayTeam,
             leagueTeam: oldRecord.awayLeagueTeam,
             league: oldRecord.season,
-          })
+          }).name || ''
           return renderCustomCell(oldValue, newValue, wasChanged('team2Id', index) ? record?.errors : undefined)
         },
       },
@@ -318,11 +318,12 @@ export const BulkEditPreviewUpdate = () => {
           const newValue = getEventSeasonName({
             event: newRecord,
             leagueTeam: newRecord.awayLeagueTeam,
-          })
+          }).name || ''
+
           const oldValue = getEventSeasonName({
             event: oldRecord,
             leagueTeam: oldRecord.awayLeagueTeam,
-          })
+          }).name || ''
           return renderCustomCell(oldValue, newValue, wasChanged('team2Season', index) ? record?.errors : undefined)
         },
       },

@@ -19,7 +19,8 @@ export interface IEvent {
   location: ILocation
   coachHomeTeam?: IFESimpleEntity
   coachAwayTeam?: IFESimpleEntity
-  rsvpAnswers: IRsvpAnswers
+  homeTeamRsvpAnswers: IRsvpAnswers
+  awayTeamRsvpAnswers: IRsvpAnswers
   season?: IFESeason
   division?: IFEDivision
   subDivision?: IFESubdivision

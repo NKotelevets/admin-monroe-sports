@@ -1,6 +1,7 @@
 import FilterFilled from '@ant-design/icons/lib/icons/FilterFilled'
 import { Typography } from 'antd'
 import Flex from 'antd/es/flex'
+import Tooltip from 'antd/es/tooltip'
 import dayjs from 'dayjs'
 import { useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -10,6 +11,7 @@ import { EventTypeTag } from '@/pages/Protected/Events/components/EventTypeTag.t
 import { StatusTag } from '@/pages/Protected/Events/components/StatusTag.tsx'
 import { DeleteWrapper } from '@/pages/Protected/LeagueTeams/components/DeleteWrapper.ts'
 
+import { Link } from '@/components/Link.tsx'
 import { DateRangeFilterDropdown } from '@/components/Table/DateRangeFilterDropdown.tsx'
 import MonroeFilter from '@/components/Table/MonroeFilter.tsx'
 
@@ -25,7 +27,15 @@ import { TGetTeamDisplayNameProps, getEventTeamName } from '@/utils/getTeamName.
 
 import { EMPTY_VALUE } from '@/common/constants'
 import { eventRepeatName, eventRepeatOptions, eventType, repeatType } from '@/common/constants/events.ts'
-import { PATH_TO_EDIT_EVENT, PATH_TO_EVENTS, PATH_TO_LOCATIONS } from '@/common/constants/paths.ts'
+import {
+  PATH_TO_EDIT_EVENT,
+  PATH_TO_EVENTS,
+  PATH_TO_LEAGUE_TEAMS,
+  PATH_TO_LOCATIONS,
+  PATH_TO_MASTER_TEAMS,
+  PATH_TO_SEASONS,
+  PATH_TO_USERS,
+} from '@/common/constants/paths.ts'
 import { IEvent } from '@/common/interfaces/event.ts'
 import { TColumns } from '@/common/types'
 
@@ -75,17 +85,6 @@ export const useEventsTable = () => {
   }
 
   /**
-   * A callback function that creates a navigation handler for a given location ID.
-   *
-   * @function
-   * @param {string} id - The unique identifier of the location to navigate to.
-   * @returns {Function} A function that triggers navigation to the specified location.
-   */
-  const navigateToLocation = useCallback((id: string) => {
-    return () => navigate(`${PATH_TO_LOCATIONS}/${id}`)
-  }, [])
-
-  /**
    * A memoized callback function that renders a filter icon.
    * The icon's color dynamically changes based on the `filtered` state.
    *
@@ -122,16 +121,23 @@ export const useEventsTable = () => {
    * @param {Object} values.leagueTeam - The league-specific team object containing coach details.
    * @returns {string} The full name of the head coach or a placeholder value if not found.
    */
-  const getTeamHeadCoachName = (values: Omit<TGetTeamDisplayNameProps, 'league'>): string => {
+  const getTeamHeadCoachName = (values: Omit<TGetTeamDisplayNameProps, 'league'>): { name: string; id: string } => {
     const { event, masterTeam, leagueTeam } = values
 
     if (event.type === eventType.GAME || event.type === eventType.PLAYOFF) {
-      if (!leagueTeam?.headCoach?.firstName) return EMPTY_VALUE
-      return `${leagueTeam?.headCoach?.firstName} ${leagueTeam?.headCoach?.lastName}`
+      if (!leagueTeam?.headCoach?.firstName) return { name: EMPTY_VALUE, id: '' }
+
+      return {
+        name: `${leagueTeam?.headCoach?.firstName} ${leagueTeam?.headCoach?.lastName}`,
+        id: `${leagueTeam?.headCoach?.id}`,
+      }
     }
 
-    if (!masterTeam?.headCoach?.firstName) return EMPTY_VALUE
-    return `${masterTeam?.headCoach?.firstName} ${masterTeam?.headCoach?.lastName}`
+    if (!masterTeam?.headCoach?.firstName) return { name: EMPTY_VALUE, id: '' }
+    return {
+      name: `${masterTeam?.headCoach?.firstName} ${masterTeam?.headCoach?.lastName}`,
+      id: `${masterTeam?.headCoach?.id}`,
+    }
   }
 
   const columns: TColumns<IEvent> = [
@@ -235,12 +241,27 @@ export const useEventsTable = () => {
       sorter: true,
       width: '188px',
       ...getColumnSearchProps('homeTeam', undefined, false),
-      render: (_, record) =>
-        getEventTeamName({
+      render: (_, record) => {
+        const title = `Ok(${record.homeTeamRsvpAnswers.going}); No(${record.homeTeamRsvpAnswers.notGoing}); Not answer (${record.homeTeamRsvpAnswers.noReply})`
+        const team = getEventTeamName({
           event: record,
           masterTeam: record.homeTeam,
           leagueTeam: record.homeLeagueTeam,
-        }),
+        })
+
+        const url =
+          record.type === eventType.PRACTICE || record.type === eventType.OTHER
+            ? `${PATH_TO_MASTER_TEAMS}/${team.id}`
+            : `${PATH_TO_LEAGUE_TEAMS}/${team.id}`
+
+        if (team.name)
+          return (
+            <Tooltip title={title}>
+              <Link to={url}>{team.name}</Link>
+            </Tooltip>
+          )
+        return EMPTY_VALUE
+      },
     },
     {
       title: 'Head Coach Team 1',
@@ -248,12 +269,15 @@ export const useEventsTable = () => {
       sorter: true,
       width: '204px',
       ...getColumnSearchProps('team1HeadCoach' as keyof IEvent, () => true),
-      render: (_, record) =>
-        getTeamHeadCoachName({
+      render: (_, record) => {
+        const coach = getTeamHeadCoachName({
           event: record,
           masterTeam: record.homeTeam,
           leagueTeam: record.homeLeagueTeam,
-        }),
+        })
+        if (coach.name) return <Link to={`${PATH_TO_USERS}/${coach.id}`}>{coach.name}</Link>
+        return EMPTY_VALUE
+      },
     },
     {
       title: 'Season',
@@ -261,11 +285,14 @@ export const useEventsTable = () => {
       sorter: true,
       width: '188px',
       ...getColumnSearchProps('team1Season' as keyof IEvent, () => true),
-      render: (_, record) =>
-        getEventSeasonName({
+      render: (_, record) => {
+        const season = getEventSeasonName({
           event: record,
           leagueTeam: record.homeLeagueTeam,
-        }),
+        })
+        if (season.name) return <Link to={`${PATH_TO_SEASONS}/${season.id}`}>{season.name}</Link>
+        return EMPTY_VALUE
+      },
     },
     {
       title: 'Team 2 Name',
@@ -273,12 +300,28 @@ export const useEventsTable = () => {
       sorter: true,
       width: '188px',
       ...getColumnSearchProps('awayTeam', undefined, false),
-      render: (_, record) =>
-        getEventTeamName({
+      render: (_, record) => {
+        const title = `Ok(${record.awayTeamRsvpAnswers.going}); No(${record.awayTeamRsvpAnswers.notGoing}); Not answer (${record.awayTeamRsvpAnswers.noReply})`
+        const team = getEventTeamName({
           event: record,
           masterTeam: record.awayTeam,
           leagueTeam: record.awayLeagueTeam,
-        }),
+        })
+
+        const url =
+          record.type === eventType.PRACTICE || record.type === eventType.OTHER
+            ? `${PATH_TO_MASTER_TEAMS}/${team.id}`
+            : `${PATH_TO_LEAGUE_TEAMS}/${team.id}`
+
+        if (team.name)
+          return (
+            <Tooltip title={title}>
+              <Link to={url}>{team.name}</Link>
+            </Tooltip>
+          )
+
+        return EMPTY_VALUE
+      },
     },
     {
       title: 'Head Coach Team 2',
@@ -286,12 +329,15 @@ export const useEventsTable = () => {
       sorter: true,
       width: '204px',
       ...getColumnSearchProps('team2HeadCoach' as keyof IEvent, () => true),
-      render: (_, record) =>
-        getTeamHeadCoachName({
+      render: (_, record) => {
+        const coach = getTeamHeadCoachName({
           event: record,
           masterTeam: record.awayTeam,
           leagueTeam: record.awayLeagueTeam,
-        }),
+        })
+        if (coach.name) return <Link to={`${PATH_TO_USERS}/${coach.id}`}>{coach.name}</Link>
+        return EMPTY_VALUE
+      },
     },
     {
       title: 'Season',
@@ -299,18 +345,15 @@ export const useEventsTable = () => {
       sorter: true,
       width: '188px',
       ...getColumnSearchProps('team2Season' as keyof IEvent, () => true),
-      render: (_, record) =>
-        getEventSeasonName({
+      render: (_, record) => {
+        const season = getEventSeasonName({
           event: record,
-          leagueTeam: record.awayLeagueTeam,
-        }),
+          leagueTeam: record.homeLeagueTeam,
+        })
+        if (season.name) return <Link to={`${PATH_TO_SEASONS}/${season.id}`}>{season.name}</Link>
+        return EMPTY_VALUE
+      },
     },
-    // {
-    //   title: 'RSVP',
-    //   dataIndex: 'rsvpAnswers',
-    //   width: '144px',
-    //   render: (_, record) => <RSVPStatus rsvp={record.rsvpAnswers} />
-    // },
     {
       title: 'Location',
       dataIndex: 'location',
@@ -318,10 +361,8 @@ export const useEventsTable = () => {
       width: '240px',
       ...getColumnSearchProps('location', () => true),
       render: (_, record) =>
-        record.location ? (
-          <Typography.Link onClick={record.location?.id ? navigateToLocation(record.location?.id) : undefined}>
-            {record.location?.name}
-          </Typography.Link>
+        record.location?.id ? (
+          <Link to={`${PATH_TO_LOCATIONS}/${record.location.id}`}>{record.location?.name}</Link>
         ) : (
           EMPTY_VALUE
         ),

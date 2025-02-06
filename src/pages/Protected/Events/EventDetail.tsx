@@ -20,7 +20,7 @@ import { getTeam, getTeamAdmin, getTeamHeadCoach, getTeamUrl } from '@/pages/Pro
 import styled from '@emotion/styled'
 import { colors } from '@/utils/colors.tsx'
 import { IFESimpleEntity, ITeamAdmin } from '@/common/interfaces/masterTeams.ts'
-import { IEvent } from '@/common/interfaces/event.ts'
+import { IRsvpAnswers } from '@/common/interfaces/event.ts'
 
 type TTeamDataProps = {
   title: string
@@ -35,7 +35,7 @@ type TTeamDataProps = {
 type TTeamProps = {
   last?: boolean
   team: {
-    rsvp: IEvent['rsvpAnswers']
+    rsvp: IRsvpAnswers
     id?: string
     name?: string
     url: string,
@@ -121,7 +121,7 @@ const EventDetail = () => {
     name: team1?.name,
     url: getTeamUrl(data),
     teamAdmin: getTeamAdmin(data, team1),
-    rsvp: data.rsvpAnswers,
+    rsvp: data.homeTeamRsvpAnswers,
     coach: getTeamHeadCoach({
       event: data,
       masterTeam: data.homeTeam,
@@ -134,7 +134,7 @@ const EventDetail = () => {
     name: team2?.name,
     url: getTeamUrl(data),
     teamAdmin: getTeamAdmin(data, team2),
-    rsvp: data.rsvpAnswers,
+    rsvp: data.awayTeamRsvpAnswers,
     coach: getTeamHeadCoach({
       event: data,
       masterTeam: data.awayTeam,

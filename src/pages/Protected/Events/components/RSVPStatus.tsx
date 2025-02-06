@@ -1,4 +1,4 @@
-import { IEvent } from '@/common/interfaces/event.ts'
+import { IRsvpAnswers } from '@/common/interfaces/event.ts'
 import { Flex } from 'antd'
 import { ReactSVG } from 'react-svg'
 import yesIcon from '@/assets/icons/rsvp/yes.svg'
@@ -7,7 +7,7 @@ import maybeIcon from '@/assets/icons/rsvp/maybe.svg'
 import styled from '@emotion/styled'
 
 type TRSVPStatusProps = {
-  rsvp: IEvent['rsvpAnswers']
+  rsvp: IRsvpAnswers
 }
 
 export const RSVPStatus = (props: TRSVPStatusProps) => {
