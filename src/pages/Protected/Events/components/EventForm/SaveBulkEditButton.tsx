@@ -110,7 +110,7 @@ export const SaveBulkEditButton = (props: TSaveBulkEditButtonProps) => {
         navigate(PATH_TO_EVENTS)
       })
       .catch((response) => {
-        notify(response?.data?.detail || response?.data?.details || DEFAULT_ERROR_MESSAGE, 'error')
+        notify(response?.data?.detail || response?.data?.details || response?.data?.error || DEFAULT_ERROR_MESSAGE, 'error')
       })
   }
 

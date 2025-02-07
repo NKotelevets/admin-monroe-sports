@@ -77,7 +77,7 @@ export const BulkEditPreviewUpdate = () => {
     })
   }
 
-  const diffs = bulkEditResults.map((result) => deepCompare(values.events[result.id], result))
+  const diffs = Object.values(initialValues.events).map((result) => deepCompare(values.events[result.id], result))
 
   /**
    * Determines if a specific field has changed within the provided index of the `diffs` array.
@@ -258,12 +258,13 @@ export const BulkEditPreviewUpdate = () => {
           const newRecord = values.events[record.id]
 
           const newValue = newRecord.team1IdName
-          const oldValue = getEventTeamName({
-            event: oldRecord,
-            masterTeam: oldRecord.homeTeam,
-            leagueTeam: oldRecord.homeLeagueTeam,
-            league: oldRecord.season,
-          }).name || ''
+          const oldValue =
+            getEventTeamName({
+              event: oldRecord,
+              masterTeam: oldRecord.homeTeam,
+              leagueTeam: oldRecord.homeLeagueTeam,
+              league: oldRecord.season,
+            }).name || ''
           return renderCustomCell(oldValue, newValue, wasChanged('team1Id', index) ? record?.errors : undefined)
         },
       },
@@ -276,14 +277,16 @@ export const BulkEditPreviewUpdate = () => {
           const oldRecord = bulkEditRecords.find((old) => old.id === record.id)!
           const newRecord = values.events[record.id]
 
-          const newValue = getEventSeasonName({
-            event: newRecord,
-            leagueTeam: newRecord.homeLeagueTeam,
-          }).name || ''
-          const oldValue = getEventSeasonName({
-            event: oldRecord,
-            leagueTeam: oldRecord.homeLeagueTeam,
-          }).name || ''
+          const newValue =
+            getEventSeasonName({
+              event: newRecord,
+              leagueTeam: newRecord.homeLeagueTeam,
+            }).name || ''
+          const oldValue =
+            getEventSeasonName({
+              event: oldRecord,
+              leagueTeam: oldRecord.homeLeagueTeam,
+            }).name || ''
           return renderCustomCell(oldValue, newValue, wasChanged('team1Season', index) ? record?.errors : undefined)
         },
       },
@@ -297,12 +300,13 @@ export const BulkEditPreviewUpdate = () => {
           const newRecord = values.events[record.id]
 
           const newValue = newRecord.team2IdName
-          const oldValue = getEventTeamName({
-            event: oldRecord,
-            masterTeam: oldRecord.awayTeam,
-            leagueTeam: oldRecord.awayLeagueTeam,
-            league: oldRecord.season,
-          }).name || ''
+          const oldValue =
+            getEventTeamName({
+              event: oldRecord,
+              masterTeam: oldRecord.awayTeam,
+              leagueTeam: oldRecord.awayLeagueTeam,
+              league: oldRecord.season,
+            }).name || ''
           return renderCustomCell(oldValue, newValue, wasChanged('team2Id', index) ? record?.errors : undefined)
         },
       },
@@ -315,15 +319,17 @@ export const BulkEditPreviewUpdate = () => {
           const oldRecord = bulkEditRecords.find((old) => old.id === record.id)!
           const newRecord = values.events[record.id]
 
-          const newValue = getEventSeasonName({
-            event: newRecord,
-            leagueTeam: newRecord.awayLeagueTeam,
-          }).name || ''
+          const newValue =
+            getEventSeasonName({
+              event: newRecord,
+              leagueTeam: newRecord.awayLeagueTeam,
+            }).name || ''
 
-          const oldValue = getEventSeasonName({
-            event: oldRecord,
-            leagueTeam: oldRecord.awayLeagueTeam,
-          }).name || ''
+          const oldValue =
+            getEventSeasonName({
+              event: oldRecord,
+              leagueTeam: oldRecord.awayLeagueTeam,
+            }).name || ''
           return renderCustomCell(oldValue, newValue, wasChanged('team2Season', index) ? record?.errors : undefined)
         },
       },
