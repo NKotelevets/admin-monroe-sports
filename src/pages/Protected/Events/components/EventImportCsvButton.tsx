@@ -21,6 +21,7 @@ export const EventImportCsvButton = () => {
   const [importEvents] = useImportEventsCSVMutation()
   const [importType, setImportType] = useState<'playoffs' | 'others' | undefined>()
   const [importModalOptions, setImportModalOptions] = useState<IImportModalOptions>(DEFAULT_IMPORT_MODAL_OPTIONS)
+  const [fileKey, setFileKey] = useState<string>(new Date().toISOString())
 
   const navigate = useNavigate()
   const inputRef = useRef<HTMLInputElement | null>()
@@ -53,7 +54,7 @@ export const EventImportCsvButton = () => {
         setImportModalOptions({
           filename: file.name,
           isOpen: true,
-          status: response.status,
+          status: response.status === 'red' ? 'yellow' : response.status,
           errorMessage: '',
         })
       })
@@ -73,11 +74,12 @@ export const EventImportCsvButton = () => {
             'Something went wrong. Please, try again',
         })
       })
+    setFileKey(new Date().toISOString())
   }
 
   return (
     <>
-      {importModalOptions.isOpen &&
+        {importModalOptions.isOpen &&
         createPortal(
           <ImportModal
             title="Importing"
@@ -107,6 +109,7 @@ export const EventImportCsvButton = () => {
         accept={'text/csv'}
         onChange={onUpload}
         className="d-n"
+        key={fileKey}
       />
     </>
   )
