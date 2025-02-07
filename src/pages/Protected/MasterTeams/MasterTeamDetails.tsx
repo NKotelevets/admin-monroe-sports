@@ -1,4 +1,3 @@
-import { PlusOutlined } from '@ant-design/icons'
 import DeleteOutlined from '@ant-design/icons/lib/icons/DeleteOutlined'
 import EditOutlined from '@ant-design/icons/lib/icons/EditOutlined'
 import { Flex } from 'antd'
@@ -15,7 +14,6 @@ import {
   ProtectedPageTitle,
 } from '@/components/Elements'
 import Loader from '@/components/Loader'
-import MonroeButton from '@/components/MonroeButton'
 import MonroeModal from '@/components/MonroeModal'
 
 import BaseLayout from '@/layouts/BaseLayout'
@@ -23,7 +21,6 @@ import BaseLayout from '@/layouts/BaseLayout'
 import { useDeleteMasterTeamMutation, useGetMasterTeamQuery } from '@/redux/masterTeams/masterTeams.api'
 
 import {
-  PATH_TO_CREATE_LEAGUE,
   PATH_TO_EDIT_MASTER_TEAM,
   PATH_TO_MASTER_TEAMS
 } from '@/common/constants/paths'
@@ -135,14 +132,14 @@ const MasterTeamDetails = () => {
                 Edit
               </MonroeSecondaryButton>
 
-              <MonroeButton
-                label="Connect to league/tourn"
-                type="primary"
-                icon={<PlusOutlined />}
-                iconPosition="start"
-                onClick={() => navigate(`${PATH_TO_CREATE_LEAGUE}`)}
-                className="h-32"
-              />
+              {/*<MonroeButton*/}
+              {/*  label="Connect to league/tourn"*/}
+              {/*  type="primary"*/}
+              {/*  icon={<PlusOutlined />}*/}
+              {/*  iconPosition="start"*/}
+              {/*  onClick={() => navigate(`${PATH_TO_CREATE_LEAGUE}`)}*/}
+              {/*  className="h-32"*/}
+              {/*/>*/}
             </Flex>
           </Flex>
 

@@ -5,7 +5,7 @@ import { ILeagueForm } from '@/common/interfaces/league.ts'
 import { ICreateLeagueTeamRequest } from '@/common/interfaces/leagueTeams.ts'
 import { useNotification } from '@/hooks/useNotification.ts'
 import { useNavigate } from 'react-router-dom'
-import { PATH_TO_LEAGUE_TEAMS, PATH_TO_MASTER_TEAMS } from '@/common/constants/paths.ts'
+import { PATH_TO_LEAGUE_TEAMS } from '@/common/constants/paths.ts'
 import { ReactElement } from 'react'
 import { MonroeBlueText } from '@/components/Elements'
 import { TScreenProps } from '@/common/types'
@@ -55,7 +55,7 @@ const LeagueTeamCreate = (props: TScreenProps): ReactElement => {
       return goBackParent(response)
     }
 
-    navigate(PATH_TO_MASTER_TEAMS)
+    navigate(PATH_TO_LEAGUE_TEAMS)
   }
 
   const onSubmit = (body: ILeagueForm) => {

@@ -1,9 +1,9 @@
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
+import styled from '@emotion/styled'
 import { Breadcrumb } from 'antd'
 import Flex from 'antd/es/flex'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ReactSVG } from 'react-svg'
 
 import { ViewSeasonText } from '@/pages/Protected/LeaguesAndTournaments/components/Elements'
 import LeagueTagType from '@/pages/Protected/LeaguesAndTournaments/components/LeagueTagType'
@@ -19,7 +19,6 @@ import {
   ViewTextInfo,
 } from '@/components/Elements'
 import Loader from '@/components/Loader'
-import MonroeButton from '@/components/MonroeButton'
 import MonroeModal from '@/components/MonroeModal'
 
 import BaseLayout from '@/layouts/BaseLayout'
@@ -35,9 +34,6 @@ import {
   PATH_TO_SEASON_DETAILS,
 } from '@/common/constants/paths'
 import { IIdName } from '@/common/interfaces'
-
-import WhiteTShirtIcon from '@/assets/icons/white-team.svg'
-import styled from '@emotion/styled'
 
 const STANDING_FORMAT_WINNING_INFO = 'Wins (info only), Losses (info only), Winning %'
 const STANDING_FORMAT_POINTS_INFO =
@@ -144,14 +140,14 @@ const LeagueDetails = () => {
                   Create season
                 </MonroeSecondaryButton>
 
-                <MonroeButton
-                  label="Connect team"
-                  type="primary"
-                  icon={<ReactSVG src={WhiteTShirtIcon} />}
-                  iconPosition="start"
-                  onClick={() => {}}
-                  className="h-32"
-                />
+                {/*<MonroeButton*/}
+                {/*  label="Connect team"*/}
+                {/*  type="primary"*/}
+                {/*  icon={<ReactSVG src={WhiteTShirtIcon} />}*/}
+                {/*  iconPosition="start"*/}
+                {/*  onClick={() => {}}*/}
+                {/*  className="h-32"*/}
+                {/*/>*/}
               </Flex>
             </Flex>
 
