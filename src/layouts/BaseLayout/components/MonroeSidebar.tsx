@@ -1,4 +1,4 @@
-import { Flex } from 'antd'
+import { Divider, Flex } from 'antd'
 import type { MenuProps } from 'antd'
 import { Menu } from 'antd'
 import Sider from 'antd/es/layout/Sider'
@@ -6,7 +6,7 @@ import { CSSProperties, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
-import { MonroeDivider } from '@/components/Elements'
+import { Link } from '@/components/Link.tsx'
 
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
@@ -17,6 +17,7 @@ import {
   PATH_TO_CREATE_MASTER_TEAM,
   PATH_TO_CREATE_SEASON,
   PATH_TO_CREATE_USER,
+  PATH_TO_EDIT_EVENT,
   PATH_TO_EDIT_LEAGUE,
   PATH_TO_EDIT_LEAGUE_TEAM,
   PATH_TO_EDIT_MASTER_TEAM,
@@ -26,12 +27,13 @@ import {
   PATH_TO_LEAGUES,
   PATH_TO_LEAGUE_TEAMS,
   PATH_TO_LOCATIONS,
+  PATH_TO_LOCATIONS_EDIT,
   PATH_TO_MASTER_TEAMS,
   PATH_TO_PLAYOFF_FORMAT,
   PATH_TO_SEASONS,
   PATH_TO_STANDINGS_FORMAT,
   PATH_TO_TIEBREAKERS,
-  PATH_TO_USERS, PATH_TO_EDIT_EVENT, PATH_TO_LOCATIONS_EDIT
+  PATH_TO_USERS,
 } from '@/common/constants/paths'
 
 import UserIcon from '@/assets/icons/header/user.svg'
@@ -40,6 +42,9 @@ import LeagueIcon from '@/assets/icons/sidebar/league.svg'
 import MapIcon from '@/assets/icons/sidebar/map.svg'
 import ScheduleIcon from '@/assets/icons/sidebar/schedule.svg'
 import TeamsIcon from '@/assets/icons/sidebar/t-shirt.svg'
+import { colors } from '@/utils/colors.tsx'
+import { SVGIcon } from '@/components/SVGIcon.tsx'
+import styled from '@emotion/styled'
 
 const siderStyle: CSSProperties = {
   backgroundColor: '#ffffff',
@@ -51,8 +56,14 @@ type TMenuItem = Required<MenuProps>['items'][number]
 const COMPANY_MENU_ITEMS: TMenuItem[] = [
   {
     key: 'monroe-sport',
-    label: 'Monroe Sport',
-    icon: <ReactSVG src={MonroeIcon} style={{ marginLeft: '5px' }} />,
+    label: (
+      <Flex vertical={false} align={'center'} gap={8}>
+        <Flex style={{backgroundColor: '#fff', width: 32, height: 32, marginLeft: 4}} justify='center' align='center'>
+          <ReactSVG src={MonroeIcon} />
+        </Flex>
+        Monroe Sport
+      </Flex>
+    ),
     children: [],
   },
 ]
@@ -64,6 +75,20 @@ const USERS_KEY = 'users'
 const LOCATIONS_KEY = 'locations'
 const EVENTS_KEY = 'events'
 
+/**
+ * @function MonroeSidebar
+ *
+ * Represents a sidebar component used within the Monroe application. It dynamically adjusts its structure
+ * and behavior based on defined paths and user navigation. The component contains menu items tailored
+ * for navigating through specific categories such as Users, Teams, Locations, and Events.
+ *
+ * It also includes functionality such as:
+ * - Identifying and setting selected menu keys based on the current page.
+ * - Managing state transitions for specific application actions (e.g., bracket creation).
+ * - Handling unsaved changes through the `beforeunload` event listener.
+ *
+ * The component leverages `useEffect` to ensure cleanup of event listeners on component unmount.
+ */
 const MonroeSidebar = () => {
   const location = useLocation()
   const pathname = location.pathname
@@ -91,7 +116,13 @@ const MonroeSidebar = () => {
 
   const { setIsCreateBracketPage, setSelectedBracketId } = useSeasonSlice()
 
-  const getSelectedSubMenu = () => {
+  /**
+   * Determines the selected sub-menu key based on the current page's path or context.
+   *
+   * @function
+   * @returns {string} The key representing the selected sub-menu. Returns an empty string if no match is found.
+   */
+  const getSelectedSubMenu = (): string => {
     if ([PATH_TO_MASTER_TEAMS, PATH_TO_LEAGUE_TEAMS].includes(pathname)) return TEAMS_KEY
 
     if (isLeagueTournamentPage || isSeasonsPage) return LEAGUE_AND_TOURN_KEY
@@ -107,7 +138,13 @@ const MonroeSidebar = () => {
     return ''
   }
 
+  /**
+   * Determines the default selected keys based on the current page context.
+   *
+   * @return {string} The path corresponding to the current page or an empty string if no match is found.
+   */
   const getDefaultSelectedKeys = () => {
+    if (isUsersPage) return PATH_TO_USERS
     if (isLeagueTournamentPage) return PATH_TO_LEAGUES
     if (isSeasonsPage) return PATH_TO_SEASONS
     if (isMasterTeamsPage) return PATH_TO_MASTER_TEAMS
@@ -118,54 +155,48 @@ const MonroeSidebar = () => {
     return ''
   }
 
-  const navigateTo = (path: string) => {
-    window.location.href = path
-  }
+  const getIconColor = (selected: boolean) => selected ? colors.primary : colors.secondaryText
 
   const MENU_ITEMS: TMenuItem[] = [
     {
-      key: USERS_KEY,
-      label: 'Users',
-      icon: <ReactSVG className={isUsersPage ? 'red-icon' : ''} src={UserIcon} style={{ marginLeft: '5px' }} />,
-      onClick: () => navigateTo(PATH_TO_USERS),
-      className: isUsersPage ? 'red-text' : '',
-      style: isUsersPage
-        ? {
-            backgroundColor: '#fcf1ed',
-            borderRight: '3px solid #BC261B',
-          }
-        : {},
+      key: PATH_TO_USERS,
+      label: <Link disableHover to={PATH_TO_USERS}>Users</Link>,
+      icon: <SVGIcon color={getIconColor(isUsersPage)} src={UserIcon} />,
     },
     {
       key: TEAMS_KEY,
       label: 'Teams',
-      icon: <ReactSVG src={TeamsIcon} style={{ marginLeft: '5px' }} />,
+      icon: <SVGIcon src={TeamsIcon} />,
       children: [
         {
           key: PATH_TO_MASTER_TEAMS,
-          label: 'Master Teams',
-          onClick: () => navigateTo(PATH_TO_MASTER_TEAMS),
+          label: <Link disableHover to={PATH_TO_MASTER_TEAMS}>Master Teams</Link>,
         },
-        { key: PATH_TO_LEAGUE_TEAMS, label: 'League Teams', onClick: () => navigateTo(PATH_TO_LEAGUE_TEAMS) },
+        {
+          key: PATH_TO_LEAGUE_TEAMS,
+          label: <Link disableHover to={PATH_TO_LEAGUE_TEAMS}>League Teams</Link>,
+        },
       ],
     },
     {
       key: LEAGUE_AND_TOURN_KEY,
       label: 'League & Tourn',
-      icon: <ReactSVG src={LeagueIcon} style={{ marginLeft: '5px' }} />,
+      icon: <SVGIcon src={LeagueIcon} />,
       children: [
         {
           key: PATH_TO_LEAGUES,
-          label: 'League & Tourn',
-          onClick: () => navigateTo(PATH_TO_LEAGUES),
+          label: <Link disableHover to={PATH_TO_LEAGUES}>League & Tourn</Link>,
         },
-        { key: PATH_TO_SEASONS, label: 'Seasons', onClick: () => navigateTo(PATH_TO_SEASONS) },
+        {
+          key: PATH_TO_SEASONS,
+          label: <Link disableHover to={PATH_TO_SEASONS}>Seasons</Link>,
+        },
       ],
     },
     // {
     //   key: STANDINGS_DISPLAY_KEY,
     //   label: 'Standings Display',
-    //   icon: <ReactSVG src={StandingsIcon} style={{ marginLeft: '5px' }} />,
+    //   icon: <ReactSVG src={StandingsIcon} />,
     //   children: [
     //     {
     //       key: PATH_TO_PLAYOFF_FORMAT,
@@ -182,27 +213,17 @@ const MonroeSidebar = () => {
     // },
     {
       key: PATH_TO_EVENTS,
-      label: 'Events',
+      label: <Link disableHover to={PATH_TO_EVENTS}>Events</Link>,
       icon: (
-        <ReactSVG
-          className={location.pathname === PATH_TO_EVENTS ? 'red-icon' : ''}
-          src={ScheduleIcon}
-          style={{ marginLeft: '5px' }}
-        />
+        <SVGIcon color={getIconColor(isEventsPage)} src={ScheduleIcon} />
       ),
-      onClick: () => navigateTo(PATH_TO_EVENTS),
     },
     {
       key: PATH_TO_LOCATIONS,
-      label: 'Locations',
+      label: <Link disableHover to={PATH_TO_LOCATIONS}>Locations</Link>,
       icon: (
-        <ReactSVG
-          className={location.pathname === PATH_TO_LOCATIONS ? 'red-icon' : ''}
-          src={MapIcon}
-          style={{ marginLeft: '5px' }}
-        />
+        <SVGIcon color={getIconColor(isLocationsPage)} src={MapIcon} />
       ),
-      onClick: () => navigateTo(PATH_TO_LOCATIONS),
     },
     // {
     //   key: PATH_TO_GROUPS,
@@ -211,13 +232,19 @@ const MonroeSidebar = () => {
     //     <ReactSVG
     //       className={location.pathname === PATH_TO_GROUPS ? 'red-icon' : ''}
     //       src={GroupsIcon}
-    //       style={{ marginLeft: '5px' }}
+    //
     //     />
     //   ),
     //   onClick: () => navigateTo(PATH_TO_GROUPS),
     // },
   ]
 
+  /**
+   * Handles the `beforeunload` event to prevent accidental navigation
+   * or tab closure on specific pages with potential unsaved changes.
+   *
+   * @param {BeforeUnloadEvent} e - The event triggered before the page unloads.
+   */
   const handleBeforeUnloadEvent = (e: BeforeUnloadEvent) => {
     if (isPageThatWillHaveChanges) e.preventDefault()
 
@@ -226,6 +253,13 @@ const MonroeSidebar = () => {
     setShowOperatorScreen(false)
   }
 
+  /**
+   * Adds an event listener for the 'beforeunload' event on the window object,
+   * and removes it when the returned function is invoked. This can be used to
+   * handle actions before the page is unloaded or refreshed.
+   *
+   * @returns A cleanup function to remove the 'beforeunload' event listener.
+   */
   useEffect(() => {
     window.addEventListener('beforeunload', handleBeforeUnloadEvent)
     return () => {
@@ -235,18 +269,15 @@ const MonroeSidebar = () => {
 
   return (
     <Sider width="256px" style={siderStyle}>
-      <Flex style={{ padding: '0 15px' }}>
-        <Menu
-          className="company-menu"
-          style={{
-            border: 0,
-          }}
+      <Companies>
+        <CompanyMenu
           mode="inline"
+          className="company-menu"
           items={COMPANY_MENU_ITEMS}
         />
-      </Flex>
+      </Companies>
 
-      <MonroeDivider style={{ margin: '8px 0' }} />
+      <Divider />
 
       <Menu
         defaultSelectedKeys={[location.pathname, getDefaultSelectedKeys()]}
@@ -263,3 +294,18 @@ const MonroeSidebar = () => {
 }
 
 export default MonroeSidebar
+
+// Styled components
+const Companies = styled(Flex)`
+    margin-top: 4px;
+    padding: 0 12px;
+    & .company-menu .ant-menu-submenu.ant-menu-submenu-inline{
+        margin: 0;
+    }
+    & .company-menu .ant-menu-submenu-arrow {
+        right: 18px
+    }
+`
+const CompanyMenu = styled(Menu)`
+   border: none !important;
+`

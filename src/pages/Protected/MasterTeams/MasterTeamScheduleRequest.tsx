@@ -15,6 +15,23 @@ const BREAD_CRUMB_ITEMS = [
   { title: <MonroeBlueText>Schedule Request</MonroeBlueText> }
 ]
 
+/**
+ * MasterTeamScheduleRequest component.
+ *
+ * Handles the scheduling page for master team requests.
+ * It processes URL parameters, manages state, and renders the schedule table with configurable options.
+ *
+ * Key functionalities include:
+ * - Validating and processing URL parameters for date range and selected IDs.
+ * - Exporting schedule data as a CSV file.
+ * - Returning to a default page if parameters are missing or invalid.
+ * - Rendering table and controls for interacting with the schedules.
+ *
+ * Utilizes multiple components and hooks including:
+ * - ScheduleRequestControls for export actions and loading status.
+ * - ScheduleProvider for initializing and managing schedule-related data.
+ * - A data decompression function for processing IDs and additional schedule-related data.
+ */
 const MasterTeamScheduleRequest = () => {
   const params = useParams<{ range: string, selectedIds: string }>()
   const navigate = useNavigate()
@@ -37,6 +54,13 @@ const MasterTeamScheduleRequest = () => {
     additionalData = dt
   }
 
+  /**
+   * Renders the control components for schedule requests.
+   *
+   * @function
+   * @name renderControls
+   * @returns {ReactElement} The rendered ScheduleRequestControls component.
+   */
   const renderControls = (): ReactElement => (
     <ScheduleRequestControls
       onExport={onExport}

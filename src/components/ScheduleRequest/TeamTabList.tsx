@@ -5,11 +5,11 @@ import { ReactElement, useContext, useMemo } from 'react'
 import styled from '@emotion/styled'
 import { colors } from '@/utils/colors.tsx'
 import { ReactSVG } from 'react-svg'
-import { useNavigate } from 'react-router-dom'
 import { PATH_TO_MASTER_TEAMS } from '@/common/constants/paths.ts'
 import { ScheduleContext } from '@/components/ScheduleRequest/ScheduleContext.ts'
 
 import { IScheduleRequest } from '@/common/interfaces'
+import { Link } from '@/components/Link.tsx'
 
 interface IMasterTeamTabListProps {
   data: IScheduleRequest[]
@@ -51,7 +51,6 @@ export const TeamTabList = (props: IMasterTeamTabListProps): ReactElement => {
     additionalData
   } = useContext(ScheduleContext)
 
-  const navigate = useNavigate()
   const navigateTo = detailPath || PATH_TO_MASTER_TEAMS
 
   /**
@@ -76,12 +75,6 @@ export const TeamTabList = (props: IMasterTeamTabListProps): ReactElement => {
     const selectedClassName = index === selectedTabIndex ? 'selected-tab' : ''
     const canDelete = selectedIds && selectedIds?.length > 1 || false
 
-    const onInfoPress = (event: React.MouseEvent<HTMLSpanElement>) => {
-      event.preventDefault()
-      event.stopPropagation()
-      navigate(`${navigateTo}/${additionalData ? additionalData[index].id : id}`)
-    }
-
     return (
       <CustomTab
         className={selectedClassName}
@@ -102,7 +95,7 @@ export const TeamTabList = (props: IMasterTeamTabListProps): ReactElement => {
           </HoverIcon>
         </Tooltip>
         <Tooltip title="Go to team info page">
-          <StaticIcon onClick={onInfoPress}>
+          <StaticIcon target='_blank' to={`${navigateTo}/${additionalData ? additionalData[index].id : id}`}>
             <ArrowRightUpWrapper>
               <ReactSVG src={ArrowRightUpIcon} />
             </ArrowRightUpWrapper>
@@ -168,7 +161,7 @@ const TabText = styled.span`
     white-space: nowrap;
     text-overflow: ellipsis;
 `
-const StaticIcon = styled.span`
+const StaticIcon = styled(Link)`
     color: ${colors.secondaryText}; /* Link icon color */
     margin-left: 8px;
     flex-shrink: 0;

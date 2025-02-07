@@ -17,6 +17,17 @@ const BREAD_CRUMB_ITEMS = [
   { title: <MonroeBlueText>Schedule Request</MonroeBlueText> }
 ]
 
+/**
+ * LeagueTeamScheduleRequest component handles the team schedule request functionality.
+ *
+ * @function LeagueTeamScheduleRequest
+ * @description This component manages and processes the scheduling details for league teams,
+ * including data compression, id extraction, and rendering associated controls and tables
+ * within a provider context.
+ *
+ * @returns {ReactElement|null} A React element containing the schedule request interface
+ * or null if required parameters are missing.
+ */
 const LeagueTeamScheduleRequest = () => {
   const params = useParams<{ range: string, selectedIds: string }>()
   const navigate = useNavigate()
@@ -39,6 +50,12 @@ const LeagueTeamScheduleRequest = () => {
     additionalData = dt
   }
 
+  /**
+   * Renders the control components for the schedule request.
+   *
+   * @function
+   * @returns {ReactElement} The rendered React element containing the schedule request controls.
+   */
   const renderControls = (): ReactElement => (
     <ScheduleRequestControls
       onExport={onExport}

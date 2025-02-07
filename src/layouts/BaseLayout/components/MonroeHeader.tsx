@@ -19,22 +19,11 @@ import SubMenuIcon from '@/assets/icons/header/sub-menu.svg'
 import UserIcon from '@/assets/icons/header/user.svg'
 import LogotypeIcon from '@/assets/icons/logotype.svg'
 
-const StyledHeader = styled(Header)`
-  height: 55px;
-  background-color: #ffffff;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #f1f0ff;
-  padding: 0 16px;
-  width: 100vw;
-`
-
-const StyledSpace = styled(Space)<{ is_rotated: string }>`
-  transform: ${(props) => (props.is_rotated === 'true' ? 'rotate(180deg)' : 'none')};
-  transition: all 0.3s lineal 0.5s;
-`
-
+/**
+ * MonroeHeader is a functional React component that renders a custom header for the application.
+ * It includes a logo, search icon, help icon, notification icon, and user-related dropdown menu.
+ * It provides user interaction features such as profile navigation and logout functionality.
+ */
 const MonroeHeader = () => {
   const { user } = useUserSlice()
   const { onLogOut } = useLogout()
@@ -100,10 +89,27 @@ const MonroeHeader = () => {
 
 export default MonroeHeader
 
-// Styled
 const styles = {
   logo: {
     width: 77,
     height: 32,
   },
 }
+
+// Styled components
+const StyledHeader = styled(Header)`
+  height: 55px;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f1f0ff;
+  padding: 0;
+  padding-right: 16px !important;
+  width: 100vw;
+`
+
+const StyledSpace = styled(Space)<{ is_rotated: string }>`
+  transform: ${(props) => (props.is_rotated === 'true' ? 'rotate(180deg)' : 'none')};
+  transition: all 0.3s lineal 0.5s;
+`

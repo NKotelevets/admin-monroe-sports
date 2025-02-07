@@ -476,6 +476,11 @@ td.ant-picker-cell.ant-picker-cell-disabled.ant-picker-cell-in-view::before {
   margin-bottom: 16px;
 }
 
+.ant-menu-item {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
 .red-text .ant-menu-title-content {
   color: #bc261b !important
 }

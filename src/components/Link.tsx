@@ -8,6 +8,7 @@ export type TCustomLinkProps = {
   color?: string
   hoverColor?: string
   underline?: boolean
+  disableHover?: boolean
 }
 
 /**
@@ -30,8 +31,8 @@ const LinkStyle = styled(LK)<TCustomLinkProps>`
     transition: opacity ease-in-out .3s !important;
     
     &:hover {
-        color: ${({ hoverColor }) => hoverColor || style.default.color} !important;
-        opacity: 0.6;
+        color: ${({ hoverColor, color, disableHover}) =>  disableHover ? color : hoverColor || style.default.color} !important;
+        opacity: ${({ disableHover }) => disableHover ? 1 : 0.6};
         transition: opacity ease-in-out .3s !important;
     }
 `
