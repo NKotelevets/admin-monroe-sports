@@ -69,12 +69,15 @@ export const BulkEditPreviewUpdate = () => {
    * @return {void} Does not return a value.
    */
   function resetForm() {
-    setShowPreviewUpdate(false)
-    selectedTableIds.forEach((id) => {
+    let ids = selectedTableIds
+    if (ids.length === 0) ids = bulkEditRecords.map((event) => event.id)
+
+    ids.forEach((id) => {
       if (id in initialValues.events) {
         setFieldValue(`events.${id}`, initialValues.events[id])
       }
     })
+    setShowPreviewUpdate(false)
   }
 
   const diffs = Object.values(initialValues.events).map((result) => deepCompare(values.events[result.id], result))
@@ -215,9 +218,9 @@ export const BulkEditPreviewUpdate = () => {
           const oldRecord = bulkEditRecords.find((old) => old.id === record.id)!
           const newRecord = values.events[record.id]
 
-          const newValue = newRecord.location?.name
+          const newValue = newRecord.locationIdName
           const oldValue = oldRecord.location?.name || '---'
-          return renderCustomCell(oldValue, newValue, wasChanged('locationId', index) ? record?.errors : undefined)
+          return renderCustomCell(oldValue, newValue, wasChanged('locationIdName', index) ? record?.errors : undefined)
         },
       },
       {
@@ -231,7 +234,7 @@ export const BulkEditPreviewUpdate = () => {
 
           const newValue = newRecord.courtOrField
           const oldValue = oldRecord.courtOrField || '---'
-          return renderCustomCell(oldValue, newValue, wasChanged('locationId', index) ? record?.errors : undefined)
+          return renderCustomCell(oldValue, newValue, wasChanged('courtOrField', index) ? record?.errors : undefined)
         },
       },
       {
@@ -245,7 +248,7 @@ export const BulkEditPreviewUpdate = () => {
 
           const newValue = newRecord.subResource
           const oldValue = oldRecord.subResource || '---'
-          return renderCustomCell(oldValue, newValue, wasChanged('locationId', index) ? record?.errors : undefined)
+          return renderCustomCell(oldValue, newValue, wasChanged('subResource', index) ? record?.errors : undefined)
         },
       },
       {

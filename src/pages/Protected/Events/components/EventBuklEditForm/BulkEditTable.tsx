@@ -23,6 +23,7 @@ import { colors } from '@/utils/colors.tsx'
 import { eventType } from '@/common/constants/events.ts'
 import { IEvent } from '@/common/interfaces/event.ts'
 import { TBulkEditEvent, TBulkEditEventForm } from '@/common/types/events.ts'
+import dayjs from 'dayjs'
 
 /**
  * BulkEditTable is a functional component designed for batch editing events.
@@ -56,6 +57,7 @@ export const BulkEditTable = (): ReactElement => {
       events: selectedEvents.reduce((acc, event) => {
         acc[event.id] = {
           ...event,
+          day: event.day || event.date ? dayjs(event.date, 'YYYY-MM-DD').format('dddd') : '',
           eventDescription: event.eventDescription || '',
           courtOrField: event.courtOrField || '',
           subResource: event.subResource || '',
@@ -65,6 +67,7 @@ export const BulkEditTable = (): ReactElement => {
               ? 60
               : 0,
           locationId: event?.location?.id,
+          locationIdName: event?.location?.name,
           team1Id:
             event.type === eventType.PRACTICE || event.type === eventType.OTHER
               ? event?.homeTeam?.id
@@ -187,6 +190,14 @@ const TableForm = () => {
     )
     setPageTitle('Bulk Edit')
   }, [selectedTableIds, values, setFieldValue, isValid, dirty, showPreviewUpdate])
+
+  /**
+   * Forces validation when changing between "review"
+   * and bulk edit screens
+   */
+  useEffect(() => {
+    validateForm()
+  }, [showPreviewUpdate])
 
   if (showPreviewUpdate) {
     return <BulkEditPreviewUpdate />
