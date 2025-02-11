@@ -1,24 +1,30 @@
+import styled from '@emotion/styled'
 import { Autocomplete, Libraries, LoadScript } from '@react-google-maps/api'
 import Input from 'antd/es/input/Input'
 import { useRef, useState } from 'react'
+
 import InputWrapper, { IInputWrapper } from '@/components/Inputs/InputWrapper.tsx'
 
-export type TResultValueProps = {
-  address: string
-  city?: string
-  state?: string
-  country?: string
-  postalCode?: string
-  lat: number
-  lng: number
-}
+import { colors } from '@/utils/colors.tsx'
+
+export type TResultValueProps =
+  | {
+      address: string
+      city?: string
+      state?: string
+      country?: string
+      postalCode?: string
+      lat: number
+      lng: number
+    }
+  | undefined
 
 type TGoogleAutocompleteInputProps = {
   onChange: (value: TResultValueProps) => void
   initialValue?: string
 } & Omit<IInputWrapper, 'onChange' | 'value' | 'children'>
 
-const G_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_LOCATION_API_KEY as string || ''
+const G_MAPS_API_KEY = (import.meta.env.VITE_GOOGLE_MAPS_LOCATION_API_KEY as string) || ''
 const RESULT_FIELDS = ['geometry.location', 'address_components']
 const LIBS = ['places'] as Libraries
 const OPTIONS = {
@@ -44,6 +50,7 @@ export const GoogleAutocompleteInput = (props: TGoogleAutocompleteInputProps) =>
 
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null)
   const [localField, setLocalField] = useState(initialValue || '')
+  const [fieldError, setFieldError] = useState(false)
   const [previousValue, setPreviousValue] = useState(initialValue || '')
 
   /**
@@ -67,6 +74,7 @@ export const GoogleAutocompleteInput = (props: TGoogleAutocompleteInputProps) =>
    * @function
    */
   const handlePlaceChanged = () => {
+    setFieldError(false) // reset errors
     if (autocompleteRef.current) {
       const place = autocompleteRef.current.getPlace()
 
@@ -78,8 +86,15 @@ export const GoogleAutocompleteInput = (props: TGoogleAutocompleteInputProps) =>
       const country = getAddressComponent(place, 'country') || ''
       const postalCode = getAddressComponent(place, 'postal_code') || ''
 
+      if (!postalCode || !city || !state || !streetNumber || !streetName || !country) {
+        setFieldError(true)
+        setLocalField('')
+        onChange(undefined)
+        return
+      }
+
       // Extract relevant information from the selected place
-      const formattedAddress = `${streetName}${neighborhood ? `, ${neighborhood}` : ''}${streetNumber ? ` – ${streetNumber}` : ''}`
+      const formattedAddress = `${streetNumber ? `${streetNumber} – ` : ''}${streetName}${neighborhood ? `, ${neighborhood}` : ''}`
       const location = place.geometry?.location
 
       // updates local field with selected address
@@ -101,28 +116,40 @@ export const GoogleAutocompleteInput = (props: TGoogleAutocompleteInputProps) =>
   }
 
   return (
-    <InputWrapper {...rest}>
-      <LoadScript googleMapsApiKey={G_MAPS_API_KEY} libraries={LIBS}>
-        <Autocomplete
-          onLoad={(autocomplete) => {
-            autocompleteRef.current = autocomplete
-          }}
-          onPlaceChanged={handlePlaceChanged}
-          fields={RESULT_FIELDS}
-          options={OPTIONS}
-        >
-          <Input
-            name="new-password"
-            placeholder={placeholder || 'Enter your address'}
-            value={localField}
-            onChange={(event) => {
-              setLocalField(event.target.value)
+    <>
+      <InputWrapper {...rest}>
+        <LoadScript googleMapsApiKey={G_MAPS_API_KEY} libraries={LIBS}>
+          <Autocomplete
+            onLoad={(autocomplete) => {
+              autocompleteRef.current = autocomplete
             }}
-            onBlur={() => setLocalField(previousValue)}
-            autoComplete="new-password"
-          />
-        </Autocomplete>
-      </LoadScript>
-    </InputWrapper>
+            onPlaceChanged={handlePlaceChanged}
+            fields={RESULT_FIELDS}
+            options={OPTIONS}
+          >
+            <>
+              <Input
+                status={fieldError ? 'error' : undefined}
+                name="new-password"
+                placeholder={placeholder || 'Enter your address'}
+                value={localField}
+                onChange={(event) => {
+                  setLocalField(event.target.value)
+                }}
+                onBlur={() => setLocalField(previousValue)}
+                autoComplete="new-password"
+              />
+              {fieldError && <ErrorMessage>Please select a complete and valid address</ErrorMessage>}
+            </>
+          </Autocomplete>
+        </LoadScript>
+      </InputWrapper>
+    </>
   )
 }
+
+const ErrorMessage = styled.div`
+  color: ${colors.primary};
+  font-size: 12px;
+  margin-top: 4px;
+`
