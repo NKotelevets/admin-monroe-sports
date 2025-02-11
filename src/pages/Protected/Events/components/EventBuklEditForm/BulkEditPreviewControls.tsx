@@ -1,6 +1,6 @@
 import { TBulkEditTableControlsProps } from './BulkEditTableControls'
 import { Button } from 'antd'
-import { ReactElement } from 'react'
+import { ReactElement, useState } from 'react'
 
 import { SaveBulkEditButton } from '@/pages/Protected/Events/components/EventForm/SaveBulkEditButton.tsx'
 import { useEventBulkEditContext } from '@/pages/Protected/Events/hooks/useEventBulkEditContext.ts'
@@ -17,9 +17,22 @@ export const BulkEditPreviewControls = (props: TBulkEditTableControlsProps): Rea
   const { values, forceUpdate, selectedIds, resetForm } = props
   const { setShowPreviewUpdate } = useEventBulkEditContext()
 
+  const [resettingForm, setResettingForm] = useState(false)
+
+  /**
+   * Resets the form state and manages the resetting process.
+   *
+   * @return {void} Does not return any value.
+   */
+  const onReset = () => {
+    setResettingForm(true)
+    !!resetForm && resetForm()
+    setResettingForm(false)
+  }
+
   return (
     <>
-      <Button onClick={resetForm}>Undo Changes</Button>
+      <Button disabled={resettingForm} onClick={onReset}>Undo Changes</Button>
       <Button onClick={() => setShowPreviewUpdate(false)}>Back to bulk edit</Button>
       <SaveBulkEditButton forceUpdate={forceUpdate} disabled={false} values={values} selectedIds={selectedIds} />
     </>

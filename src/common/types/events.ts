@@ -101,6 +101,7 @@ export type TBulkEditEvent = Record<
     team2Id?: string
     team1IdName?: string
     team2IdName?: string
+    locationIdName?: string
   }
 >
 export type TBulkEditEventForm = { events: TBulkEditEvent }

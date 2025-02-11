@@ -44,7 +44,7 @@ export const LocationDropdown = React.memo((props: TLocationDropdownProps) => {
     values,
     errors,
     touched,
-    handleChange,
+    setFieldValue,
     handleBlur
   } = useFormikContext<IEventForm>()
 
@@ -106,7 +106,10 @@ export const LocationDropdown = React.memo((props: TLocationDropdownProps) => {
         placeholder="Select location"
         optionFilterProp="label"
         value={locationValue}
-        onChange={handleChange(field)}
+        onChange={(value) => {
+          setFieldValue(field, value)
+          setFieldValue(field.replace('locationId', 'locationIdName'), locations.find(loc => loc.id === value)!.name)
+        }}
         onLoadMore={!endReached ? onLoadMore : undefined}
         options={locations.map(mt => ({ label: mt.name, value: mt.id }))}
         buttonAction={showAddButton ? () => setAddingLocation(true) : undefined}
