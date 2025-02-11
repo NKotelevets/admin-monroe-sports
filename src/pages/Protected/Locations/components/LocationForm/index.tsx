@@ -43,6 +43,15 @@ export const LocationForm = (props: IFormProps<TLocationForm, TLocationForm>) =>
    * @param {function} setFieldValue - Formik's setFieldValue function to update the form field values.
    */
   const updateFields = (result: TResultValueProps, setFieldValue: FormikHelpers<TLocationForm>['setFieldValue']) => {
+    if (!result) {
+      setFieldValue('address', '')
+      setFieldValue('zipCode', '')
+      setFieldValue('state', '')
+      setFieldValue('city', '')
+      setFieldValue('latitude', '')
+      setFieldValue('longitude', '')
+      return
+    }
     setFieldValue('address', result.address)
     setFieldValue('zipCode', result.postalCode)
     setFieldValue('state', result.state)
