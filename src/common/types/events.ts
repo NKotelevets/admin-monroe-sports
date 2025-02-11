@@ -110,6 +110,7 @@ export type TEventImport = {
   status: string
   index: number
   error: string
+  type?: string
   row: {
     status: string
     Date: string | null

@@ -7,7 +7,6 @@ import { EventTypeTag } from '@/pages/Protected/Events/components/EventTypeTag.t
 
 import { DateFilterDropdown } from '@/components/Table/DateFilterDropdown.tsx'
 import MonroeFilter from '@/components/Table/MonroeFilter.tsx'
-import TagType from '@/components/Table/TagType.tsx'
 
 import { useTableSearch } from '@/hooks/useTableSearch.tsx'
 
@@ -15,6 +14,7 @@ import { getIconColor } from '@/utils'
 
 import { eventType } from '@/common/constants/events.ts'
 import { TEventImportErrors } from '@/common/types/events.ts'
+import { Tag } from '@/components/Tag.tsx'
 
 type TColumns<T> = TableProps<T>['columns']
 
@@ -105,7 +105,7 @@ export const useEventImportInfoTableParams = () => {
       onFilter: (value, record) => value === record.status,
       filterDropdown: (props) => <MonroeFilter {...props} />,
       filterIcon,
-      render: (value) => <TagType text={value} />,
+      render: (value) => <Tag title={value} color='gray' />,
     },
     {
       title: 'Error info',

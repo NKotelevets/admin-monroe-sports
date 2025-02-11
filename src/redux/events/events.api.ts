@@ -162,7 +162,7 @@ export const eventsApi = createApi({
           status: response.status,
           success: response.success,
           errors: response.errors.map((record) => ({
-            status: record.status,
+            status: record.type,
             error: record.error,
             index: record.index,
             date: record.row.Date,
