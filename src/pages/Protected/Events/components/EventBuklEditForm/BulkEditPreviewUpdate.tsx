@@ -80,7 +80,9 @@ export const BulkEditPreviewUpdate = () => {
     setShowPreviewUpdate(false)
   }
 
-  const diffs = Object.values(initialValues.events).map((result) => deepCompare(values.events[result.id], result))
+  const diffs = Object.fromEntries(
+    Object.values(initialValues.events).map((result) => [result.id, deepCompare(result, values.events[result.id])]),
+  )
 
   /**
    * Determines if a specific field has changed within the provided index of the `diffs` array.
@@ -91,7 +93,7 @@ export const BulkEditPreviewUpdate = () => {
    * @returns {boolean} Returns true if the field exists within the given index; otherwise, false.
    */
   const wasChanged = useCallback(
-    (fieldName: string, index?: number) => {
+    (fieldName: string, index?: string) => {
       if (index !== undefined) return Object.hasOwnProperty.call(diffs[index], fieldName)
       return false
     },
@@ -102,7 +104,7 @@ export const BulkEditPreviewUpdate = () => {
    * A function that generates a function to determine the CSS class for a cell based on field changes and record status.
    */
   const onCell = (fieldName: string) => (record: IEvent, rowIndex: number | undefined) => {
-    const hasChanged = rowIndex !== undefined ? Object.hasOwnProperty.call(diffs[rowIndex], fieldName) : false
+    const hasChanged = rowIndex !== undefined ? Object.hasOwnProperty.call(diffs[record.id], fieldName) : false
     return {
       className: hasChanged ? (record.status !== 'success' ? 'errorCell' : 'successCell') : 'unchangedCell',
     }
@@ -134,7 +136,7 @@ export const BulkEditPreviewUpdate = () => {
         dataIndex: 'date',
         width: '88px',
         onCell: onCell('date'),
-        render: (_, record, index) => {
+        render: (_, record) => {
           const oldRecord = bulkEditRecords.find((old) => old.id === record.id)!
           const newRecord = values.events[record.id]
 
@@ -151,7 +153,7 @@ export const BulkEditPreviewUpdate = () => {
             oldValue = dayjs(oldRecord.date, 'YYYY-MM-DD').format('ddd')
           }
 
-          return renderCustomCell(oldValue, newValue, wasChanged('date', index) ? record?.errors : undefined)
+          return renderCustomCell(oldValue, newValue, wasChanged('date', record.id) ? record?.errors : undefined)
         },
       },
       {
@@ -159,14 +161,14 @@ export const BulkEditPreviewUpdate = () => {
         dataIndex: 'date',
         width: '198px',
         onCell: onCell('date'),
-        render: (_, record, index) => {
+        render: (_, record) => {
           const oldRecord = bulkEditRecords.find((old) => old.id === record.id)!
           const newRecord = values.events[record.id]
 
           const newValue = newRecord.date ? dayjs(newRecord.date, 'YYYY-MM-DD').format('MM/DD/YYYY') : 'Pending date'
           const oldValue = oldRecord.date ? dayjs(oldRecord.date, 'YYYY-MM-DD').format('MM/DD/YYYY') : 'Pending date'
 
-          return renderCustomCell(oldValue, newValue, wasChanged('date', index) ? record?.errors : undefined)
+          return renderCustomCell(oldValue, newValue, wasChanged('date', record.id) ? record?.errors : undefined)
         },
       },
       {
@@ -174,14 +176,14 @@ export const BulkEditPreviewUpdate = () => {
         dataIndex: 'time',
         width: '198px',
         onCell: onCell('time'),
-        render: (_, record, index) => {
+        render: (_, record) => {
           const oldRecord = bulkEditRecords.find((old) => old.id === record.id)!
           const newRecord = values.events[record.id]
 
           const newValue = newRecord.time ? dayjs(newRecord.time, 'HH:mm:ss').format('hh:mm A') : 'Pending date'
           const oldValue = oldRecord.time ? dayjs(oldRecord.time, 'HH:mm:ss').format('hh:mm A') : 'Pending date'
 
-          return renderCustomCell(oldValue, newValue, wasChanged('time', index) ? record?.errors : undefined)
+          return renderCustomCell(oldValue, newValue, wasChanged('time', record.id) ? record?.errors : undefined)
         },
       },
       {
@@ -189,7 +191,7 @@ export const BulkEditPreviewUpdate = () => {
         dataIndex: 'duration',
         width: '198px',
         onCell: onCell('time'),
-        render: (_, record, index) => {
+        render: (_, record) => {
           const oldRecord = bulkEditRecords.find((old) => old.id === record.id)!
           const newRecord = values.events[record.id]
 
@@ -200,7 +202,7 @@ export const BulkEditPreviewUpdate = () => {
             ? dayjs(oldRecord.time, 'HH:mm:ss').add(oldRecord.duration, 'minute').format('hh:mm A')
             : 'Pending date'
 
-          return renderCustomCell(oldValue, newValue, wasChanged('time', index) ? record?.errors : undefined)
+          return renderCustomCell(oldValue, newValue, wasChanged('time', record.id) ? record?.errors : undefined)
         },
       },
       {
@@ -214,13 +216,17 @@ export const BulkEditPreviewUpdate = () => {
         dataIndex: 'locationId',
         width: '240px',
         onCell: onCell('locationId'),
-        render: (_, record, index) => {
+        render: (_, record) => {
           const oldRecord = bulkEditRecords.find((old) => old.id === record.id)!
           const newRecord = values.events[record.id]
 
           const newValue = newRecord.locationIdName
           const oldValue = oldRecord.location?.name || '---'
-          return renderCustomCell(oldValue, newValue, wasChanged('locationIdName', index) ? record?.errors : undefined)
+          return renderCustomCell(
+            oldValue,
+            newValue,
+            wasChanged('locationIdName', record.id) ? record?.errors : undefined,
+          )
         },
       },
       {
@@ -228,13 +234,17 @@ export const BulkEditPreviewUpdate = () => {
         dataIndex: 'courtOrField',
         width: '96px',
         onCell: onCell('courtOrField'),
-        render: (_, record, index) => {
+        render: (_, record) => {
           const oldRecord = bulkEditRecords.find((old) => old.id === record.id)!
           const newRecord = values.events[record.id]
 
           const newValue = newRecord.courtOrField
           const oldValue = oldRecord.courtOrField || '---'
-          return renderCustomCell(oldValue, newValue, wasChanged('courtOrField', index) ? record?.errors : undefined)
+          return renderCustomCell(
+            oldValue,
+            newValue,
+            wasChanged('courtOrField', record.id) ? record?.errors : undefined,
+          )
         },
       },
       {
@@ -242,13 +252,13 @@ export const BulkEditPreviewUpdate = () => {
         width: '132px',
         dataIndex: 'subResource',
         onCell: onCell('subResource'),
-        render: (_, record, index) => {
+        render: (_, record) => {
           const oldRecord = bulkEditRecords.find((old) => old.id === record.id)!
           const newRecord = values.events[record.id]
 
           const newValue = newRecord.subResource
           const oldValue = oldRecord.subResource || '---'
-          return renderCustomCell(oldValue, newValue, wasChanged('subResource', index) ? record?.errors : undefined)
+          return renderCustomCell(oldValue, newValue, wasChanged('subResource', record.id) ? record?.errors : undefined)
         },
       },
       {
@@ -256,7 +266,7 @@ export const BulkEditPreviewUpdate = () => {
         dataIndex: 'team1Id',
         width: '188px',
         onCell: onCell('team1Id'),
-        render: (_, record, index) => {
+        render: (_, record) => {
           const oldRecord = bulkEditRecords.find((old) => old.id === record.id)!
           const newRecord = values.events[record.id]
 
@@ -268,7 +278,7 @@ export const BulkEditPreviewUpdate = () => {
               leagueTeam: oldRecord.homeLeagueTeam,
               league: oldRecord.season,
             }).name || ''
-          return renderCustomCell(oldValue, newValue, wasChanged('team1Id', index) ? record?.errors : undefined)
+          return renderCustomCell(oldValue, newValue, wasChanged('team1Id', record.id) ? record?.errors : undefined)
         },
       },
       {
@@ -276,7 +286,7 @@ export const BulkEditPreviewUpdate = () => {
         dataIndex: 'team1Season',
         width: '188px',
         onCell: onCell('team1Season'),
-        render: (_, record, index) => {
+        render: (_, record) => {
           const oldRecord = bulkEditRecords.find((old) => old.id === record.id)!
           const newRecord = values.events[record.id]
 
@@ -290,7 +300,7 @@ export const BulkEditPreviewUpdate = () => {
               event: oldRecord,
               leagueTeam: oldRecord.homeLeagueTeam,
             }).name || ''
-          return renderCustomCell(oldValue, newValue, wasChanged('team1Season', index) ? record?.errors : undefined)
+          return renderCustomCell(oldValue, newValue, wasChanged('team1Season', record.id) ? record?.errors : undefined)
         },
       },
       {
@@ -298,7 +308,7 @@ export const BulkEditPreviewUpdate = () => {
         dataIndex: 'team2Id',
         width: '188px',
         onCell: onCell('team2Id'),
-        render: (_, record, index) => {
+        render: (_, record) => {
           const oldRecord = bulkEditRecords.find((old) => old.id === record.id)!
           const newRecord = values.events[record.id]
 
@@ -310,7 +320,7 @@ export const BulkEditPreviewUpdate = () => {
               leagueTeam: oldRecord.awayLeagueTeam,
               league: oldRecord.season,
             }).name || ''
-          return renderCustomCell(oldValue, newValue, wasChanged('team2Id', index) ? record?.errors : undefined)
+          return renderCustomCell(oldValue, newValue, wasChanged('team2Id', record.id) ? record?.errors : undefined)
         },
       },
       {
@@ -318,7 +328,7 @@ export const BulkEditPreviewUpdate = () => {
         dataIndex: 'team2Season',
         width: '188px',
         onCell: onCell('team2Season'),
-        render: (_, record, index) => {
+        render: (_, record) => {
           const oldRecord = bulkEditRecords.find((old) => old.id === record.id)!
           const newRecord = values.events[record.id]
 
@@ -333,7 +343,7 @@ export const BulkEditPreviewUpdate = () => {
               event: oldRecord,
               leagueTeam: oldRecord.awayLeagueTeam,
             }).name || ''
-          return renderCustomCell(oldValue, newValue, wasChanged('team2Season', index) ? record?.errors : undefined)
+          return renderCustomCell(oldValue, newValue, wasChanged('team2Season', record.id) ? record?.errors : undefined)
         },
       },
       {
