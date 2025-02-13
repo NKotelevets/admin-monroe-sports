@@ -157,7 +157,10 @@ export const LeagueTeamSelect = (props: TLeagueTeamSelectProps) => {
         loading={isLoading || isFetching}
         value={fieldValue}
         options={teamOptions || []}
-        onChange={(value) => setFieldValue(fieldName, value)}
+        onChange={(value) => {
+          setFieldValue(fieldName, value)
+          setFieldValue(isTeam1 ? fieldName.replace('team1Id','team1IdName') : fieldName.replace('team2Id','team2IdName'), teamOptions.find(team => team.value === value)!.label)
+        }}
         error={touched ? error : undefined}
         onBlur={() => setFieldTouched(fieldName)}
         errorPosition="bottom"
