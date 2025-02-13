@@ -199,24 +199,6 @@ export const useEventsBulkEditTable = () => {
       ),
     },
     {
-      title: 'Description',
-      dataIndex: 'eventDescription',
-      width: '240px',
-      editable: true,
-      renderField: (field, meta) => (
-        <TextInput
-          {...field}
-          noMargin
-          style={{ width: 198 }}
-          placeholder="Enter description"
-          value={field.value}
-          onChange={field.onChange}
-          onBlur={field.onBlur}
-          error={meta.touched ? meta.error : undefined}
-        />
-      ),
-    },
-    {
       title: 'Court / Field',
       dataIndex: 'courtOrField',
       width: '240px',

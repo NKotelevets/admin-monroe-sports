@@ -8,7 +8,7 @@ export interface IParticipant {
 }
 
 export interface IMatch {
-  id: number
+  id?: string | number
   matchIntegerId?: number
   bracket?: number
   nextMatchId: number | null

@@ -12,7 +12,7 @@ import {
   IGetSeasonsResponse,
   IImportSeasonsResponse,
 } from '@/common/interfaces/season'
-import { transformKeysToCamelCase, transformKeysToSnakeCase } from '@/utils'
+import { removeEmptyStringAttributes, transformKeysToCamelCase, transformKeysToSnakeCase } from '@/utils'
 import { TPopulateBracketsBody } from '@/common/types/season.ts'
 
 const SEASON_TAG = 'SEASON_TAG'
@@ -68,7 +68,7 @@ export const seasonsApi = createApi({
     updateSeason: builder.mutation<void, { id: string, body: IBECreateSeasonBody }>({
       query: ({ id, body }) => ({
         url: 'teams/seasons/' + id,
-        body: transformKeysToSnakeCase(body),
+        body: transformKeysToSnakeCase(removeEmptyStringAttributes(body)),
         method: 'PUT',
       }),
     }),

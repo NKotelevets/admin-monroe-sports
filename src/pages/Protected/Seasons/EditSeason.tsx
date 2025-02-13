@@ -72,7 +72,7 @@ const EditSeason = () => {
           subdivision: bracket.subdivisionsNames,
           published: false,
           matches: bracket.matches.map((match) => ({
-            id: match.primaryId,
+            id: match.id as string,
             match_integer_id: match.matchIntegerId!,
             top_team: match?.topTeam as string || '',
             bottom_team: match?.bottomTeam as string || '',
@@ -83,7 +83,7 @@ const EditSeason = () => {
             stage: match.stage,
             match_participants: match.matchParticipants
               ?.map((participant) => ({
-                id: participant.id || '',
+                id: Number.isInteger(Number(participant.id)) ? '' : participant.id,
                 sub_division: participant.subDivision,
                 seed: participant.seed,
                 is_empty: participant.isEmpty,
@@ -153,7 +153,7 @@ const EditSeason = () => {
             ],
             playoffTeams: bracket.numberOfTeams,
             matches: bracket.matches.map((match) => ({
-              id: match.matchIntegerId || 0,
+              id: match.id || '',
               matchIntegerId: match.matchIntegerId,
               nextMatchId: match.nextMatchId,
               tournamentRoundText: match.tournamentRoundText,

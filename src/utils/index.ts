@@ -1,6 +1,6 @@
-import { format, isValid, parse, parseISO } from 'date-fns'
-import { SorterResult, SortOrder } from 'antd/es/table/interface'
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query'
+import { SortOrder, SorterResult } from 'antd/es/table/interface'
+import { format, isValid, parse, parseISO } from 'date-fns'
 import dayjs from 'dayjs'
 import pako from 'pako'
 
@@ -43,7 +43,7 @@ type ParseWithFormatsOptions = {
 export const parseWithMultipleFormats = (
   dateString: string,
   formats: string[],
-  options: ParseWithFormatsOptions = {}
+  options: ParseWithFormatsOptions = {},
 ): Date | null => {
   const { fallbackToISO = true, referenceDate = new Date() } = options
 
@@ -128,13 +128,10 @@ export function isFetchBaseQueryError<T = unknown>(error: unknown): error is Fet
   return typeof error === 'object' && error != null && 'data' in error
 }
 
-
 const toCamelCase = (key: string): string =>
   key
     .replace(/_./g, (match) => match.charAt(1).toUpperCase())
-    .replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) =>
-      index === 0 ? match.toLowerCase() : match.toUpperCase()
-    )
+    .replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) => (index === 0 ? match.toLowerCase() : match.toUpperCase()))
     .replace(/\s+/g, '')
 /**
  * Transforms the keys of an object or array from snake_case to camelCase.
@@ -152,21 +149,22 @@ const toCamelCase = (key: string): string =>
  */
 export const transformKeysToCamelCase = <T, K>(obj: K): T => {
   if (Array.isArray(obj)) {
-    return obj.map(item => transformKeysToCamelCase(item)) as T
+    return obj.map((item) => transformKeysToCamelCase(item)) as T
   }
 
   if (obj !== null && typeof obj === 'object') {
-    return Object.keys(obj).reduce((acc, key) => {
-      const camelCaseKey = toCamelCase(key)
+    return Object.keys(obj).reduce(
+      (acc, key) => {
+        const camelCaseKey = toCamelCase(key)
 
-      // Ensure obj[key] is defined and transform recursively if it's an object
-      const value = (obj as Record<string, unknown>)[key]
-      acc[camelCaseKey] = value && typeof value === 'object'
-        ? transformKeysToCamelCase(value)
-        : value
+        // Ensure obj[key] is defined and transform recursively if it's an object
+        const value = (obj as Record<string, unknown>)[key]
+        acc[camelCaseKey] = value && typeof value === 'object' ? transformKeysToCamelCase(value) : value
 
-      return acc
-    }, {} as Record<string, unknown>) as T
+        return acc
+      },
+      {} as Record<string, unknown>,
+    ) as T
   }
 
   // Return obj as-is if it's not an array or object
@@ -185,20 +183,21 @@ export const transformKeysToCamelCase = <T, K>(obj: K): T => {
  */
 export const transformKeysToSnakeCase = <T, K>(obj: K): T => {
   if (Array.isArray(obj)) {
-    return obj.map(item => transformKeysToSnakeCase(item)) as T
+    return obj.map((item) => transformKeysToSnakeCase(item)) as T
   }
 
   if (obj !== null && typeof obj === 'object') {
-    return Object.keys(obj).reduce((acc, key) => {
-      const snakeCaseKey = toSnakeCase(key)
+    return Object.keys(obj).reduce(
+      (acc, key) => {
+        const snakeCaseKey = toSnakeCase(key)
 
-      const value = (obj as Record<string, unknown>)[key]
-      acc[snakeCaseKey] = value && typeof value === 'object'
-        ? transformKeysToSnakeCase(value)
-        : value
+        const value = (obj as Record<string, unknown>)[key]
+        acc[snakeCaseKey] = value && typeof value === 'object' ? transformKeysToSnakeCase(value) : value
 
-      return acc
-    }, {} as Record<string, unknown>) as T
+        return acc
+      },
+      {} as Record<string, unknown>,
+    ) as T
   }
 
   return obj as unknown as T
@@ -219,7 +218,12 @@ const toSnakeCase = (str: string): string => {
     .toLowerCase()
 }
 
-export const getTableSortField = <T,>(sorter:  SorterResult<T> | SorterResult<T>[], fieldMap: { [key: string]: string }) => {
+export const getTableSortField = <T>(
+  sorter: SorterResult<T> | SorterResult<T>[],
+  fieldMap: {
+    [key: string]: string
+  },
+) => {
   if (Array.isArray(sorter) || !sorter.order) return undefined
   const getField = (field: string): string => {
     if (field in fieldMap) return fieldMap[field]
@@ -236,33 +240,30 @@ export const checkAmOrPm = (time: string) => {
 }
 
 /**
- * Removes properties with empty string (`""`) values from an object.
+ * Recursively removes attributes with empty string values from an object or an array.
  *
- * This function takes an object as input and returns a new object where
- * all properties with empty string (`""`) values are removed. It preserves
- * the original types of the object's properties.
- *
- * @template T - The type of the input object.
- * @param {T} obj - The input object from which empty string properties should be removed.
- * @returns {{ [K in keyof T]: Exclude<T[K], ""> }} A new object without empty string values.
- *
- * @example
- * const obj = { a: 1, b: "", c: "test", d: "" }
- * const cleanedObj = removeEmptyStringAttributes(obj)
- * console.log(cleanedObj) // Output: { a: 1, c: "test" }
+ * @template T
+ * @param {T} obj The object or array to process.
+ * @return {T} A new object or array without attributes that have empty string values.
  */
-export const removeEmptyStringAttributes = <T extends object>(obj: T): {
-  [K in keyof T]: Exclude<T[K], ''>
-} => {
-  const result: Partial<{ [K in keyof T]: Exclude<T[K], ''> }> = {}
+export const removeEmptyStringAttributes = <T>(obj: T): T => {
+  if (Array.isArray(obj)) {
+    return obj.map(removeEmptyStringAttributes) as T
+  } else if (typeof obj === 'object' && obj !== null) {
+    const result: Partial<{ [K in keyof T]: Exclude<T[K], ''> }> = {}
 
-  for (const key of Object.keys(obj) as Array<keyof T>) {
-    if (obj[key] !== '') {
-      result[key] = obj[key] as Exclude<T[typeof key], ''>
+    for (const key of Object.keys(obj) as Array<keyof T>) {
+      const value = obj[key]
+
+      if (value !== '') {
+        result[key] = removeEmptyStringAttributes(value) as Exclude<T[typeof key], ''>
+      }
     }
+
+    return result as T
   }
 
-  return result as { [K in keyof T]: Exclude<T[K], ''> }
+  return obj
 }
 
 export const scrollToTop = () => {
@@ -301,7 +302,7 @@ export const decompressData = (base64String: string): object | string | null => 
   }
 }
 
-export const isAtLeast16YearsOld = (date: string): boolean  => {
+export const isAtLeast16YearsOld = (date: string): boolean => {
   const sixteenYearsAgo = dayjs().subtract(16, 'year')
   const inputDate = dayjs(date)
 

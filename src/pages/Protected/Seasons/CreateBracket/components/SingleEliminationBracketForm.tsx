@@ -67,6 +67,7 @@ export const SingleEliminationBracketForm = (props: TSingleEliminationBracketFor
       ...match,
       index,
       primaryId: match.matchIntegerId,
+      id: match.id!,
       participants: match.matchParticipants?.map((pt, idx) => ({ ...pt, index: idx, primaryId: idx })) || []
     })
   })
