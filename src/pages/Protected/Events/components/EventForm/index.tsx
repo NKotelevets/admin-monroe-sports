@@ -109,6 +109,7 @@ export const EventForm = (props: IFormProps<IEventForm, IEventForm>) => {
                     disabled={isPlayoff}
                     options={showPlayoffType ? editEventTypeOptions : createEventTypeOptions}
                     onChange={value => {
+                      // FIXME: make a more elegant solution to this
                       setFieldValue('team1Id', undefined)
                       setFieldValue('team2Id', undefined)
                       setFieldValue('repeats', repeatType.NO_REPEAT)

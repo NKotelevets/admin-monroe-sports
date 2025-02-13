@@ -95,22 +95,36 @@ export const eventsApi = createApi({
      */
     editEvent: builder.mutation<void, TEventEditingPayload>({
       query: (body) => {
-        body = removeEmptyStringAttributes(body)
-        body = transformKeysToSnakeCase(body)
+        let url = `games/admin-events/${body.id}/update-event`
+        let method = 'PATCH'
 
         switch (body.event_type) {
-          case eventType.GAME || eventType.PLAYOFF:
+          case eventType.GAME:
             body = {
               ...body,
               league_team_1_id: body.team_1_id,
               league_team_2_id: body.team_2_id,
             } as TEventEditingPayload
             break
+          case eventType.PLAYOFF:
+            url = `games/admin-events/update-playoff-event`
+            method = 'POST'
+            body = {
+              ...body,
+              id: '',
+              game_id: body.id,
+              league_team_1_id: body.team_1_id,
+              league_team_2_id: body.team_2_id,
+            } as TEventEditingPayload
+            break
         }
 
+        body = removeEmptyStringAttributes(body)
+        body = transformKeysToSnakeCase(body)
+
         return {
-          url: `games/admin-events/${body.id}/update-event`,
-          method: 'PATCH',
+          url,
+          method,
           body,
         }
       },

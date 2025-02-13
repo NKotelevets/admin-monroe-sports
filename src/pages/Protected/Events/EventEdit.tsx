@@ -38,7 +38,7 @@ const EventEdit = () => {
     const subscribers = body.eventSubscribers
     const { setErrors } = formikHelpers
 
-    const payload = {
+    let payload = {
       id: params.id!,
       event_type: body.eventType,
       event_description: body.eventDescription,
@@ -56,6 +56,16 @@ const EventEdit = () => {
       team_2_id: body.team2Id || null,
       duration: body.duration
     } as TEventEditingPayload
+
+    if (body.eventType === eventType.PLAYOFF) {
+      payload = {
+        ...payload,
+        leagueId: body.league,
+        seasonId: body.season,
+        divisionId: body.division,
+        bracketId: body.bracket
+      }
+    }
 
     editEvent(payload)
       .unwrap()

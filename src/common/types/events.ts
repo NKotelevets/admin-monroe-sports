@@ -59,7 +59,8 @@ export type TEventCreationPayload = {
 }
 
 export type TEventEditingPayload = {
-  id: string
+  id?: string
+  game_id?: string
   event_type?: number
   event_description?: string
   event_subscribers?: string
@@ -73,6 +74,11 @@ export type TEventEditingPayload = {
   team_1_id?: string
   team_2_id?: string
   duration?: number
+
+  leagueId?: string
+  seasonId?: string
+  divisionId?: string
+  bracketId?: number
 }
 
 export type TEventBulkEditPayload = {
