@@ -11,7 +11,7 @@ import { Layout } from '@/layouts/PublicLayout'
 import { useSignUpMutation } from '@/redux/account/account.api.ts'
 import { useNavigate } from 'react-router-dom'
 import { useAuthSlice } from '@/redux/hooks/useAuthSlice.ts'
-import { PATH_TO_ACCOUNT_INVITATIONS, PATH_TO_DOWNLOAD_SCREEN } from '@/common/constants/paths.ts'
+import { PATH_TO_ACCOUNT_INVITATIONS } from '@/common/constants/paths.ts'
 import { notification } from 'antd'
 
 
@@ -105,7 +105,7 @@ const SignUp = () => {
         if (hasInvitation) {
           navigate(`${PATH_TO_ACCOUNT_INVITATIONS}/${data.invitation}`)
         } else {
-          navigate(PATH_TO_DOWNLOAD_SCREEN)
+          navigate(PATH_TO_ACCOUNT_INVITATIONS)
         }
 
       })

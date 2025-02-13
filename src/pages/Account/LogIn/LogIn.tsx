@@ -20,10 +20,9 @@ import { useLogout } from '@/hooks/useLogout.ts'
 import { colors } from '@/utils/colors.tsx'
 
 import {
-  AUTH_PAGES,
+  AUTH_PAGES, PATH_TO_ACCOUNT_INVITATIONS,
   PATH_TO_ACCOUNT_REQUEST_RESET_PASSWORD,
-  PATH_TO_ACCOUNT_SIGNUP,
-  PATH_TO_DOWNLOAD_SCREEN,
+  PATH_TO_ACCOUNT_SIGNUP
 } from '@/common/constants/paths.ts'
 import { ISignInRequestBody } from '@/common/interfaces/auth.ts'
 
@@ -104,7 +103,7 @@ const LogIn = () => {
         getUserData()
 
         if ((prevRoute && AUTH_PAGES.includes(prevRoute)) || !prevRoute) {
-          navigate(PATH_TO_DOWNLOAD_SCREEN)
+          navigate(PATH_TO_ACCOUNT_INVITATIONS)
         } else {
           navigate(prevRoute)
         }
