@@ -75,7 +75,7 @@ const CreateSeason = (): ReactElement => {
             tournament_round_text: match?.tournamentRoundText || '',
             is_not_first_round: !!match.isNotFirstRound,
             game_number: match.gameNumber || null,
-            match_integer_id: match.id,
+            match_integer_id: match.matchIntegerId || 0,
             stage: match.stage,
             match_participants: match.matchParticipants
               .map((participant) => ({

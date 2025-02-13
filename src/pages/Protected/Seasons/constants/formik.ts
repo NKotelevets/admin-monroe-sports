@@ -22,7 +22,7 @@ export const participantSchema = Yup.object().shape({
 })
 
 export const matchSchema = Yup.object({
-  id: Yup.number().nullable(),
+  id: Yup.string().nullable(),
   nextMatchId: Yup.number().nullable(),
   tournamentRoundText: Yup.string().nullable(),
   state: Yup.string().required(),
