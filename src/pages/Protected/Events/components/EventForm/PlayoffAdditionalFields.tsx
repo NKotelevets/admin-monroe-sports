@@ -93,6 +93,7 @@ export const PlayoffAdditionalFields = () => {
   return (
     <>
       <LeagueSelect
+        disabled
         label="Legue/Tourn name *"
         placeholder="Select league"
         value={values.league}
@@ -102,8 +103,8 @@ export const PlayoffAdditionalFields = () => {
         getLeague={getLeague}
       />
       <SeasonSelect
+        disabled
         label="Season *"
-        disabled={!currentLeague}
         value={values.season}
         options={seasonOptions}
         onChange={onSeasonChange}
@@ -113,8 +114,8 @@ export const PlayoffAdditionalFields = () => {
         getDivisions={getDivision}
       />
       <Select
+        disabled
         label="Division Name *"
-        disabled={!values.season}
         value={values.division}
         options={divisionOptions}
         onChange={onDivisionChange}
@@ -123,8 +124,8 @@ export const PlayoffAdditionalFields = () => {
         placeholder="Select division"
       />
       <Select
+        disabled
         label="Bracket *"
-        disabled={!values.division}
         value={values.bracket}
         options={bracketList?.map(bracket => ({ label: bracket.name, value: bracket.id }))}
         onChange={onBracketChange}
@@ -133,8 +134,8 @@ export const PlayoffAdditionalFields = () => {
         placeholder="Select bracket"
       />
       <Select
+        disabled
         label="Game number *"
-        disabled={!values.bracket}
         value={values.game}
         options={matchList?.map(match => {
           return ({ label: `Game ${match.gameNumber} (${match.stage})`, value: match.id })
