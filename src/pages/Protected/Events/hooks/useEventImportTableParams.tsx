@@ -105,7 +105,12 @@ export const useEventImportInfoTableParams = () => {
       onFilter: (value, record) => value === record.status,
       filterDropdown: (props) => <MonroeFilter {...props} />,
       filterIcon,
-      render: (value) => <Tag title={value} color='gray' />,
+      render: (value) => {
+        if (value.toLowerCase() === 'error') {
+          return <Tag title='Error' color='red' />
+        }
+       return <Tag title='Conflict' color='gray' />
+      },
     },
     {
       title: 'Error info',
