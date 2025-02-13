@@ -15,6 +15,7 @@ export type TSendInvitePayload = {
 
 export type TInviteProps = {
   invite: IInvite
+  callback: () => void
 }
 
 export type TCreateSupervisedUserForm = {

@@ -1,16 +1,18 @@
 import { LoadingOutlined } from '@ant-design/icons'
 import styled from '@emotion/styled'
 import { Flex, Row, Spin, notification } from 'antd'
-import { ReactElement } from 'react'
+import { ReactElement, useState } from 'react'
 
 import { Layout } from '@/layouts/PublicLayout'
 
-import { useAcceptInviteMutation, useDenyInviteMutation } from '@/redux/auth/auth.api.ts'
+import { useAcceptInviteMutation } from '@/redux/auth/auth.api.ts'
 import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 
 import { TInviteProps } from '@/common/types/account.ts'
 
 import FamilyIllustration from '@/assets/images/onboarding/family-invitation.svg'
+import { FamilyInvitationAccepted } from '@/pages/Account/Invitations/FamilyInvitation/FamilyInvitationAccepted.tsx'
+import { useDenyInviteMutation } from '@/redux/account/account.api.ts'
 
 const {
   Styles: { Title, Subtitle, Body, LargeButton },
@@ -33,6 +35,7 @@ export const FamilyInvitation = (props: TInviteProps): ReactElement => {
   const [api, contextHolder] = notification.useNotification()
   const [acceptInvite, { isLoading }] = useAcceptInviteMutation()
   const [denyInvite, { isLoading: isLoadingDeny }] = useDenyInviteMutation()
+  const [invitationAccepted, setInvitationAccepted] = useState(false)
 
   /**
    * Handles the action of accepting an invitation.
@@ -45,7 +48,9 @@ export const FamilyInvitation = (props: TInviteProps): ReactElement => {
 
     acceptInvite({ invite_id: invite.id, users_ids: [user.id] })
       .unwrap()
-      .then(() => {})
+      .then(() => {
+        setInvitationAccepted(true)
+      })
       .catch((error) => {
         api.error({
           message: `Could not accept invitation`,
@@ -81,6 +86,13 @@ export const FamilyInvitation = (props: TInviteProps): ReactElement => {
         <Spin indicator={<LoadingOutlined spin />} size="large" />
       </Body>
     )
+
+  if (invitationAccepted) {
+    return <FamilyInvitationAccepted
+      familyName={invite.inviter?.lastName || user?.lastName || ''}
+      userName={invite.children.map(child => child.firstName).join(',') || ''}
+    />
+  }
 
   return (
     <Body centered>

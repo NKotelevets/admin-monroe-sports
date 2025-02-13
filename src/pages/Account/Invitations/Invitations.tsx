@@ -49,6 +49,7 @@ const Invitations = () => {
   const { data: userData } = useGetUserQuery()
   const [getInvites] = useLazyInviteListQuery()
   const [getInviteByToken] = useLazyGetInviteByIdQuery()
+  const [invites, setInvites] = useState<IInvite[]>([])
   const [currentInvite, setCurrentInvite] = useState<undefined | null | IInvite>(undefined)
   const [api, contextHolder] = notification.useNotification()
 
@@ -88,6 +89,7 @@ const Invitations = () => {
     getInvites({ id: userData.id || '' })
       .unwrap()
       .then((response) => {
+        setInvites(response)
         response.length ? setCurrentInvite(response[0]) : setCurrentInvite(null)
       })
       .catch((error) => {
@@ -114,6 +116,23 @@ const Invitations = () => {
   }, [token, userData])
 
   /**
+   * Navigates to the next invitation in the list of invites. If the current
+   * invitation is the last one or no invites exist, sets the current invitation
+   * to null.
+   *
+   * @function
+   */
+  const nextInvitation = () => {
+    if (!invites.length) return setCurrentInvite(null)
+    const nextIndex = invites.findIndex((invite) => invite.id === currentInvite?.id) + 1
+    if (nextIndex <= invites.length) {
+      setCurrentInvite(invites[nextIndex])
+    } else {
+      setCurrentInvite(null)
+    }
+  }
+
+  /**
    * Memoized variable that determines and returns the appropriate content
    * component based on the current user's role and the invite type.
    *
@@ -129,22 +148,22 @@ const Invitations = () => {
     if (currentInvite === null) return <NoInvitations />
     if (currentInvite === undefined || !user) return <Spin indicator={<LoadingOutlined spin />} size="large" />
     if (user.isChild && currentInvite.invite_type !== INVITE_TYPE_NAMED.SUPERVISED)
-      return <ChildInvitation invite={currentInvite} />
+      return <ChildInvitation invite={currentInvite} callback={nextInvitation} />
 
     if (
       currentInvite.invite_type !== INVITE_TYPE_NAMED.SUPERVISED ||
       currentInvite.invite_type !== INVITE_TYPE_NAMED.SUPERVISED
     )
-      return <FamilyInvitation invite={currentInvite} />
+      return <FamilyInvitation invite={currentInvite} callback={nextInvitation} />
 
     if (
       currentInvite.invite_type === INVITE_TYPE_NAMED.COACH ||
       currentInvite.invite_type === INVITE_TYPE_NAMED.HEAD_COACH ||
       currentInvite.invite_type === INVITE_TYPE_NAMED.TEAM_ADMIN
     )
-      return <StaffInvitation invite={currentInvite} />
+      return <StaffInvitation invite={currentInvite} callback={nextInvitation} />
 
-    return <PlayerInvitation invite={currentInvite} />
+    return <PlayerInvitation invite={currentInvite} callback={nextInvitation} />
   }, [currentInvite, user])
 
   return (

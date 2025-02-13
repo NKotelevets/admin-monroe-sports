@@ -72,25 +72,6 @@ export const authApi = createApi({
         method: 'POST',
       }),
     }),
-
-    /**
-     * Mutation to deny an invitation for a user.
-     *
-     * @function
-     * @name denyInvite
-     * @param {Object} body - The request body.
-     * @param {string} body.userId - The ID of the user declining the invite.
-     * @param {string} body.inviteId - The ID of the invite to be declined.
-     * @param {string[]} [body.usersIds] - Optional array of user IDs related to the invite.
-     * @returns {void}
-     */
-    denyInvite: builder.mutation<void, { userId: string; inviteId: string; usersIds?: string[] }>({
-      query: (body) => ({
-        url: `users/${body.userId}/decline-invite`,
-        body: { users_ids: body.usersIds, invite_id: body.inviteId },
-        method: 'POST',
-      }),
-    }),
   }),
 })
 
@@ -100,5 +81,4 @@ export const {
   useCreateUserMutation,
   useUpdateOperatorMutation,
   useAcceptInviteMutation,
-  useDenyInviteMutation,
 } = authApi
