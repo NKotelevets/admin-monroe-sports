@@ -32,7 +32,7 @@ export const BulkEditPreviewControls = (props: TBulkEditTableControlsProps): Rea
 
   return (
     <>
-      <Button disabled={resettingForm} onClick={onReset}>Undo Changes</Button>
+      <Button disabled={resettingForm} onClick={onReset}>Undo changes</Button>
       <Button onClick={() => setShowPreviewUpdate(false)}>Back to bulk edit</Button>
       <SaveBulkEditButton forceUpdate={forceUpdate} disabled={false} values={values} selectedIds={selectedIds} />
     </>

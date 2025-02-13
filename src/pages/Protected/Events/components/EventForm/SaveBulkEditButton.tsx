@@ -116,7 +116,7 @@ export const SaveBulkEditButton = (props: TSaveBulkEditButtonProps) => {
 
   return (
     <Button type="primary" disabled={disabled} onClick={onSave} loading={isLoading}>
-      Save changes
+      Save all changes
     </Button>
   )
 }

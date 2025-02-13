@@ -59,7 +59,7 @@ export const BulkEditPreviewUpdate = () => {
         isValid={isValid && dirty}
       />,
     )
-    setPageTitle('Preview Bulk Edit')
+    setPageTitle('Review update')
   }, [selectedTableIds, values, setFieldValue, isValid, dirty])
 
   /**
