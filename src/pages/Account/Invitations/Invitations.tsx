@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { ChildInvitation } from '@/pages/Account/Invitations/ChildInvitation/ChildInvitation.tsx'
+import { FamilyInvitation } from '@/pages/Account/Invitations/FamilyInvitation/FamilyInvitation.tsx'
 import { NoInvitations } from '@/pages/Account/Invitations/NoInvitations.tsx'
 import { PlayerInvitation } from '@/pages/Account/Invitations/PlayerInvitation/PlayerInvitation.tsx'
 import { StaffInvitation } from '@/pages/Account/Invitations/StaffInvitation.tsx'
@@ -12,10 +13,10 @@ import { Layout } from '@/layouts/PublicLayout'
 
 import { useLazyGetInviteByIdQuery, useLazyInviteListQuery } from '@/redux/account/account.api.ts'
 import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
+import { useGetUserQuery } from '@/redux/user/user.api.ts'
 
 import { INVITE_TYPE_NAMED } from '@/common/constants'
 import { IInvite } from '@/common/interfaces/user.ts'
-import { FamilyInvitation } from '@/pages/Account/Invitations/FamilyInvitation/FamilyInvitation.tsx'
 
 const {
   Page,
@@ -45,6 +46,7 @@ const Invitations = () => {
   const { token } = useParams<{ token: string }>()
   const { user } = useUserSlice()
 
+  const { data: userData } = useGetUserQuery()
   const [getInvites] = useLazyInviteListQuery()
   const [getInviteByToken] = useLazyGetInviteByIdQuery()
   const [currentInvite, setCurrentInvite] = useState<undefined | null | IInvite>(undefined)
@@ -81,7 +83,9 @@ const Invitations = () => {
    * @function
    */
   const getAllInvitations = () => {
-    getInvites({ id: user?.id || '' })
+    if (!userData) return
+
+    getInvites({ id: userData.id || '' })
       .unwrap()
       .then((response) => {
         response.length ? setCurrentInvite(response[0]) : setCurrentInvite(null)
@@ -107,7 +111,7 @@ const Invitations = () => {
     } else {
       getAllInvitations()
     }
-  }, [token])
+  }, [token, userData])
 
   /**
    * Memoized variable that determines and returns the appropriate content
