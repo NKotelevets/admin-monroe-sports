@@ -1,14 +1,21 @@
-import { ReactElement, ReactNode } from 'react'
-import { useEffect } from 'react'
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { ReactElement, ReactNode } from 'react';
+import { useEffect } from 'react';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
-import { useAuthSlice } from '@/redux/hooks/useAuthSlice'
-import { useLazyGetUserQuery } from '@/redux/user/user.api'
 
-import { useCookies } from '@/hooks/useCookies'
-import { useLogout } from '@/hooks/useLogout'
 
-import { AUTH_PAGES, PATH_TO_HOME, PATH_TO_LEAGUES, PATH_TO_SIGN_IN, PROTECTED_PAGES } from '@/common/constants/paths'
+import { useAuthSlice } from '@/redux/hooks/useAuthSlice';
+import { useLazyGetUserQuery } from '@/redux/user/user.api';
+
+
+
+import { useCookies } from '@/hooks/useCookies';
+import { useLogout } from '@/hooks/useLogout';
+
+
+
+import { AUTH_PAGES, PATH_TO_HOME, PATH_TO_LEAGUES, PATH_TO_SIGN_IN, PROTECTED_PAGES } from '@/common/constants/paths';
+
 
 interface TAuthProviderProps {
   children: ReactNode
@@ -32,7 +39,7 @@ const AuthProvider = (props: TAuthProviderProps): ReactElement => {
 
   const navigate = useNavigate()
   const location = useLocation()
-  const isProtectedPage = PROTECTED_PAGES.includes(location.pathname)
+  const isProtectedPage = PROTECTED_PAGES.some(path => location.pathname.startsWith(path))
 
   const [getUserData] = useLazyGetUserQuery()
   const [searchParams] = useSearchParams()

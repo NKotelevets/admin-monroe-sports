@@ -1,6 +1,6 @@
 import { LoadingOutlined } from '@ant-design/icons'
 import { Spin, notification } from 'antd'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { ChildInvitation } from '@/pages/Account/Invitations/ChildInvitation/ChildInvitation.tsx'
@@ -12,8 +12,9 @@ import { StaffInvitation } from '@/pages/Account/Invitations/StaffInvitation.tsx
 import { Layout } from '@/layouts/PublicLayout'
 
 import { useLazyGetInviteByIdQuery, useLazyInviteListQuery } from '@/redux/account/account.api.ts'
+import { useAuthSlice } from '@/redux/hooks/useAuthSlice.ts'
 import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
-import { useGetUserQuery } from '@/redux/user/user.api.ts'
+import { useLazyGetUserQuery } from '@/redux/user/user.api.ts'
 
 import { INVITE_TYPE_NAMED } from '@/common/constants'
 import { IInvite } from '@/common/interfaces/user.ts'
@@ -45,13 +46,16 @@ const {
 const Invitations = () => {
   const { token } = useParams<{ token: string }>()
   const { user } = useUserSlice()
+  const { access } = useAuthSlice()
 
-  const { data: userData } = useGetUserQuery()
+  const firstLoad = useRef(true)
+  const [getLoggedUser] = useLazyGetUserQuery()
   const [getInvites] = useLazyInviteListQuery()
   const [getInviteByToken] = useLazyGetInviteByIdQuery()
+  const [api, contextHolder] = notification.useNotification()
+
   const [invites, setInvites] = useState<IInvite[]>([])
   const [currentInvite, setCurrentInvite] = useState<undefined | null | IInvite>(undefined)
-  const [api, contextHolder] = notification.useNotification()
 
   /**
    * Function to fetch an invitation details using a token.
@@ -60,21 +64,27 @@ const Invitations = () => {
    *
    * @param {{ id: string }} payload The payload containing an identifier for the invitation.
    */
-  const getInvitationByToken = (payload: { id: string }) => {
-    getInviteByToken(payload)
-      .unwrap()
-      .then((response) => {
-        response ? setCurrentInvite(response) : setCurrentInvite(null)
-      })
-      .catch((error) => {
-        api.error({
-          message: 'Could not load invitation',
-          description:
-            error?.details || error?.detail || 'Please, try again. If the problem persists, contact support.',
-          placement: 'bottomRight',
+  const getInvitationByToken = useCallback(
+    (payload: { id: string }) => {
+      if (!firstLoad?.current) return
+      firstLoad.current = false
+
+      getInviteByToken(payload)
+        .unwrap()
+        .then((response) => {
+          response ? setCurrentInvite(response) : setCurrentInvite(null)
         })
-      })
-  }
+        .catch((error) => {
+          api.error({
+            message: 'Could not load invitation',
+            description:
+              error?.details || error?.detail || 'Please, try again. If the problem persists, contact support.',
+            placement: 'bottomRight',
+          })
+        })
+    },
+    [firstLoad?.current],
+  )
 
   /**
    * Fetches all invitations for a user and updates the current invite state.
@@ -83,10 +93,10 @@ const Invitations = () => {
    *
    * @function
    */
-  const getAllInvitations = () => {
-    if (!userData) return
+  const getAllInvitations = useCallback(() => {
+    if (!user) return
 
-    getInvites({ id: userData.id || '' })
+    getInvites({ id: user.id || '' })
       .unwrap()
       .then((response) => {
         setInvites(response)
@@ -100,7 +110,7 @@ const Invitations = () => {
           placement: 'bottomRight',
         })
       })
-  }
+  }, [user])
 
   /**
    * Fetches invitation data based on the existence of a token.
@@ -109,11 +119,18 @@ const Invitations = () => {
    */
   useEffect(() => {
     if (token) {
-      getInvitationByToken({ id: token })
-    } else {
+      getInvitationByToken({ id: token?.split('?')[0]?.split('&')[0] || '' })
+    }
+    if (!token && user) {
       getAllInvitations()
     }
-  }, [token, userData])
+  }, [token, user])
+
+  useEffect(() => {
+    if (!user && access) {
+      getLoggedUser()
+    }
+  }, [user, access])
 
   /**
    * Navigates to the next invitation in the list of invites. If the current
@@ -147,12 +164,12 @@ const Invitations = () => {
   const pageContent = useMemo(() => {
     if (currentInvite === null) return <NoInvitations />
     if (currentInvite === undefined || !user) return <Spin indicator={<LoadingOutlined spin />} size="large" />
-    if (user.isChild && currentInvite.invite_type !== INVITE_TYPE_NAMED.SUPERVISED)
+    if (user.isChild && currentInvite.invite_type === INVITE_TYPE_NAMED.SUPERVISED)
       return <ChildInvitation invite={currentInvite} callback={nextInvitation} />
 
     if (
-      currentInvite.invite_type !== INVITE_TYPE_NAMED.SUPERVISED ||
-      currentInvite.invite_type !== INVITE_TYPE_NAMED.SUPERVISED
+      currentInvite.invite_type === INVITE_TYPE_NAMED.SUPERVISED ||
+      currentInvite.invite_type === INVITE_TYPE_NAMED.SUPERVISOR
     )
       return <FamilyInvitation invite={currentInvite} callback={nextInvitation} />
 

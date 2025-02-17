@@ -122,7 +122,7 @@ export const PlayerInvitation = (props: TInviteProps): ReactElement => {
           type="primary"
           onClick={onSubmit}
           disabled={!selectedAthletes.length || isLoading}
-          style={{ marginTop: 20 }}
+          style={{ marginTop: 20, marginBottom: 60 }}
         >
           Continue
         </LargeButton>
