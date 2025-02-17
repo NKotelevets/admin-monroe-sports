@@ -1,20 +1,20 @@
-import { ReactElement, ReactNode } from 'react';
-import { useEffect } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { ReactElement, ReactNode } from 'react'
+import { useEffect } from 'react'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 
 
 
-import { useAuthSlice } from '@/redux/hooks/useAuthSlice';
-import { useLazyGetUserQuery } from '@/redux/user/user.api';
+import { useAuthSlice } from '@/redux/hooks/useAuthSlice'
+import { useLazyGetUserQuery } from '@/redux/user/user.api'
 
 
 
-import { useCookies } from '@/hooks/useCookies';
-import { useLogout } from '@/hooks/useLogout';
+import { useCookies } from '@/hooks/useCookies'
+import { useLogout } from '@/hooks/useLogout'
 
 
 
-import { AUTH_PAGES, PATH_TO_HOME, PATH_TO_LEAGUES, PATH_TO_SIGN_IN, PROTECTED_PAGES } from '@/common/constants/paths';
+import { AUTH_PAGES, PATH_TO_HOME, PATH_TO_LEAGUES, PATH_TO_SIGN_IN, PROTECTED_PAGES } from '@/common/constants/paths'
 
 
 interface TAuthProviderProps {
