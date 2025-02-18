@@ -32,7 +32,7 @@ const {
  * information about the invitation status and team details.
  */
 export const StaffInvitation = (props: TInviteProps): ReactElement => {
-  const { invite, accepted } = props
+  const { invite, accepted, callback } = props
   const { user } = useUserSlice()
 
   const [api, contextHolder] = notification.useNotification()
@@ -52,7 +52,16 @@ export const StaffInvitation = (props: TInviteProps): ReactElement => {
 
     acceptInvite({ invite_id: invite.id, users_ids: [user.id] })
       .unwrap()
-      .then(() => {})
+      .then(() => {
+        api.success({
+          message: `Invitation accepted`,
+          description: 'You have successfully accepted the invitation.',
+          placement: 'bottomRight',
+        })
+        setTimeout(() => {
+          callback && callback()
+        }, 2000)
+      })
       .catch((error) => {
         api.error({
           message: `Could not accept invitation`,
@@ -68,7 +77,16 @@ export const StaffInvitation = (props: TInviteProps): ReactElement => {
 
     denyInvite({ userId: user.id, inviteId: invite.id, usersIds: [user.id] })
       .unwrap()
-      .then(() => {})
+      .then(() => {
+        api.success({
+          message: `Invitation denied`,
+          description: 'You have successfully denied the invitation.',
+          placement: 'bottomRight',
+        })
+        setTimeout(() => {
+          callback && callback()
+        }, 2000)
+      })
       .catch((error) => {
         api.error({
           message: `Could not deny invitation`,
@@ -76,7 +94,7 @@ export const StaffInvitation = (props: TInviteProps): ReactElement => {
           placement: 'bottomRight',
         })
       })
-  }, [user, invite, accepted])
+  }, [user, invite, accepted, callback])
 
   if (isLoading || isLoadingDeny)
     return (

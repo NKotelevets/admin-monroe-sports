@@ -887,7 +887,7 @@ form .ant-divider {
   border: 0;
 }
 
-.public-layout :where(.css-dev-only-do-not-override-ftg7lt).ant-checkbox-checked .ant-checkbox-inner:after {
+.public-layout :where(.css-dev-only-do-not-override-ftg7lt).ant-checkbox-checked .ant-checkbox-inner:after, .public-layout :where(.css-dev-only-do-not-override-155trlg).ant-checkbox .ant-checkbox-inner:after {
   left: 7px !important;
 }
 
