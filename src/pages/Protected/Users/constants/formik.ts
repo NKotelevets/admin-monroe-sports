@@ -55,12 +55,7 @@ export const userInitialFormData: ICreateUserFormValues = {
   email: '',
   phoneNumber: '',
   zipCode: '',
-  roles: [
-    {
-      name: '',
-      linkedEntities: [],
-    },
-  ],
+  roles: [],
 }
 
 export interface ICreateUserFormValues {

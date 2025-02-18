@@ -4,7 +4,7 @@ import { DefaultOptionType } from 'antd/es/select'
 import dayjs from 'dayjs'
 import { Form, Formik, FormikHelpers } from 'formik'
 import {
-  ICreateUserFormValues, INITIAL_ROLE_DATA,
+  ICreateUserFormValues,
   userInitialFormData,
   userValidationSchema
 } from '@/pages/Protected/Users/constants/formik'
@@ -144,10 +144,10 @@ const UserForm = (props: IFormProps<ICreateUserAsAdmin, ICreateUserFormValues>):
         const onBirthDateChange = (_: unknown, data: string | string[]) => {
           if (data) {
             setFieldValue('birthDate', dayjs(data as string, 'MMMM D, YYYY').format('YYYY-MM-DD'))
-            setFieldValue('roles', [INITIAL_ROLE_DATA], true)
+            // setFieldValue('roles', [INITIAL_ROLE_DATA], true)
           } else {
             setFieldValue('birthDate', null)
-            setFieldValue('roles', [INITIAL_ROLE_DATA], true)
+            // setFieldValue('roles', [INITIAL_ROLE_DATA], true)
           }
         }
 
