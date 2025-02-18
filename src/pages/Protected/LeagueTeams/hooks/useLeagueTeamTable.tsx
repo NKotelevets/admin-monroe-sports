@@ -188,6 +188,7 @@ export const useLeagueTeamTable = (): IUseLeagueTableReturn => {
               title={!record.canBeDeleted ? `You can't delete a league team that has events` : ''}
             >
               <DeleteWrapper
+                disabled={!record.canBeDeleted}
                 onClick={
                   record.canBeDeleted
                     ? () => {
@@ -292,11 +293,11 @@ const useLeagueTeamTableRenderers = (): IRenderersReturn => {
   )
 
   const renderMasterTeam = useCallback(
-    (_: unknown, { masterTeam }: IFELeagueTeam) => (
+    (_: unknown, { masterTeam, id }: IFELeagueTeam) => (
       <MonroeLinkText
         inline={true}
         underline={false}
-        onClick={() => navigate(PATH_TO_MASTER_TEAMS + '/' + masterTeam?.id)}
+        onClick={() => masterTeam?.id ? navigate(PATH_TO_MASTER_TEAMS + '/' + masterTeam?.id) : navigate(`${PATH_TO_EDIT_LEAGUE_TEAM}/${id}`)}
       >
         {masterTeam?.name ? (
           masterTeam.name
