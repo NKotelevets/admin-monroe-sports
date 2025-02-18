@@ -119,7 +119,7 @@ export const useLocationsTable = () => {
             }}
           />
           {canDelete && (
-            <div className="mg-l8">
+            <Flex style={{marginLeft: 12}}>
               <DeleteWrapper
                 onClick={() => {
                   setSingleDeleting(true)
@@ -128,7 +128,7 @@ export const useLocationsTable = () => {
               >
                 <ReactSVG src={DeleteIcon} />
               </DeleteWrapper>
-            </div>
+            </Flex>
           )}
         </Flex>
       ),

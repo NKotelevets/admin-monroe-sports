@@ -9,6 +9,7 @@ import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
+import { DeleteWrapper } from '@/pages/Protected/LeagueTeams/components/DeleteWrapper.ts'
 import LeagueTagType from '@/pages/Protected/LeaguesAndTournaments/components/LeagueTagType'
 
 import CellText from '@/components/Table/CellText'
@@ -26,8 +27,6 @@ import { IFELeague } from '@/common/interfaces/league'
 
 import DeleteIcon from '@/assets/icons/delete.svg'
 import EditIcon from '@/assets/icons/edit.svg'
-import { colors } from '@/utils/colors.tsx'
-import { SVGIcon } from '@/components/SVGIcon.tsx'
 
 type TColumns<T> = TableProps<T>['columns']
 type TDataIndex = keyof IFELeague
@@ -174,23 +173,23 @@ export const useLeagueAndTournamentTableParams = ({ setSelectedRecordId, setShow
       width: '96px',
       fixed: 'right',
       render: (value) => (
-        <Flex vertical={false} justify="flex-start" align="center" className="c-p">
+        <Flex className="c-p" justify="center" align="center">
           <ReactSVG
             src={EditIcon}
             onClick={() => {
               navigate(PATH_TO_EDIT_LEAGUE + `/${value.id}`)
             }}
           />
-
-          <SVGIcon
-            color={colors.primary}
-            onClick={() => {
-              setSelectedRecordId(value.id)
-              setShowDeleteSingleRecordModal(true)
-            }}
-            src={DeleteIcon}
-            className="mg-l8"
-          />
+          <Flex style={{ marginLeft: 12 }}>
+            <DeleteWrapper
+              onClick={() => {
+                setSelectedRecordId(value.id)
+                setShowDeleteSingleRecordModal(true)
+              }}
+            >
+              <ReactSVG src={DeleteIcon} />
+            </DeleteWrapper>
+          </Flex>
         </Flex>
       ),
     },

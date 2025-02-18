@@ -18,8 +18,8 @@ import useIsActiveComponent from '@/hooks/useIsActiveComponent'
 import { IFEUser } from '@/common/interfaces/user'
 
 import DeleteIcon from '@/assets/icons/delete.svg'
-import { colors } from '@/utils/colors.tsx'
-import { SVGIcon } from '@/components/SVGIcon.tsx'
+import { ReactSVG } from 'react-svg'
+import { DeleteWrapper } from '@/pages/Protected/LeagueTeams/components/DeleteWrapper.ts'
 
 export interface IPopulateRoleProps {
   index: number
@@ -105,8 +105,7 @@ const PopulateEntity: FC<IPopulateRoleProps> = ({
             width="240px"
             containerWidth="auto"
           >
-            <div
-              className="mg-t8"
+            <DeleteWrapper
               onClick={() => {
                 if (totalNumberOfItems === 1) {
                   setFieldValue(`${entityName}.${index}`, {
@@ -122,12 +121,8 @@ const PopulateEntity: FC<IPopulateRoleProps> = ({
                 setSelectedName('')
               }}
             >
-              <SVGIcon
-                color={colors.primary}
-                className="mg-l8 mg-r32"
-                src={DeleteIcon}
-              />
-            </div>
+              <ReactSVG src={DeleteIcon} />
+            </DeleteWrapper>
           </MonroeTooltip>
         </Flex>
       )}

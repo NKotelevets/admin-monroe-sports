@@ -1,29 +1,31 @@
 import Flex from 'antd/es/flex'
+import { ColumnGroupType } from 'antd/es/table/interface'
+import { ColumnType } from 'rc-table/lib/interface'
 import { Fragment, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
+import { DeleteWrapper } from '@/pages/Protected/LeagueTeams/components/DeleteWrapper.ts'
+
+import { MonroeLinkText } from '@/components/Elements'
 import TextWithTooltip from '@/components/TextWithTooltip'
 
 import { useMasterTeamsSlice } from '@/redux/hooks/useMasterTeamsSlice'
 import { useLazyGetMasterTeamsQuery } from '@/redux/masterTeams/masterTeams.api'
 
+import { useCopyContent } from '@/hooks/useCopyContent.tsx'
+import { useTableContext } from '@/hooks/useTableContext.ts'
+import { useTableSearch } from '@/hooks/useTableSearch.tsx'
+
+import { getColumnSort } from '@/utils'
+
 import { PATH_TO_EDIT_MASTER_TEAM, PATH_TO_MASTER_TEAMS, PATH_TO_USERS } from '@/common/constants/paths'
 import { IFEMasterTeam } from '@/common/interfaces/masterTeams'
+import { TColumns } from '@/common/types'
 
 import CopyIcon from '@/assets/icons/copy.svg'
 import DeleteIcon from '@/assets/icons/delete.svg'
 import EditIcon from '@/assets/icons/edit.svg'
-import { useTableSearch } from '@/hooks/useTableSearch.tsx'
-import { getColumnSort } from '@/utils'
-import { MonroeLinkText } from '@/components/Elements'
-import { useTableContext } from '@/hooks/useTableContext.ts'
-import { useCopyContent } from '@/hooks/useCopyContent.tsx'
-import { ColumnType } from 'rc-table/lib/interface'
-import { TColumns } from '@/common/types'
-import { ColumnGroupType } from 'antd/es/table/interface'
-import { colors } from '@/utils/colors.tsx'
-import { SVGIcon } from '@/components/SVGIcon.tsx'
 
 interface IUseMasterTableReturn {
   /**
@@ -45,13 +47,8 @@ export const useMasterTeamsTable = (): IUseMasterTableReturn => {
   const { getColumnSearchProps } = useTableSearch(handleReset)
   const { setSelectedIds, setSingleDeleting } = useTableContext()
   const { limit, offset, ordering } = useMasterTeamsSlice()
-  const {
-    renderTeamAdmins,
-    renderTeamAdminEmail,
-    renderHeadCoachName,
-    renderHeadCoachEmail,
-    renderLinkedLeague
-  } = useMasterTeamTableRenderers()
+  const { renderTeamAdmins, renderTeamAdminEmail, renderHeadCoachName, renderHeadCoachEmail, renderLinkedLeague } =
+    useMasterTeamTableRenderers()
 
   const [getMasterTeams] = useLazyGetMasterTeamsQuery()
 
@@ -62,7 +59,7 @@ export const useMasterTeamsTable = (): IUseMasterTableReturn => {
     getMasterTeams({
       limit,
       offset,
-      ordering: ordering || undefined
+      ordering: ordering || undefined,
     })
   }
 
@@ -75,7 +72,8 @@ export const useMasterTeamsTable = (): IUseMasterTableReturn => {
    * @returns {boolean} True if any linked league matches the filter value.
    */
   const onFilterLeague = useCallback((value: boolean | React.Key, record: IFEMasterTeam) => {
-    return !!record['leagues'].filter(league => league.name.toLowerCase().includes((value as string).toLowerCase())).length
+    return !!record['leagues'].filter((league) => league.name.toLowerCase().includes((value as string).toLowerCase()))
+      .length
   }, [])
 
   /**
@@ -87,7 +85,9 @@ export const useMasterTeamsTable = (): IUseMasterTableReturn => {
    * @returns {boolean} True if any team administrator matches the filter value.
    */
   const onFilterTeamAdmin = useCallback((value: boolean | React.Key, record: IFEMasterTeam) => {
-    return !!record['teamAdmins']?.filter(admin => (`${admin.firstName} ${admin.lastName}`).toLowerCase().includes((value as string).toLowerCase())).length
+    return !!record['teamAdmins']?.filter((admin) =>
+      `${admin.firstName} ${admin.lastName}`.toLowerCase().includes((value as string).toLowerCase()),
+    ).length
   }, [])
 
   const columns: TColumns<IFEMasterTeam> = [
@@ -105,7 +105,7 @@ export const useMasterTeamsTable = (): IUseMasterTableReturn => {
           text={record.name}
           onClick={() => navigate(PATH_TO_MASTER_TEAMS + '/' + record.id)}
         />
-      )
+      ),
     },
     {
       title: 'Team Administrator',
@@ -114,13 +114,13 @@ export const useMasterTeamsTable = (): IUseMasterTableReturn => {
       ...getColumnSearchProps('teamAdmins', onFilterTeamAdmin),
       sortOrder: getColumnSort('team_admins', ordering || null),
       sorter: true,
-      render: renderTeamAdmins
+      render: renderTeamAdmins,
     },
     {
       title: 'Team Admin Email',
       dataIndex: 'teamAdminEmail',
       width: '240px',
-      render: renderTeamAdminEmail
+      render: renderTeamAdminEmail,
     },
     {
       title: 'Head Coach',
@@ -129,13 +129,13 @@ export const useMasterTeamsTable = (): IUseMasterTableReturn => {
       ...getColumnSearchProps('headCoachFullName'),
       sortOrder: getColumnSort('head_coach', ordering || null),
       sorter: true,
-      render: renderHeadCoachName
+      render: renderHeadCoachName,
     },
     {
       title: 'Coach email',
       dataIndex: 'headCoachEmail',
       width: '240px',
-      render: renderHeadCoachEmail
+      render: renderHeadCoachEmail,
     },
     {
       title: 'Linked Leagues/Tourns',
@@ -144,7 +144,7 @@ export const useMasterTeamsTable = (): IUseMasterTableReturn => {
       ...getColumnSearchProps('leagues', onFilterLeague),
       sorter: true,
       sortOrder: getColumnSort('league_name', ordering || null),
-      render: renderLinkedLeague
+      render: renderLinkedLeague,
     },
     {
       title: 'Actions',
@@ -152,30 +152,30 @@ export const useMasterTeamsTable = (): IUseMasterTableReturn => {
       width: '96px',
       fixed: 'right',
       render: (value, record) => (
-        <Flex className="c-p" justify="flex-start" align="center">
+        <Flex className="c-p" justify="center" align="center">
           <ReactSVG
             src={EditIcon}
             onClick={() => {
               navigate(PATH_TO_EDIT_MASTER_TEAM + `/${record.id}`)
             }}
           />
-
-          <SVGIcon
-            color={colors.primary}
-            className="mg-l8"
-            onClick={() => {
-              setSingleDeleting(true)
-              setSelectedIds([value.id])
-            }}
-            src={DeleteIcon}
-          />
+          <Flex style={{ marginLeft: 12 }}>
+            <DeleteWrapper
+              onClick={() => {
+                setSingleDeleting(true)
+                setSelectedIds([value.id])
+              }}
+            >
+              <ReactSVG src={DeleteIcon} />
+            </DeleteWrapper>
+          </Flex>
         </Flex>
-      )
-    }
+      ),
+    },
   ]
 
   return {
-    columns: columns as (ColumnGroupType<IFEMasterTeam> | ColumnType<IFEMasterTeam>)[]
+    columns: columns as (ColumnGroupType<IFEMasterTeam> | ColumnType<IFEMasterTeam>)[],
   }
 }
 
@@ -207,72 +207,75 @@ const useMasterTeamTableRenderers = (): IRenderersReturn => {
     copy(email, 'Email successfully copied')
   }, [])
 
-  const renderTeamAdmins = useCallback((_: unknown, record: IFEMasterTeam) => (
-    record.teamAdmins?.map((admin, index) => (
-      (
+  const renderTeamAdmins = useCallback(
+    (_: unknown, record: IFEMasterTeam) =>
+      record.teamAdmins?.map((admin, index) => (
         <Fragment key={`${admin.id}-row-team-admin`}>
-          <MonroeLinkText
-            inline={true}
-            underline={false}
-            onClick={() => navigate(PATH_TO_USERS + '/' + admin.id)}
-          >
+          <MonroeLinkText inline={true} underline={false} onClick={() => navigate(PATH_TO_USERS + '/' + admin.id)}>
             {admin.firstName}
           </MonroeLinkText>
           {record.teamAdmins?.length !== index + 1 ? `, ` : undefined}
         </Fragment>
-      )
-    ))
-  ), [])
+      )),
+    [],
+  )
 
-  const renderTeamAdminEmail = useCallback((_: unknown, record: IFEMasterTeam) => (
-    record.teamAdminEmail ? (
-      <Flex
-        align="center"
-        justify="space-between"
-        onClick={() => handleCopyContent(record.teamAdminEmail as string)}
-      >
-        <TextWithTooltip maxLength={21} text={record.teamAdminEmail} isRegularText />
-        <ReactSVG className="c-p mg-l4" src={CopyIcon} />
-      </Flex>
-    ) : '-'
-  ), [])
+  const renderTeamAdminEmail = useCallback(
+    (_: unknown, record: IFEMasterTeam) =>
+      record.teamAdminEmail ? (
+        <Flex align="center" justify="space-between" onClick={() => handleCopyContent(record.teamAdminEmail as string)}>
+          <TextWithTooltip maxLength={21} text={record.teamAdminEmail} isRegularText />
+          <ReactSVG className="c-p mg-l4" src={CopyIcon} />
+        </Flex>
+      ) : (
+        '-'
+      ),
+    [],
+  )
 
-  const renderHeadCoachName = useCallback((_: unknown, record: IFEMasterTeam) => (
-    record.headCoachFullName ? (
+  const renderHeadCoachName = useCallback(
+    (_: unknown, record: IFEMasterTeam) =>
+      record.headCoachFullName ? (
+        <TextWithTooltip
+          maxLength={22}
+          text={record.headCoachFullName}
+          onClick={() => navigate(PATH_TO_USERS + '/' + record.headCoachId)}
+        />
+      ) : (
+        '-'
+      ),
+    [],
+  )
+
+  const renderHeadCoachEmail = useCallback(
+    (_: unknown, record: IFEMasterTeam) =>
+      record.headCoachEmail ? (
+        <Flex align="center" justify="space-between" onClick={() => handleCopyContent(record.headCoachEmail as string)}>
+          <TextWithTooltip maxLength={21} text={record.headCoachEmail} isRegularText />
+          <ReactSVG className="c-p mg-l4" src={CopyIcon} />
+        </Flex>
+      ) : (
+        '-'
+      ),
+    [],
+  )
+
+  const renderLinkedLeague = useCallback(
+    (_: unknown, record: IFEMasterTeam) => (
       <TextWithTooltip
         maxLength={22}
-        text={record.headCoachFullName}
-        onClick={() => navigate(PATH_TO_USERS + '/' + record.headCoachId)}
+        text={record.leagues.map((l) => l.name).join(', ') || '-'}
+        onClick={() => navigate(PATH_TO_MASTER_TEAMS + '/' + record.id)}
       />
-    ) : '-'
-  ), [])
-
-  const renderHeadCoachEmail = useCallback((_: unknown, record: IFEMasterTeam) => (
-    record.headCoachEmail ? (
-      <Flex
-        align="center"
-        justify="space-between"
-        onClick={() => handleCopyContent(record.headCoachEmail as string)}
-      >
-        <TextWithTooltip maxLength={21} text={record.headCoachEmail} isRegularText />
-        <ReactSVG className="c-p mg-l4" src={CopyIcon} />
-      </Flex>
-    ) : '-'
-  ), [])
-
-  const renderLinkedLeague = useCallback((_: unknown, record: IFEMasterTeam) => (
-    <TextWithTooltip
-      maxLength={22}
-      text={record.leagues.map((l) => l.name).join(', ') || '-'}
-      onClick={() => navigate(PATH_TO_MASTER_TEAMS + '/' + record.id)}
-    />
-  ), [])
+    ),
+    [],
+  )
 
   return {
     renderTeamAdmins,
     renderTeamAdminEmail,
     renderHeadCoachName,
     renderHeadCoachEmail,
-    renderLinkedLeague
+    renderLinkedLeague,
   }
 }

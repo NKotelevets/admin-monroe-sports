@@ -7,6 +7,8 @@ import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
 
+import { DeleteWrapper } from '@/pages/Protected/LeagueTeams/components/DeleteWrapper.ts'
+
 import MonroeTooltip from '@/components/MonroeTooltip'
 import CellText from '@/components/Table/CellText'
 import FilterDropDown from '@/components/Table/FilterDropDown'
@@ -19,8 +21,6 @@ import { IFESeason } from '@/common/interfaces/season'
 import DeleteIcon from '@/assets/icons/delete.svg'
 import EditIcon from '@/assets/icons/edit.svg'
 import WarningIcon from '@/assets/icons/small-warn.svg'
-import { SVGIcon } from '@/components/SVGIcon.tsx'
-import { colors } from '@/utils/colors.tsx'
 
 type TDataIndex = keyof IFESeason
 type TColumns<T> = TableProps<T>['columns']
@@ -70,11 +70,11 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
       sortOrder: ordering?.includes('name') ? (!ordering.startsWith('-') ? 'ascend' : 'descend') : null,
       render: (value, record) => {
         // const importedWithoutBrackets = record.divisions.flatMap((d) => d.subDivision?.filter((s) => s.changed)).length
-        const createdWithoutBrackets = record.divisions.find(d => d.playoffFormat === 1 && !d.brackets.length)
+        const createdWithoutBrackets = record.divisions.find((d) => d.playoffFormat === 1 && !d.brackets.length)
 
         return (
           <Flex align="center" justify="flex-start">
-            {(!!createdWithoutBrackets) && (
+            {!!createdWithoutBrackets && (
               <div className="mg-r8">
                 <MonroeTooltip text="Season requires brackets setting." width="130px" containerWidth="auto">
                   <ReactSVG src={WarningIcon} />
@@ -168,17 +168,18 @@ export const useSeasonTableParams = ({ ordering, setSelectedRecordId, setShowDel
       fixed: 'right',
       render: (_, record) => {
         return (
-          <Flex vertical={false} justify="flex-start" align="center">
+          <Flex className="c-p" justify="center" align="center">
             <ReactSVG src={EditIcon} onClick={() => navigate(`${PATH_TO_EDIT_SEASON}/${record.id}`)} className="c-p" />
-            <SVGIcon
-              color={colors.primary}
-              className="c-p mg-l8"
-              onClick={() => {
-                setSelectedRecordId(record.id)
-                setShowDeleteSingleRecordModal(true)
-              }}
-              src={DeleteIcon}
-            />
+            <Flex style={{ marginLeft: 12 }}>
+              <DeleteWrapper
+                onClick={() => {
+                  setSelectedRecordId(record.id)
+                  setShowDeleteSingleRecordModal(true)
+                }}
+              >
+                <ReactSVG src={DeleteIcon} />
+              </DeleteWrapper>
+            </Flex>
           </Flex>
         )
       },

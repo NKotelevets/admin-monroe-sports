@@ -23,10 +23,10 @@ import { IFERole } from '@/common/interfaces/role'
 import { TRole } from '@/common/types'
 
 import DeleteIcon from '@/assets/icons/delete.svg'
-import { colors } from '@/utils/colors.tsx'
-import { SVGIcon } from '@/components/SVGIcon.tsx'
 import { isAtLeast16YearsOld } from '@/utils'
 import MonroeTooltip from '@/components/MonroeTooltip'
+import { ReactSVG } from 'react-svg'
+import { DeleteWrapper } from '@/pages/Protected/LeagueTeams/components/DeleteWrapper.ts'
 
 interface IPopulateRoleProps {
   index: number
@@ -117,12 +117,9 @@ const PopulateRole: FC<IPopulateRoleProps> = (props) => {
 
           {!([OPERATOR_ROLE, MASTER_ADMIN_ROLE].includes(role.name) && !isAdmin) &&
             !(isSameUser && role.name === MASTER_ADMIN_ROLE) && (
-              <SVGIcon
-                color={colors.primary}
-                className="mg-l8 mg-r32"
-                onClick={() => removeFn(index)}
-                src={DeleteIcon}
-              />
+              <DeleteWrapper onClick={() => removeFn(index)}>
+                <ReactSVG src={DeleteIcon} />
+              </DeleteWrapper>
             )}
         </Flex>
       )}

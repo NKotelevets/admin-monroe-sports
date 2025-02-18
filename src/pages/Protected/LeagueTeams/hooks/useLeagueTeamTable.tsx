@@ -1,34 +1,39 @@
-import { getColumnSort } from '@/utils'
+import { CloseCircleOutlined } from '@ant-design/icons'
+import { Tag, Tooltip } from 'antd'
+import Flex from 'antd/es/flex'
+import { ColumnGroupType } from 'antd/es/table/interface'
+import { ColumnType } from 'rc-table/lib/interface'
+import { useCallback, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { ReactSVG } from 'react-svg'
+
+import { DeleteWrapper } from '@/pages/Protected/LeagueTeams/components/DeleteWrapper.ts'
+
+import { MonroeLinkText } from '@/components/Elements'
 import TextWithTooltip from '@/components/TextWithTooltip.tsx'
+
+import { useLeagueTeamsSlice } from '@/redux/hooks/useLeagueTeamsSlice.tsx'
+import { useLazyGetLeagueTeamsQuery } from '@/redux/leagueTeams/leagueTeams.api.ts'
+
+import { useCopyContent } from '@/hooks/useCopyContent.tsx'
+import { useTableContext } from '@/hooks/useTableContext.ts'
+import { useTableSearch } from '@/hooks/useTableSearch.tsx'
+
+import { getColumnSort } from '@/utils'
+
 import {
   PATH_TO_EDIT_LEAGUE_TEAM,
   PATH_TO_LEAGUE_PAGE,
   PATH_TO_LEAGUE_TEAMS,
   PATH_TO_MASTER_TEAMS,
-  PATH_TO_USERS
+  PATH_TO_USERS,
 } from '@/common/constants/paths.ts'
-import { TColumns } from '@/common/types'
 import { IFELeagueTeam } from '@/common/interfaces/leagueTeams.ts'
-import { useTableSearch } from '@/hooks/useTableSearch.tsx'
-import { useLazyGetLeagueTeamsQuery } from '@/redux/leagueTeams/leagueTeams.api.ts'
-import { useLeagueTeamsSlice } from '@/redux/hooks/useLeagueTeamsSlice.tsx'
-import { useNavigate } from 'react-router-dom'
-import { useCallback, useEffect } from 'react'
-import { MonroeLinkText } from '@/components/Elements'
-import Flex from 'antd/es/flex'
-import { ReactSVG } from 'react-svg'
-import EditIcon from '@/assets/icons/edit.svg'
-import DeleteIcon from '@/assets/icons/delete.svg'
+import { TColumns } from '@/common/types'
+
 import CopyIcon from '@/assets/icons/copy.svg'
-import { useCopyContent } from '@/hooks/useCopyContent.tsx'
-import { useTableContext } from '@/hooks/useTableContext.ts'
-import { ColumnType } from 'rc-table/lib/interface'
-import { ColumnGroupType } from 'antd/es/table/interface'
-import { Tag, Tooltip } from 'antd'
-import { DeleteWrapper } from '@/pages/Protected/LeagueTeams/components/DeleteWrapper.ts'
-import { CloseCircleOutlined } from '@ant-design/icons'
-import { colors } from '@/utils/colors.tsx'
-import { SVGIcon } from '@/components/SVGIcon.tsx'
+import DeleteIcon from '@/assets/icons/delete.svg'
+import EditIcon from '@/assets/icons/edit.svg'
 
 const EMAIL_COPIED_MESSAGE = 'Email successfully copied'
 
@@ -48,10 +53,7 @@ interface IUseLeagueTableReturn {
  */
 export const useLeagueTeamTable = (): IUseLeagueTableReturn => {
   const navigate = useNavigate()
-  const {
-    setSelectedIds,
-    setSingleDeleting
-  } = useTableContext<IFELeagueTeam>()
+  const { setSelectedIds, setSingleDeleting } = useTableContext<IFELeagueTeam>()
 
   const [getLeagueTeams] = useLazyGetLeagueTeamsQuery()
 
@@ -66,7 +68,7 @@ export const useLeagueTeamTable = (): IUseLeagueTableReturn => {
     renderCoachName,
     renderCoachEmail,
     renderTeamAdminName,
-    renderTeamAdminEmail
+    renderTeamAdminEmail,
   } = useLeagueTeamTableRenderers()
 
   useEffect(() => {
@@ -77,15 +79,17 @@ export const useLeagueTeamTable = (): IUseLeagueTableReturn => {
     getLeagueTeams({
       limit,
       offset,
-      ordering: ordering || undefined
+      ordering: ordering || undefined,
     })
   }
 
-  const onFilter = useCallback((fieldName: keyof Pick<IFELeagueTeam, 'league' | 'division' | 'subdivision' | 'season'>) => (
-    (value: boolean | React.Key, record: IFELeagueTeam) => {
-      return !!record[fieldName]?.name.toLowerCase().includes((value as string).toLowerCase())
-    }
-  ), [])
+  const onFilter = useCallback(
+    (fieldName: keyof Pick<IFELeagueTeam, 'league' | 'division' | 'subdivision' | 'season'>) =>
+      (value: boolean | React.Key, record: IFELeagueTeam) => {
+        return !!record[fieldName]?.name.toLowerCase().includes((value as string).toLowerCase())
+      },
+    [],
+  )
 
   const columns: TColumns<IFELeagueTeam> = [
     {
@@ -96,7 +100,7 @@ export const useLeagueTeamTable = (): IUseLeagueTableReturn => {
       width: '240px',
       sortOrder: getColumnSort('name', ordering),
       ...getColumnSearchProps('name'),
-      render: renderTeamName
+      render: renderTeamName,
     },
     {
       title: 'Linked Leagues/Tourns',
@@ -105,7 +109,7 @@ export const useLeagueTeamTable = (): IUseLeagueTableReturn => {
       width: '240px',
       sortOrder: getColumnSort('league_name', ordering),
       ...getColumnSearchProps('league', onFilter('league')),
-      render: renderLeague
+      render: renderLeague,
     },
     {
       title: 'Linked Season',
@@ -114,7 +118,7 @@ export const useLeagueTeamTable = (): IUseLeagueTableReturn => {
       width: '240px',
       sortOrder: getColumnSort('season_name', ordering),
       ...getColumnSearchProps('season', onFilter('season')),
-      render: renderLeague
+      render: renderLeague,
     },
     {
       title: 'Division / Pool',
@@ -123,7 +127,7 @@ export const useLeagueTeamTable = (): IUseLeagueTableReturn => {
       width: '240px',
       sortOrder: getColumnSort('division_name', ordering),
       ...getColumnSearchProps('division', onFilter('division')),
-      render: renderDivision
+      render: renderDivision,
     },
     {
       title: 'Subdivision / Pool',
@@ -132,37 +136,37 @@ export const useLeagueTeamTable = (): IUseLeagueTableReturn => {
       width: '240px',
       sortOrder: getColumnSort('subdivision_name', ordering),
       ...getColumnSearchProps('subdivision', onFilter('subdivision')),
-      render: renderSubdivision
+      render: renderSubdivision,
     },
     {
       title: 'Master Team',
       dataIndex: 'masterTeam',
       width: '240px',
-      render: renderMasterTeam
+      render: renderMasterTeam,
     },
     {
       title: 'Team Admin Name',
       dataIndex: 'masterTeam',
       width: '240px',
-      render: renderTeamAdminName
+      render: renderTeamAdminName,
     },
     {
       title: 'Team Admin Email',
       dataIndex: 'masterTeam',
       width: '240px',
-      render: renderTeamAdminEmail
+      render: renderTeamAdminEmail,
     },
     {
       title: 'Coach Name',
       dataIndex: 'masterTeam',
       width: '240px',
-      render: renderCoachName
+      render: renderCoachName,
     },
     {
       title: 'Coach Email',
       dataIndex: 'masterTeam',
       width: '240px',
-      render: renderCoachEmail
+      render: renderCoachEmail,
     },
     {
       title: 'Actions',
@@ -170,7 +174,7 @@ export const useLeagueTeamTable = (): IUseLeagueTableReturn => {
       width: '96px',
       fixed: 'right',
       render: (value, record) => (
-        <Flex className="c-p" justify="flex-start" align="center">
+        <Flex className="c-p" justify="center" align="center">
           <ReactSVG
             src={EditIcon}
             onClick={() => {
@@ -178,29 +182,32 @@ export const useLeagueTeamTable = (): IUseLeagueTableReturn => {
             }}
           />
 
-          <div className="mg-l8">
+          <Flex style={{ marginLeft: 12 }}>
             <Tooltip
               placement="left"
               title={!record.canBeDeleted ? `You can't delete a league team that has events` : ''}
             >
-              <DeleteWrapper onClick={record.canBeDeleted ? () => {
-                setSingleDeleting(true)
-                setSelectedIds([value.id])
-              } : undefined}>
-                <SVGIcon
-                  color={colors.primary}
-                  src={DeleteIcon}
-                />
+              <DeleteWrapper
+                onClick={
+                  record.canBeDeleted
+                    ? () => {
+                        setSingleDeleting(true)
+                        setSelectedIds([value.id])
+                      }
+                    : undefined
+                }
+              >
+                <ReactSVG src={DeleteIcon} />
               </DeleteWrapper>
             </Tooltip>
-          </div>
+          </Flex>
         </Flex>
-      )
-    }
+      ),
+    },
   ]
 
   return {
-    columns: columns as (ColumnGroupType<IFELeagueTeam> | ColumnType<IFELeagueTeam>)[]
+    columns: columns as (ColumnGroupType<IFELeagueTeam> | ColumnType<IFELeagueTeam>)[],
   }
 }
 
@@ -254,91 +261,95 @@ const useLeagueTeamTableRenderers = (): IRenderersReturn => {
   const navigate = useNavigate()
   const { copy } = useCopyContent()
 
-  const renderTeamName = useCallback((_: unknown, record: IFELeagueTeam) => (
-    <TextWithTooltip
-      maxLength={22}
-      text={record.name}
-      onClick={() => navigate(PATH_TO_LEAGUE_TEAMS + '/' + record.id)}
-    />
-  ), [])
+  const renderTeamName = useCallback(
+    (_: unknown, record: IFELeagueTeam) => (
+      <TextWithTooltip
+        maxLength={22}
+        text={record.name}
+        onClick={() => navigate(PATH_TO_LEAGUE_TEAMS + '/' + record.id)}
+      />
+    ),
+    [],
+  )
 
-  const renderLeague = useCallback((_: unknown, { league }: IFELeagueTeam) => (
-    <MonroeLinkText
-      inline={true}
-      underline={false}
-      onClick={() => navigate(PATH_TO_LEAGUE_PAGE + '/' + league?.id)}
-    >
-      {league?.name ? league.name : '-'}
-    </MonroeLinkText>
-  ), [])
+  const renderLeague = useCallback(
+    (_: unknown, { league }: IFELeagueTeam) => (
+      <MonroeLinkText inline={true} underline={false} onClick={() => navigate(PATH_TO_LEAGUE_PAGE + '/' + league?.id)}>
+        {league?.name ? league.name : '-'}
+      </MonroeLinkText>
+    ),
+    [],
+  )
 
-  const renderDivision = useCallback((_: unknown, { division }: IFELeagueTeam) => (
-    division?.name ? division.name : '-'
-  ), [])
+  const renderDivision = useCallback(
+    (_: unknown, { division }: IFELeagueTeam) => (division?.name ? division.name : '-'),
+    [],
+  )
 
-  const renderSubdivision = useCallback((_: unknown, { subdivision }: IFELeagueTeam) => (
-    subdivision?.name ? subdivision.name : '-'
-  ), [])
+  const renderSubdivision = useCallback(
+    (_: unknown, { subdivision }: IFELeagueTeam) => (subdivision?.name ? subdivision.name : '-'),
+    [],
+  )
 
-  const renderMasterTeam = useCallback((_: unknown, { masterTeam }: IFELeagueTeam) => (
-    <MonroeLinkText
-      inline={true}
-      underline={false}
-      onClick={() => navigate(PATH_TO_MASTER_TEAMS + '/' + masterTeam?.id)}
-    >
-      {masterTeam?.name ? masterTeam.name : <Tag icon={<CloseCircleOutlined />} color="orange">Waiting for MT</Tag>}
-    </MonroeLinkText>
-  ), [])
+  const renderMasterTeam = useCallback(
+    (_: unknown, { masterTeam }: IFELeagueTeam) => (
+      <MonroeLinkText
+        inline={true}
+        underline={false}
+        onClick={() => navigate(PATH_TO_MASTER_TEAMS + '/' + masterTeam?.id)}
+      >
+        {masterTeam?.name ? (
+          masterTeam.name
+        ) : (
+          <Tag icon={<CloseCircleOutlined />} color="orange">
+            Waiting for MT
+          </Tag>
+        )}
+      </MonroeLinkText>
+    ),
+    [],
+  )
 
-  const renderCoachName = useCallback((_: unknown, { headCoach }: IFELeagueTeam) => (
-    <MonroeLinkText
-      inline={true}
-      underline={false}
-      onClick={() => navigate(PATH_TO_USERS + '/' + headCoach?.id)}
-    >
-      {headCoach?.firstName && headCoach?.lastName
-        ? (`${headCoach?.firstName} ${headCoach?.lastName}`)
-        : '-'
-      }
-    </MonroeLinkText>
-  ), [])
+  const renderCoachName = useCallback(
+    (_: unknown, { headCoach }: IFELeagueTeam) => (
+      <MonroeLinkText inline={true} underline={false} onClick={() => navigate(PATH_TO_USERS + '/' + headCoach?.id)}>
+        {headCoach?.firstName && headCoach?.lastName ? `${headCoach?.firstName} ${headCoach?.lastName}` : '-'}
+      </MonroeLinkText>
+    ),
+    [],
+  )
 
   const renderCoachEmail = useCallback((_: unknown, { headCoach }: IFELeagueTeam) => {
     const email = headCoach?.email
     if (!email) return '-'
 
     return (
-      <Flex
-        align="center"
-        justify="space-between"
-        onClick={() => copy(email, EMAIL_COPIED_MESSAGE)}
-      >
+      <Flex align="center" justify="space-between" onClick={() => copy(email, EMAIL_COPIED_MESSAGE)}>
         <TextWithTooltip maxLength={21} text={email} isRegularText />
         <ReactSVG className="c-p mg-l4" src={CopyIcon} />
       </Flex>
     )
   }, [])
 
-  const renderTeamAdminName = useCallback((_: unknown, { adminData }: IFELeagueTeam) => (
-    <MonroeLinkText
-      inline={true}
-      underline={false}
-      onClick={() => navigate(PATH_TO_USERS + '/' + (adminData?.length ? adminData[0].id : ''))}
-    >
-      {adminData?.length && adminData[0].name}
-    </MonroeLinkText>
-  ), [])
+  const renderTeamAdminName = useCallback(
+    (_: unknown, { adminData }: IFELeagueTeam) => (
+      <MonroeLinkText
+        inline={true}
+        underline={false}
+        onClick={() => navigate(PATH_TO_USERS + '/' + (adminData?.length ? adminData[0].id : ''))}
+      >
+        {adminData?.length && adminData[0].name}
+      </MonroeLinkText>
+    ),
+    [],
+  )
 
   const renderTeamAdminEmail = useCallback((_: unknown, { adminData }: IFELeagueTeam) => {
     const email = adminData ? adminData[0].email : undefined
     if (!email) return '-'
 
     return (
-      <Flex
-        align="center"
-        justify="space-between"
-        onClick={() => copy(email, EMAIL_COPIED_MESSAGE)}
-      >
+      <Flex align="center" justify="space-between" onClick={() => copy(email, EMAIL_COPIED_MESSAGE)}>
         <TextWithTooltip maxLength={21} text={email} isRegularText />
         <ReactSVG className="c-p mg-l4" src={CopyIcon} />
       </Flex>
@@ -354,6 +365,6 @@ const useLeagueTeamTableRenderers = (): IRenderersReturn => {
     renderCoachName,
     renderCoachEmail,
     renderTeamAdminName,
-    renderTeamAdminEmail
+    renderTeamAdminEmail,
   }
 }
