@@ -3,6 +3,7 @@ import { ReactElement } from 'react'
 import { Tag } from '@/components/Tag.tsx'
 
 import { eventType } from '@/common/constants/events.ts'
+import { EMPTY_VALUE } from '@/common/constants'
 
 type TEventTypeTagProps = {
   type: number
@@ -64,5 +65,5 @@ export const EventTypeTag = (props: TEventTypeTagProps): ReactElement => {
     return <Tag color={typeMap[type].color} title={typeMap[type].name} />
   }
 
-  return <Tag color={typeMap[type].color} title={typeMap[5].name} />
+  return <>{EMPTY_VALUE}</>
 }
