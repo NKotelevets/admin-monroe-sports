@@ -887,6 +887,29 @@ form .ant-divider {
   border: 0;
 }
 
+.public-layout .ant-checkbox-inner {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 0;
+}
+
+.public-layout .ant-select-arrow {
+  svg {
+    fill: black;
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.public-layout .ant-select-selection-item {
+  font-size: 16px !important;
+}
+
+.public-layout .ant-select-arrow span svg, .ant-select-selection-search {
+  display: block !important
+}
+
 .public-layout :where(.css-dev-only-do-not-override-ftg7lt).ant-checkbox-checked .ant-checkbox-inner:after, .public-layout :where(.css-dev-only-do-not-override-155trlg).ant-checkbox .ant-checkbox-inner:after, .ant-checkbox-checked .ant-checkbox-inner:after {
   left: 7px !important;
 }
