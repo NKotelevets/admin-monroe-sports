@@ -13,7 +13,7 @@ import {
   TBulkEditResponseRaw,
   TEventBulkEditPayload,
   TEventCreationPayload,
-  TEventEditingPayload,
+  TEventEditingPayload, TEventImportErrors,
   TEventImportResponse,
   TEventImportTable,
   TListEventRequestParams,
@@ -172,29 +172,39 @@ export const eventsApi = createApi({
         body: file,
       }),
       transformResponse: (response: TEventImportResponse) => {
+        const mergedErrors = response.errors.reduce((acc, record) => {
+          const existingError = acc.find((item) => item.index === record.index)
+          if (existingError) {
+            existingError.error = `${existingError.error} ${record.error}`
+          } else {
+            acc.push({
+              status: record.type || '',
+              error: record.error,
+              index: record.index,
+              date: record.row.Date || '',
+              eventDescription: record.row['Event Description'],
+              type: record.row['Event Type'],
+              team1Name: record.row['Team 1 Name'],
+              team1Season: record.row['Team 1 Season'],
+              team1League: record.row['Team 1 League'],
+              team2Name: record.row['Team 2 Name'],
+              team2Season: record.row['Team 2 Season'],
+              team2League: record.row['Team 2 League'],
+              location: record.row.Location || '',
+              courtOrField: record.row['Court/Field'],
+              time: record.row['Start Time'] || '',
+              duration: record.row['Duration (in minutes)'] || 30,
+              zipCode: record.row['Zip Code'],
+              subResources: record.row['Sub Resource'],
+            })
+          }
+          return acc
+        }, [] as TEventImportErrors[])
+
         return {
           status: response.status,
           success: response.success,
-          errors: response.errors.map((record) => ({
-            status: record.type,
-            error: record.error,
-            index: record.index,
-            date: record.row.Date,
-            eventDescription: record.row['Event Description'],
-            type: record.row['Event Type'],
-            team1Name: record.row['Team 1 Name'],
-            team1Season: record.row['Team 1 Season'],
-            team1League: record.row['Team 1 League'],
-            team2Name: record.row['Team 2 Name'],
-            team2Season: record.row['Team 2 Season'],
-            team2League: record.row['Team 2 League'],
-            location: record.row.Location,
-            courtOrField: record.row['Court/Field'],
-            time: record.row['Start Time'],
-            duration: record.row['Duration (in minutes)'],
-            zipCode: record.row['Zip Code'],
-            subResources: record.row['Sub Resource'],
-          })),
+          errors: mergedErrors,
         } as TEventImportTable
       },
     }),

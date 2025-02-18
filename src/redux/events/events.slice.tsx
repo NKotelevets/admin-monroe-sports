@@ -72,6 +72,7 @@ export const eventsSlice = createSlice({
       })
       .addMatcher(eventsApi.endpoints.importEventsCSV.matchFulfilled, (state, action) => {
         state.createdIds = action.payload.success.map((event) => event.id)
+        state.importCSVTableRecords = []
         state.importCSVTableRecords = action.payload?.errors
       })
       .addMatcher(eventsApi.endpoints.bulkDeleteEvents.matchFulfilled, (state, action) => {
