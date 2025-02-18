@@ -13,6 +13,7 @@ import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 import { TInviteProps } from '@/common/types/account.ts'
 
 import CoachIllustration from '@/assets/images/onboarding/coach-invitation.svg'
+import { useDenyInviteMutation } from '@/redux/account/account.api.ts'
 
 const {
   Styles: { Title, Subtitle, Body },
@@ -31,10 +32,11 @@ const {
  * information about the invitation status and team details.
  */
 export const StaffInvitation = (props: TInviteProps): ReactElement => {
-  const { invite } = props
+  const { invite, accepted } = props
   const { user } = useUserSlice()
 
   const [api, contextHolder] = notification.useNotification()
+  const [denyInvite, { isLoading: isLoadingDeny }] = useDenyInviteMutation()
   const [acceptInvite, { isLoading }] = useAcceptInviteMutation()
 
   /**
@@ -46,7 +48,7 @@ export const StaffInvitation = (props: TInviteProps): ReactElement => {
    * @returns {void}
    */
   useEffect(() => {
-    if (!user || !invite) return
+    if (!user || !invite || accepted === false) return
 
     acceptInvite({ invite_id: invite.id, users_ids: [user.id] })
       .unwrap()
@@ -58,9 +60,25 @@ export const StaffInvitation = (props: TInviteProps): ReactElement => {
           placement: 'bottomRight',
         })
       })
-  }, [user, invite])
+  }, [user, invite, accepted])
 
-  if (isLoading)
+
+  useEffect(() => {
+    if (!user || !invite || accepted === true || accepted === undefined) return
+
+    denyInvite({ userId: user.id, inviteId: invite.id, usersIds: [user.id] })
+      .unwrap()
+      .then(() => {})
+      .catch((error) => {
+        api.error({
+          message: `Could not deny invitation`,
+          description: error?.details || error?.detail || 'Please, try again later.',
+          placement: 'bottomRight',
+        })
+      })
+  }, [user, invite, accepted])
+
+  if (isLoading || isLoadingDeny)
     return (
       <Body centered>
         <Spin indicator={<LoadingOutlined spin />} size="large" />

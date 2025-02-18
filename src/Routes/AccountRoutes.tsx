@@ -53,6 +53,7 @@ export const AccountRoutes = () => {
         <Route path={normalizePath(PATH_TO_ACCOUNT_REQUEST_RESET_PASSWORD)} element={<RequestPasswordReset />} />
         <Route path={`${normalizePath(PATH_TO_ACCOUNT_RESET_PASSWORD)}/:token`} element={<ResetPassword />} />
         <Route path={`${normalizePath(PATH_TO_ACCOUNT_INVITATIONS)}`} element={<Invitations />} />
+        <Route path={`${normalizePath(PATH_TO_ACCOUNT_INVITATIONS)}/:token/:accepted`} element={<Invitations />} />
         <Route path={`${normalizePath(PATH_TO_ACCOUNT_INVITATIONS)}/:token`} element={<Invitations />} />
       </Routes>
     </AuthProvider>

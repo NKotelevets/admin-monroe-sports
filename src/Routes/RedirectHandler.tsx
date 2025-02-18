@@ -13,11 +13,11 @@ const redirectMap: Record<string, string> = {
 }
 
 export function RedirectHandler({ basePath }: { basePath: string }) {
-  const { token } = useParams()
+  const { token, accepted } = useParams()
   const newPath = redirectMap[basePath]
 
   return newPath ? (
-    <Navigate replace to={`${newPath}/${token ? token : ''}`} />
+    <Navigate replace to={`${newPath}/${token ? token : ''}${accepted ? `/${accepted}` : ''}`}  />
   ) : (
     <Navigate to="/404" />
   )

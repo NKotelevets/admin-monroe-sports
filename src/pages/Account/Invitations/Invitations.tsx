@@ -44,7 +44,7 @@ const {
  * - Components: Page, Body, Spin, LoadingOutlined, ChildInvitation, StaffInvitation, PlayerInvitation.
  */
 const Invitations = () => {
-  const { token } = useParams<{ token: string }>()
+  const { token, accepted: acceptedString } = useParams<{ token: string, accepted?: string }>()
   const { user } = useUserSlice()
   const { access } = useAuthSlice()
 
@@ -56,6 +56,11 @@ const Invitations = () => {
 
   const [invites, setInvites] = useState<IInvite[]>([])
   const [currentInvite, setCurrentInvite] = useState<undefined | null | IInvite>(undefined)
+
+  const accepted = useMemo(() => {
+    if (acceptedString === undefined) return undefined
+    return acceptedString === 'true'
+  }, [acceptedString])
 
   /**
    * Function to fetch an invitation details using a token.
@@ -165,23 +170,23 @@ const Invitations = () => {
     if (currentInvite === null) return <NoInvitations />
     if (currentInvite === undefined || !user) return <Spin indicator={<LoadingOutlined spin />} size="large" />
     if (user.isChild && currentInvite.invite_type === INVITE_TYPE_NAMED.SUPERVISED)
-      return <ChildInvitation invite={currentInvite} callback={nextInvitation} />
+      return <ChildInvitation invite={currentInvite} callback={nextInvitation} accepted={accepted} />
 
     if (
       currentInvite.invite_type === INVITE_TYPE_NAMED.SUPERVISED ||
       currentInvite.invite_type === INVITE_TYPE_NAMED.SUPERVISOR
     )
-      return <FamilyInvitation invite={currentInvite} callback={nextInvitation} />
+      return <FamilyInvitation invite={currentInvite} callback={nextInvitation} accepted={accepted} />
 
     if (
       currentInvite.invite_type === INVITE_TYPE_NAMED.COACH ||
       currentInvite.invite_type === INVITE_TYPE_NAMED.HEAD_COACH ||
       currentInvite.invite_type === INVITE_TYPE_NAMED.TEAM_ADMIN
     )
-      return <StaffInvitation invite={currentInvite} callback={nextInvitation} />
+      return <StaffInvitation invite={currentInvite} callback={nextInvitation} accepted={accepted} />
 
-    return <PlayerInvitation invite={currentInvite} callback={nextInvitation} />
-  }, [currentInvite, user])
+    return <PlayerInvitation invite={currentInvite} callback={nextInvitation} accepted={accepted} />
+  }, [currentInvite, user, accepted])
 
   return (
     <Page centered={!(user?.isChild || currentInvite?.invite_type === INVITE_TYPE_NAMED.PLAYER)}>

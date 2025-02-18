@@ -1,18 +1,19 @@
 import { LoadingOutlined } from '@ant-design/icons'
 import styled from '@emotion/styled'
 import { Flex, Row, Spin, notification } from 'antd'
-import { ReactElement, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
+
+import { FamilyInvitationAccepted } from '@/pages/Account/Invitations/FamilyInvitation/FamilyInvitationAccepted.tsx'
 
 import { Layout } from '@/layouts/PublicLayout'
 
+import { useDenyInviteMutation } from '@/redux/account/account.api.ts'
 import { useAcceptInviteMutation } from '@/redux/auth/auth.api.ts'
 import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 
 import { TInviteProps } from '@/common/types/account.ts'
 
 import FamilyIllustration from '@/assets/images/onboarding/family-invitation.svg'
-import { FamilyInvitationAccepted } from '@/pages/Account/Invitations/FamilyInvitation/FamilyInvitationAccepted.tsx'
-import { useDenyInviteMutation } from '@/redux/account/account.api.ts'
 
 const {
   Styles: { Title, Subtitle, Body, LargeButton },
@@ -29,7 +30,7 @@ const {
  * @returns {ReactElement} A React element that renders the invitation details and interaction options.
  */
 export const FamilyInvitation = (props: TInviteProps): ReactElement => {
-  const { invite } = props
+  const { invite, accepted } = props
   const { user } = useUserSlice()
 
   const [api, contextHolder] = notification.useNotification()
@@ -79,6 +80,25 @@ export const FamilyInvitation = (props: TInviteProps): ReactElement => {
       })
   }
 
+  /**
+   * Handles an invitation response based on the acceptance status.
+   *
+   * Executes `onAcceptInvite` if the invite is accepted,
+   * otherwise executes `onDenyInvite`. Does nothing if
+   * the acceptance status is undefined.
+   *
+   * @function
+   */
+  useEffect(() => {
+    if (accepted === undefined) return
+
+    if (accepted) {
+      onAcceptInvite()
+    } else {
+      onDenyInvite()
+    }
+  }, [accepted])
+
   if (isLoading)
     return (
       <Body centered>
@@ -88,10 +108,12 @@ export const FamilyInvitation = (props: TInviteProps): ReactElement => {
     )
 
   if (invitationAccepted) {
-    return <FamilyInvitationAccepted
-      familyName={invite.inviter?.lastName || user?.lastName || ''}
-      userName={invite.children.map(child => child.firstName).join(',') || ''}
-    />
+    return (
+      <FamilyInvitationAccepted
+        familyName={invite.inviter?.lastName || user?.lastName || ''}
+        userName={invite.children.map((child) => child.firstName).join(',') || ''}
+      />
+    )
   }
 
   return (
