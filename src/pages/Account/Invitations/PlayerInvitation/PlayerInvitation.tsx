@@ -1,6 +1,6 @@
 import styled from '@emotion/styled'
 import { Flex, notification } from 'antd'
-import { ReactElement, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 
 import { CreateSupervisedUserModal } from '@/pages/Account/Invitations/PlayerInvitation/CreateSupervisedUserModal.tsx'
 import { UserCheckbox } from '@/pages/Account/Invitations/PlayerInvitation/UserCheckbox.tsx'
@@ -31,7 +31,7 @@ const {
  * @returns {ReactElement} The PlayerInvitation component or null if no user exists.
  */
 export const PlayerInvitation = (props: TInviteProps): ReactElement => {
-  const { invite } = props
+  const { invite, accepted } = props
   const { user } = useUserSlice()
 
   const [acceptInvite, { isLoading }] = useAcceptInviteMutation()
@@ -40,6 +40,19 @@ export const PlayerInvitation = (props: TInviteProps): ReactElement => {
   const [invitationAccepted, setInvitationAccepted] = useState(false)
   const [selectedAthletes, setSelectedAthletes] = useState([user!.id])
   const [createdSupervisedUsers, setCreatedSupervisedUsers] = useState<IChildren[] | null>(null)
+
+  /**
+   * Handles the submission logic based on the state of the `accepted` variable.
+   * If `accepted` is undefined, the function exits early.
+   * If `accepted` is true, the `onSubmit` function is called.
+   */
+  useEffect(() => {
+    if (accepted === undefined) return
+
+    if (accepted) {
+      onSubmit()
+    }
+  }, [accepted])
 
   /**
    * Handles the selection and deselection of an athlete based on their ID.
