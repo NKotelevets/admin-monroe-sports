@@ -1,19 +1,21 @@
 import { LoadingOutlined } from '@ant-design/icons'
 import styled from '@emotion/styled'
 import { Spin, notification } from 'antd'
-import { ReactElement, useEffect } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
+
+import InvitationDenied from '@/pages/Account/Invitations/InvitationDenied.tsx'
 
 import { AppDownloadCTA } from '@/components/AppDownloadCTA.tsx'
 
 import { Layout } from '@/layouts/PublicLayout'
 
+import { useDenyInviteMutation } from '@/redux/account/account.api.ts'
 import { useAcceptInviteMutation } from '@/redux/auth/auth.api.ts'
 import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 
 import { TInviteProps } from '@/common/types/account.ts'
 
 import CoachIllustration from '@/assets/images/onboarding/coach-invitation.svg'
-import { useDenyInviteMutation } from '@/redux/account/account.api.ts'
 
 const {
   Styles: { Title, Subtitle, Body },
@@ -38,6 +40,7 @@ export const StaffInvitation = (props: TInviteProps): ReactElement => {
   const [api, contextHolder] = notification.useNotification()
   const [denyInvite, { isLoading: isLoadingDeny }] = useDenyInviteMutation()
   const [acceptInvite, { isLoading }] = useAcceptInviteMutation()
+  const [invitationDenied, setInvitationDenied] = useState(false)
 
   /**
    * Accepts an invitation for the user and handles possible errors during the process.
@@ -71,7 +74,6 @@ export const StaffInvitation = (props: TInviteProps): ReactElement => {
       })
   }, [user, invite, accepted])
 
-
   useEffect(() => {
     if (!user || !invite || accepted === true || accepted === undefined) return
 
@@ -83,9 +85,7 @@ export const StaffInvitation = (props: TInviteProps): ReactElement => {
           description: 'You have successfully denied the invitation.',
           placement: 'bottomRight',
         })
-        setTimeout(() => {
-          callback && callback()
-        }, 2000)
+        setInvitationDenied(true)
       })
       .catch((error) => {
         api.error({
@@ -102,6 +102,10 @@ export const StaffInvitation = (props: TInviteProps): ReactElement => {
         <Spin indicator={<LoadingOutlined spin />} size="large" />
       </Body>
     )
+
+  if (invitationDenied) {
+    return <InvitationDenied teamName={invite.team!.name} role={'coach'} />
+  }
 
   return (
     <Body centered>
