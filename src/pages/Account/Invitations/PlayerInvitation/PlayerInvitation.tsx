@@ -13,6 +13,7 @@ import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 import { IChildren } from '@/common/interfaces/user.ts'
 import { TInviteProps } from '@/common/types/account.ts'
 import { PlayerInvitationAccepted } from '@/pages/Account/Invitations/PlayerInvitation/PlayerInvitationAccepted.tsx'
+import InvitationDenied from '@/pages/Account/Invitations/InvitationDenied.tsx'
 
 const {
   Styles: { Title, Subtitle, Body, LargeButton },
@@ -37,7 +38,7 @@ export const PlayerInvitation = (props: TInviteProps): ReactElement => {
   const [acceptInvite, { isLoading }] = useAcceptInviteMutation()
   const [api, contextHolder] = notification.useNotification()
 
-  const [invitationAccepted, setInvitationAccepted] = useState(false)
+  const [invitationStatus, setInvitationStatus] = useState<'accepted' | 'denied' | 'none'>('none')
   const [selectedAthletes, setSelectedAthletes] = useState([user!.id])
   const [createdSupervisedUsers, setCreatedSupervisedUsers] = useState<IChildren[] | null>(null)
 
@@ -51,6 +52,8 @@ export const PlayerInvitation = (props: TInviteProps): ReactElement => {
 
     if (accepted) {
       onSubmit()
+    } else {
+      denyInvitation()
     }
   }, [accepted])
 
@@ -76,7 +79,7 @@ export const PlayerInvitation = (props: TInviteProps): ReactElement => {
   )
 
   /**
-   * Handles the submission of an invite acceptance.
+   * Handles the submission of an invitation acceptance.
    *
    * Submits the invitation acceptance request with the invite ID and selected
    * user IDs. On success, it sets the invitation as accepted. On failure, it
@@ -86,7 +89,7 @@ export const PlayerInvitation = (props: TInviteProps): ReactElement => {
     acceptInvite({ invite_id: invite.id, users_ids: selectedAthletes })
       .unwrap()
       .then(() => {
-        setInvitationAccepted(true)
+        setInvitationStatus('accepted')
       })
       .catch((error) => {
         api.error({
@@ -97,8 +100,32 @@ export const PlayerInvitation = (props: TInviteProps): ReactElement => {
       })
   }
 
-  if (invitationAccepted) {
+  /**
+   * Denies an invitation and updates the invitation status. Handles errors if the operation fails.
+   *
+   * @return {Promise<void>} A promise that resolves when the invitation is successfully denied or rejects with an error if the operation fails.
+   */
+  const denyInvitation = () => {
+    acceptInvite({ invite_id: invite.id, users_ids: [user!.id] })
+      .unwrap()
+      .then(() => {
+        setInvitationStatus('denied')
+      })
+      .catch((error) => {
+        api.error({
+          message: `Could not deny invitation`,
+          description: error?.details || error?.detail || 'Please, try again later.',
+          placement: 'bottomRight',
+        })
+      })
+  }
+
+  if (invitationStatus === 'accepted') {
     return <PlayerInvitationAccepted teamName={invite.team!.name} />
+  }
+
+  if (invitationStatus === 'denied') {
+    return <InvitationDenied teamName={invite.team!.name} role={'player'} />
   }
 
   return (

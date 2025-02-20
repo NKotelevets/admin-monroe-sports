@@ -4,6 +4,7 @@ import { Flex, Row, Spin, notification } from 'antd'
 import { ReactElement, useEffect, useState } from 'react'
 
 import { FamilyInvitationAccepted } from '@/pages/Account/Invitations/FamilyInvitation/FamilyInvitationAccepted.tsx'
+import InvitationDenied from '@/pages/Account/Invitations/InvitationDenied.tsx'
 
 import { Layout } from '@/layouts/PublicLayout'
 
@@ -30,13 +31,13 @@ const {
  * @returns {ReactElement} A React element that renders the invitation details and interaction options.
  */
 export const FamilyInvitation = (props: TInviteProps): ReactElement => {
-  const { invite, accepted, callback } = props
+  const { invite, accepted } = props
   const { user } = useUserSlice()
 
   const [api, contextHolder] = notification.useNotification()
   const [acceptInvite, { isLoading }] = useAcceptInviteMutation()
   const [denyInvite, { isLoading: isLoadingDeny }] = useDenyInviteMutation()
-  const [invitationAccepted, setInvitationAccepted] = useState(false)
+  const [invitationStatus, setInvitationStatus] = useState<'accepted' | 'denied' | 'none'>('none')
 
   /**
    * Handles the action of accepting an invitation.
@@ -50,7 +51,7 @@ export const FamilyInvitation = (props: TInviteProps): ReactElement => {
     acceptInvite({ invite_id: invite.id, users_ids: [user.id] })
       .unwrap()
       .then(() => {
-        setInvitationAccepted(true)
+        setInvitationStatus('accepted')
       })
       .catch((error) => {
         api.error({
@@ -76,9 +77,7 @@ export const FamilyInvitation = (props: TInviteProps): ReactElement => {
           description: 'You have successfully denied the invitation.',
           placement: 'bottomRight',
         })
-        setTimeout(() => {
-          callback && callback()
-        }, 2000)
+        setInvitationStatus('denied')
       })
       .catch((error) => {
         api.error({
@@ -116,13 +115,17 @@ export const FamilyInvitation = (props: TInviteProps): ReactElement => {
       </Body>
     )
 
-  if (invitationAccepted) {
+  if (invitationStatus === 'accepted') {
     return (
       <FamilyInvitationAccepted
         familyName={invite.inviter?.lastName || user?.lastName || ''}
         userName={invite.children.map((child) => child.firstName).join(',') || ''}
       />
     )
+  }
+
+  if (invitationStatus === 'denied') {
+    return <InvitationDenied teamName={invite.inviter?.lastName || user?.lastName || ''} role={'family'} />
   }
 
   return (
