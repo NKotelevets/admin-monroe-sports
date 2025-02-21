@@ -910,7 +910,7 @@ form .ant-divider {
   display: block !important
 }
 
-.public-layout :where(.css-dev-only-do-not-override-ftg7lt).ant-checkbox-checked .ant-checkbox-inner:after, .public-layout :where(.css-dev-only-do-not-override-155trlg).ant-checkbox .ant-checkbox-inner:after, .ant-checkbox-checked .ant-checkbox-inner:after {
+.public-layout :where(.css-dev-only-do-not-override-ftg7lt).ant-checkbox-checked .ant-checkbox-inner:after, .public-layout :where(.css-dev-only-do-not-override-155trlg).ant-checkbox .ant-checkbox-inner:after, .public-layout .ant-checkbox-checked .ant-checkbox-inner:after {
   left: 7px !important;
 }
 
