@@ -21,7 +21,7 @@ interface ISeasonsSliceState {
   offset: number
   total: number
   ordering: string | null
-  createdRecordsNames: { name: string; showIcon: boolean }[]
+  createdRecordsNames: { id: string; name: string; showIcon: boolean }[]
   deletedRecordsErrors: IDeletionSeasonItemError[]
   tableRecords: IImportSeasonTableRecord[]
   duplicates: ISeasonDuplicate[]
@@ -131,6 +131,7 @@ export const seasonsSlice = createSlice({
         const errors = action.payload.errors || []
 
         state.createdRecordsNames = success.map((item) => ({
+          id: item.id,
           name: item.name,
           showIcon: false,
         }))

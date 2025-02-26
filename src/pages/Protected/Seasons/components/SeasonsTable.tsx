@@ -234,7 +234,7 @@ const SeasonsTable: FC<ISeasonsTableTableProps> = ({
         loading={isLoading || isFetching}
         onChange={handleTableChange}
         rowClassName={(record) =>
-          showCreatedRecords && createdRecordsNames.find((cRN) => cRN.name === record.name) ? 'highlighted-row' : ''
+          showCreatedRecords && createdRecordsNames.find((cRN) => cRN.id === record.id) ? 'highlighted-row' : ''
         }
         rowSelection={{
           type: 'checkbox',
