@@ -5,6 +5,7 @@ import LogIn from '@/pages/Account/LogIn/LogIn.tsx'
 import RequestPasswordReset from '@/pages/Account/RequestPasswordReset/RequestPasswordReset.tsx'
 import ResetPassword from '@/pages/Account/ResetPassword/ResetPassword.tsx'
 import SignUp from '@/pages/Account/SignUp/SignUp.tsx'
+import Onboarding from '@/pages/Account/Onboarding/Oboarding.tsx'
 
 import InfoAlert from '@/components/InfoAlert.tsx'
 import Notification from '@/components/Notification.tsx'
@@ -15,12 +16,14 @@ import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 import AuthProvider from '@/utils/AuthProvider.tsx'
 
 import {
+  PATH_TO_ACCOUNT_CREATE_PASSWORD,
   PATH_TO_ACCOUNT_INVITATIONS,
-  PATH_TO_ACCOUNT_LOGIN,
+  PATH_TO_ACCOUNT_LOGIN, PATH_TO_ACCOUNT_ONBOARDING,
   PATH_TO_ACCOUNT_REQUEST_RESET_PASSWORD,
   PATH_TO_ACCOUNT_RESET_PASSWORD,
   PATH_TO_ACCOUNT_SIGNUP
 } from '@/common/constants/paths.ts'
+import CreatePassword from '@/pages/Account/CreatePassword.tsx'
 
 /**
  * Functional component routing the account-related pages.
@@ -52,6 +55,11 @@ export const AccountRoutes = () => {
         <Route path={normalizePath(PATH_TO_ACCOUNT_SIGNUP)} element={<SignUp />} />
         <Route path={normalizePath(PATH_TO_ACCOUNT_REQUEST_RESET_PASSWORD)} element={<RequestPasswordReset />} />
         <Route path={`${normalizePath(PATH_TO_ACCOUNT_RESET_PASSWORD)}/:token`} element={<ResetPassword />} />
+        <Route path={`${normalizePath(PATH_TO_ACCOUNT_ONBOARDING)}/:token`} element={<Onboarding />} />
+        <Route path={`${normalizePath(PATH_TO_ACCOUNT_ONBOARDING)}/:token/:accepted`} element={<Onboarding />} />
+        <Route path={`${normalizePath(PATH_TO_ACCOUNT_CREATE_PASSWORD)}`} element={<CreatePassword />} />
+        <Route path={`${normalizePath(PATH_TO_ACCOUNT_CREATE_PASSWORD)}/:token`} element={<CreatePassword />} />
+        <Route path={`${normalizePath(PATH_TO_ACCOUNT_CREATE_PASSWORD)}/:token/:accepted`} element={<CreatePassword />} />
         <Route path={`${normalizePath(PATH_TO_ACCOUNT_INVITATIONS)}`} element={<Invitations />} />
         <Route path={`${normalizePath(PATH_TO_ACCOUNT_INVITATIONS)}/:token/:accepted`} element={<Invitations />} />
         <Route path={`${normalizePath(PATH_TO_ACCOUNT_INVITATIONS)}/:token`} element={<Invitations />} />

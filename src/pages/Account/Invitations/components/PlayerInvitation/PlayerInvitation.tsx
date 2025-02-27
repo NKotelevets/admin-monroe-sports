@@ -2,8 +2,8 @@ import styled from '@emotion/styled'
 import { Flex, notification } from 'antd'
 import { ReactElement, useEffect, useState } from 'react'
 
-import { CreateSupervisedUserModal } from '@/pages/Account/Invitations/PlayerInvitation/CreateSupervisedUserModal.tsx'
-import { UserCheckbox } from '@/pages/Account/Invitations/PlayerInvitation/UserCheckbox.tsx'
+import { CreateSupervisedUserModal } from '@/pages/Account/Invitations/components/PlayerInvitation/CreateSupervisedUserModal.tsx'
+import { UserCheckbox } from '@/pages/Account/Invitations/components/PlayerInvitation/UserCheckbox.tsx'
 
 import { Layout } from '@/layouts/PublicLayout'
 
@@ -12,8 +12,8 @@ import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 
 import { IChildren } from '@/common/interfaces/user.ts'
 import { TInviteProps } from '@/common/types/account.ts'
-import { PlayerInvitationAccepted } from '@/pages/Account/Invitations/PlayerInvitation/PlayerInvitationAccepted.tsx'
-import InvitationDenied from '@/pages/Account/Invitations/InvitationDenied.tsx'
+import { PlayerInvitationAccepted } from '@/pages/Account/Invitations/components/PlayerInvitation/PlayerInvitationAccepted.tsx'
+import InvitationDenied from '@/pages/Account/Invitations/components/InvitationDenied.tsx'
 
 const {
   Styles: { Title, Subtitle, Body, LargeButton },

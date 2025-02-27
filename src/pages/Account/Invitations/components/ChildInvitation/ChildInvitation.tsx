@@ -2,14 +2,14 @@ import { notification } from 'antd'
 import { Formik } from 'formik'
 import { ReactElement, useState } from 'react'
 
-import { ParenInviteSent } from '@/pages/Account/Invitations/ChildInvitation/ParentInviteSent.tsx'
-import { childFlowSchema } from '@/pages/Account/Invitations/ChildInvitation/validation.tsx'
+import { ParenInviteSent } from '@/pages/Account/Invitations/components/ChildInvitation/ParentInviteSent.tsx'
+import { childFlowSchema } from '@/pages/Account/Invitations/components/ChildInvitation/validation.tsx'
 
 import TextInput from '@/components/Inputs/TextInput.tsx'
 
 import { Layout } from '@/layouts/PublicLayout'
 
-import { useSendInviteMutation } from '@/redux/account/account.api'
+import { useSendInviteMutation } from '@/redux/account/account.api.ts'
 import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 
 import { INVITE_TYPE_NAMED } from '@/common/constants'

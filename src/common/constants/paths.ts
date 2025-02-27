@@ -11,6 +11,8 @@ export const PATH_TO_ACCOUNT_LOGIN = '/accounts/login'
 export const PATH_TO_ACCOUNT_SIGNUP = '/accounts/signup'
 export const PATH_TO_ACCOUNT_REQUEST_RESET_PASSWORD = '/accounts/request-reset-password'
 export const PATH_TO_ACCOUNT_RESET_PASSWORD = '/accounts/reset-password'
+export const PATH_TO_ACCOUNT_ONBOARDING = '/accounts/onboarding'
+export const PATH_TO_ACCOUNT_CREATE_PASSWORD = '/accounts/create-password'
 export const PATH_TO_ACCOUNT_INVITATIONS = '/accounts/invitations'
 
 // LEAGUES & TOURNAMENTS PAGES

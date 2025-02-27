@@ -3,8 +3,8 @@ import styled from '@emotion/styled'
 import { Flex, Row, Spin, notification } from 'antd'
 import { ReactElement, useEffect, useState } from 'react'
 
-import { FamilyInvitationAccepted } from '@/pages/Account/Invitations/FamilyInvitation/FamilyInvitationAccepted.tsx'
-import InvitationDenied from '@/pages/Account/Invitations/InvitationDenied.tsx'
+import { FamilyInvitationAccepted } from '@/pages/Account/Invitations/components/FamilyInvitation/FamilyInvitationAccepted.tsx'
+import InvitationDenied from '@/pages/Account/Invitations/components/InvitationDenied.tsx'
 
 import { Layout } from '@/layouts/PublicLayout'
 

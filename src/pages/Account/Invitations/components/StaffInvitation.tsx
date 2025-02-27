@@ -3,7 +3,7 @@ import styled from '@emotion/styled'
 import { Spin, notification } from 'antd'
 import { ReactElement, useEffect, useState } from 'react'
 
-import InvitationDenied from '@/pages/Account/Invitations/InvitationDenied.tsx'
+import InvitationDenied from '@/pages/Account/Invitations/components/InvitationDenied.tsx'
 
 import { AppDownloadCTA } from '@/components/AppDownloadCTA.tsx'
 

@@ -4,10 +4,10 @@ import { Navigate, useParams } from 'react-router-dom'
 // Define specific old paths that need redirection
 const redirectMap: Record<string, string> = {
   'create-new-password': '/accounts/reset-password',
-  'invite-coach': '/accounts/invitations',
-  'invite-player': '/accounts/invitations',
-  'invite-parent': '/accounts/invitations',
-  'child-parent': '/accounts/invitations',
+  'invite-coach': '/accounts/onboarding',
+  'invite-player': '/accounts/onboarding',
+  'invite-parent': '/accounts/onboarding',
+  'child-parent': '/accounts/onboarding',
   'sign-up': '/accounts/signup',
   'create-password-child-invitation': '/invitations',
 }

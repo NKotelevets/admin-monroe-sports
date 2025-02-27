@@ -3,15 +3,18 @@ import { Spin, notification } from 'antd'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-import { ChildInvitation } from '@/pages/Account/Invitations/ChildInvitation/ChildInvitation.tsx'
-import { FamilyInvitation } from '@/pages/Account/Invitations/FamilyInvitation/FamilyInvitation.tsx'
-import { NoInvitations } from '@/pages/Account/Invitations/NoInvitations.tsx'
-import { PlayerInvitation } from '@/pages/Account/Invitations/PlayerInvitation/PlayerInvitation.tsx'
-import { StaffInvitation } from '@/pages/Account/Invitations/StaffInvitation.tsx'
+import { ChildInvitation } from '@/pages/Account/Invitations/components/ChildInvitation/ChildInvitation.tsx'
+import { FamilyInvitation } from '@/pages/Account/Invitations/components/FamilyInvitation/FamilyInvitation.tsx'
+import { NoInvitations } from '@/pages/Account/Invitations/components/NoInvitations.tsx'
+import { PlayerInvitation } from '@/pages/Account/Invitations/components/PlayerInvitation/PlayerInvitation.tsx'
+import { StaffInvitation } from '@/pages/Account/Invitations/components/StaffInvitation.tsx'
 
 import { Layout } from '@/layouts/PublicLayout'
 
-import { useLazyGetInviteByIdQuery, useLazyInviteListQuery } from '@/redux/account/account.api.ts'
+import {
+  useLazyGetInviteByIdQuery,
+  useLazyInviteListQuery
+} from '@/redux/account/account.api.ts'
 import { useAuthSlice } from '@/redux/hooks/useAuthSlice.ts'
 import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 import { useLazyGetUserQuery } from '@/redux/user/user.api.ts'

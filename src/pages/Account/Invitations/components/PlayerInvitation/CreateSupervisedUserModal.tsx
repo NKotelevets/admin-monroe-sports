@@ -5,8 +5,8 @@ import dayjs, { Dayjs } from 'dayjs'
 import { Formik, FormikHelpers } from 'formik'
 import React, { ReactElement, useEffect, useState } from 'react'
 
-import { ImageUploadField } from '@/pages/Account/Invitations/PlayerInvitation/ImageUploadField.tsx'
-import { addFamilyMemberSchema } from '@/pages/Account/Invitations/PlayerInvitation/validation.ts'
+import { ImageUploadField } from '@/pages/Account/Invitations/components/PlayerInvitation/ImageUploadField.tsx'
+import { addFamilyMemberSchema } from '@/pages/Account/Invitations/components/PlayerInvitation/validation.ts'
 
 import InputWrapper from '@/components/Inputs/InputWrapper.tsx'
 import TextInput from '@/components/Inputs/TextInput.tsx'
