@@ -126,10 +126,10 @@ export const accountApi = createApi({
      * Fetches user information based on a token (sent to user's email).
      *
      * @function
-     * @name getInviteById
+     * @name getPrefilledData
      * @param {Object} args - The arguments object.
      * @param {string} args.token - The invitation token.
-     * @returns {Object} Query configuration for fetching the team info.
+     * @returns {Object} Object containing user and invitation data.
      */
     getPrefilledData: builder.query<IPrefilledUserData, { token: string }>({
       query: ({ token }) => ({
@@ -137,6 +137,13 @@ export const accountApi = createApi({
         method: 'GET',
       }),
       transformResponse: (response: IBEPrefilledUserData) => transformKeysToCamelCase(response),
+    }),
+    createPassword: builder.mutation<void, { userId: string; inviteId: string; usersIds?: string[] }>({
+      query: (body) => ({
+        url: `users/${body.userId}/decline-invite`, // FIXME
+        body: { users_ids: body.usersIds, invite_id: body.inviteId },
+        method: 'POST',
+      }),
     }),
     /**
      * Mutation for sending an invitation to a user.
@@ -188,6 +195,7 @@ export const {
   useResetPasswordMutation,
   useSignUpMutation,
   useLazyGetPrefilledDataQuery,
+  useCreatePasswordMutation,
   useLazyGetInviteByIdQuery,
   useLazyInviteListQuery,
   useSendInviteMutation,

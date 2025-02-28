@@ -65,7 +65,7 @@ export const authApi = createApi({
      * @param {string[]} [body.users_ids] - Optional array of user IDs associated with the invitation.
      * @returns {void}
      */
-    acceptInvite: builder.mutation<void, { invite_id: string; users_ids?: string[] }>({
+    acceptInvite: builder.mutation<void, { invite_id: string; users_ids?: string[]; password?: string }>({
       query: (body) => ({
         url: 'users/accept-invite',
         body,

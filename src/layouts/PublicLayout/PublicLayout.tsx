@@ -10,10 +10,15 @@ export interface IPublicLayoutProps {
   children: React.ReactNode
   showFooter?: boolean
   centered?: boolean
+  inline?: boolean
 }
 
 const PublicLayout = (props: IPublicLayoutProps) => {
-  const { showFooter, centered, children } = props
+  const { showFooter, centered, children, inline } = props
+
+  if (inline) {
+    return children
+  }
 
   return (
     <Page className="public-layout">

@@ -23,6 +23,7 @@ const Root = (): ReactElement => (
     <Route path="/invite-player/:token" element={<RedirectHandler basePath="invite-player" />} />
     <Route path="/invite-parent/:token" element={<RedirectHandler basePath="invite-parent" />} />
     <Route path="/child-parent/:token" element={<RedirectHandler basePath="child-parent" />} />
+    <Route path="/invite-user/:token" element={<RedirectHandler basePath="invite-user" />} />
 
     <Route path="/invite-coach/:token/:accepted" element={<RedirectHandler basePath="invite-coach" />} />
     <Route path="/invite-player/:token/:accepted" element={<RedirectHandler basePath="invite-player" />} />

@@ -8,6 +8,7 @@ const redirectMap: Record<string, string> = {
   'invite-player': '/accounts/onboarding',
   'invite-parent': '/accounts/onboarding',
   'child-parent': '/accounts/onboarding',
+  'invite-user': '/accounts/onboarding',
   'sign-up': '/accounts/signup',
   'create-password-child-invitation': '/invitations',
 }

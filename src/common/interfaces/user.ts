@@ -85,6 +85,7 @@ export interface IFEUser {
   emergencyContactName: string
   emergencyContactPhone: string
   isActive: boolean
+  isNewUser?: boolean
   isSuperuser: boolean
   roles: string[]
   teams: string[]

@@ -1,17 +1,14 @@
 import { LoadingOutlined } from '@ant-design/icons'
 import { Spin } from 'antd'
-import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-
+import { useEffect } from 'react'
 import { InvitationError } from '@/pages/Account/Onboarding/components/InvitationError.tsx'
 import { InvitationExpired } from '@/pages/Account/Onboarding/components/InvitationExpired.tsx'
 
 import { Layout } from '@/layouts/PublicLayout'
 
-import { useLazyGetPrefilledDataQuery } from '@/redux/account/account.api.ts'
+import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
 
-import { PATH_TO_ACCOUNT_CREATE_PASSWORD, PATH_TO_ACCOUNT_INVITATIONS } from '@/common/constants/paths.ts'
-import { IFEUser, IInvitation } from '@/common/interfaces/user.ts'
+import { useInvitation } from '@/hooks/useInvitation.ts'
 
 const {
   Page,
@@ -45,39 +42,9 @@ const {
  * - Shows `InvitationExpired` or `InvitationError` components if applicable.
  */
 const Onboarding = () => {
-  const navigate = useNavigate()
+  const { userData, invitation, invitationExpired, hasErrors, token } = useInvitation()
+  const { receiveInvitation } = useAccountSlice()
 
-  const { token, accepted: acceptedString } = useParams<{ token: string; accepted?: string }>()
-
-  const [getPrefilledData] = useLazyGetPrefilledDataQuery()
-  const [userData, setUserData] = useState<IFEUser | null>(null)
-  const [invitation, setInvitation] = useState<IInvitation | null>(null)
-  const [invitationExpired, setInvitationExpired] = useState(false)
-  const [hasErrors, setHasErrors] = useState(false)
-
-  /**
-   * Processes a token to fetch prefilled data and handle the response.
-   * If the token is invalid or an error occurs, updates relevant states.
-   * Updates user data and invitation if retrieved successfully.
-   * Handles cases where the invitation is expired or errors occur during the process.
-   */
-  useEffect(() => {
-    if (!token) return
-    const payload = { token: token?.split('?')[0]?.split('&')[0] || '' }
-    getPrefilledData(payload)
-      .unwrap()
-      .then((response) => {
-        if (response?.invitation === undefined) {
-          setInvitationExpired(true)
-          return
-        }
-        setUserData(response.userData)
-        setInvitation(response.invitation)
-      })
-      .catch(() => {
-        setHasErrors(true)
-      })
-  }, [token])
 
   /**
    * Redirects the user based on their activation status and invitation token.
@@ -98,11 +65,12 @@ const Onboarding = () => {
   useEffect(() => {
     if (!userData || !invitation) return
 
-    if (userData.isActive) {
-      navigate(`/accounts/login?prev=${PATH_TO_ACCOUNT_INVITATIONS}/${token}/${acceptedString}`, { replace: true })
-    } else {
-      navigate(`${PATH_TO_ACCOUNT_CREATE_PASSWORD}/${token}/${acceptedString}`, { replace: true })
-    }
+    receiveInvitation({
+      userData,
+      invitation,
+      token: token || '',
+    })
+
   }, [userData, invitation])
 
   return (
