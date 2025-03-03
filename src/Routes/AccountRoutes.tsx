@@ -1,5 +1,4 @@
-import { useEffect } from 'react'
-import { Route, Routes, useNavigate } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 
 import CreatePassword from '@/pages/Account/CreatePassword/CreatePassword.tsx'
 import Invitations from '@/pages/Account/Invitations/Invitations.tsx'
@@ -12,23 +11,15 @@ import SignUp from '@/pages/Account/SignUp/SignUp.tsx'
 import InfoAlert from '@/components/InfoAlert.tsx'
 import Notification from '@/components/Notification.tsx'
 
-import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
 import { useAuthSlice } from '@/redux/hooks/useAuthSlice.ts'
 import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
-
-import { useInvitation } from '@/hooks/useInvitation.ts'
 
 import AuthProvider from '@/utils/AuthProvider.tsx'
 
 import {
   PATH_TO_ACCOUNT_INVITATIONS,
-  PATH_TO_ACCOUNT_INVITATION_ERROR,
-  PATH_TO_ACCOUNT_INVITATION_EXPIRED,
-  PATH_TO_ACCOUNT_INVITE_PARENT,
   PATH_TO_ACCOUNT_LOGIN,
   PATH_TO_ACCOUNT_ONBOARDING,
-  PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA,
-  PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PARENT_DATA,
   PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD,
   PATH_TO_ACCOUNT_REQUEST_RESET_PASSWORD,
   PATH_TO_ACCOUNT_RESET_PASSWORD,
@@ -44,61 +35,14 @@ import {
  * @constant {Function} AccountRoutes - Component managing account-related routing.
  */
 export const AccountRoutes = () => {
-  const navigate = useNavigate()
-
-  const { status, receiveInvitation, setError, setExpired } = useAccountSlice()
   const { access, refresh } = useAuthSlice()
   const { user } = useUserSlice()
-  const { userData, invitation, invitationExpired, hasErrors, acceptedString, token } = useInvitation()
-
   let redirect = PATH_TO_ACCOUNT_INVITATIONS
 
   if (access && refresh && user) {
     if (user.invitations.length) {
       redirect = `${PATH_TO_ACCOUNT_INVITATIONS}/${user.invitations[0].id}`
     }
-  }
-
-  useEffect(() => {
-    if (hasErrors) setError()
-    if (invitationExpired) setExpired()
-
-    if (!userData || !invitation || !token) return
-
-    receiveInvitation({
-      userData,
-      invitation,
-      token,
-    })
-  }, [userData, invitation, token])
-
-  if (status === 'expired') {
-    navigate(`${PATH_TO_ACCOUNT_INVITATION_EXPIRED}/${token}/${acceptedString}`, { replace: true })
-  }
-
-  if (status === 'error') {
-    navigate(`${PATH_TO_ACCOUNT_INVITATION_ERROR}/${token}/${acceptedString}`, { replace: true })
-  }
-
-  if (status === 'createPassword') {
-    navigate(`${PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD}/${token}/${acceptedString}`, { replace: true })
-  }
-
-  if (status === 'confirmData') {
-    navigate(`${PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA}/${token}/${acceptedString}`, { replace: true })
-  }
-
-  if (status === 'confirmParentData') {
-    navigate(`${PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PARENT_DATA}/${token}/${acceptedString}`, { replace: true })
-  }
-
-  if (status === 'pending' || status === 'requestLogin') {
-    navigate(`/accounts/login?prev=${PATH_TO_ACCOUNT_INVITATIONS}/${token}/${acceptedString}`, { replace: true })
-  }
-
-  if (status === 'under16') {
-    // TODO: check if token is needed at this point
-    navigate(`${PATH_TO_ACCOUNT_INVITE_PARENT}/${token}/${acceptedString}`, { replace: true })
   }
 
   return (

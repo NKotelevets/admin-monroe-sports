@@ -1,12 +1,10 @@
 import { LoadingOutlined } from '@ant-design/icons'
 import { Spin } from 'antd'
-import { useEffect } from 'react'
+
 import { InvitationError } from '@/pages/Account/Onboarding/components/InvitationError.tsx'
 import { InvitationExpired } from '@/pages/Account/Onboarding/components/InvitationExpired.tsx'
 
 import { Layout } from '@/layouts/PublicLayout'
-
-import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
 
 import { useInvitation } from '@/hooks/useInvitation.ts'
 
@@ -42,41 +40,12 @@ const {
  * - Shows `InvitationExpired` or `InvitationError` components if applicable.
  */
 const Onboarding = () => {
-  const { userData, invitation, invitationExpired, hasErrors, token } = useInvitation()
-  const { receiveInvitation } = useAccountSlice()
-
-
-  /**
-   * Redirects the user based on their activation status and invitation token.
-   *
-   * If the user is active, navigates to the login page with the previous URL set to the invitation path.
-   * If the user is inactive, navigates to the account creation password page with the token and acceptance string.
-   *
-   * Preconditions:
-   * - `userData` and `invitation` must be defined.
-   * - The `userData` object must contain an `is_active` property.
-   *
-   * @param {Object} userData - The user data object containing activation status.
-   * @param {Object} invitation - The invitation data required for navigation.
-   * @param {string} token - The invitation token used for navigation.
-   * @param {string} acceptedString - Indicator of the invitation acceptance status.
-   * @param {Function} navigate - Function for handling navigation between routes.
-   */
-  useEffect(() => {
-    if (!userData || !invitation) return
-
-    receiveInvitation({
-      userData,
-      invitation,
-      token: token || '',
-    })
-
-  }, [userData, invitation])
+  const { invitationExpired, hasErrors, loaded } = useInvitation()
 
   return (
     <Page centered>
       <Body>
-        {!invitationExpired && <Spin indicator={<LoadingOutlined spin />} size="large" />}
+        {!loaded && <Spin indicator={<LoadingOutlined spin />} size="large" />}
         {invitationExpired && <InvitationExpired />}
         {hasErrors && !invitationExpired && <InvitationError />}
       </Body>

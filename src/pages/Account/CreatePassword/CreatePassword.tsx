@@ -32,7 +32,7 @@ type TCreatePasswordForm = {
 }
 
 const CreatePassword = () => {
-  const { invitation, invitationExpired, hasErrors, token } = useInvitation()
+  const { invitation, invitationExpired, hasErrors, token, nextStep } = useInvitation()
   const { handleErrors, nonFieldErrors } = useFieldErrors<TCreatePasswordForm>(false)
 
   const [createPassword, { isLoading }] = useAcceptInviteMutation()
@@ -79,12 +79,7 @@ const CreatePassword = () => {
     createPassword({ invite_id: invitation.id, password: values.newPassword })
       .unwrap()
       .then(() => {
-        api.success({
-          message: 'Password changed successfully',
-          description: 'You can now sign in with your new password.',
-          placement: 'bottomRight'
-        })
-        setTimeout(() => navigate(PATH_TO_ACCOUNT_LOGIN), 3000)
+        nextStep()
       })
       .catch(handleErrors(setErrors, errorsCallback))
       .catch(() => {
