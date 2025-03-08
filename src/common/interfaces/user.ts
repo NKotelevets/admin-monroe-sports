@@ -15,6 +15,28 @@ export interface IInvite {
   team: IFEMasterTeam | null
 }
 
+export interface IInvitation {
+  id: string
+  email: string
+  inviter: IFEUser | null
+  inviteType: number
+  isAdminInvite: boolean
+  visible: boolean
+  children: IChildren[]
+  team: IFEMasterTeam | null
+  createdAt: string
+}
+
+export interface IBEPrefilledUserData {
+  user_data: IBEUser
+  invitation: IInvite
+}
+
+export interface IPrefilledUserData {
+  userData: IFEUser
+  invitation: IInvitation
+}
+
 export interface IBEUser {
   id: string
   email: string
@@ -63,7 +85,9 @@ export interface IFEUser {
   emergencyContactName: string
   emergencyContactPhone: string
   isActive: boolean
+  isNewUser?: boolean
   isSuperuser: boolean
+  isChild?: boolean
   roles: string[]
   teams: string[]
   invitations: IInvite[]

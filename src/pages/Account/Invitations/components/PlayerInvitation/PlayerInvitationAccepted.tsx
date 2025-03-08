@@ -19,7 +19,7 @@ const {
  * @param {string} props.teamName - The name of the team the player has joined.
  * @return {ReactElement} A React component rendering the success message and additional information.
  */
-export const PlayerInvitationAccepted = (props: {teamName: string}): ReactElement => {
+export const PlayerInvitationAccepted = (props: {teamName?: string}): ReactElement => {
   const { teamName } = props
 
   return (

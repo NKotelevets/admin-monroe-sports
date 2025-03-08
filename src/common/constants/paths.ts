@@ -12,6 +12,19 @@ export const PATH_TO_ACCOUNT_SIGNUP = '/accounts/signup'
 export const PATH_TO_ACCOUNT_REQUEST_RESET_PASSWORD = '/accounts/request-reset-password'
 export const PATH_TO_ACCOUNT_RESET_PASSWORD = '/accounts/reset-password'
 export const PATH_TO_ACCOUNT_INVITATIONS = '/accounts/invitations'
+export const PATH_TO_ACCOUNT_INVITE_PARENT = '/accounts/invite-parent'
+export const PATH_TO_ACCOUNT_INVITATION_EXPIRED = '/accounts/invitation-expired'
+export const PATH_TO_ACCOUNT_INVITATION_ERROR = '/accounts/invitation-error'
+
+// ONBOARDING PAGES
+export const PATH_TO_ACCOUNT_ONBOARDING = '/accounts/onboarding'
+export const PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA = '/accounts/onboarding/confirm-data'
+export const PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PARENT_DATA = '/accounts/onboarding/confirm-parent-data'
+export const PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD = '/accounts/onboarding/create-password'
+export const PATH_TO_ACCOUNT_ONBOARDING_INVITATION = '/accounts/invitation'
+export const PATH_TO_ACCOUNT_ONBOARDING_INVITE_PARENT = '/accounts/invite-parent'
+export const PATH_TO_ACCOUNT_ONBOARDING_SIGNUP = PATH_TO_ACCOUNT_SIGNUP
+
 
 // LEAGUES & TOURNAMENTS PAGES
 export const PATH_TO_LEAGUES = '/leagues-and-tournaments'

@@ -8,14 +8,14 @@ export type TChildFlowForm = {
 
 export type TSendInvitePayload = {
   inviteType: number
-  teamId: string
+  teamId?: string
   emails: string[]
   childrenIds: string[]
 }
 
 export type TInviteProps = {
-  invite: IInvite
-  callback: () => void
+  invite?: IInvite
+  callback?: () => void
   accepted?: boolean
 }
 

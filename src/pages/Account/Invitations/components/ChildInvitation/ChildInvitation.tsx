@@ -1,22 +1,24 @@
-import { notification } from 'antd'
+import { notification, Spin } from 'antd'
 import { Formik } from 'formik'
-import { ReactElement, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 
-import { ParenInviteSent } from '@/pages/Account/Invitations/ChildInvitation/ParentInviteSent.tsx'
-import { childFlowSchema } from '@/pages/Account/Invitations/ChildInvitation/validation.tsx'
+import { childFlowSchema } from '@/pages/Account/Invitations/components/ChildInvitation/validation.tsx'
 
 import TextInput from '@/components/Inputs/TextInput.tsx'
 
 import { Layout } from '@/layouts/PublicLayout'
 
-import { useSendInviteMutation } from '@/redux/account/account.api'
-import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
+import { useSendInviteMutation } from '@/redux/account/account.api.ts'
+
+import { useInvitation } from '@/hooks/useInvitation.ts'
 
 import { INVITE_TYPE_NAMED } from '@/common/constants'
 import { TChildFlowForm, TInviteProps, TSendInvitePayload } from '@/common/types/account.ts'
+import { LoadingOutlined } from '@ant-design/icons'
+import { transformKeysToCamelCase } from '@/utils'
 
 const {
-  Styles: { Title, Subtitle, FormStyled, LargeButton },
+  Styles: { Title, Subtitle, FormStyled, LargeButton, Body },
 } = Layout
 
 /**
@@ -26,20 +28,25 @@ const {
  * when the user is under 16 years old. This component includes a form with appropriate validation
  * and handles the logic for sending an invitation to a supervisor.
  *
- * @param {TInviteProps} props - The properties passed to the component, including invite details.
- * @returns {ReactElement} Returns a JSX.Element for rendering the ChildInvitation component.
+ * @returns {ReactElement} Returns a ReactElement for rendering the ChildInvitation component.
  */
 export const ChildInvitation = (props: TInviteProps): ReactElement => {
-  const { invite } = props
-  const { user } = useUserSlice()
+  const { invite: _invite } = props
+  const { invitation: _invitation, userData: user, nextStep } = useInvitation()
 
   const [sendInvite, { isLoading }] = useSendInviteMutation()
-  const [inviteSent, setInviteSent] = useState(false)
   const [api, contextHolder] = notification.useNotification()
+  const [invite, setInvite] = useState(_invitation)
 
   const initialValues: TChildFlowForm = {
     email: '',
   }
+
+  useEffect(() => {
+    if(_invite) {
+      setInvite(transformKeysToCamelCase(_invite))
+    }
+  }, [_invite])
 
   /**
    * Handles form submission to send an invitation to a supervisor.
@@ -49,16 +56,17 @@ export const ChildInvitation = (props: TInviteProps): ReactElement => {
   const onSubmit = (values: TChildFlowForm): void => {
     const payload: TSendInvitePayload = {
       inviteType: INVITE_TYPE_NAMED.SUPERVISOR,
-      teamId: invite.team!.id,
+      teamId: invite?.team?.id || undefined,
       emails: [values.email],
       childrenIds: [user!.id],
     }
 
     sendInvite(payload)
       .unwrap()
-      .then(() => setInviteSent(true))
+      .then(() => {
+        nextStep()
+      })
       .catch((error) => {
-        setInviteSent(false)
         api.error({
           message: 'Something went wrong',
           description:
@@ -68,9 +76,13 @@ export const ChildInvitation = (props: TInviteProps): ReactElement => {
       })
   }
 
-  if (inviteSent) {
-    return <ParenInviteSent />
-  }
+
+  if (isLoading || !invite)
+    return (
+      <Body centered>
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </Body>
+    )
 
   return (
     <>

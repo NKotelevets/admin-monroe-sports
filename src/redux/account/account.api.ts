@@ -6,7 +6,7 @@ import baseQueryWithReAuth from '@/redux/reauthBaseQuery.ts'
 
 import { transformKeysToCamelCase, transformKeysToSnakeCase } from '@/utils'
 
-import { IInvite } from '@/common/interfaces/user.ts'
+import { IBEPrefilledUserData, IInvite, IPrefilledUserData } from '@/common/interfaces/user.ts'
 import {
   TCreateSupervisedUserPayload,
   TCreateSupervisedUserResponse,
@@ -123,6 +123,29 @@ export const accountApi = createApi({
       }),
     }),
     /**
+     * Fetches user information based on a token (sent to user's email).
+     *
+     * @function
+     * @name getPrefilledData
+     * @param {Object} args - The arguments object.
+     * @param {string} args.token - The invitation token.
+     * @returns {Object} Object containing user and invitation data.
+     */
+    getPrefilledData: builder.query<IPrefilledUserData, { token: string }>({
+      query: ({ token }) => ({
+        url: `users/get-prefilled-data?invitation_token=${decodeURIComponent(token)}`,
+        method: 'GET',
+      }),
+      transformResponse: (response: IBEPrefilledUserData) => transformKeysToCamelCase(response),
+    }),
+    createPassword: builder.mutation<void, { userId: string; inviteId: string; usersIds?: string[] }>({
+      query: (body) => ({
+        url: `users/${body.userId}/decline-invite`, // FIXME
+        body: { users_ids: body.usersIds, invite_id: body.inviteId },
+        method: 'POST',
+      }),
+    }),
+    /**
      * Mutation for sending an invitation to a user.
      *
      * @function sendInvite
@@ -171,6 +194,8 @@ export const {
   useRequestResetPasswordMutation,
   useResetPasswordMutation,
   useSignUpMutation,
+  useLazyGetPrefilledDataQuery,
+  useCreatePasswordMutation,
   useLazyGetInviteByIdQuery,
   useLazyInviteListQuery,
   useSendInviteMutation,

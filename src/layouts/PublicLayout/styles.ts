@@ -47,6 +47,10 @@ const FormStyled = styled(Form)`
   width: 100%;
   padding: 0 50px;
 
+  & svg {
+    width: inherit;
+  }
+
   @media (max-width: 768px) {
     padding: 0;
   }
