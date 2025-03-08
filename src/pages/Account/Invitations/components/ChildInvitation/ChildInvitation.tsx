@@ -36,17 +36,17 @@ export const ChildInvitation = (props: TInviteProps): ReactElement => {
 
   const [sendInvite, { isLoading }] = useSendInviteMutation()
   const [api, contextHolder] = notification.useNotification()
-  const [invite, setInvite] = useState(_invitation)
+  const [invite, setInvite] = useState(_invite)
 
   const initialValues: TChildFlowForm = {
     email: '',
   }
 
   useEffect(() => {
-    if(_invite) {
-      setInvite(transformKeysToCamelCase(_invite))
+    if(_invitation) {
+      setInvite(transformKeysToCamelCase(_invitation))
     }
-  }, [_invite])
+  }, [_invitation])
 
   /**
    * Handles form submission to send an invitation to a supervisor.
