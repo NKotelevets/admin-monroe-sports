@@ -62,14 +62,14 @@ export const receiveInvitationThunk = createAsyncThunk(
       }
     }
 
-    if (payload.userData?.isNewUser && payload.userData.isChild) {
+    if (payload.userData?.isNewUser && !payload.userData.isChild) {
       return {
         status: 'createPassword',
         payload,
       }
     }
 
-    if (payload.userData?.isNewUser && !payload.userData.isChild) {
+    if (payload.userData?.isNewUser && payload.userData.isChild) {
       return {
         status: 'under16',
         payload,
