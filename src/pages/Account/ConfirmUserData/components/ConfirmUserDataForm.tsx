@@ -122,10 +122,10 @@ export const ConfirmUserDataForm = ({ isLoading }: { isLoading: boolean }): Reac
           Privacy policy
         </Link>
       </CheckboxStyled>
-      <Button loading={isLoading} type="primary" onSubmit={() => onsubmit('player')} disabled={!isValid}>
+      <Button loading={isLoading} type="primary" onClick={() => onsubmit('player')} disabled={!isValid}>
         Confirm As Player Info
       </Button>
-      <Button loading={isLoading} danger onSubmit={() => onsubmit('guardian')} disabled={!isValid || isUnder16}>
+      <Button loading={isLoading} danger onClick={() => onsubmit('guardian')} disabled={!isValid || isUnder16}>
         Confirm As Guardian Info
       </Button>
     </Fields>

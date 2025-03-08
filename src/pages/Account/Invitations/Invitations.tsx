@@ -57,7 +57,7 @@ const Invitations = () => {
   const [getInviteByToken] = useLazyGetInviteByIdQuery()
   const [api, contextHolder] = notification.useNotification()
 
-  const [invites, setInvites] = useState<IInvite[]>([])
+  const [, setInvites] = useState<IInvite[]>([])
   const [currentInvite, setCurrentInvite] = useState<undefined | null | IInvite>(undefined)
 
   const accepted = useMemo(() => {
@@ -147,15 +147,15 @@ const Invitations = () => {
    *
    * @function
    */
-  const nextInvitation = () => {
-    if (!invites.length) return setCurrentInvite(null)
-    const nextIndex = invites.findIndex((invite) => invite.id === currentInvite?.id) + 1
-    if (nextIndex <= invites.length) {
-      setCurrentInvite(invites[nextIndex])
-    } else {
-      setCurrentInvite(null)
-    }
-  }
+  // const nextInvitation = () => {
+  //   if (!invites.length) return setCurrentInvite(null)
+  //   const nextIndex = invites.findIndex((invite) => invite.id === currentInvite?.id) + 1
+  //   if (nextIndex <= invites.length) {
+  //     setCurrentInvite(invites[nextIndex])
+  //   } else {
+  //     setCurrentInvite(null)
+  //   }
+  // }
 
   /**
    * Memoized variable that determines and returns the appropriate content
@@ -173,22 +173,23 @@ const Invitations = () => {
     if (currentInvite === null) return <NoInvitations />
     if (currentInvite === undefined || !user) return <Spin indicator={<LoadingOutlined spin />} size="large" />
     if (user.isChild && currentInvite.invite_type === INVITE_TYPE_NAMED.SUPERVISED)
-      return <ChildInvitation invite={currentInvite} callback={nextInvitation} accepted={accepted} />
+      return <ChildInvitation invite={currentInvite} accepted={accepted} />
 
     if (
       currentInvite.invite_type === INVITE_TYPE_NAMED.SUPERVISED ||
       currentInvite.invite_type === INVITE_TYPE_NAMED.SUPERVISOR
     )
-      return <FamilyInvitation invite={currentInvite} callback={nextInvitation} accepted={accepted} />
+      return <FamilyInvitation invite={currentInvite} accepted={accepted} />
 
     if (
       currentInvite.invite_type === INVITE_TYPE_NAMED.COACH ||
       currentInvite.invite_type === INVITE_TYPE_NAMED.HEAD_COACH ||
       currentInvite.invite_type === INVITE_TYPE_NAMED.TEAM_ADMIN
-    )
-      return <StaffInvitation invite={currentInvite} callback={nextInvitation} accepted={accepted} />
+    ) {
+      return <StaffInvitation invite={currentInvite} accepted={accepted} />
+    }
 
-    return <PlayerInvitation invite={currentInvite} callback={nextInvitation} accepted={accepted} />
+    return <PlayerInvitation invite={currentInvite} accepted={accepted} />
   }, [currentInvite, user, accepted])
 
   return (

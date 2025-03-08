@@ -8,12 +8,14 @@ import { UserCheckbox } from '@/pages/Account/Invitations/components/PlayerInvit
 import { Layout } from '@/layouts/PublicLayout'
 
 import { useAcceptInviteMutation } from '@/redux/auth/auth.api.ts'
-import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 
 import { IChildren } from '@/common/interfaces/user.ts'
 import { TInviteProps } from '@/common/types/account.ts'
 import { PlayerInvitationAccepted } from '@/pages/Account/Invitations/components/PlayerInvitation/PlayerInvitationAccepted.tsx'
 import InvitationDenied from '@/pages/Account/Invitations/components/InvitationDenied.tsx'
+import { useInvitation } from '@/hooks/useInvitation.ts'
+import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
+import { transformKeysToCamelCase } from '@/utils'
 
 const {
   Styles: { Title, Subtitle, Body, LargeButton },
@@ -32,15 +34,24 @@ const {
  * @returns {ReactElement} The PlayerInvitation component or null if no user exists.
  */
 export const PlayerInvitation = (props: TInviteProps): ReactElement => {
-  const { invite, accepted } = props
-  const { user } = useUserSlice()
+  const { invite: _invite } = props
+  const { invitation: _invitation, userData: _userData, accepted, loaded } = useInvitation()
+  const {user: _user} = useUserSlice()
 
   const [acceptInvite, { isLoading }] = useAcceptInviteMutation()
   const [api, contextHolder] = notification.useNotification()
 
+  const [user, setUser] = useState(_userData)
   const [invitationStatus, setInvitationStatus] = useState<'accepted' | 'denied' | 'none'>('none')
-  const [selectedAthletes, setSelectedAthletes] = useState([user!.id])
+  const [selectedAthletes, setSelectedAthletes] = useState(user?.id ? [user?.id] : [])
   const [createdSupervisedUsers, setCreatedSupervisedUsers] = useState<IChildren[] | null>(null)
+  const [invite, setInvite] = useState(_invitation)
+
+  useEffect(() => {
+    if(_invite) {
+      setInvite(transformKeysToCamelCase(_invite))
+    }
+  }, [_invite])
 
   /**
    * Handles the submission logic based on the state of the `accepted` variable.
@@ -57,6 +68,12 @@ export const PlayerInvitation = (props: TInviteProps): ReactElement => {
     }
   }, [accepted])
 
+  useEffect(() => {
+    if (_user) {
+      setUser(_user)
+    }
+  }, [_user])
+
   /**
    * Handles the selection and deselection of an athlete based on their ID.
    * Toggles the athlete's ID in the selectedAthletes list.
@@ -72,7 +89,7 @@ export const PlayerInvitation = (props: TInviteProps): ReactElement => {
     }
   }
 
-  if (!user) return (
+  if (!user && loaded) return (
     <Body>
       Nothing to show here.
     </Body>
@@ -86,7 +103,7 @@ export const PlayerInvitation = (props: TInviteProps): ReactElement => {
    * displays an error notification to the user.
    */
   const onSubmit = () => {
-    acceptInvite({ invite_id: invite.id, users_ids: selectedAthletes })
+    acceptInvite({ invite_id: invite?.id || '', users_ids: selectedAthletes })
       .unwrap()
       .then(() => {
         setInvitationStatus('accepted')
@@ -106,7 +123,7 @@ export const PlayerInvitation = (props: TInviteProps): ReactElement => {
    * @return {Promise<void>} A promise that resolves when the invitation is successfully denied or rejects with an error if the operation fails.
    */
   const denyInvitation = () => {
-    acceptInvite({ invite_id: invite.id, users_ids: [user!.id] })
+    acceptInvite({ invite_id: invite?.id || '', users_ids: [user!.id] })
       .unwrap()
       .then(() => {
         setInvitationStatus('denied')
@@ -120,18 +137,22 @@ export const PlayerInvitation = (props: TInviteProps): ReactElement => {
       })
   }
 
+  if (!user || !invite) {
+    return <InvitationDenied teamName={invite?.team?.name || 'team'} role={'player'} />
+  }
+
   if (invitationStatus === 'accepted') {
-    return <PlayerInvitationAccepted teamName={invite.team!.name} />
+    return <PlayerInvitationAccepted teamName={invite?.team?.name || 'team'} />
   }
 
   if (invitationStatus === 'denied') {
-    return <InvitationDenied teamName={invite.team!.name} role={'player'} />
+    return <InvitationDenied teamName={invite?.team?.name || 'team'} role={'player'} />
   }
 
   return (
     <Body centered>
       {contextHolder}
-      <Title>Welcome to {invite.team!.name}</Title>
+      <Title>Welcome to {invite?.team?.name || 'team'}</Title>
       <Subtitle small>Please submit the info for the player who is being added to {invite.team!.name}</Subtitle>
 
       <Wrap vertical>
@@ -143,7 +164,7 @@ export const PlayerInvitation = (props: TInviteProps): ReactElement => {
           name={`${user.firstName} ${user.lastName}`}
         />
 
-        {[...(user.asParent?.filter((child) => child.firstName) || []), ...(createdSupervisedUsers || [])].map(
+        {[...(invite?.children?.filter((child) => child.firstName) || []), ...(createdSupervisedUsers || [])].map(
           (child) => (
             <UserCheckbox
               id={child.id}

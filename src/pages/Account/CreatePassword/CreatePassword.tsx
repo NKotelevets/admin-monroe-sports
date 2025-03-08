@@ -1,6 +1,6 @@
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons'
 import { notification } from 'antd'
-import { Formik, FormikHelpers } from 'formik'
+import { Formik } from 'formik'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -20,6 +20,7 @@ import { useAcceptInviteMutation } from '@/redux/auth/auth.api.ts'
 import { useInvitation } from '@/hooks/useInvitation.ts'
 import { InvitationExpired } from '@/pages/Account/Onboarding/components/InvitationExpired.tsx'
 import { InvitationError } from '@/pages/Account/Onboarding/components/InvitationError.tsx'
+import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
 
 const {
   Page,
@@ -33,9 +34,10 @@ type TCreatePasswordForm = {
 
 const CreatePassword = () => {
   const { invitation, invitationExpired, hasErrors, token, nextStep } = useInvitation()
-  const { handleErrors, nonFieldErrors } = useFieldErrors<TCreatePasswordForm>(false)
+  const { nonFieldErrors } = useFieldErrors<TCreatePasswordForm>(false)
+  const { setTempPassword } = useAccountSlice()
 
-  const [createPassword, { isLoading }] = useAcceptInviteMutation()
+  const [, { isLoading }] = useAcceptInviteMutation()
   const [api, contextHolder] = notification.useNotification()
 
   const navigate = useNavigate()
@@ -72,23 +74,25 @@ const CreatePassword = () => {
   const renderEyeIcon = (visible: boolean) =>
     visible ? <EyeOutlined style={styles.icon} /> : <EyeInvisibleOutlined style={styles.icon} />
 
-  const onSubmit = (values: TCreatePasswordForm, { setErrors }: FormikHelpers<TCreatePasswordForm>): void => {
+  const onSubmit = (values: TCreatePasswordForm): void => {
     if (!invitation) return
+    setTempPassword(values.newPassword)
+    return nextStep()
 
-    // FIXME: this will probably change (waiting Andrey's feedback)
-    createPassword({ invite_id: invitation.id, password: values.newPassword })
-      .unwrap()
-      .then(() => {
-        nextStep()
-      })
-      .catch(handleErrors(setErrors, errorsCallback))
-      .catch(() => {
-        api.error({
-          message: 'Something went wrong',
-          description: 'We were unable to change your password. Please, try again.',
-          placement: 'bottomRight'
-        })
-      })
+    // // FIXME: this will probably change (waiting Andrey's feedback)
+    // createPassword({ invite_id: invitation.id, password: values.newPassword })
+    //   .unwrap()
+    //   .then(() => {
+    //     nextStep()
+    //   })
+    //   .catch(handleErrors(setErrors, errorsCallback))
+    //   .catch(() => {
+    //     api.error({
+    //       message: 'Something went wrong',
+    //       description: 'We were unable to change your password. Please, try again.',
+    //       placement: 'bottomRight'
+    //     })
+    //   })
   }
 
   if (invitationExpired) {

@@ -1,18 +1,19 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import { useLazyGetPrefilledDataQuery } from '@/redux/account/account.api.ts'
-
-import { IFEUser, IInvitation } from '@/common/interfaces/user.ts'
+import { receiveInvitationThunk } from '@/redux/account/account.slice.tsx'
 import { useAppDispatch } from '@/redux/hooks.ts'
 import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
-import { receiveInvitationThunk } from '@/redux/account/account.slice.tsx'
+
 import {
-  PATH_TO_ACCOUNT_INVITATIONS, PATH_TO_ACCOUNT_INVITE_PARENT,
-  PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA, PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PARENT_DATA,
-  PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD
+  PATH_TO_ACCOUNT_INVITATIONS,
+  PATH_TO_ACCOUNT_INVITE_PARENT,
+  PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA,
+  PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PARENT_DATA,
+  PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD, PATH_TO_ACCOUNT_ONBOARDING_INVITATION, PATH_TO_ACCOUNT_ONBOARDING_SIGNUP
 } from '@/common/constants/paths.ts'
-import dayjs from 'dayjs'
+import { IFEUser, IInvitation } from '@/common/interfaces/user.ts'
 
 type TUseInvitation = {
   userData: IFEUser | null
@@ -20,9 +21,11 @@ type TUseInvitation = {
   invitationExpired: boolean
   hasErrors: boolean
   acceptedString: string | undefined
+  accepted: boolean | undefined
   token: string | undefined
   loaded: boolean
   nextStep(): void
+  navigateToCurrentStep(): void
 }
 
 /**
@@ -41,13 +44,14 @@ type TUseInvitation = {
  * }} An object containing the user data, invitation information, invitation expiration status, error status, and acceptance status string.
  */
 export const useInvitation = (): TUseInvitation => {
+  const { status, setError, setExpired, setConfirmData, setCreatePassword, setPending, setSignUp } = useAccountSlice()
+  const { token, accepted: acceptedString } = useParams<{ token: string; accepted?: string }>()
+
   const navigate = useNavigate()
   const location = useLocation()
   const hasDispatched = useRef(false)
   const dispatch = useAppDispatch()
 
-  const { status, setError, setExpired, setConfirmData, setUnder16, setPending} = useAccountSlice()
-  const { token, accepted: acceptedString } = useParams<{ token: string; accepted?: string }>()
 
   const [getPrefilledData] = useLazyGetPrefilledDataQuery()
   const [userData, setUserData] = useState<IFEUser | null>(null)
@@ -55,6 +59,7 @@ export const useInvitation = (): TUseInvitation => {
   const [invitationExpired, setInvitationExpired] = useState(false)
   const [hasErrors, setHasErrors] = useState(false)
   const [loaded, setLoaded] = useState(false)
+  const [accepted, setAccepted] = useState<boolean | undefined>(undefined)
 
   /**
    * Processes a token to fetch prefilled data and handle the response.
@@ -75,8 +80,12 @@ export const useInvitation = (): TUseInvitation => {
         setUserData(response.userData)
         setInvitation(response.invitation)
       })
-      .catch(() => {
+      .catch(reason => {
+        if (reason.status === 404) {
+          setSignUp({ callback: navigateToCurrentStep, params: false })
+        } else {
         setHasErrors(true)
+        }
       })
       .finally(() => {
         setLoaded(true)
@@ -84,80 +93,85 @@ export const useInvitation = (): TUseInvitation => {
   }, [token])
 
   useEffect(() => {
-    _nextStep()
-  }, [loaded])
+    if (acceptedString) {
+      const _accepted = acceptedString?.split('?')[0]?.split('&')[0]
+      setAccepted(_accepted === 'undefined' || _accepted === undefined ? undefined : (_accepted === 'true'))
+    }
+  }, [acceptedString])
 
   const nextStep = () => {
     if (status === 'createPassword') {
-      setConfirmData()
-      _nextStep()
+      setConfirmData({ callback: navigateToCurrentStep, params: false })
     } else if (status === 'confirmData') {
-      if (dayjs().diff(dayjs(userData?.birthDate, 'YYYY-MM-DD'), 'years') < 16) {
-        setUnder16()
-        _nextStep()
-      } else {
-        setPending()
-        _nextStep()
-      }
+      setPending({ callback: navigateToCurrentStep, params: false })
     } else if (status === 'confirmParentData') {
-      setPending()
-      _nextStep()
+      setPending({ callback: navigateToCurrentStep, params: false})
     } else if (status === 'under16') {
-      setPending()
-      _nextStep()
+      setCreatePassword({ callback: navigateToCurrentStep, params: false})
     }
   }
 
-  const _nextStep = () => {
-    if (!loaded) return
-    if (hasErrors) setError()
-    if (invitationExpired) setExpired()
+  useEffect(() => {
+    navigateToCurrentStep(false)
+  }, [status])
 
-    // ✅ Only dispatch once per render cycle
-    if (!hasDispatched.current && !hasErrors && !invitationExpired) {
-      hasDispatched.current = true
-      dispatch(
-        receiveInvitationThunk({
-          userData: userData || undefined,
-          invitation: invitation || undefined,
-          token: token || undefined,
-        }),
-      )
-    }
+  const navigateToCurrentStep = useCallback(
+    (shouldDispatch = true) => {
+      if (!loaded) return
+      if (hasErrors) setError()
+      if (invitationExpired) setExpired()
 
-    let newPath = null
+      // ✅ Only dispatch once per render cycle
+      if (shouldDispatch && !hasDispatched.current && !hasErrors && !invitationExpired) {
+        hasDispatched.current = true
+        dispatch(
+          receiveInvitationThunk({
+            userData: userData || undefined,
+            invitation: invitation || undefined,
+            token: token || undefined,
+          }),
+        )
+      }
 
-    if (status === 'createPassword' && !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD)) {
-      newPath = `${PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD}/${token}/${acceptedString}`
-    } else if (status === 'confirmData' && !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA)) {
-      newPath = `${PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA}/${token}/${acceptedString}`
-    } else if (
-      status === 'confirmParentData' &&
-      !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PARENT_DATA)
-    ) {
-      newPath = `${PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PARENT_DATA}/${token}/${acceptedString}`
-    } else if (
-      (status === 'pending' || status === 'requestLogin') &&
-      !location.pathname.includes(PATH_TO_ACCOUNT_INVITATIONS)
-    ) {
-      newPath = `/accounts/login?prev=${PATH_TO_ACCOUNT_INVITATIONS}/${token}/${acceptedString}`
-    } else if (status === 'under16' && !location.pathname.includes(PATH_TO_ACCOUNT_INVITE_PARENT)) {
-      newPath = `${PATH_TO_ACCOUNT_INVITE_PARENT}/${token}/${acceptedString}`
-    }
+      let newPath = null
 
-    if (newPath) {
-      navigate(newPath, { replace: true })
-    }
-  }
+      if (status === 'createPassword' && !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD)) {
+        newPath = `${PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD}/${token}/${acceptedString}`
+      } else if (status === 'confirmData' && !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA)) {
+        newPath = `${PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA}/${token}/${acceptedString}`
+      } else if (
+        status === 'confirmParentData' &&
+        !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PARENT_DATA)
+      ) {
+        newPath = `${PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PARENT_DATA}/${token}/${acceptedString}`
+      } else if (
+        (status === 'pending' || status === 'requestLogin') &&
+        !location.pathname.includes(PATH_TO_ACCOUNT_INVITATIONS)
+      ) {
+        newPath = `${PATH_TO_ACCOUNT_ONBOARDING_INVITATION}/${token}/${acceptedString}`
+      } else if (status === 'under16' && !location.pathname.includes(PATH_TO_ACCOUNT_INVITE_PARENT)) {
+        newPath = `${PATH_TO_ACCOUNT_INVITE_PARENT}/${token}/${acceptedString}`
+      } else if (status === 'signUp') {
+        newPath = `${PATH_TO_ACCOUNT_ONBOARDING_SIGNUP}/${token}/${acceptedString}`
+      }
+
+      if (newPath) {
+        navigate(newPath, { replace: true })
+      }
+    },
+    [status, loaded, hasErrors, invitationExpired, hasDispatched?.current, location.pathname],
+  )
 
   return {
     acceptedString,
+    accepted,
     token,
     userData,
     invitation,
     invitationExpired,
     hasErrors,
     nextStep,
+    navigateToCurrentStep,
     loaded
   }
 }

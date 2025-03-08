@@ -11,11 +11,13 @@ import { Layout } from '@/layouts/PublicLayout'
 
 import { useDenyInviteMutation } from '@/redux/account/account.api.ts'
 import { useAcceptInviteMutation } from '@/redux/auth/auth.api.ts'
-import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 
 import { TInviteProps } from '@/common/types/account.ts'
 
 import CoachIllustration from '@/assets/images/onboarding/coach-invitation.svg'
+import { useInvitation } from '@/hooks/useInvitation.ts'
+import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
+import { transformKeysToCamelCase } from '@/utils'
 
 const {
   Styles: { Title, Subtitle, Body },
@@ -34,13 +36,27 @@ const {
  * information about the invitation status and team details.
  */
 export const StaffInvitation = (props: TInviteProps): ReactElement => {
-  const { invite, accepted, callback } = props
-  const { user } = useUserSlice()
+  const { invite: _invite, callback } = props
+  const { invitation: _invitation, userData, accepted } = useInvitation()
+  const {user: _user} = useUserSlice()
 
   const [api, contextHolder] = notification.useNotification()
   const [denyInvite, { isLoading: isLoadingDeny }] = useDenyInviteMutation()
   const [acceptInvite, { isLoading }] = useAcceptInviteMutation()
   const [invitationDenied, setInvitationDenied] = useState(false)
+  const [invite, setInvite] = useState(_invitation)
+  const [user, setUser] = useState(_user)
+
+  useEffect(() => {
+    if(_invite) {
+      setInvite(transformKeysToCamelCase(_invite))
+    }
+  }, [_invite])
+  useEffect(() => {
+    if(userData) {
+      setUser(transformKeysToCamelCase(userData))
+    }
+  }, [userData])
 
   /**
    * Accepts an invitation for the user and handles possible errors during the process.
@@ -96,7 +112,7 @@ export const StaffInvitation = (props: TInviteProps): ReactElement => {
       })
   }, [user, invite, accepted, callback])
 
-  if (isLoading || isLoadingDeny)
+  if (isLoading || isLoadingDeny || !invite)
     return (
       <Body centered>
         <Spin indicator={<LoadingOutlined spin />} size="large" />

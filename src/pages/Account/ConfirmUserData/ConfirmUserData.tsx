@@ -1,13 +1,14 @@
-import { notification } from 'antd'
-import { Formik, FormikHelpers } from 'formik'
-import { ReactElement, useEffect } from 'react'
+import { Formik } from 'formik'
+import { ReactElement, useMemo } from 'react'
 
 import { ConfirmUserDataForm } from '@/pages/Account/ConfirmUserData/components/ConfirmUserDataForm.tsx'
 import { confirmUserDataSchema } from '@/pages/Account/ConfirmUserData/components/validate.ts'
 
 import { Layout } from '@/layouts/PublicLayout'
 
-import { useFieldErrors } from '@/hooks/useFieldErrors.ts'
+import { useAccountSlice } from '@/redux/hooks/useAccountSlice'
+
+import { useInvitation } from '@/hooks/useInvitation.ts'
 
 const {
   Page,
@@ -29,16 +30,6 @@ export type TConfirmUserDataForm = {
   type: 'player' | 'guardian' | undefined
 }
 
-const DEFAULT_ERROR_MESSAGE = 'We were unable to confirm your data. Please, try again.'
-
-// TODO: not implemented yet
-const confirmGuardianData = (value: TConfirmUserDataForm) => new Promise((_resolve, reject) => {
-  reject(value)
-})
-const confirmPlayerData = (value: TConfirmUserDataForm) => new Promise((_resolve, reject) => {
-  reject(value)
-})
-
 /**
  * A functional component for confirming user data, allowing users to review
  * and optionally edit profile information entered by the admin before submission.
@@ -50,93 +41,51 @@ const confirmPlayerData = (value: TConfirmUserDataForm) => new Promise((_resolve
  */
 const ConfirmUserData = (props: TConfirmUserDataProps): ReactElement => {
   const { inline = false, onSubmit } = props
-  const { handleErrors, nonFieldErrors } = useFieldErrors<TConfirmUserDataForm>(false)
+  const { user, setUserData, setConfirmParentData } = useAccountSlice()
 
-  const [api, contextHolder] = notification.useNotification()
+  const { nextStep } = useInvitation()
 
-  const initialValues: TConfirmUserDataForm = {
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-    gender: '',
-    zipCode: '',
-    terms: false,
-    type: undefined,
-  }
-
-  const errorsCallback = () => {
-    const serverMessage = typeof nonFieldErrors === 'string' ? nonFieldErrors : nonFieldErrors?.[0]
-    if (!serverMessage) return
-
-    const message = serverMessage.includes('expired') ? 'Please, request a new password reset' : undefined
-    api.error({
-      message: serverMessage,
-      description: message || 'Please, try again. If the problem persists, contact support.',
-      placement: 'bottomRight',
-    })
-  }
-
-  useEffect(() => {
-    errorsCallback()
-  }, [nonFieldErrors])
-
-  const handlePlayerData = (
-    values: TConfirmUserDataForm,
-    setErrors: FormikHelpers<TConfirmUserDataForm>['setErrors'],
-  ) => {
-    confirmPlayerData(values)
-      .then(() => {
-        // console.log(res)
-      })
-      .catch(handleErrors(setErrors, errorsCallback))
-      .catch(() => {
-        api.error({
-          message: 'Something went wrong',
-          description: DEFAULT_ERROR_MESSAGE,
-          placement: 'bottomRight',
-        })
-      })
-  }
-  const handleGuardianData = (
-    values: TConfirmUserDataForm,
-    setErrors: FormikHelpers<TConfirmUserDataForm>['setErrors'],
-  ) => {
-    confirmGuardianData(values)
-      .then(() => {
-        // console.log(res)
-      })
-      .catch(handleErrors(setErrors, errorsCallback))
-      .catch(() => {
-        api.error({
-          message: 'Something went wrong',
-          description: DEFAULT_ERROR_MESSAGE,
-          placement: 'bottomRight',
-        })
-      })
-  }
+  const initialValues: TConfirmUserDataForm = useMemo(
+    () => ({
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
+      dateOfBirth: user?.birthDate || '',
+      gender: user?.gender ? user?.gender.toString() : '',
+      zipCode: user?.zipCode || '',
+      terms: false,
+      type: undefined,
+    }),
+    [user],
+  )
 
   /**
    * Handles form submission logic based on the provided form values and formik helpers.
    *
    * @param {TConfirmUserDataForm} values - The form data submitted by the user.
-   * @param {FormikHelpers<TConfirmUserDataForm>} formikHelpers - Formik helper functions such as setErrors.
    * @returns {void|Promise<void>} - Returns the result of the `onSubmit` function if provided; otherwise, no return value.
    */
-  const handleSubmit = (values: TConfirmUserDataForm, { setErrors }: FormikHelpers<TConfirmUserDataForm>) => {
+  const handleSave = (values: TConfirmUserDataForm) => {
     if (onSubmit) {
       return onSubmit(values)
     }
 
+    setUserData({
+      firstName: values.firstName || '',
+      lastName: values.lastName || '',
+      birthDate: values.dateOfBirth || '',
+      gender: parseInt(values.gender) ?? 0,
+      zipCode: values.zipCode || '',
+    })
+
     if (values.type === 'player') {
-      handlePlayerData(values, setErrors)
+      nextStep()
     } else {
-      handleGuardianData(values, setErrors)
+      setConfirmParentData()
     }
   }
 
   return (
     <Page inline={inline}>
-      {contextHolder}
       <Body>
         <Title>Confirm your data</Title>
         <Subtitle>
@@ -148,7 +97,7 @@ const ConfirmUserData = (props: TConfirmUserDataProps): ReactElement => {
           validateOnChange
           initialValues={initialValues}
           validationSchema={confirmUserDataSchema}
-          onSubmit={handleSubmit}
+          onSubmit={handleSave}
         >
           {({ handleSubmit }) => (
             <FormStyled autoComplete="new" onSubmit={handleSubmit}>

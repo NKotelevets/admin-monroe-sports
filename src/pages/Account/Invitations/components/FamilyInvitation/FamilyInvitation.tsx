@@ -10,11 +10,12 @@ import { Layout } from '@/layouts/PublicLayout'
 
 import { useDenyInviteMutation } from '@/redux/account/account.api.ts'
 import { useAcceptInviteMutation } from '@/redux/auth/auth.api.ts'
-import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 
-import { TInviteProps } from '@/common/types/account.ts'
+import { useInvitation } from '@/hooks/useInvitation.ts'
 
 import FamilyIllustration from '@/assets/images/onboarding/family-invitation.svg'
+import { TInviteProps } from '@/common/types/account.ts'
+import { transformKeysToCamelCase } from '@/utils'
 
 const {
   Styles: { Title, Subtitle, Body, LargeButton },
@@ -27,17 +28,23 @@ const {
  * It utilizes notification systems to handle errors during the acceptance or denial process.
  *
  * @function FamilyInvitation
- * @param {TInviteProps} props - The properties containing the invite data and context information for rendering.
  * @returns {ReactElement} A React element that renders the invitation details and interaction options.
  */
 export const FamilyInvitation = (props: TInviteProps): ReactElement => {
-  const { invite, accepted } = props
-  const { user } = useUserSlice()
+  const { invite: _invite } = props
+  const { invitation: _invitation, userData: user, accepted, loaded } = useInvitation()
 
   const [api, contextHolder] = notification.useNotification()
   const [acceptInvite, { isLoading }] = useAcceptInviteMutation()
   const [denyInvite, { isLoading: isLoadingDeny }] = useDenyInviteMutation()
   const [invitationStatus, setInvitationStatus] = useState<'accepted' | 'denied' | 'none'>('none')
+  const [invite, setInvite] = useState(_invitation)
+
+  useEffect(() => {
+    if(_invite) {
+      setInvite(transformKeysToCamelCase(_invite))
+    }
+  }, [_invite])
 
   /**
    * Handles the action of accepting an invitation.
@@ -107,7 +114,7 @@ export const FamilyInvitation = (props: TInviteProps): ReactElement => {
     }
   }, [accepted])
 
-  if (isLoading)
+  if (isLoading || !loaded || !invite || !user)
     return (
       <Body centered>
         {contextHolder}

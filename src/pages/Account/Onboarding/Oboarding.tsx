@@ -7,6 +7,8 @@ import { InvitationExpired } from '@/pages/Account/Onboarding/components/Invitat
 import { Layout } from '@/layouts/PublicLayout'
 
 import { useInvitation } from '@/hooks/useInvitation.ts'
+import { useEffect } from 'react'
+import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
 
 const {
   Page,
@@ -40,7 +42,14 @@ const {
  * - Shows `InvitationExpired` or `InvitationError` components if applicable.
  */
 const Onboarding = () => {
-  const { invitationExpired, hasErrors, loaded } = useInvitation()
+  const { status } = useAccountSlice()
+  const { invitationExpired, hasErrors, loaded, navigateToCurrentStep } = useInvitation()
+
+  useEffect(() => {
+    if (loaded) {
+      navigateToCurrentStep()
+    }
+  }, [loaded, status])
 
   return (
     <Page centered>
