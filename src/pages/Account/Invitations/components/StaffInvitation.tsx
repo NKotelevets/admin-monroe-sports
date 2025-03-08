@@ -44,14 +44,15 @@ export const StaffInvitation = (props: TInviteProps): ReactElement => {
   const [denyInvite, { isLoading: isLoadingDeny }] = useDenyInviteMutation()
   const [acceptInvite, { isLoading }] = useAcceptInviteMutation()
   const [invitationDenied, setInvitationDenied] = useState(false)
-  const [invite, setInvite] = useState(_invitation)
+  const [invite, setInvite] = useState(_invite)
   const [user, setUser] = useState(_user)
 
   useEffect(() => {
-    if(_invite) {
-      setInvite(transformKeysToCamelCase(_invite))
+    if(_invitation) {
+      setInvite(transformKeysToCamelCase(_invitation))
     }
-  }, [_invite])
+  }, [_invitation])
+
   useEffect(() => {
     if(userData) {
       setUser(transformKeysToCamelCase(userData))

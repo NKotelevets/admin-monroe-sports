@@ -45,13 +45,13 @@ export const PlayerInvitation = (props: TInviteProps): ReactElement => {
   const [invitationStatus, setInvitationStatus] = useState<'accepted' | 'denied' | 'none'>('none')
   const [selectedAthletes, setSelectedAthletes] = useState(user?.id ? [user?.id] : [])
   const [createdSupervisedUsers, setCreatedSupervisedUsers] = useState<IChildren[] | null>(null)
-  const [invite, setInvite] = useState(_invitation)
+  const [invite, setInvite] = useState(_invite)
 
   useEffect(() => {
-    if(_invite) {
-      setInvite(transformKeysToCamelCase(_invite))
+    if(_invitation) {
+      setInvite(transformKeysToCamelCase(_invitation))
     }
-  }, [_invite])
+  }, [_invitation])
 
   /**
    * Handles the submission logic based on the state of the `accepted` variable.
@@ -138,7 +138,7 @@ export const PlayerInvitation = (props: TInviteProps): ReactElement => {
   }
 
   if (!user || !invite) {
-    return <InvitationDenied teamName={invite?.team?.name || 'team'} role={'player'} />
+    return <>no user or invite</>
   }
 
   if (invitationStatus === 'accepted') {
