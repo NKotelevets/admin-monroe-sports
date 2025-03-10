@@ -50,7 +50,7 @@ export const PasswordRequirements = (props: { password: string }) => {
 function passwordRequirements(password: string) {
   const requirements = []
   // Check password length
-  if (password.length > 8) requirements.push('long')
+  if (password.length >= 8) requirements.push('long')
   // Contains lowercase
   if (/[a-z]/.test(password)) requirements.push('lowercase')
   // Contains uppercase

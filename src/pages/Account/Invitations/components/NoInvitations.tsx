@@ -13,7 +13,7 @@ export const NoInvitations = () => {
     <Body centered>
       <Illustration src={PlayerIllustration} />
       <Title>You have no invitations left!</Title>
-      <Subtitle>Jump into the app to select your availability, view rosters & schedules and more.</Subtitle>
+      <Subtitle>Get started now! Set your availability, explore your schedule, and stay on top of everything—right in the app.</Subtitle>
       <AppDownloadCTA />
     </Body>
   )

@@ -7,6 +7,7 @@ import { useAppDispatch } from '@/redux/hooks.ts'
 import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
 
 import {
+  PATH_TO_ACCOUNT_INVITATION_EXPIRED,
   PATH_TO_ACCOUNT_INVITATIONS,
   PATH_TO_ACCOUNT_INVITE_PARENT,
   PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA,
@@ -68,7 +69,7 @@ export const useInvitation = (): TUseInvitation => {
    * Handles cases where the invitation is expired or errors occur during the process.
    */
   useEffect(() => {
-    if (!token) return
+    if (!token || (userData && invitation)) return
     const payload = { token: token?.split('?')[0]?.split('&')[0] || '' }
     getPrefilledData(payload)
       .unwrap()
@@ -90,7 +91,7 @@ export const useInvitation = (): TUseInvitation => {
       .finally(() => {
         setLoaded(true)
       })
-  }, [token])
+  }, [token, userData, invitation])
 
   useEffect(() => {
     if (acceptedString) {
@@ -153,6 +154,8 @@ export const useInvitation = (): TUseInvitation => {
         newPath = `${PATH_TO_ACCOUNT_INVITE_PARENT}/${token}/${acceptedString}`
       } else if (status === 'signUp') {
         newPath = `${PATH_TO_ACCOUNT_ONBOARDING_SIGNUP}/${token}/${acceptedString}`
+      } else if (status === 'expired') {
+        newPath = `${PATH_TO_ACCOUNT_INVITATION_EXPIRED}/${token}/${acceptedString}`
       }
 
       if (newPath) {

@@ -26,7 +26,7 @@ export const PlayerInvitationAccepted = (props: {teamName?: string}): ReactEleme
     <Body centered>
       <Illustration src={PlayerIllustration} />
       <Title>You have successfully joined the {teamName || 'team'}</Title>
-      <Subtitle small>Jump into the app to select your availability, view rosters & schedules and more.</Subtitle>
+      <Subtitle small>Get started now! Set your availability, explore your schedule, and stay on top of everything—right in the app.</Subtitle>
       <AppDownloadCTA />
     </Body>
   )

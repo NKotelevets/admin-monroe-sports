@@ -16,6 +16,7 @@ import { Layout } from '@/layouts/PublicLayout'
 import { colors } from '@/utils/colors.tsx'
 
 import ArrowDown from '@/assets/icons/arrow-down.svg'
+import { Fields } from '@/components/Elements'
 
 const {
   Styles: { LargeButton },
@@ -79,8 +80,8 @@ export const SecondStepSignUpForm = ({ isLoading }: { isLoading: boolean }): Rea
           style={styles.select}
           suffixIcon={<ReactSVG src={ArrowDown} style={{ marginRight: 10 }} />}
           options={[
-            { label: 'Male', value: '0' },
-            { label: 'Female', value: '1' },
+            { label: 'Male', value: '1' },
+            { label: 'Female', value: '0' },
             { label: 'Other', value: '2' },
           ]}
           value={values.gender}
@@ -170,9 +171,6 @@ const Date = styled(DatePicker)`
     color: ${colors.blackText} !important;
     font-size: 16px !important;
   }
-`
-const Fields = styled.div`
-  margin-bottom: 144px;
 `
 const Button = styled(LargeButton)`
   margin-top: 24px;

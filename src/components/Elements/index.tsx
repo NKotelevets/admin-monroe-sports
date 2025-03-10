@@ -5,26 +5,27 @@ import Flex from 'antd/es/flex'
 import Typography from 'antd/es/typography'
 
 import MonroeInput from '@/components/Inputs/MonroeInput'
+
 import { colors } from '@/utils/colors.tsx'
 
 export const MonroeBlueText = styled(Typography)<{ onClick?: unknown }>`
-    color: rgba(26, 22, 87, 0.85);
-    cursor: ${({ onClick }) => onClick ? 'pointer' : 'unset'};
+  color: rgba(26, 22, 87, 0.85);
+  cursor: ${({ onClick }) => (onClick ? 'pointer' : 'unset')};
 `
 
-export const MonroeLinkText = styled(Typography)<{ underline?: boolean, inline?: boolean }>`
+export const MonroeLinkText = styled(Typography)<{ underline?: boolean; inline?: boolean }>`
   color: rgba(62, 52, 202, 1);
-  text-decoration: ${({ underline }) => underline === false ? 'none' : 'underline'};
-  display: ${({ inline }) => inline === true ? 'inline-block' : 'block'};
+  text-decoration: ${({ underline }) => (underline === false ? 'none' : 'underline')};
+  display: ${({ inline }) => (inline === true ? 'inline-block' : 'block')};
   cursor: pointer;
 `
 
 export const PageContainer = styled(Flex)`
-    padding: 16px 24px;
-    overflow: scroll !important;
-    height: 100%;
-    flex-direction: column;
-    min-width: 600px;
+  padding: 16px 24px;
+  overflow: scroll !important;
+  height: 100%;
+  flex-direction: column;
+  min-width: 600px;
 `
 
 export const PageContent = styled(Flex)`
@@ -287,16 +288,22 @@ export const AccordionHeader = styled(Typography)<{ is_add_margin?: string }>`
   margin-top: ${(props) => (props.is_add_margin === 'true' ? '12px' : '0px')};
 `
 
-export const Box = styled(Space)<{ error: boolean, showForm?: boolean; children?: React.ReactNode }>`
-    width: 100%;
-    display: block;
-    padding: 16px;
-    border-radius: 3px;
-    cursor: ${({ showForm }) => showForm ? 'pointer' : 'default' };
-    
-    border: 1px solid ${({ error }) => error ? colors.primary : colors.dimLight};
+export const Box = styled(Space)<{ error: boolean; showForm?: boolean; children?: React.ReactNode }>`
+  width: 100%;
+  display: block;
+  padding: 16px;
+  border-radius: 3px;
+  cursor: ${({ showForm }) => (showForm ? 'pointer' : 'default')};
+
+  border: 1px solid ${({ error }) => (error ? colors.primary : colors.dimLight)};
 `
 
 export const Line = styled(Divider)`
-    margin: 24px 0 !important
+  margin: 24px 0 !important;
+`
+
+export const Fields = styled.div`
+  @media (min-width: 768px) {
+    margin-bottom: 144px;
+  }
 `
