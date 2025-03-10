@@ -20,7 +20,7 @@ import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 import AuthProvider from '@/utils/AuthProvider.tsx'
 
 import {
-  PATH_TO_ACCOUNT_INVITATION_ACCEPTED,
+  PATH_TO_ACCOUNT_INVITATION_ACCEPTED, PATH_TO_ACCOUNT_INVITATION_DENIED,
   PATH_TO_ACCOUNT_INVITATION_EXPIRED,
   PATH_TO_ACCOUNT_INVITATIONS,
   PATH_TO_ACCOUNT_LOGIN,
@@ -36,6 +36,7 @@ import {
 } from '@/common/constants/paths.ts'
 import ConfirmPlayerData from '@/pages/Account/ConfirmPlayerData/ConfirmPlayerData.tsx'
 import AcceptedInvitation from '@/pages/Account/Onboarding/AcceptedInvitation.tsx'
+import InvitationDenied from '@/pages/Account/Onboarding/InvitationDenied.tsx'
 
 /**
  * Functional component routing the account-related pages.
@@ -92,6 +93,10 @@ export const AccountRoutes = () => {
         <Route
           path={`${normalizePath(PATH_TO_ACCOUNT_INVITATION_ACCEPTED)}/:token/:accepted?`}
           element={<AcceptedInvitation />}
+        />
+        <Route
+          path={`${normalizePath(PATH_TO_ACCOUNT_INVITATION_DENIED)}/:token/:accepted?`}
+          element={<InvitationDenied />}
         />
         <Route
           path={`${normalizePath(PATH_TO_ACCOUNT_INVITATION_EXPIRED)}/:token/:accepted?`}

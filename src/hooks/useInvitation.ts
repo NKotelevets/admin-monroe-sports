@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
-import { useLazyGetPrefilledDataQuery } from '@/redux/account/account.api.ts'
+import { useDenyInviteMutation, useLazyGetPrefilledDataQuery } from '@/redux/account/account.api.ts'
 import { receiveInvitationThunk } from '@/redux/account/account.slice.tsx'
 import { useAcceptInviteMutation } from '@/redux/auth/auth.api.ts'
 import { useAppDispatch } from '@/redux/hooks.ts'
@@ -9,13 +9,14 @@ import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
 
 import {
   PATH_TO_ACCOUNT_INVITATIONS,
+  PATH_TO_ACCOUNT_INVITATION_ACCEPTED,
   PATH_TO_ACCOUNT_INVITATION_EXPIRED,
   PATH_TO_ACCOUNT_INVITE_PARENT,
   PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA,
   PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PLAYER_DATA,
   PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD,
   PATH_TO_ACCOUNT_ONBOARDING_INVITATION,
-  PATH_TO_ACCOUNT_ONBOARDING_SIGNUP, PATH_TO_ACCOUNT_INVITATION_ACCEPTED
+  PATH_TO_ACCOUNT_ONBOARDING_SIGNUP, PATH_TO_ACCOUNT_INVITATION_DENIED
 } from '@/common/constants/paths.ts'
 import { IFEUser, IInvitation } from '@/common/interfaces/user.ts'
 
@@ -28,9 +29,12 @@ type TUseInvitation = {
   accepted: boolean | undefined
   token: string | undefined
   loaded: boolean
+  isLoadingDeny: boolean
+  isLoadingAccept: boolean
   nextStep(): void
   navigateToCurrentStep(): void
   acceptInvitation(selectedChildrenId?: string[]): void
+  denyInvitation(selectedChildrenId?: string[]): void
 }
 
 /**
@@ -54,6 +58,7 @@ export const useInvitation = (): TUseInvitation => {
     setError,
     setExpired,
     setAccepted: setStatusAccepted,
+    setDenied,
     setConfirmData,
     tempPassword,
     setCreatePassword,
@@ -69,8 +74,10 @@ export const useInvitation = (): TUseInvitation => {
   const hasDispatched = useRef(false)
   const dispatch = useAppDispatch()
 
-  const [acceptInvite] = useAcceptInviteMutation()
   const [getPrefilledData] = useLazyGetPrefilledDataQuery()
+  const [acceptInvite, { isLoading: isLoadingAccept }] = useAcceptInviteMutation()
+  const [denyInvite, { isLoading: isLoadingDeny }] = useDenyInviteMutation()
+
   const [userData, setUserData] = useState<IFEUser | null>(null)
   const [invitation, setInvitation] = useState<IInvitation | null>(null)
   const [invitationExpired, setInvitationExpired] = useState(false)
@@ -139,7 +146,7 @@ export const useInvitation = (): TUseInvitation => {
       if (invitationExpired) setExpired()
 
       // ✅ Only dispatch once per render cycle
-      if (shouldDispatch && !hasDispatched.current && !hasErrors && !invitationExpired) {
+      if ((shouldDispatch && !hasDispatched.current && !hasErrors && !invitationExpired) || status === 'idle') {
         hasDispatched.current = true
         dispatch(
           receiveInvitationThunk({
@@ -174,6 +181,8 @@ export const useInvitation = (): TUseInvitation => {
         newPath = `${PATH_TO_ACCOUNT_INVITATION_EXPIRED}/${token}/${acceptedString}`
       } else if (status === 'accepted' && !location.pathname.includes(PATH_TO_ACCOUNT_INVITATION_ACCEPTED)) {
         newPath = `${PATH_TO_ACCOUNT_INVITATION_ACCEPTED}/${token}/${acceptedString}`
+      } else if (status === 'rejected' && !location.pathname.includes(PATH_TO_ACCOUNT_INVITATION_DENIED)) {
+        newPath = `${PATH_TO_ACCOUNT_INVITATION_DENIED}/${token}/${acceptedString}`
       }
 
       if (newPath) {
@@ -200,6 +209,23 @@ export const useInvitation = (): TUseInvitation => {
       })
   }
 
+  const denyInvitation = (selectedAthletes?: string[]) => {
+    denyInvite({
+      userId: userData?.id || '',
+      inviteId: invitation?.id || '',
+      usersIds: selectedAthletes,
+      ...updatedUserData,
+      childObject: childData,
+    })
+      .unwrap()
+      .then(() => {
+        setDenied()
+      })
+      .catch(() => {
+        setHasErrors(true)
+      })
+  }
+
   return {
     acceptedString,
     accepted,
@@ -208,9 +234,12 @@ export const useInvitation = (): TUseInvitation => {
     invitation,
     invitationExpired,
     hasErrors,
-    nextStep,
     navigateToCurrentStep,
     loaded,
+    isLoadingDeny,
+    isLoadingAccept,
+    nextStep,
     acceptInvitation,
+    denyInvitation,
   }
 }

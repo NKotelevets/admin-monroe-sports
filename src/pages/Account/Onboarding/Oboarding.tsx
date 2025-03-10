@@ -1,5 +1,6 @@
 import { LoadingOutlined } from '@ant-design/icons'
 import { Spin } from 'antd'
+import { useEffect } from 'react'
 
 import { InvitationError } from '@/pages/Account/Onboarding/components/InvitationError.tsx'
 import { InvitationExpired } from '@/pages/Account/Onboarding/components/InvitationExpired.tsx'
@@ -7,8 +8,6 @@ import { InvitationExpired } from '@/pages/Account/Onboarding/components/Invitat
 import { Layout } from '@/layouts/PublicLayout'
 
 import { useInvitation } from '@/hooks/useInvitation.ts'
-import { useEffect } from 'react'
-import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
 
 const {
   Page,
@@ -42,14 +41,19 @@ const {
  * - Shows `InvitationExpired` or `InvitationError` components if applicable.
  */
 const Onboarding = () => {
-  const { status } = useAccountSlice()
-  const { invitationExpired, hasErrors, loaded, navigateToCurrentStep } = useInvitation()
+  const { invitationExpired, hasErrors, loaded, navigateToCurrentStep, accepted, denyInvitation } = useInvitation()
 
   useEffect(() => {
-    if (loaded) {
+    if (loaded && accepted !== false) {
       navigateToCurrentStep()
     }
-  }, [loaded, status])
+  }, [loaded, accepted])
+
+  useEffect(() => {
+    if (loaded && accepted === false) {
+      denyInvitation()
+    }
+  }, [])
 
   return (
     <Page centered>
