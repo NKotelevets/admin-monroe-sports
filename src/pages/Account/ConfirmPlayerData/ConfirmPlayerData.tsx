@@ -1,7 +1,6 @@
 import { Formik } from 'formik'
 import { useMemo } from 'react'
 
-import { ConfirmUserDataForm } from '@/pages/Account/ConfirmUserData/components/ConfirmUserDataForm.tsx'
 import { confirmUserDataSchema } from '@/pages/Account/ConfirmUserData/components/validate.ts'
 
 import { Layout } from '@/layouts/PublicLayout'
@@ -9,6 +8,7 @@ import { Layout } from '@/layouts/PublicLayout'
 import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
 
 import { useInvitation } from '@/hooks/useInvitation.ts'
+import { ConfirmPlayerDataForm } from '@/pages/Account/ConfirmPlayerData/components/ConfirmPlayerDataForm.tsx'
 
 export type TConfirmPlayerDataForm = {
   firstName: string
@@ -20,7 +20,7 @@ export type TConfirmPlayerDataForm = {
 
 const {
   Page,
-  Styles: { Title, Subtitle, FormStyled, Body },
+  Styles: { Title, FormStyled, Body },
 } = Layout
 
 const ConfirmPlayerData = () => {
@@ -47,11 +47,7 @@ const ConfirmPlayerData = () => {
   return (
     <Page>
       <Body>
-        <Title>Confirm your data</Title>
-        <Subtitle>
-          The Admin has added your main profile information. Please review it for accuracy and make any necessary
-          changes.
-        </Subtitle>
+        <Title>Add player info</Title>
         <Formik
           validateOnMount
           validateOnChange
@@ -61,7 +57,7 @@ const ConfirmPlayerData = () => {
         >
           {({ handleSubmit }) => (
             <FormStyled autoComplete="new" onSubmit={handleSubmit}>
-              <ConfirmUserDataForm isLoading={false} />
+              <ConfirmPlayerDataForm isLoading={false} />
             </FormStyled>
           )}
         </Formik>
