@@ -1,14 +1,13 @@
 import { Formik } from 'formik'
 import { useMemo } from 'react'
 
-import { confirmUserDataSchema } from '@/pages/Account/ConfirmUserData/components/validate.ts'
-
 import { Layout } from '@/layouts/PublicLayout'
 
 import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
 
 import { useInvitation } from '@/hooks/useInvitation.ts'
 import { ConfirmPlayerDataForm } from '@/pages/Account/ConfirmPlayerData/components/ConfirmPlayerDataForm.tsx'
+import { confirmPlayerDataSchema } from '@/pages/Account/ConfirmPlayerData/components/validate.ts'
 
 export type TConfirmPlayerDataForm = {
   firstName: string
@@ -52,7 +51,7 @@ const ConfirmPlayerData = () => {
           validateOnMount
           validateOnChange
           initialValues={initialValues}
-          validationSchema={confirmUserDataSchema}
+          validationSchema={confirmPlayerDataSchema}
           onSubmit={handleSave}
         >
           {({ handleSubmit }) => (

@@ -7,6 +7,7 @@ import { useAppDispatch } from '@/redux/hooks.ts'
 import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
 
 import {
+  PATH_TO_ACCOUNT_INVITATION_EXPIRED,
   PATH_TO_ACCOUNT_INVITATIONS,
   PATH_TO_ACCOUNT_INVITE_PARENT,
   PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA,
@@ -153,6 +154,8 @@ export const useInvitation = (): TUseInvitation => {
         newPath = `${PATH_TO_ACCOUNT_INVITE_PARENT}/${token}/${acceptedString}`
       } else if (status === 'signUp') {
         newPath = `${PATH_TO_ACCOUNT_ONBOARDING_SIGNUP}/${token}/${acceptedString}`
+      } else if (status === 'expired') {
+        newPath = `${PATH_TO_ACCOUNT_INVITATION_EXPIRED}/${token}/${acceptedString}`
       }
 
       if (newPath) {

@@ -20,6 +20,7 @@ import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 import AuthProvider from '@/utils/AuthProvider.tsx'
 
 import {
+  PATH_TO_ACCOUNT_INVITATION_EXPIRED,
   PATH_TO_ACCOUNT_INVITATIONS,
   PATH_TO_ACCOUNT_LOGIN,
   PATH_TO_ACCOUNT_ONBOARDING,
@@ -85,6 +86,10 @@ export const AccountRoutes = () => {
         <Route
           path={`${normalizePath(PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PLAYER_DATA)}/:token/:accepted?`}
           element={<ConfirmPlayerData />}
+        />
+        <Route
+          path={`${normalizePath(PATH_TO_ACCOUNT_INVITATION_EXPIRED)}/:token/:accepted?`}
+          element={<Onboarding />}
         />
       </Routes>
     </AuthProvider>

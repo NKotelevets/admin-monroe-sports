@@ -5,20 +5,22 @@ import dayjs, { Dayjs } from 'dayjs'
 import { useFormikContext } from 'formik'
 import { ReactElement } from 'react'
 
+import { TConfirmPlayerDataForm } from '@/pages/Account/ConfirmPlayerData/ConfirmPlayerData.tsx'
+
 import InputWrapper from '@/components/Inputs/InputWrapper.tsx'
 import TextInput from '@/components/Inputs/TextInput.tsx'
 
 import { Layout } from '@/layouts/PublicLayout'
 
 import { colors } from '@/utils/colors.tsx'
-import { TConfirmPlayerDataForm } from '@/pages/Account/ConfirmPlayerData/ConfirmPlayerData.tsx'
 
 const {
   Styles: { LargeButton },
 } = Layout
 
 export const ConfirmPlayerDataForm = ({ isLoading }: { isLoading: boolean }): ReactElement => {
-  const { values, errors, touched, handleChange, handleBlur, isValid, setFieldValue, handleSubmit } = useFormikContext<TConfirmPlayerDataForm>()
+  const { values, errors, touched, handleChange, handleBlur, isValid, setFieldValue, handleSubmit } =
+    useFormikContext<TConfirmPlayerDataForm>()
 
   return (
     <Fields>
@@ -87,7 +89,6 @@ export const ConfirmPlayerDataForm = ({ isLoading }: { isLoading: boolean }): Re
   )
 }
 
-
 const Date = styled(DatePicker)`
   width: 100%;
   border-radius: 8px;
@@ -112,4 +113,3 @@ const CalendarIcon = styled(CalendarOutlined)`
   color: ${colors.blackText};
   font-size: 24px;
 `
-
