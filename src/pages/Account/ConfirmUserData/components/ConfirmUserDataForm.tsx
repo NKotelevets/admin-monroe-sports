@@ -85,8 +85,8 @@ export const ConfirmUserDataForm = ({ isLoading }: { isLoading: boolean }): Reac
           style={styles.select}
           suffixIcon={<ReactSVG src={ArrowDown} style={{ marginRight: 10 }} />}
           options={[
-            { label: 'Male', value: '0' },
-            { label: 'Female', value: '1' },
+            { label: 'Male', value: '1' },
+            { label: 'Female', value: '0' },
             { label: 'Other', value: '2' },
           ]}
           value={values.gender}
