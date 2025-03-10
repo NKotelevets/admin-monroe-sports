@@ -69,7 +69,7 @@ export const useInvitation = (): TUseInvitation => {
    * Handles cases where the invitation is expired or errors occur during the process.
    */
   useEffect(() => {
-    if (!token) return
+    if (!token || (userData && invitation)) return
     const payload = { token: token?.split('?')[0]?.split('&')[0] || '' }
     getPrefilledData(payload)
       .unwrap()
@@ -91,7 +91,7 @@ export const useInvitation = (): TUseInvitation => {
       .finally(() => {
         setLoaded(true)
       })
-  }, [token])
+  }, [token, userData, invitation])
 
   useEffect(() => {
     if (acceptedString) {
