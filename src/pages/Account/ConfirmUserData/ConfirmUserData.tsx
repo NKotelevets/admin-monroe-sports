@@ -9,6 +9,9 @@ import { Layout } from '@/layouts/PublicLayout'
 import { useAccountSlice } from '@/redux/hooks/useAccountSlice'
 
 import { useInvitation } from '@/hooks/useInvitation.ts'
+import { INVITE_TYPE_NAMED } from '@/common/constants'
+import { LoadingOutlined } from '@ant-design/icons'
+import { Spin } from 'antd'
 
 const {
   Page,
@@ -27,7 +30,7 @@ export type TConfirmUserDataForm = {
   gender: string
   zipCode: string
   terms: boolean
-  type: 'player' | 'guardian' | undefined
+  type: 'player' | 'guardian' | 'staff' | undefined
 }
 
 /**
@@ -41,9 +44,9 @@ export type TConfirmUserDataForm = {
  */
 const ConfirmUserData = (props: TConfirmUserDataProps): ReactElement => {
   const { inline = false, onSubmit } = props
-  const { user, setUserData, setConfirmParentData } = useAccountSlice()
+  const { user, setUserData, setConfirmParentData, invitation } = useAccountSlice()
 
-  const { nextStep } = useInvitation()
+  const { acceptInvitation, loaded } = useInvitation()
 
   const initialValues: TConfirmUserDataForm = useMemo(
     () => ({
@@ -77,11 +80,19 @@ const ConfirmUserData = (props: TConfirmUserDataProps): ReactElement => {
       zipCode: values.zipCode || '',
     })
 
-    if (values.type === 'player') {
-      nextStep()
-    } else {
+    if (values.type === 'player' || values.type === 'staff') {
+      acceptInvitation()
+    } else if (values.type === 'guardian') {
       setConfirmParentData()
     }
+  }
+
+  if (!loaded || !invitation) {
+    return (
+      <Page inline={inline}>
+        <Body centered><Spin indicator={<LoadingOutlined spin />} size="large" /></Body>
+      </Page>
+    )
   }
 
   return (
@@ -101,7 +112,7 @@ const ConfirmUserData = (props: TConfirmUserDataProps): ReactElement => {
         >
           {({ handleSubmit }) => (
             <FormStyled autoComplete="new" onSubmit={handleSubmit}>
-              <ConfirmUserDataForm isLoading={false} />
+              <ConfirmUserDataForm isLoading={false} isPlayer={invitation.inviteType === INVITE_TYPE_NAMED.PLAYER} />
             </FormStyled>
           )}
         </Formik>

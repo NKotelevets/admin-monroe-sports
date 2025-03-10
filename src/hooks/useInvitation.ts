@@ -3,16 +3,19 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import { useLazyGetPrefilledDataQuery } from '@/redux/account/account.api.ts'
 import { receiveInvitationThunk } from '@/redux/account/account.slice.tsx'
+import { useAcceptInviteMutation } from '@/redux/auth/auth.api.ts'
 import { useAppDispatch } from '@/redux/hooks.ts'
 import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
 
 import {
-  PATH_TO_ACCOUNT_INVITATION_EXPIRED,
   PATH_TO_ACCOUNT_INVITATIONS,
+  PATH_TO_ACCOUNT_INVITATION_EXPIRED,
   PATH_TO_ACCOUNT_INVITE_PARENT,
   PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA,
   PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PLAYER_DATA,
-  PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD, PATH_TO_ACCOUNT_ONBOARDING_INVITATION, PATH_TO_ACCOUNT_ONBOARDING_SIGNUP
+  PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD,
+  PATH_TO_ACCOUNT_ONBOARDING_INVITATION,
+  PATH_TO_ACCOUNT_ONBOARDING_SIGNUP, PATH_TO_ACCOUNT_INVITATION_ACCEPTED
 } from '@/common/constants/paths.ts'
 import { IFEUser, IInvitation } from '@/common/interfaces/user.ts'
 
@@ -27,6 +30,7 @@ type TUseInvitation = {
   loaded: boolean
   nextStep(): void
   navigateToCurrentStep(): void
+  acceptInvitation(selectedChildrenId?: string[]): void
 }
 
 /**
@@ -45,7 +49,19 @@ type TUseInvitation = {
  * }} An object containing the user data, invitation information, invitation expiration status, error status, and acceptance status string.
  */
 export const useInvitation = (): TUseInvitation => {
-  const { status, setError, setExpired, setConfirmData, setCreatePassword, setPending, setSignUp } = useAccountSlice()
+  const {
+    status,
+    setError,
+    setExpired,
+    setAccepted: setStatusAccepted,
+    setConfirmData,
+    tempPassword,
+    setCreatePassword,
+    setPending,
+    setSignUp,
+    updatedUserData,
+    childData,
+  } = useAccountSlice()
   const { token, accepted: acceptedString } = useParams<{ token: string; accepted?: string }>()
 
   const navigate = useNavigate()
@@ -53,7 +69,7 @@ export const useInvitation = (): TUseInvitation => {
   const hasDispatched = useRef(false)
   const dispatch = useAppDispatch()
 
-
+  const [acceptInvite] = useAcceptInviteMutation()
   const [getPrefilledData] = useLazyGetPrefilledDataQuery()
   const [userData, setUserData] = useState<IFEUser | null>(null)
   const [invitation, setInvitation] = useState<IInvitation | null>(null)
@@ -81,11 +97,11 @@ export const useInvitation = (): TUseInvitation => {
         setUserData(response.userData)
         setInvitation(response.invitation)
       })
-      .catch(reason => {
+      .catch((reason) => {
         if (reason.status === 404) {
           setSignUp({ callback: navigateToCurrentStep, params: false })
         } else {
-        setHasErrors(true)
+          setHasErrors(true)
         }
       })
       .finally(() => {
@@ -96,7 +112,7 @@ export const useInvitation = (): TUseInvitation => {
   useEffect(() => {
     if (acceptedString) {
       const _accepted = acceptedString?.split('?')[0]?.split('&')[0]
-      setAccepted(_accepted === 'undefined' || _accepted === undefined ? undefined : (_accepted === 'true'))
+      setAccepted(_accepted === 'undefined' || _accepted === undefined ? undefined : _accepted === 'true')
     }
   }, [acceptedString])
 
@@ -106,9 +122,9 @@ export const useInvitation = (): TUseInvitation => {
     } else if (status === 'confirmData') {
       setPending({ callback: navigateToCurrentStep, params: false })
     } else if (status === 'confirmParentData') {
-      setPending({ callback: navigateToCurrentStep, params: false})
+      setPending({ callback: navigateToCurrentStep, params: false })
     } else if (status === 'under16') {
-      setCreatePassword({ callback: navigateToCurrentStep, params: false})
+      setCreatePassword({ callback: navigateToCurrentStep, params: false })
     }
   }
 
@@ -156,6 +172,8 @@ export const useInvitation = (): TUseInvitation => {
         newPath = `${PATH_TO_ACCOUNT_ONBOARDING_SIGNUP}/${token}/${acceptedString}`
       } else if (status === 'expired') {
         newPath = `${PATH_TO_ACCOUNT_INVITATION_EXPIRED}/${token}/${acceptedString}`
+      } else if (status === 'accepted' && !location.pathname.includes(PATH_TO_ACCOUNT_INVITATION_ACCEPTED)) {
+        newPath = `${PATH_TO_ACCOUNT_INVITATION_ACCEPTED}/${token}/${acceptedString}`
       }
 
       if (newPath) {
@@ -164,6 +182,23 @@ export const useInvitation = (): TUseInvitation => {
     },
     [status, loaded, hasErrors, invitationExpired, hasDispatched?.current, location.pathname],
   )
+
+  const acceptInvitation = (selectedAthletes?: string[]) => {
+    acceptInvite({
+      invite_id: invitation?.id || '',
+      users_ids: selectedAthletes,
+      password: tempPassword,
+      ...updatedUserData,
+      child_object: childData,
+    })
+      .unwrap()
+      .then(() => {
+        setStatusAccepted()
+      })
+      .catch(() => {
+        setHasErrors(true)
+      })
+  }
 
   return {
     acceptedString,
@@ -175,6 +210,7 @@ export const useInvitation = (): TUseInvitation => {
     hasErrors,
     nextStep,
     navigateToCurrentStep,
-    loaded
+    loaded,
+    acceptInvitation,
   }
 }

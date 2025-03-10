@@ -15,6 +15,8 @@ export const PATH_TO_ACCOUNT_INVITATIONS = '/accounts/invitations'
 export const PATH_TO_ACCOUNT_INVITE_PARENT = '/accounts/invite-parent'
 export const PATH_TO_ACCOUNT_INVITATION_EXPIRED = '/accounts/invitation-expired'
 export const PATH_TO_ACCOUNT_INVITATION_ERROR = '/accounts/invitation-error'
+export const PATH_TO_ACCOUNT_INVITATION_ACCEPTED = '/accounts/invitation-accepted'
+export const PATH_TO_ACCOUNT_INVITATION_REJECTED = '/accounts/invitation-rejected'
 
 // ONBOARDING PAGES
 export const PATH_TO_ACCOUNT_ONBOARDING = '/accounts/onboarding'

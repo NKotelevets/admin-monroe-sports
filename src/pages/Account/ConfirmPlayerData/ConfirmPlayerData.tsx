@@ -25,7 +25,7 @@ const {
 const ConfirmPlayerData = () => {
   const { user, setChildData } = useAccountSlice()
 
-  const { nextStep } = useInvitation()
+  const { acceptInvitation } = useInvitation()
 
   const initialValues: TConfirmPlayerDataForm = useMemo(
     () => ({
@@ -40,7 +40,7 @@ const ConfirmPlayerData = () => {
 
   const handleSave = (values: TConfirmPlayerDataForm) => {
     setChildData(values)
-    nextStep()
+    acceptInvitation()
   }
 
   return (

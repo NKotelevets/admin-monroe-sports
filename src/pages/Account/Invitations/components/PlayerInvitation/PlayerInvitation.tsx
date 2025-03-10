@@ -16,6 +16,7 @@ import InvitationDenied from '@/pages/Account/Invitations/components/InvitationD
 import { useInvitation } from '@/hooks/useInvitation.ts'
 import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 import { transformKeysToCamelCase } from '@/utils'
+import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
 
 const {
   Styles: { Title, Subtitle, Body, LargeButton },
@@ -36,12 +37,13 @@ const {
 export const PlayerInvitation = (props: TInviteProps): ReactElement => {
   const { invite: _invite } = props
   const { invitation: _invitation, userData: _userData, accepted, loaded } = useInvitation()
+  const { updatedUserData, tempPassword, childData } = useAccountSlice()
   const {user: _user} = useUserSlice()
 
   const [acceptInvite, { isLoading }] = useAcceptInviteMutation()
   const [api, contextHolder] = notification.useNotification()
 
-  const [user, setUser] = useState(_userData)
+  const [user, setUser] = useState(_user)
   const [invitationStatus, setInvitationStatus] = useState<'accepted' | 'denied' | 'none'>('none')
   const [selectedAthletes, setSelectedAthletes] = useState(user?.id ? [user?.id] : [])
   const [createdSupervisedUsers, setCreatedSupervisedUsers] = useState<IChildren[] | null>(null)
@@ -52,6 +54,12 @@ export const PlayerInvitation = (props: TInviteProps): ReactElement => {
       setInvite(transformKeysToCamelCase(_invitation))
     }
   }, [_invitation])
+
+  useEffect(() => {
+    if(_userData) {
+      setUser(transformKeysToCamelCase(_userData))
+    }
+  }, [_userData])
 
   /**
    * Handles the submission logic based on the state of the `accepted` variable.
@@ -103,7 +111,7 @@ export const PlayerInvitation = (props: TInviteProps): ReactElement => {
    * displays an error notification to the user.
    */
   const onSubmit = () => {
-    acceptInvite({ invite_id: invite?.id || '', users_ids: selectedAthletes })
+    acceptInvite({ invite_id: invite?.id || '', users_ids: selectedAthletes, password: tempPassword, ...updatedUserData, child_object: childData })
       .unwrap()
       .then(() => {
         setInvitationStatus('accepted')
