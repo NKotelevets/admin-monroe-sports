@@ -5,3 +5,11 @@ export type TNewUserRoles = (IRole & { teamName: string })[]
 export type TLinkedRole = IRole & { teamName: string, teamNames?: string[] }
 
 export type TPrefilledDataWithToken = IPrefilledUserData & { token: string }
+
+export type TChildData = {
+  firstName: string
+  lastName: string
+  dateOfBirth: string
+  suffix: string
+  email: string
+}

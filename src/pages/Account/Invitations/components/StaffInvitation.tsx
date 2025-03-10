@@ -1,7 +1,7 @@
 import { LoadingOutlined } from '@ant-design/icons'
 import styled from '@emotion/styled'
 import { Spin, notification } from 'antd'
-import { ReactElement, useEffect, useState } from 'react'
+import { ReactElement, useEffect, useMemo, useState } from 'react'
 
 import InvitationDenied from '@/pages/Account/Invitations/components/InvitationDenied.tsx'
 
@@ -18,6 +18,8 @@ import CoachIllustration from '@/assets/images/onboarding/coach-invitation.svg'
 import { useInvitation } from '@/hooks/useInvitation.ts'
 import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 import { transformKeysToCamelCase } from '@/utils'
+import { INVITE_TYPE_NAMED } from '@/common/constants'
+import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
 
 const {
   Styles: { Title, Subtitle, Body },
@@ -38,6 +40,7 @@ const {
 export const StaffInvitation = (props: TInviteProps): ReactElement => {
   const { invite: _invite, callback } = props
   const { invitation: _invitation, userData, accepted } = useInvitation()
+  const { updatedUserData, tempPassword, childData } = useAccountSlice()
   const {user: _user} = useUserSlice()
 
   const [api, contextHolder] = notification.useNotification()
@@ -70,7 +73,7 @@ export const StaffInvitation = (props: TInviteProps): ReactElement => {
   useEffect(() => {
     if (!user || !invite || accepted === false) return
 
-    acceptInvite({ invite_id: invite.id, users_ids: [user.id] })
+    acceptInvite({ invite_id: invite.id, password: tempPassword, users_ids: [user.id], ...updatedUserData, child_object: childData })
       .unwrap()
       .then(() => {
         api.success({
@@ -113,6 +116,21 @@ export const StaffInvitation = (props: TInviteProps): ReactElement => {
       })
   }, [user, invite, accepted, callback])
 
+  const role = useMemo(() => {
+    if (!invite) return ''
+
+    if (invite.invite_type === INVITE_TYPE_NAMED.COACH) {
+      return 'coach'
+    }
+    if (invite.invite_type === INVITE_TYPE_NAMED.HEAD_COACH) {
+      return 'head coach'
+    }
+    if (invite.invite_type === INVITE_TYPE_NAMED.TEAM_ADMIN) {
+      return 'team admin'
+    }
+    return ''
+  }, [invite])
+
   if (isLoading || isLoadingDeny || !invite)
     return (
       <Body centered>
@@ -121,7 +139,7 @@ export const StaffInvitation = (props: TInviteProps): ReactElement => {
     )
 
   if (invitationDenied) {
-    return <InvitationDenied teamName={invite.team!.name} role={'coach'} />
+    return <InvitationDenied teamName={invite.team!.name} role={role} />
   }
 
   return (
@@ -130,7 +148,7 @@ export const StaffInvitation = (props: TInviteProps): ReactElement => {
       <Illustration src={CoachIllustration} />
       <Title>Welcome to {invite.team!.name}</Title>
       <Subtitle small>
-        {user!.firstName} {user!.lastName} has been added as a coach for {invite.team!.name}. Coaches can submit their
+        {user!.firstName} {user!.lastName} has been added as a coach for {invite.team!.name}. <span className='capitalize'>{role}</span> can submit their
         roster, invite players, enter availability, monitor RSVP and more.
       </Subtitle>
       <AppDownloadCTA />

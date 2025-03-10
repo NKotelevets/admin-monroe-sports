@@ -8,6 +8,8 @@ import {
   IUpdateOperator,
 } from '@/common/interfaces/auth'
 import { IBEOperator } from '@/common/interfaces/operator'
+import { TChildData } from '@/common/types/users.ts'
+import { removeEmptyStringAttributes } from '@/utils'
 
 export const authApi = createApi({
   baseQuery: fetchBaseQuery({
@@ -65,12 +67,13 @@ export const authApi = createApi({
      * @param {string[]} [body.users_ids] - Optional array of user IDs associated with the invitation.
      * @returns {void}
      */
-    acceptInvite: builder.mutation<void, { invite_id: string; users_ids?: string[]; password?: string }>({
+    acceptInvite: builder.mutation<void, { invite_id: string; users_ids?: string[]; password?: string, child_object?: TChildData }>({
       query: (body) => {
-        // TODO: Modificar o body p/ adicionar password or child se houver
+        const _body = removeEmptyStringAttributes(body)
+
         return ({
           url: 'users/accept-invite',
-          body,
+          body: _body,
           method: 'POST',
         })
       },

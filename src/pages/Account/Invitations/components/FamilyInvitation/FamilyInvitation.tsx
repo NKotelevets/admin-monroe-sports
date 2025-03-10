@@ -16,6 +16,7 @@ import { useInvitation } from '@/hooks/useInvitation.ts'
 import FamilyIllustration from '@/assets/images/onboarding/family-invitation.svg'
 import { TInviteProps } from '@/common/types/account.ts'
 import { transformKeysToCamelCase } from '@/utils'
+import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
 
 const {
   Styles: { Title, Subtitle, Body, LargeButton },
@@ -33,6 +34,7 @@ const {
 export const FamilyInvitation = (props: TInviteProps): ReactElement => {
   const { invite: _invite } = props
   const { invitation: _invitation, userData: user, accepted, loaded } = useInvitation()
+  const { updatedUserData, tempPassword, childData } = useAccountSlice()
 
   const [api, contextHolder] = notification.useNotification()
   const [acceptInvite, { isLoading }] = useAcceptInviteMutation()
@@ -55,7 +57,7 @@ export const FamilyInvitation = (props: TInviteProps): ReactElement => {
   const onAcceptInvite = () => {
     if (!user || !invite) return
 
-    acceptInvite({ invite_id: invite.id, users_ids: [user.id] })
+    acceptInvite({ invite_id: invite.id, users_ids: [user.id], password: tempPassword, ...updatedUserData, child_object: childData })
       .unwrap()
       .then(() => {
         setInvitationStatus('accepted')

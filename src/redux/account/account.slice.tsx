@@ -3,19 +3,12 @@ import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { TRootState } from '@/redux/store.ts'
 
 import { IFEUser, IInvitation } from '@/common/interfaces/user.ts'
-import { TPrefilledDataWithToken } from '@/common/types/users.ts'
+import { TChildData, TPrefilledDataWithToken } from '@/common/types/users.ts'
 
 type TUpdatedUserData = Pick<
   TPrefilledDataWithToken['userData'],
   'firstName' | 'lastName' | 'gender' | 'birthDate' | 'zipCode'
 >
-type TChildData = {
-  firstName: string
-  lastName: string
-  dateOfBirth: string
-  suffix: string
-  email: string
-}
 
 interface InvitationState {
   status:

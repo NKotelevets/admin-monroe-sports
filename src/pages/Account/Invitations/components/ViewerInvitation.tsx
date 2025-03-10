@@ -11,7 +11,7 @@ import { useInvitation } from '@/hooks/useInvitation.ts'
 
 export const ViewerInvitation = () => {
   const { invitation } = useInvitation()
-  const { updatedUserData, tempPassword } = useAccountSlice()
+  const { updatedUserData, tempPassword, childData } = useAccountSlice()
 
   const [acceptInvite, { isLoading }] = useAcceptInviteMutation()
   const [api, contextHolder] = notification.useNotification()
@@ -20,7 +20,7 @@ export const ViewerInvitation = () => {
   useEffect(() => {
     if (!invitation) return
 
-    acceptInvite({ invite_id: invitation.id, password: tempPassword, ...updatedUserData })
+    acceptInvite({ invite_id: invitation.id, password: tempPassword, ...updatedUserData, child_object: childData })
       .unwrap()
       .then(() => {
         setDone(true)

@@ -23,12 +23,12 @@ const {
   Styles: { LargeButton },
 } = Layout
 
-export const ConfirmUserDataForm = ({ isLoading }: { isLoading: boolean }): ReactElement => {
+export const ConfirmUserDataForm = ({ isLoading, isPlayer }: { isLoading: boolean, isPlayer?: boolean }): ReactElement => {
   const { values, errors, touched, handleChange, handleBlur, isValid, setFieldValue, handleSubmit } = useFormikContext<TConfirmUserDataForm>()
 
   const isUnder16 = dayjs().diff(dayjs(values.dateOfBirth, 'YYYY-MM-DD'), 'years') < 16
 
-  const onsubmit = async (type: 'player' | 'guardian') => {
+  const onsubmit = async (type: 'player' | 'guardian' | 'staff') => {
     await setFieldValue('type', type)
     handleSubmit()
   }
@@ -122,12 +122,22 @@ export const ConfirmUserDataForm = ({ isLoading }: { isLoading: boolean }): Reac
           Privacy policy
         </Link>
       </CheckboxStyled>
-      <Button loading={isLoading} type="primary" onClick={() => onsubmit('player')} disabled={!isValid}>
-        Confirm As Player Info
-      </Button>
-      <Button loading={isLoading} danger onClick={() => onsubmit('guardian')} disabled={!isValid || isUnder16}>
-        Confirm As Guardian Info
-      </Button>
+      {isPlayer && (
+        <>
+          <Button loading={isLoading} type="primary" onClick={() => onsubmit('player')} disabled={!isValid}>
+            Confirm As Player Info
+          </Button>
+          <Button loading={isLoading} danger onClick={() => onsubmit('guardian')} disabled={!isValid || isUnder16}>
+            Confirm As Guardian Info
+          </Button>
+        </>
+      )}
+
+      {!isPlayer && (
+        <Button loading={isLoading} danger onClick={() => onsubmit('staff')} disabled={!isValid || isUnder16}>
+          Confirm
+        </Button>
+      )}
     </Fields>
   )
 }
