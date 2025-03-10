@@ -1,25 +1,22 @@
 import { LoadingOutlined } from '@ant-design/icons'
 import styled from '@emotion/styled'
-import { Spin, notification } from 'antd'
+import { Spin } from 'antd'
 import { ReactElement, useEffect, useMemo, useState } from 'react'
-
-import InvitationDenied from '@/pages/Account/Invitations/components/InvitationDenied.tsx'
 
 import { AppDownloadCTA } from '@/components/AppDownloadCTA.tsx'
 
 import { Layout } from '@/layouts/PublicLayout'
 
-import { useDenyInviteMutation } from '@/redux/account/account.api.ts'
-import { useAcceptInviteMutation } from '@/redux/auth/auth.api.ts'
+import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 
+import { useInvitation } from '@/hooks/useInvitation.ts'
+
+import { transformKeysToCamelCase } from '@/utils'
+
+import { INVITE_TYPE_NAMED } from '@/common/constants'
 import { TInviteProps } from '@/common/types/account.ts'
 
 import CoachIllustration from '@/assets/images/onboarding/coach-invitation.svg'
-import { useInvitation } from '@/hooks/useInvitation.ts'
-import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
-import { transformKeysToCamelCase } from '@/utils'
-import { INVITE_TYPE_NAMED } from '@/common/constants'
-import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
 
 const {
   Styles: { Title, Subtitle, Body },
@@ -39,25 +36,20 @@ const {
  */
 export const StaffInvitation = (props: TInviteProps): ReactElement => {
   const { invite: _invite, callback } = props
-  const { invitation: _invitation, userData, accepted } = useInvitation()
-  const { updatedUserData, tempPassword, childData } = useAccountSlice()
-  const {user: _user} = useUserSlice()
+  const { invitation: _invitation, userData, accepted, acceptInvitation, denyInvitation, isLoadingAccept, isLoadingDeny } = useInvitation()
+  const { user: _user } = useUserSlice()
 
-  const [api, contextHolder] = notification.useNotification()
-  const [denyInvite, { isLoading: isLoadingDeny }] = useDenyInviteMutation()
-  const [acceptInvite, { isLoading }] = useAcceptInviteMutation()
-  const [invitationDenied, setInvitationDenied] = useState(false)
   const [invite, setInvite] = useState(_invite)
   const [user, setUser] = useState(_user)
 
   useEffect(() => {
-    if(_invitation) {
+    if (_invitation) {
       setInvite(transformKeysToCamelCase(_invitation))
     }
   }, [_invitation])
 
   useEffect(() => {
-    if(userData) {
+    if (userData) {
       setUser(transformKeysToCamelCase(userData))
     }
   }, [userData])
@@ -73,47 +65,13 @@ export const StaffInvitation = (props: TInviteProps): ReactElement => {
   useEffect(() => {
     if (!user || !invite || accepted === false) return
 
-    acceptInvite({ invite_id: invite.id, password: tempPassword, users_ids: [user.id], ...updatedUserData, child_object: childData })
-      .unwrap()
-      .then(() => {
-        api.success({
-          message: `Invitation accepted`,
-          description: 'You have successfully accepted the invitation.',
-          placement: 'bottomRight',
-        })
-        setTimeout(() => {
-          callback && callback()
-        }, 2000)
-      })
-      .catch((error) => {
-        api.error({
-          message: `Could not accept invitation`,
-          description: error?.details || error?.detail || 'Please, try again later.',
-          placement: 'bottomRight',
-        })
-      })
+    acceptInvitation()
   }, [user, invite, accepted])
 
   useEffect(() => {
     if (!user || !invite || accepted === true || accepted === undefined) return
 
-    denyInvite({ userId: user.id, inviteId: invite.id, usersIds: [user.id] })
-      .unwrap()
-      .then(() => {
-        api.success({
-          message: `Invitation denied`,
-          description: 'You have successfully denied the invitation.',
-          placement: 'bottomRight',
-        })
-        setInvitationDenied(true)
-      })
-      .catch((error) => {
-        api.error({
-          message: `Could not deny invitation`,
-          description: error?.details || error?.detail || 'Please, try again later.',
-          placement: 'bottomRight',
-        })
-      })
+    denyInvitation()
   }, [user, invite, accepted, callback])
 
   const role = useMemo(() => {
@@ -131,25 +89,21 @@ export const StaffInvitation = (props: TInviteProps): ReactElement => {
     return ''
   }, [invite])
 
-  if (isLoading || isLoadingDeny || !invite)
+  if (isLoadingAccept || isLoadingDeny || !invite)
     return (
       <Body centered>
         <Spin indicator={<LoadingOutlined spin />} size="large" />
       </Body>
     )
 
-  if (invitationDenied) {
-    return <InvitationDenied teamName={invite.team!.name} role={role} />
-  }
-
   return (
     <Body centered>
-      {contextHolder}
       <Illustration src={CoachIllustration} />
       <Title>Welcome to {invite.team!.name}</Title>
       <Subtitle small>
-        {user!.firstName} {user!.lastName} has been added as a coach for {invite.team!.name}. <span className='capitalize'>{role}</span> can submit their
-        roster, invite players, enter availability, monitor RSVP and more.
+        {user!.firstName} {user!.lastName} has been added as a coach for {invite.team!.name}.{' '}
+        <span className="capitalize">{role}</span> can submit their roster, invite players, enter availability, monitor
+        RSVP and more.
       </Subtitle>
       <AppDownloadCTA />
     </Body>
