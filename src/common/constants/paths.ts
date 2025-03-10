@@ -19,7 +19,7 @@ export const PATH_TO_ACCOUNT_INVITATION_ERROR = '/accounts/invitation-error'
 // ONBOARDING PAGES
 export const PATH_TO_ACCOUNT_ONBOARDING = '/accounts/onboarding'
 export const PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA = '/accounts/onboarding/confirm-data'
-export const PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PARENT_DATA = '/accounts/onboarding/confirm-parent-data'
+export const PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PLAYER_DATA = '/accounts/onboarding/confirm-player-data'
 export const PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD = '/accounts/onboarding/create-password'
 export const PATH_TO_ACCOUNT_ONBOARDING_INVITATION = '/accounts/invitation'
 export const PATH_TO_ACCOUNT_ONBOARDING_INVITE_PARENT = '/accounts/invite-parent'

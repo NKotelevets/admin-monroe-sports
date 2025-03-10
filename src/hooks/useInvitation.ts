@@ -10,7 +10,7 @@ import {
   PATH_TO_ACCOUNT_INVITATIONS,
   PATH_TO_ACCOUNT_INVITE_PARENT,
   PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA,
-  PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PARENT_DATA,
+  PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PLAYER_DATA,
   PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD, PATH_TO_ACCOUNT_ONBOARDING_INVITATION, PATH_TO_ACCOUNT_ONBOARDING_SIGNUP
 } from '@/common/constants/paths.ts'
 import { IFEUser, IInvitation } from '@/common/interfaces/user.ts'
@@ -141,9 +141,9 @@ export const useInvitation = (): TUseInvitation => {
         newPath = `${PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA}/${token}/${acceptedString}`
       } else if (
         status === 'confirmParentData' &&
-        !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PARENT_DATA)
+        !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PLAYER_DATA)
       ) {
-        newPath = `${PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PARENT_DATA}/${token}/${acceptedString}`
+        newPath = `${PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PLAYER_DATA}/${token}/${acceptedString}`
       } else if (
         (status === 'pending' || status === 'requestLogin') &&
         !location.pathname.includes(PATH_TO_ACCOUNT_INVITATIONS)
