@@ -27,7 +27,7 @@ export type TConfirmUserDataForm = {
   firstName: string
   lastName: string
   dateOfBirth: string
-  gender: string
+  gender: number
   zipCode: string
   terms: boolean
   type: 'player' | 'guardian' | 'staff' | undefined
@@ -53,7 +53,7 @@ const ConfirmUserData = (props: TConfirmUserDataProps): ReactElement => {
       firstName: user?.firstName || '',
       lastName: user?.lastName || '',
       dateOfBirth: user?.birthDate || '',
-      gender: user?.gender ? user?.gender.toString() : '',
+      gender: user?.gender ? user?.gender : 2,
       zipCode: user?.zipCode || '',
       terms: false,
       type: undefined,
@@ -76,7 +76,7 @@ const ConfirmUserData = (props: TConfirmUserDataProps): ReactElement => {
       firstName: values.firstName || '',
       lastName: values.lastName || '',
       birthDate: values.dateOfBirth || '',
-      gender: parseInt(values.gender) ?? 0,
+      gender: values.gender,
       zipCode: values.zipCode || '',
     })
 

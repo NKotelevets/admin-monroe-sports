@@ -129,7 +129,7 @@ export const accountSlice = createSlice({
     setAccepted: (state) => {
       state.status = 'accepted'
     },
-    setRejected: (state) => {
+    setDenied: (state) => {
       state.status = 'rejected'
     },
     setExpired: (state) => {
