@@ -16,6 +16,7 @@ import { Layout } from '@/layouts/PublicLayout'
 import { colors } from '@/utils/colors.tsx'
 
 import ArrowDown from '@/assets/icons/arrow-down.svg'
+import { Fields } from '@/components/Elements'
 
 const {
   Styles: { LargeButton },
@@ -170,9 +171,6 @@ const Date = styled(DatePicker)`
     color: ${colors.blackText} !important;
     font-size: 16px !important;
   }
-`
-const Fields = styled.div`
-  margin-bottom: 144px;
 `
 const Button = styled(LargeButton)`
   margin-top: 24px;

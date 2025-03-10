@@ -5,26 +5,28 @@ import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { createPasswordSchema } from '@/pages/Account/CreatePassword/validation.ts'
+import { InvitationError } from '@/pages/Account/Onboarding/components/InvitationError.tsx'
+import { InvitationExpired } from '@/pages/Account/Onboarding/components/InvitationExpired.tsx'
 
+import { Fields } from '@/components/Elements'
 import TextInput from '@/components/Inputs/TextInput.tsx'
 import { PasswordRequirements } from '@/components/PasswordRequirements.tsx'
 
 import { Layout } from '@/layouts/PublicLayout'
 
+import { useAcceptInviteMutation } from '@/redux/auth/auth.api.ts'
+import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
+
 import { useFieldErrors } from '@/hooks/useFieldErrors.ts'
+import { useInvitation } from '@/hooks/useInvitation.ts'
 
 import { colors } from '@/utils/colors.tsx'
 
 import { PATH_TO_ACCOUNT_LOGIN } from '@/common/constants/paths.ts'
-import { useAcceptInviteMutation } from '@/redux/auth/auth.api.ts'
-import { useInvitation } from '@/hooks/useInvitation.ts'
-import { InvitationExpired } from '@/pages/Account/Onboarding/components/InvitationExpired.tsx'
-import { InvitationError } from '@/pages/Account/Onboarding/components/InvitationError.tsx'
-import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
 
 const {
   Page,
-  Styles: { Title, Subtitle, LargeButton, FormStyled, Body }
+  Styles: { Title, Subtitle, LargeButton, FormStyled, Body },
 } = Layout
 
 type TCreatePasswordForm = {
@@ -56,7 +58,7 @@ const CreatePassword = () => {
     api.error({
       message: serverMessage || 'Something went wrong',
       description: 'Please, try again. If the problem persists, contact support.',
-      placement: 'bottomRight'
+      placement: 'bottomRight',
     })
   }
 
@@ -78,21 +80,6 @@ const CreatePassword = () => {
     if (!invitation) return
     setTempPassword(values.newPassword)
     return nextStep()
-
-    // // FIXME: this will probably change (waiting Andrey's feedback)
-    // createPassword({ invite_id: invitation.id, password: values.newPassword })
-    //   .unwrap()
-    //   .then(() => {
-    //     nextStep()
-    //   })
-    //   .catch(handleErrors(setErrors, errorsCallback))
-    //   .catch(() => {
-    //     api.error({
-    //       message: 'Something went wrong',
-    //       description: 'We were unable to change your password. Please, try again.',
-    //       placement: 'bottomRight'
-    //     })
-    //   })
   }
 
   if (invitationExpired) {
@@ -128,35 +115,37 @@ const CreatePassword = () => {
         >
           {({ values, errors, touched, isValid, handleChange, handleBlur, handleSubmit }) => (
             <FormStyled onSubmit={handleSubmit}>
-              <TextInput
-                preset="app"
-                type="password"
-                name="newPassword"
-                label="Password"
-                value={values.newPassword}
-                placeholder="Enter password"
-                onChange={handleChange('newPassword')}
-                onBlur={handleBlur('newPassword')}
-                // error={touched.newPassword ? errors.newPassword : undefined}
-                iconRender={renderEyeIcon}
-              />
-              <PasswordRequirements password={values.newPassword} />
-              <TextInput
-                preset="app"
-                type="password"
-                name="confirmPassword"
-                label="Confirm password"
-                value={values.confirmPassword}
-                placeholder="Confirm password"
-                onChange={handleChange('confirmPassword')}
-                onBlur={handleBlur('confirmPassword')}
-                error={touched.confirmPassword ? errors.confirmPassword : undefined}
-                iconRender={renderEyeIcon}
-              />
+              <Fields>
+                <TextInput
+                  preset="app"
+                  type="password"
+                  name="newPassword"
+                  label="Password"
+                  value={values.newPassword}
+                  placeholder="Enter password"
+                  onChange={handleChange('newPassword')}
+                  onBlur={handleBlur('newPassword')}
+                  // error={touched.newPassword ? errors.newPassword : undefined}
+                  iconRender={renderEyeIcon}
+                />
+                <PasswordRequirements password={values.newPassword} />
+                <TextInput
+                  preset="app"
+                  type="password"
+                  name="confirmPassword"
+                  label="Confirm password"
+                  value={values.confirmPassword}
+                  placeholder="Confirm password"
+                  onChange={handleChange('confirmPassword')}
+                  onBlur={handleBlur('confirmPassword')}
+                  error={touched.confirmPassword ? errors.confirmPassword : undefined}
+                  iconRender={renderEyeIcon}
+                />
 
-              <LargeButton loading={isLoading} type="primary" htmlType="submit" disabled={!isValid}>
-                Create Password
-              </LargeButton>
+                <LargeButton loading={isLoading} type="primary" htmlType="submit" disabled={!isValid}>
+                  Create Password
+                </LargeButton>
+              </Fields>
             </FormStyled>
           )}
         </Formik>
@@ -170,6 +159,6 @@ export default CreatePassword
 const styles = {
   icon: {
     fontSize: 22,
-    color: colors.blackText
-  }
+    color: colors.blackText,
+  },
 }
