@@ -66,11 +66,14 @@ export const authApi = createApi({
      * @returns {void}
      */
     acceptInvite: builder.mutation<void, { invite_id: string; users_ids?: string[]; password?: string }>({
-      query: (body) => ({
-        url: 'users/accept-invite',
-        body,
-        method: 'POST',
-      }),
+      query: (body) => {
+        // TODO: Modificar o body p/ adicionar password or child se houver
+        return ({
+          url: 'users/accept-invite',
+          body,
+          method: 'POST',
+        })
+      },
     }),
   }),
 })

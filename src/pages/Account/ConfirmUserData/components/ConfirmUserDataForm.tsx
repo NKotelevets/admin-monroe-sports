@@ -80,7 +80,7 @@ export const ConfirmUserDataForm = ({ isLoading }: { isLoading: boolean }): Reac
         error={touched.dateOfBirth ? errors.dateOfBirth : undefined}
       >
         <Select
-          placeholder="Outlined"
+          placeholder="Select gender"
           variant="borderless"
           style={styles.select}
           suffixIcon={<ReactSVG src={ArrowDown} style={{ marginRight: 10 }} />}
