@@ -30,7 +30,7 @@ const AcceptedInvitation = () => {
     }
   }, [invitation])
 
-  if (!user || !invitation || !type || invitationExpired)
+  if (!type || (invitationExpired && (!user || !invitation)))
     return (
       <Page>
         <Body>
@@ -45,7 +45,7 @@ const AcceptedInvitation = () => {
       return (
         <FamilyInvitationAccepted
           familyName={invitation?.inviter?.lastName || 'family'}
-          userName={`${user.firstName} ${user.lastName}`}
+          userName={user ? `${user.firstName} ${user.lastName}` : ''}
         />
       )
     }
@@ -71,7 +71,7 @@ const AcceptedInvitation = () => {
     return <PlayerInvitationAccepted teamName={invitation?.team?.name || 'team'} />
   }
 
-  return <Page>{content()}</Page>
+  return <Page centered>{content()}</Page>
 }
 
 export default AcceptedInvitation
