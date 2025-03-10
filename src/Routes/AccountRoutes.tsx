@@ -23,15 +23,16 @@ import {
   PATH_TO_ACCOUNT_INVITATIONS,
   PATH_TO_ACCOUNT_LOGIN,
   PATH_TO_ACCOUNT_ONBOARDING,
-  PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA,
+  PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA, PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PLAYER_DATA,
   PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD,
   PATH_TO_ACCOUNT_ONBOARDING_INVITATION,
   PATH_TO_ACCOUNT_ONBOARDING_INVITE_PARENT,
   PATH_TO_ACCOUNT_ONBOARDING_SIGNUP,
   PATH_TO_ACCOUNT_REQUEST_RESET_PASSWORD,
   PATH_TO_ACCOUNT_RESET_PASSWORD,
-  PATH_TO_ACCOUNT_SIGNUP,
+  PATH_TO_ACCOUNT_SIGNUP
 } from '@/common/constants/paths.ts'
+import ConfirmPlayerData from '@/pages/Account/ConfirmPlayerData/ConfirmPlayerData.tsx'
 
 /**
  * Functional component routing the account-related pages.
@@ -80,6 +81,10 @@ export const AccountRoutes = () => {
         <Route
           path={`${normalizePath(PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA)}/:token/:accepted?`}
           element={<ConfirmUserData />}
+        />
+        <Route
+          path={`${normalizePath(PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PLAYER_DATA)}/:token/:accepted?`}
+          element={<ConfirmPlayerData />}
         />
       </Routes>
     </AuthProvider>
