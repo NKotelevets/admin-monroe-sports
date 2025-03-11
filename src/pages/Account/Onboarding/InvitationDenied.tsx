@@ -1,15 +1,11 @@
-import { LoadingOutlined } from '@ant-design/icons'
-import { Spin } from 'antd'
 import { useMemo } from 'react'
 
 import Denied from '@/pages/Account/Invitations/components/InvitationDenied.tsx'
-import { InvitationExpired } from '@/pages/Account/Onboarding/components/InvitationExpired.tsx'
 
 import { Layout } from '@/layouts/PublicLayout'
 
 import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
 
-import { useInvitation } from '@/hooks/useInvitation.ts'
 
 import { INVITE_TYPE_NAMED } from '@/common/constants'
 
@@ -30,8 +26,7 @@ const {
  * @returns {JSX.Element} The rendered component for an invitation denial message.
  */
 const InvitationDenied = () => {
-  const { user, invitation } = useAccountSlice()
-  const { loaded, invitationExpired } = useInvitation()
+  const { invitation } = useAccountSlice()
 
   const invitationRole = useMemo(() => {
     if (invitation?.inviteType === INVITE_TYPE_NAMED.COACH) {
@@ -47,22 +42,8 @@ const InvitationDenied = () => {
       return 'master admin'
     }
 
-    return 'player'
+    return undefined
   }, [invitation])
-
-  if (!user || !invitation)
-    if (!loaded || invitationExpired)
-      return (
-        <Page>
-          <Body>
-            {loaded && invitationExpired ? (
-              <InvitationExpired />
-            ) : (
-              <Spin indicator={<LoadingOutlined spin />} size="large" />
-            )}
-          </Body>
-        </Page>
-      )
 
   return (
     <Page>
