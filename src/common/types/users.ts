@@ -9,7 +9,7 @@ export type TPrefilledDataWithToken = IPrefilledUserData & { token: string }
 export type TChildData = {
   firstName: string
   lastName: string
-  dateOfBirth: string
+  birthDate: string
   suffix: string
   email: string
 }

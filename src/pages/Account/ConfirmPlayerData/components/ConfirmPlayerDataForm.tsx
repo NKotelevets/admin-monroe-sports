@@ -58,18 +58,18 @@ export const ConfirmPlayerDataForm = ({ isLoading }: { isLoading: boolean }): Re
         preset="app"
         label="Date of birth"
         errorPosition="top"
-        error={touched.dateOfBirth ? errors.dateOfBirth : undefined}
+        error={touched.birthDate ? errors.birthDate : undefined}
       >
         <Date
           variant="borderless"
           suffixIcon={<CalendarIcon />}
           format="MM/DD/YYYY"
           placeholder="Select date"
-          value={values.dateOfBirth ? dayjs(values.dateOfBirth, 'YYYY-MM-DD') : null}
+          value={values.birthDate ? dayjs(values.birthDate, 'YYYY-MM-DD') : null}
           onChange={(value: unknown) => {
-            setFieldValue('dateOfBirth', value ? (value as Dayjs).format('YYYY-MM-DD') : null)
+            setFieldValue('birthDate', value ? (value as Dayjs).format('YYYY-MM-DD') : null)
           }}
-          status={touched.dateOfBirth && errors.dateOfBirth ? 'error' : undefined}
+          status={touched.birthDate && errors.birthDate ? 'error' : undefined}
         />
       </InputWrapper>
       <TextInput

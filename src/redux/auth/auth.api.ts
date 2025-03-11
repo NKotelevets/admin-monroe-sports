@@ -9,7 +9,7 @@ import {
 } from '@/common/interfaces/auth'
 import { IBEOperator } from '@/common/interfaces/operator'
 import { TChildData } from '@/common/types/users.ts'
-import { removeEmptyStringAttributes } from '@/utils'
+import { removeEmptyStringAttributes, transformKeysToSnakeCase } from '@/utils'
 
 export const authApi = createApi({
   baseQuery: fetchBaseQuery({
@@ -69,8 +69,7 @@ export const authApi = createApi({
      */
     acceptInvite: builder.mutation<void, { invite_id: string; users_ids?: string[]; password?: string, child_object?: TChildData }>({
       query: (body) => {
-        const _body = removeEmptyStringAttributes(body)
-
+        const _body = removeEmptyStringAttributes(transformKeysToSnakeCase(body))
         return ({
           url: 'users/accept-invite',
           body: _body,

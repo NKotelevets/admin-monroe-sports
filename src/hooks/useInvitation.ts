@@ -10,13 +10,14 @@ import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
 import {
   PATH_TO_ACCOUNT_INVITATIONS,
   PATH_TO_ACCOUNT_INVITATION_ACCEPTED,
+  PATH_TO_ACCOUNT_INVITATION_DENIED,
   PATH_TO_ACCOUNT_INVITATION_EXPIRED,
   PATH_TO_ACCOUNT_INVITE_PARENT,
   PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA,
   PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PLAYER_DATA,
   PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD,
   PATH_TO_ACCOUNT_ONBOARDING_INVITATION,
-  PATH_TO_ACCOUNT_ONBOARDING_SIGNUP, PATH_TO_ACCOUNT_INVITATION_DENIED
+  PATH_TO_ACCOUNT_ONBOARDING_SIGNUP,
 } from '@/common/constants/paths.ts'
 import { IFEUser, IInvitation } from '@/common/interfaces/user.ts'
 
@@ -31,6 +32,7 @@ type TUseInvitation = {
   loaded: boolean
   isLoadingDeny: boolean
   isLoadingAccept: boolean
+  errorMessage: string | null
   nextStep(): void
   navigateToCurrentStep(): void
   acceptInvitation(selectedChildrenId?: string[]): void
@@ -82,6 +84,7 @@ export const useInvitation = (): TUseInvitation => {
   const [invitation, setInvitation] = useState<IInvitation | null>(null)
   const [invitationExpired, setInvitationExpired] = useState(false)
   const [hasErrors, setHasErrors] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [loaded, setLoaded] = useState(false)
   const [accepted, setAccepted] = useState<boolean | undefined>(undefined)
 
@@ -108,6 +111,10 @@ export const useInvitation = (): TUseInvitation => {
         if (reason.status === 404) {
           setSignUp({ callback: navigateToCurrentStep, params: false })
         } else {
+          if (reason.status === 400) {
+            setInvitationExpired(true)
+            return
+          }
           setHasErrors(true)
         }
       })
@@ -193,21 +200,26 @@ export const useInvitation = (): TUseInvitation => {
   )
 
   const acceptInvitation = (selectedAthletes?: string[]) => {
-    acceptInvite({
-      invite_id: invitation?.id || '',
-      users_ids: selectedAthletes,
-      password: tempPassword,
-      ...updatedUserData,
-      child_object: childData,
-    })
-      .unwrap()
-      .then(() => {
-        setStatusAccepted()
-      })
-      .catch(() => {
-        setHasErrors(true)
-      })
-  }
+      const payload = {
+        invite_id: invitation?.id || '',
+        users_ids: selectedAthletes,
+        password: tempPassword,
+        ...updatedUserData,
+        child_object: childData,
+      }
+
+      acceptInvite(payload)
+        .unwrap()
+        .then(() => {
+          setStatusAccepted()
+        })
+        .catch(error => {
+          setHasErrors(true)
+          setHasErrors(true)
+          const message = typeof error.data === 'string' ? error.data : 'Something went wrong. Please try again later.'
+          setErrorMessage(error?.data?.detail || error?.data?.details || error?.data?.message || message)
+        })
+    }
 
   const denyInvitation = (selectedAthletes?: string[]) => {
     denyInvite({
@@ -221,8 +233,10 @@ export const useInvitation = (): TUseInvitation => {
       .then(() => {
         setDenied()
       })
-      .catch(() => {
+      .catch(error => {
         setHasErrors(true)
+        const message = typeof error === 'string' ? error : 'Something went wrong. Please try again later.'
+        setErrorMessage(error?.detail || error?.details || error?.message || message)
       })
   }
 
@@ -241,5 +255,6 @@ export const useInvitation = (): TUseInvitation => {
     nextStep,
     acceptInvitation,
     denyInvitation,
+    errorMessage
   }
 }

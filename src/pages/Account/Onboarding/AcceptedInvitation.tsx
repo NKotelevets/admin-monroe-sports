@@ -1,27 +1,38 @@
 import { LoadingOutlined } from '@ant-design/icons'
 import { Spin } from 'antd'
-import { useEffect, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 
 import { FamilyInvitationAccepted } from '@/pages/Account/Invitations/components/FamilyInvitation/FamilyInvitationAccepted.tsx'
 import { PlayerInvitationAccepted } from '@/pages/Account/Invitations/components/PlayerInvitation/PlayerInvitationAccepted.tsx'
 import { StaffInvitation } from '@/pages/Account/Invitations/components/StaffInvitation.tsx'
+import { InvitationExpired } from '@/pages/Account/Onboarding/components/InvitationExpired.tsx'
 
 import { Layout } from '@/layouts/PublicLayout'
 
 import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
 
-import { INVITE_TYPE_NAMED } from '@/common/constants'
 import { useInvitation } from '@/hooks/useInvitation.ts'
-import { InvitationExpired } from '@/pages/Account/Onboarding/components/InvitationExpired.tsx'
+
+import { INVITE_TYPE_NAMED } from '@/common/constants'
 
 const {
   Page,
   Styles: { Body },
 } = Layout
 
-const AcceptedInvitation = () => {
+/**
+ * Component handling the display logic of an accepted invitation.
+ * Renders appropriate content based on the user, invitation details,
+ * and type of invitation, such as family, staff, or viewer role invitations.
+ * Displays a loading spinner or an expired invitation message when appropriate conditions are met.
+ *
+ * @function
+ * @returns {ReactElement | null} Returns the component to display the relevant content
+ * based on the invitation type, or null if necessary conditions are not satisfied.
+ */
+const AcceptedInvitation = (): ReactElement => {
   const { user, invitation } = useAccountSlice()
-  const { loaded, invitationExpired} = useInvitation()
+  const { loaded, invitationExpired } = useInvitation()
   const [type, setType] = useState<number | undefined>(undefined)
 
   useEffect(() => {
@@ -30,14 +41,19 @@ const AcceptedInvitation = () => {
     }
   }, [invitation])
 
-  if (!type || (invitationExpired && (!user || !invitation)))
-    return (
-      <Page>
-        <Body>
-          {loaded && invitationExpired ? <InvitationExpired /> : <Spin indicator={<LoadingOutlined spin />} size="large" />}
-        </Body>
-      </Page>
-    )
+  if (!user || !invitation)
+    if (!type || invitationExpired)
+      return (
+        <Page>
+          <Body>
+            {loaded && invitationExpired ? (
+              <InvitationExpired />
+            ) : (
+              <Spin indicator={<LoadingOutlined spin />} size="large" />
+            )}
+          </Body>
+        </Page>
+      )
 
   const content = () => {
     // Family invitation

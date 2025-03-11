@@ -3,7 +3,6 @@ import { Spin } from 'antd'
 import { useMemo } from 'react'
 
 import Denied from '@/pages/Account/Invitations/components/InvitationDenied.tsx'
-import { InvitationError } from '@/pages/Account/Onboarding/components/InvitationError.tsx'
 import { InvitationExpired } from '@/pages/Account/Onboarding/components/InvitationExpired.tsx'
 
 import { Layout } from '@/layouts/PublicLayout'
@@ -19,9 +18,20 @@ const {
   Styles: { Body },
 } = Layout
 
+/**
+ * A React component that displays a message for a denied invitation to join a team.
+ *
+ * The component uses invitation and user data to determine the appropriate role and messages
+ * to display. Handles scenarios where the invitation has expired or the invitation/user data
+ * has not fully loaded.
+ *
+ * @function
+ * @name InvitationDenied
+ * @returns {JSX.Element} The rendered component for an invitation denial message.
+ */
 const InvitationDenied = () => {
   const { user, invitation } = useAccountSlice()
-  const { loaded, invitationExpired, hasErrors } = useInvitation()
+  const { loaded, invitationExpired } = useInvitation()
 
   const invitationRole = useMemo(() => {
     if (invitation?.inviteType === INVITE_TYPE_NAMED.COACH) {
@@ -31,7 +41,7 @@ const InvitationDenied = () => {
       return 'head coach'
     }
     if (invitation?.inviteType === INVITE_TYPE_NAMED.TEAM_ADMIN) {
-      return 'Team admin'
+      return 'team admin'
     }
     if (invitation?.inviteType === INVITE_TYPE_NAMED.MASTER_ADMIN) {
       return 'master admin'
@@ -40,33 +50,24 @@ const InvitationDenied = () => {
     return 'player'
   }, [invitation])
 
-  if (hasErrors) {
-    return (
-      <Page>
-        <Body>
-          <InvitationError />
-        </Body>
-      </Page>
-    )
-  }
-
-  if (!user || !invitation || invitationExpired)
-    return (
-      <Page>
-        <Body>
-          {loaded && invitationExpired ? (
-            <InvitationExpired />
-          ) : (
-            <Spin indicator={<LoadingOutlined spin />} size="large" />
-          )}
-        </Body>
-      </Page>
-    )
+  if (!user || !invitation)
+    if (!loaded || invitationExpired)
+      return (
+        <Page>
+          <Body>
+            {loaded && invitationExpired ? (
+              <InvitationExpired />
+            ) : (
+              <Spin indicator={<LoadingOutlined spin />} size="large" />
+            )}
+          </Body>
+        </Page>
+      )
 
   return (
     <Page>
       <Body>
-        <Denied teamName={invitation.team?.name || 'team'} role={invitationRole} />
+        <Denied teamName={invitation?.team?.name || 'team'} role={invitationRole} />
       </Body>
     </Page>
   )
