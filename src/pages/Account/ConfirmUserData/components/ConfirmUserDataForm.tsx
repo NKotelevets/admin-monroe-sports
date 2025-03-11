@@ -86,8 +86,8 @@ export const ConfirmUserDataForm = ({ isLoading, isPlayer }: { isLoading: boolea
           suffixIcon={<ReactSVG src={ArrowDown} style={{ marginRight: 10 }} />}
           options={[
             { label: 'Male', value: 1 },
-            { label: 'Female', value: 2 },
-            { label: 'Other', value: 3 },
+            { label: 'Female', value: 0 },
+            { label: 'Other', value: 2 },
           ]}
           value={values.gender}
           onChange={(value) => {

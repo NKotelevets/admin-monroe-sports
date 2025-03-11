@@ -55,7 +55,7 @@ const ConfirmUserData = (props: TConfirmUserDataProps): ReactElement => {
       firstName: user?.firstName || '',
       lastName: user?.lastName || '',
       dateOfBirth: user?.birthDate || '',
-      gender: user?.gender ? user?.gender : 2,
+      gender: typeof user?.gender === 'number' ? user?.gender : 2,
       zipCode: user?.zipCode || '',
       terms: false,
       type: undefined,
