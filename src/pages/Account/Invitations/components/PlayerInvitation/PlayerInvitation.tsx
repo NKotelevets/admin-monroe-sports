@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { Flex, notification } from 'antd'
+import { Flex, notification, Spin } from 'antd'
 import { ReactElement, useEffect, useState } from 'react'
 
 import { CreateSupervisedUserModal } from '@/pages/Account/Invitations/components/PlayerInvitation/CreateSupervisedUserModal.tsx'
@@ -17,6 +17,7 @@ import { useInvitation } from '@/hooks/useInvitation.ts'
 import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 import { transformKeysToCamelCase } from '@/utils'
 import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
+import { LoadingOutlined } from '@ant-design/icons'
 
 const {
   Styles: { Title, Subtitle, Body, LargeButton },
@@ -155,6 +156,14 @@ export const PlayerInvitation = (props: TInviteProps): ReactElement => {
 
   if (invitationStatus === 'denied') {
     return <InvitationDenied teamName={invite?.team?.name || 'team'} role={'player'} />
+  }
+
+  if (accepted === true || accepted === false || !loaded) {
+    return (
+      <Body centered>
+        <Spin indicator={<LoadingOutlined spin />} size="large" />
+      </Body>
+    )
   }
 
   return (
