@@ -18,7 +18,7 @@ const InvitationDenied = (props: TInvitationDeniedProps) => {
     <Body centered>
       <Illustration src={PlayerIllustration} />
       <Title>Invitation Rejected</Title>
-      <Subtitle style={{marginBottom: 32}}>You have successfully rejected the invitation to join {teamName} {role ? `as ${role}` : ''}. If you change your mind and would like to join this team, please reach out to a Master Team Admin to request a new invitation.</Subtitle>
+      <Subtitle style={{marginBottom: 32}}>You have successfully rejected the invitation to join {teamName}{role ? ` as ${role}` : ''}. If you change your mind and would like to join this team, please reach out to a Master Team Admin to request a new invitation.</Subtitle>
       <Subtitle>For further support, contact us at <Link to={'mailto:info@swiftschedule.net'}>info@swiftschedule.net</Link>.</Subtitle>
     </Body>
   )

@@ -6,6 +6,7 @@ import { receiveInvitationThunk } from '@/redux/account/account.slice.tsx'
 import { useAcceptInviteMutation } from '@/redux/auth/auth.api.ts'
 import { useAppDispatch } from '@/redux/hooks.ts'
 import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
+import { useAuthSlice } from '@/redux/hooks/useAuthSlice.ts'
 
 import {
   PATH_TO_ACCOUNT_INVITATIONS,
@@ -69,6 +70,7 @@ export const useInvitation = (): TUseInvitation => {
     updatedUserData,
     childData,
   } = useAccountSlice()
+  const { access } = useAuthSlice()
   const { token, accepted: acceptedString } = useParams<{ token: string; accepted?: string }>()
 
   const navigate = useNavigate()
@@ -166,6 +168,7 @@ export const useInvitation = (): TUseInvitation => {
       }
 
       let newPath = null
+      const invitationsPath = access ? PATH_TO_ACCOUNT_INVITATIONS : PATH_TO_ACCOUNT_ONBOARDING_INVITATION
 
       if (status === 'createPassword' && !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD)) {
         newPath = `${PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD}/${token}/${acceptedString}`
@@ -176,11 +179,8 @@ export const useInvitation = (): TUseInvitation => {
         !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PLAYER_DATA)
       ) {
         newPath = `${PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PLAYER_DATA}/${token}/${acceptedString}`
-      } else if (
-        (status === 'pending' || status === 'requestLogin') &&
-        !location.pathname.includes(PATH_TO_ACCOUNT_INVITATIONS)
-      ) {
-        newPath = `${PATH_TO_ACCOUNT_ONBOARDING_INVITATION}/${token}/${acceptedString}`
+      } else if ((status === 'pending' || status === 'requestLogin') && !invitationsPath) {
+        newPath = `${invitationsPath}/${token}/${acceptedString}`
       } else if (status === 'under16' && !location.pathname.includes(PATH_TO_ACCOUNT_INVITE_PARENT)) {
         newPath = `${PATH_TO_ACCOUNT_INVITE_PARENT}/${token}/${acceptedString}`
       } else if (status === 'signUp') {
@@ -201,26 +201,26 @@ export const useInvitation = (): TUseInvitation => {
   )
 
   const acceptInvitation = (selectedAthletes?: string[]) => {
-      const payload = {
-        invite_id: invitation?.id || '',
-        users_ids: selectedAthletes,
-        password: tempPassword,
-        ...updatedUserData,
-        child_object: childData,
-      }
-
-      acceptInvite(payload)
-        .unwrap()
-        .then(() => {
-          setStatusAccepted()
-        })
-        .catch(error => {
-          setHasErrors(true)
-          setHasErrors(true)
-          const message = typeof error.data === 'string' ? error.data : 'Something went wrong. Please try again later.'
-          setErrorMessage(error?.data?.detail || error?.data?.details || error?.data?.message || message)
-        })
+    const payload = {
+      invite_id: invitation?.id || '',
+      users_ids: selectedAthletes,
+      password: tempPassword,
+      ...updatedUserData,
+      child_object: childData,
     }
+
+    acceptInvite(payload)
+      .unwrap()
+      .then(() => {
+        setStatusAccepted()
+      })
+      .catch((error) => {
+        setHasErrors(true)
+        setHasErrors(true)
+        const message = typeof error.data === 'string' ? error.data : 'Something went wrong. Please try again later.'
+        setErrorMessage(error?.data?.detail || error?.data?.details || error?.data?.message || message)
+      })
+  }
 
   const denyInvitation = (selectedAthletes?: string[]) => {
     denyInvite({
@@ -234,7 +234,7 @@ export const useInvitation = (): TUseInvitation => {
       .then(() => {
         setDenied()
       })
-      .catch(error => {
+      .catch((error) => {
         setHasErrors(true)
         const message = typeof error === 'string' ? error : 'Something went wrong. Please try again later.'
         setErrorMessage(error?.detail || error?.details || error?.message || message)
@@ -256,6 +256,6 @@ export const useInvitation = (): TUseInvitation => {
     nextStep,
     acceptInvitation,
     denyInvitation,
-    errorMessage
+    errorMessage,
   }
 }

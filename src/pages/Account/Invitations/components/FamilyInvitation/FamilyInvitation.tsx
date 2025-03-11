@@ -137,7 +137,7 @@ export const FamilyInvitation = (props: TInviteProps): ReactElement => {
     return (
       <FamilyInvitationAccepted
         familyName={invite.inviter?.lastName || user?.lastName || ''}
-        userName={invite.children.map((child) => child.firstName).join(',') || ''}
+        userName={invite.children.map((child) => child.firstName).join(',')  || user ? `${user.firstName} ${user.lastName}` : ''}
       />
     )
   }
