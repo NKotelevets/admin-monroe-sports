@@ -9,7 +9,7 @@ import { signUpSchema } from '@/pages/Account/SignUp/validation.ts'
 import { Layout } from '@/layouts/PublicLayout'
 
 import { useSignUpMutation } from '@/redux/account/account.api.ts'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useAuthSlice } from '@/redux/hooks/useAuthSlice.ts'
 import { PATH_TO_ACCOUNT_INVITATIONS } from '@/common/constants/paths.ts'
 import { notification } from 'antd'
@@ -27,11 +27,22 @@ const {
  */
 const SignUp = () => {
   const { updateTokens } = useAuthSlice()
+  const { token, accepted: acceptedString } = useParams<{ token: string; accepted?: string }>()
 
   const navigate = useNavigate()
+
   const [signUp, { isLoading }] = useSignUpMutation()
   const [formStep, setFormStep] = useState(1)
   const [api, contextHolder] = notification.useNotification()
+  const [accepted, setAccepted] = useState<boolean | undefined>(undefined)
+
+  useEffect(() => {
+    if (acceptedString) {
+      const _accepted = acceptedString?.split('?')[0]?.split('&')[0]
+      setAccepted(_accepted === 'undefined' || _accepted === undefined ? undefined : _accepted === 'true')
+    }
+  }, [acceptedString])
+
   /**
    * Handles browser back-button navigation for specific form steps.
    * - Prevents default back navigation when the form is on a specified step.
@@ -100,10 +111,8 @@ const SignUp = () => {
           refresh: data.tokens.refresh,
         })
 
-        const hasInvitation = data.invitation !== null
-
-        if (hasInvitation) {
-          navigate(`${PATH_TO_ACCOUNT_INVITATIONS}/${data.invitation}`)
+        if (token) {
+          navigate(`${PATH_TO_ACCOUNT_INVITATIONS}/${token}/${accepted}`)
         } else {
           navigate(PATH_TO_ACCOUNT_INVITATIONS)
         }

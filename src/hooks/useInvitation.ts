@@ -110,12 +110,13 @@ export const useInvitation = (): TUseInvitation => {
       .catch((reason) => {
         if (reason.status === 404) {
           setSignUp({ callback: navigateToCurrentStep, params: false })
-        } else {
-          if (reason.status === 400) {
-            setInvitationExpired(true)
-            return
-          }
+          return
+        }
+
+        if (reason.status === 400) {
           setHasErrors(true)
+          setInvitationExpired(true)
+          return
         }
       })
       .finally(() => {

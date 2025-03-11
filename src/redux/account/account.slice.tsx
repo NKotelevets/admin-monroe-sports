@@ -48,6 +48,13 @@ export const receiveInvitationThunk = createAsyncThunk(
   async (payload: Partial<TPrefilledDataWithToken>, { getState }) => {
     const state = getState() as TRootState
 
+    if (state.accountSlice?.status === 'signUp'){
+      return {
+        status: 'signUp',
+        payload,
+      }
+    }
+
     if (!payload.invitation) {
       return {
         status: 'expired',

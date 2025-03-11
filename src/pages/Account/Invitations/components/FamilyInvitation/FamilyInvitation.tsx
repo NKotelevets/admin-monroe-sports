@@ -17,6 +17,7 @@ import FamilyIllustration from '@/assets/images/onboarding/family-invitation.svg
 import { TInviteProps } from '@/common/types/account.ts'
 import { transformKeysToCamelCase } from '@/utils'
 import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
+import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 
 const {
   Styles: { Title, Subtitle, Body, LargeButton },
@@ -33,13 +34,15 @@ const {
  */
 export const FamilyInvitation = (props: TInviteProps): ReactElement => {
   const { invite: _invite } = props
-  const { invitation: _invitation, userData: user, accepted, loaded } = useInvitation()
+  const { invitation: _invitation, userData: _userData, accepted, loaded } = useInvitation()
   const { updatedUserData, tempPassword, childData } = useAccountSlice()
+  const {user: _user} = useUserSlice()
 
   const [api, contextHolder] = notification.useNotification()
   const [acceptInvite, { isLoading }] = useAcceptInviteMutation()
   const [denyInvite, { isLoading: isLoadingDeny }] = useDenyInviteMutation()
   const [invitationStatus, setInvitationStatus] = useState<'accepted' | 'denied' | 'none'>('none')
+  const [user, setUser] = useState(_user)
   const [invite, setInvite] = useState(_invitation)
 
   useEffect(() => {
@@ -47,6 +50,12 @@ export const FamilyInvitation = (props: TInviteProps): ReactElement => {
       setInvite(transformKeysToCamelCase(_invite))
     }
   }, [_invite])
+
+  useEffect(() => {
+    if(_userData) {
+      setUser(transformKeysToCamelCase(_userData))
+    }
+  }, [_userData])
 
   /**
    * Handles the action of accepting an invitation.
