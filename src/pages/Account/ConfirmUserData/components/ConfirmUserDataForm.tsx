@@ -25,7 +25,6 @@ const {
 
 export const ConfirmUserDataForm = ({ isLoading, isPlayer }: { isLoading: boolean, isPlayer?: boolean }): ReactElement => {
   const { values, errors, touched, handleChange, handleBlur, isValid, setFieldValue, handleSubmit } = useFormikContext<TConfirmUserDataForm>()
-
   const isUnder16 = dayjs().diff(dayjs(values.dateOfBirth, 'YYYY-MM-DD'), 'years') < 16
 
   const onsubmit = async (type: 'player' | 'guardian' | 'staff') => {
@@ -85,9 +84,9 @@ export const ConfirmUserDataForm = ({ isLoading, isPlayer }: { isLoading: boolea
           style={styles.select}
           suffixIcon={<ReactSVG src={ArrowDown} style={{ marginRight: 10 }} />}
           options={[
-            { label: 'Male', value: 1 },
-            { label: 'Female', value: 0 },
-            { label: 'Other', value: 2 },
+            { label: 'Male', value: '1' },
+            { label: 'Female', value: '0' },
+            { label: 'Other', value: '2' },
           ]}
           value={values.gender}
           onChange={(value) => {
@@ -134,7 +133,7 @@ export const ConfirmUserDataForm = ({ isLoading, isPlayer }: { isLoading: boolea
       )}
 
       {!isPlayer && (
-        <Button loading={isLoading} type="primary" onClick={() => onsubmit('staff')} disabled={!isValid || isUnder16}>
+        <Button loading={isLoading} type="primary" onClick={() => onsubmit('staff')} disabled={!isValid}>
           Confirm
         </Button>
       )}

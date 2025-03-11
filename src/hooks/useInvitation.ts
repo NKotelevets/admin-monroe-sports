@@ -223,11 +223,13 @@ export const useInvitation = (): TUseInvitation => {
   }
 
   const denyInvitation = (selectedAthletes?: string[]) => {
+    const { gender, ...rest } = updatedUserData || { gender: undefined }
     denyInvite({
       userId: userData?.id || '',
       inviteId: invitation?.id || '',
       usersIds: selectedAthletes,
-      ...updatedUserData,
+      ...rest,
+      ...(gender ? { gender: `${gender}` } : {}),
       childObject: childData,
     })
       .unwrap()
