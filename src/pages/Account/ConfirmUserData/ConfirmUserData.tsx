@@ -1,5 +1,5 @@
 import { Formik } from 'formik'
-import { ReactElement, useMemo } from 'react'
+import { ReactElement, useEffect, useMemo, useState } from 'react'
 
 import { ConfirmUserDataForm } from '@/pages/Account/ConfirmUserData/components/ConfirmUserDataForm.tsx'
 import { confirmUserDataSchema } from '@/pages/Account/ConfirmUserData/components/validate.ts'
@@ -11,7 +11,7 @@ import { useAccountSlice } from '@/redux/hooks/useAccountSlice'
 import { useInvitation } from '@/hooks/useInvitation.ts'
 import { INVITE_TYPE_NAMED } from '@/common/constants'
 import { LoadingOutlined } from '@ant-design/icons'
-import { Spin } from 'antd'
+import { notification, Spin } from 'antd'
 
 const {
   Page,
@@ -45,8 +45,10 @@ export type TConfirmUserDataForm = {
 const ConfirmUserData = (props: TConfirmUserDataProps): ReactElement => {
   const { inline = false, onSubmit } = props
   const { user, setUserData, setConfirmParentData, invitation } = useAccountSlice()
+  const { acceptInvitation, loaded, isLoadingAccept, hasErrors, errorMessage } = useInvitation()
 
-  const { acceptInvitation, loaded } = useInvitation()
+  const [ready, setReady] = useState(false)
+  const [api, contextHolder] = notification.useNotification()
 
   const initialValues: TConfirmUserDataForm = useMemo(
     () => ({
@@ -61,13 +63,31 @@ const ConfirmUserData = (props: TConfirmUserDataProps): ReactElement => {
     [user],
   )
 
+  useEffect(() => {
+    if (ready) {
+      acceptInvitation()
+    }
+  }, [ready])
+
+  useEffect(() => {
+    if (hasErrors) {
+      if (hasErrors) {
+        api.error({
+          message: 'Something went wrong',
+          description: errorMessage || 'Please, try again.',
+          placement: 'bottomRight',
+        })
+      }
+    }
+  }, [hasErrors, errorMessage])
+
   /**
    * Handles form submission logic based on the provided form values and formik helpers.
    *
    * @param {TConfirmUserDataForm} values - The form data submitted by the user.
-   * @returns {void|Promise<void>} - Returns the result of the `onSubmit` function if provided; otherwise, no return value.
+   * @returns {void} - Returns the result of the `onSubmit` function if provided; otherwise, no return value.
    */
-  const handleSave = (values: TConfirmUserDataForm) => {
+  const handleSave = (values: TConfirmUserDataForm): void => {
     if (onSubmit) {
       return onSubmit(values)
     }
@@ -81,7 +101,7 @@ const ConfirmUserData = (props: TConfirmUserDataProps): ReactElement => {
     })
 
     if (values.type === 'player' || values.type === 'staff') {
-      acceptInvitation()
+      setReady(true)
     } else if (values.type === 'guardian') {
       setConfirmParentData()
     }
@@ -98,6 +118,7 @@ const ConfirmUserData = (props: TConfirmUserDataProps): ReactElement => {
   return (
     <Page inline={inline}>
       <Body>
+        {contextHolder}
         <Title>Confirm your data</Title>
         <Subtitle>
           The Admin has added your main profile information. Please review it for accuracy and make any necessary
@@ -112,7 +133,7 @@ const ConfirmUserData = (props: TConfirmUserDataProps): ReactElement => {
         >
           {({ handleSubmit }) => (
             <FormStyled autoComplete="new" onSubmit={handleSubmit}>
-              <ConfirmUserDataForm isLoading={false} isPlayer={invitation.inviteType === INVITE_TYPE_NAMED.PLAYER} />
+              <ConfirmUserDataForm isLoading={isLoadingAccept} isPlayer={invitation.inviteType === INVITE_TYPE_NAMED.PLAYER} />
             </FormStyled>
           )}
         </Formik>

@@ -1,8 +1,8 @@
 import { TGender, TRole } from '@/common/types'
 
 export const APP_URL = 'https://swiftschedule.page.link/?link=https://app.swiftschedule.net/'
-export const APP_STORE_URL = 'https://app.swiftschedule.net/ios'
-export const PLAY_STORE_URL = 'https://app.swiftschedule.net/android'
+export const APP_STORE_URL = 'https://apps.apple.com/us/app/swift-schedule/id6466299529'
+export const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.scheduleworld'
 
 export const SHORT_GENDER_NAMES: Record<TGender, string> = {
   '0': 'F',
@@ -42,4 +42,4 @@ export const INVITE_TYPE_NAMED = {
   MASTER_ADMIN: INVITE_TYPE[8],
 }
 
-export const EMPTY_VALUE = '--- '
+export const EMPTY_VALUE = '---'

@@ -58,7 +58,7 @@ const ConfirmPlayerData = () => {
     if (hasErrors) {
       api.error({
         message: 'Something went wrong',
-        description: errorMessage,
+        description: errorMessage || 'Please, try again.',
         placement: 'bottomRight',
       })
     }
@@ -67,8 +67,6 @@ const ConfirmPlayerData = () => {
   const handleSave = (values: TConfirmPlayerDataForm) => {
     setChildData(values)
   }
-
-
 
   return (
     <Page>

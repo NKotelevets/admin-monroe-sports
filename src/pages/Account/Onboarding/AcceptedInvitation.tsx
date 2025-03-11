@@ -4,7 +4,7 @@ import { ReactElement, useEffect, useState } from 'react'
 
 import { FamilyInvitationAccepted } from '@/pages/Account/Invitations/components/FamilyInvitation/FamilyInvitationAccepted.tsx'
 import { PlayerInvitationAccepted } from '@/pages/Account/Invitations/components/PlayerInvitation/PlayerInvitationAccepted.tsx'
-import { StaffInvitation } from '@/pages/Account/Invitations/components/StaffInvitation.tsx'
+import { StaffInvitationAccepted } from '@/pages/Account/Invitations/components/StaffInvitation/StaffInvitationAccepted.tsx'
 import { InvitationExpired } from '@/pages/Account/Onboarding/components/InvitationExpired.tsx'
 
 import { Layout } from '@/layouts/PublicLayout'
@@ -73,15 +73,17 @@ const AcceptedInvitation = (): ReactElement => {
       type === INVITE_TYPE_NAMED.TEAM_ADMIN
     ) {
       return (
-        <Page>
-          <StaffInvitation />
-        </Page>
+        <StaffInvitationAccepted
+          name={user ? `${user.firstName} ${user.lastName}` : ''}
+          teamName={invitation?.team?.name || 'Swift Schedule'}
+          inviteType={type}
+        />
       )
     }
 
     // Invite without role
     if (type === INVITE_TYPE_NAMED.VIEWER) {
-      return <PlayerInvitationAccepted teamName={'team'} />
+      return <PlayerInvitationAccepted teamName={undefined} />
     }
 
     return <PlayerInvitationAccepted teamName={invitation?.team?.name || 'team'} />
