@@ -198,7 +198,7 @@ export const useInvitation = (): TUseInvitation => {
         navigate(newPath, { replace: true })
       }
     },
-    [status, loaded, hasErrors, invitationExpired, hasDispatched?.current, location.pathname],
+    [status, loaded, hasErrors, invitationExpired, hasDispatched?.current, location.pathname, access],
   )
 
   const acceptInvitation = (selectedAthletes?: string[]) => {
