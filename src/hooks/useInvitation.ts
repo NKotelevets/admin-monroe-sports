@@ -168,8 +168,6 @@ export const useInvitation = (): TUseInvitation => {
       }
 
       let newPath = null
-      const invitationsPath = access ? PATH_TO_ACCOUNT_INVITATIONS : PATH_TO_ACCOUNT_ONBOARDING_INVITATION
-
 
       if (status === 'createPassword' && !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD)) {
         newPath = `${PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD}/${token}/${acceptedString}`
@@ -180,8 +178,10 @@ export const useInvitation = (): TUseInvitation => {
         !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PLAYER_DATA)
       ) {
         newPath = `${PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PLAYER_DATA}/${token}/${acceptedString}`
-      } else if ((status === 'pending' || status === 'requestLogin') && !location.pathname.includes(invitationsPath)) {
-        newPath = `${invitationsPath}/${token}/${acceptedString}`
+      } else if ((status === 'requestLogin' && !location.pathname.includes(PATH_TO_ACCOUNT_INVITATIONS)) || access) {
+        newPath = `${PATH_TO_ACCOUNT_INVITATIONS}/${token}/${acceptedString}`
+      } else if (status === 'pending' && !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_INVITATION) && !access) {
+        newPath = `${PATH_TO_ACCOUNT_ONBOARDING_INVITATION}/${token}/${acceptedString}`
       } else if (status === 'under16' && !location.pathname.includes(PATH_TO_ACCOUNT_INVITE_PARENT)) {
         newPath = `${PATH_TO_ACCOUNT_INVITE_PARENT}/${token}/${acceptedString}`
       } else if (status === 'signUp') {
