@@ -50,10 +50,10 @@ const Onboarding = () => {
   }, [loaded, accepted])
 
   useEffect(() => {
-    if (loaded && accepted === false) {
+    if (loaded && accepted === false && !invitationExpired && !hasErrors) {
       denyInvitation()
     }
-  }, [])
+  }, [accepted, loaded, invitationExpired])
 
   return (
     <Page centered>

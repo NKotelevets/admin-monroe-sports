@@ -1,18 +1,20 @@
 import { Formik } from 'formik'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+
+import { ConfirmPlayerDataForm } from '@/pages/Account/ConfirmPlayerData/components/ConfirmPlayerDataForm.tsx'
+import { confirmPlayerDataSchema } from '@/pages/Account/ConfirmPlayerData/components/validate.ts'
 
 import { Layout } from '@/layouts/PublicLayout'
 
 import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
 
 import { useInvitation } from '@/hooks/useInvitation.ts'
-import { ConfirmPlayerDataForm } from '@/pages/Account/ConfirmPlayerData/components/ConfirmPlayerDataForm.tsx'
-import { confirmPlayerDataSchema } from '@/pages/Account/ConfirmPlayerData/components/validate.ts'
+import { notification } from 'antd'
 
 export type TConfirmPlayerDataForm = {
   firstName: string
   lastName: string
-  dateOfBirth: string
+  birthDate: string
   suffix: string
   email: string
 }
@@ -23,29 +25,55 @@ const {
 } = Layout
 
 const ConfirmPlayerData = () => {
-  const { user, setChildData } = useAccountSlice()
+  const { user, setChildData, childData } = useAccountSlice()
+  const { acceptInvitation, errorMessage, hasErrors } = useInvitation()
 
-  const { acceptInvitation } = useInvitation()
+  const [ready, setReady] = useState(false)
+  const [api, contextHolder] = notification.useNotification()
 
   const initialValues: TConfirmPlayerDataForm = useMemo(
     () => ({
       firstName: '',
       lastName: '',
-      dateOfBirth: '',
+      birthDate: '',
       suffix: '',
       email: '',
     }),
     [user],
   )
 
+  useEffect(() => {
+    if (childData) {
+      setReady(true)
+    }
+  }, [childData])
+
+  useEffect(() => {
+    if (ready) {
+      acceptInvitation()
+    }
+  }, [ready])
+
+  useEffect(() => {
+    if (hasErrors) {
+      api.error({
+        message: 'Something went wrong',
+        description: errorMessage,
+        placement: 'bottomRight',
+      })
+    }
+  }, [hasErrors, errorMessage])
+
   const handleSave = (values: TConfirmPlayerDataForm) => {
     setChildData(values)
-    acceptInvitation()
   }
+
+
 
   return (
     <Page>
       <Body>
+        {contextHolder}
         <Title>Add player info</Title>
         <Formik
           validateOnMount

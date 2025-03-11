@@ -77,7 +77,7 @@ export const ConfirmUserDataForm = ({ isLoading, isPlayer }: { isLoading: boolea
         preset="app"
         label="Gender"
         errorPosition="top"
-        error={touched.dateOfBirth ? errors.dateOfBirth : undefined}
+        error={touched.gender ? errors.gender : undefined}
       >
         <Select
           placeholder="Select gender"
@@ -85,9 +85,9 @@ export const ConfirmUserDataForm = ({ isLoading, isPlayer }: { isLoading: boolea
           style={styles.select}
           suffixIcon={<ReactSVG src={ArrowDown} style={{ marginRight: 10 }} />}
           options={[
-            { label: 'Male', value: '1' },
-            { label: 'Female', value: '0' },
-            { label: 'Other', value: '2' },
+            { label: 'Male', value: 1 },
+            { label: 'Female', value: 2 },
+            { label: 'Other', value: 3 },
           ]}
           value={values.gender}
           onChange={(value) => {
@@ -134,7 +134,7 @@ export const ConfirmUserDataForm = ({ isLoading, isPlayer }: { isLoading: boolea
       )}
 
       {!isPlayer && (
-        <Button loading={isLoading} danger onClick={() => onsubmit('staff')} disabled={!isValid || isUnder16}>
+        <Button loading={isLoading} type="primary" onClick={() => onsubmit('staff')} disabled={!isValid || isUnder16}>
           Confirm
         </Button>
       )}
