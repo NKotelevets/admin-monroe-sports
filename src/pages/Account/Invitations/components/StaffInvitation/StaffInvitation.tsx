@@ -35,7 +35,7 @@ const {
  * information about the invitation status and team details.
  */
 export const StaffInvitation = (props: TInviteProps): ReactElement => {
-  const { invite: _invite, callback } = props
+  const { invite: _invite, autoAccept, callback } = props
   const { invitation: _invitation, userData, accepted, acceptInvitation, denyInvitation, isLoadingAccept, isLoadingDeny } = useInvitation()
   const { user: _user } = useUserSlice()
 
@@ -63,13 +63,13 @@ export const StaffInvitation = (props: TInviteProps): ReactElement => {
    * @returns {void}
    */
   useEffect(() => {
-    if (!user || !invite || accepted === false) return
+    if (!user || !invite || accepted === false || autoAccept === false) return
 
     acceptInvitation()
-  }, [user, invite, accepted])
+  }, [user, invite, accepted, autoAccept])
 
   useEffect(() => {
-    if (!user || !invite || accepted === true || accepted === undefined) return
+    if (!user || !invite || accepted === true || accepted === undefined || !autoAccept) return
 
     denyInvitation()
   }, [user, invite, accepted, callback])
@@ -101,7 +101,7 @@ export const StaffInvitation = (props: TInviteProps): ReactElement => {
       <Illustration src={CoachIllustration} />
       <Title>Welcome to {invite.team!.name}</Title>
       <Subtitle small>
-        {user!.firstName} {user!.lastName} has been added as a coach for {invite.team!.name}.{' '}
+        {user!.firstName} {user!.lastName} has been added as a {role} for {invite.team!.name}.{' '}
         <span className="capitalize">{role}</span> can submit their roster, invite players, enter availability, monitor
         RSVP and more.
       </Subtitle>

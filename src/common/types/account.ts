@@ -17,6 +17,7 @@ export type TInviteProps = {
   invite?: IInvite
   callback?: () => void
   accepted?: boolean
+  autoAccept?: boolean
 }
 
 export type TCreateSupervisedUserForm = {

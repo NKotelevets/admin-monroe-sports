@@ -6,7 +6,7 @@ import { ChildInvitation } from '@/pages/Account/Invitations/components/ChildInv
 import { FamilyInvitation } from '@/pages/Account/Invitations/components/FamilyInvitation/FamilyInvitation.tsx'
 import { NoInvitations } from '@/pages/Account/Invitations/components/NoInvitations.tsx'
 import { PlayerInvitation } from '@/pages/Account/Invitations/components/PlayerInvitation/PlayerInvitation.tsx'
-import { StaffInvitation } from '@/pages/Account/Invitations/components/StaffInvitation.tsx'
+import { StaffInvitation } from '@/pages/Account/Invitations/components/StaffInvitation/StaffInvitation.tsx'
 import { ViewerInvitation } from '@/pages/Account/Invitations/components/ViewerInvitation.tsx'
 
 import { Layout } from '@/layouts/PublicLayout'
