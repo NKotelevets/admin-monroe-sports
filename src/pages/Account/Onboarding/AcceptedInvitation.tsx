@@ -83,7 +83,7 @@ const AcceptedInvitation = (): ReactElement => {
 
     // Invite without role
     if (type === INVITE_TYPE_NAMED.VIEWER) {
-      return <PlayerInvitationAccepted teamName={undefined} />
+      return <PlayerInvitationAccepted />
     }
 
     return <PlayerInvitationAccepted teamName={invitation?.team?.name || 'team'} />
