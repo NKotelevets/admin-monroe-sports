@@ -88,7 +88,16 @@ export const receiveInvitationThunk = createAsyncThunk(
       }
     }
 
-    if (payload.userData?.isNewUser && payload.userData.isChild) {
+    if (
+      payload.userData?.isNewUser && payload.userData.hasGuardian
+    ) {
+      return {
+        status: 'createPassword',
+        payload,
+      }
+    }
+
+    if (payload.userData?.isNewUser && payload.userData.isChild && !payload.userData.hasGuardian) {
       return {
         status: 'under16',
         payload,
@@ -193,8 +202,10 @@ export const accountSlice = createSlice({
       state.status = action.payload.status as InvitationState['status']
     })
     builder.addMatcher(accountApi.endpoints.getPrefilledData.matchFulfilled, (state, action) => {
-      state.user = action.payload.userData
-      state.invitation = action.payload.invitation
+      if (action.payload?.userData && action.payload?.invitation) {
+        state.user = action.payload.userData
+        state.invitation = action.payload.invitation
+      }
     })
   },
 })

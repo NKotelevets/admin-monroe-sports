@@ -18,7 +18,7 @@ import {
   PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PLAYER_DATA,
   PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD,
   PATH_TO_ACCOUNT_ONBOARDING_INVITATION,
-  PATH_TO_ACCOUNT_ONBOARDING_SIGNUP
+  PATH_TO_ACCOUNT_ONBOARDING_SIGNUP, PATH_TO_ACCOUNT_LOGIN
 } from '@/common/constants/paths.ts'
 import { IFEUser, IInvitation } from '@/common/interfaces/user.ts'
 
@@ -186,7 +186,7 @@ export const useInvitation = (): TUseInvitation => {
       } else if (status === 'rejected' && !location.pathname.includes(PATH_TO_ACCOUNT_INVITATION_DENIED)) {
         newPath = `${PATH_TO_ACCOUNT_INVITATION_DENIED}/${token}${acceptedValue}`
       } else if ((status === 'requestLogin' && !location.pathname.includes(PATH_TO_ACCOUNT_INVITATIONS)) || access) {
-        newPath = `${PATH_TO_ACCOUNT_INVITATIONS}/${token}${acceptedValue}`
+        newPath = `${PATH_TO_ACCOUNT_LOGIN}?prev=${PATH_TO_ACCOUNT_INVITATIONS}/${token}${acceptedValue}`
       } else if (status === 'pending' && !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_INVITATION) && !access) {
         newPath = `${PATH_TO_ACCOUNT_ONBOARDING_INVITATION}/${token}${acceptedValue}`
       } else if (status === 'under16' && !location.pathname.includes(PATH_TO_ACCOUNT_INVITE_PARENT)) {

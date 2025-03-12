@@ -170,7 +170,7 @@ export const PlayerInvitation = (props: TInviteProps): ReactElement => {
     <Body centered>
       {contextHolder}
       <Title>Welcome to {invite?.team?.name || 'team'}</Title>
-      <Subtitle small>Please submit the info for the player who is being added to {invite.team!.name}</Subtitle>
+      <Subtitle small>Please submit the info for the player who is being added to {invite.team?.name || 'the team'}</Subtitle>
 
       <Wrap vertical>
         <UserCheckbox
