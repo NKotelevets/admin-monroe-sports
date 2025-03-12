@@ -101,7 +101,13 @@ const SignUp = () => {
    * @returns {void}
    */
   const onSubmit = (values: TSignUpForm): void => {
-    signUp(values)
+    const { dateOfBirth, ...rest } = values || { dateOfBirth: '' }
+    const payload = {
+      ...rest,
+      birthDate: dateOfBirth,
+    }
+
+    signUp(payload)
       .unwrap()
       .then(response => {
         const data = response

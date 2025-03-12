@@ -5,7 +5,6 @@ import Flex from 'antd/es/flex'
 import { InputRef } from 'antd/es/input'
 import { TableProps } from 'antd/es/table/InternalTable'
 import { FilterDropdownProps } from 'antd/es/table/interface'
-import { format } from 'date-fns'
 import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ReactSVG } from 'react-svg'
@@ -21,7 +20,7 @@ import { useAppSlice } from '@/redux/hooks/useAppSlice'
 import { useUserSlice } from '@/redux/hooks/useUserSlice'
 import { useLazyGetUsersQuery, useSendInvitationMutation } from '@/redux/user/user.api'
 
-import { getIconColor } from '@/utils'
+import { formatWithoutTZ, getIconColor } from '@/utils'
 
 import { SHORT_GENDER_NAMES } from '@/common/constants'
 import { PATH_TO_EDIT_USER, PATH_TO_USERS } from '@/common/constants/paths'
@@ -176,7 +175,7 @@ export const useUsersTableParams = ({
       sorter: true,
       width: '128px',
       sortOrder: ordering ? (ordering.startsWith('-') ? 'descend' : 'ascend') : null,
-      render: (value) => <CellText>{value ? format(new Date(value), 'MMM, dd yyyy') : '-'}</CellText>,
+      render: (value) => <CellText>{value ? formatWithoutTZ(value) : '-'}</CellText>,
     },
     {
       title: 'Email',
@@ -287,4 +286,3 @@ export const useUsersTableParams = ({
     columns,
   }
 }
-
