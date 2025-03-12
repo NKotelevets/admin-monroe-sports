@@ -1,6 +1,6 @@
 import { useCookies as useReactCookie } from 'react-cookie'
 
-export type TCookieName = 'accessToken' | 'refreshToken'
+export type TCookieName = 'accessToken' | 'refreshToken' | 'accessToken_onboarding' | 'refreshToken_onboarding'
 
 const MONTH_MILLISECONDS = 2592000
 

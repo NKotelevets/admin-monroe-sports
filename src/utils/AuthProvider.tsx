@@ -22,6 +22,11 @@ interface TAuthProviderProps {
   defaultRedirect?: string
 }
 
+const getCookieSuffix = () => {
+  if (typeof window === 'undefined') return ''
+  return window.location.pathname.includes('/accounts') ? '_onboarding' : ''
+}
+
 /**
  * AuthProvider is a functional component responsible for managing authentication states and
  * access tokens, handling user redirection, and ensuring appropriate access to protected routes.
@@ -61,8 +66,8 @@ const AuthProvider = (props: TAuthProviderProps): ReactElement => {
    */
   useEffect(() => {
     if (isUpdatedTokens && access) {
-      createCookie(`accessToken`, access)
-      createCookie(`refreshToken`, refresh)
+      createCookie(`accessToken${getCookieSuffix()}`, access)
+      createCookie(`refreshToken${getCookieSuffix()}`, refresh)
       setIsUpdatedTokens(false)
     }
   }, [isUpdatedTokens])

@@ -38,8 +38,13 @@ const createNoopStorage = () => {
 
 const storage = typeof window !== 'undefined' ? createWebStorage('local') : createNoopStorage()
 
+const getPanelKey = () => {
+  if (typeof window === 'undefined') return 'root'
+  return window.location.pathname.includes('/accounts') ? 'root_onboarding' : 'root'
+}
+
 const persistConfig = {
-  key: 'root',
+  key: getPanelKey(),
   version: 1,
   storage,
   whitelist: ['authSlice', 'userSlice', 'leaguesSlice', 'seasonsSlice', 'appSlice', 'masterTeamsSlice', 'leagueTeamsSlice', 'eventsSlice',],

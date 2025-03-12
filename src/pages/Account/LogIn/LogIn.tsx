@@ -97,8 +97,8 @@ const LogIn = () => {
     logIn(values)
       .unwrap()
       .then((data) => {
-        createCookie('accessToken', data.access)
-        createCookie('refreshToken', data.refresh)
+        createCookie('refreshToken_onboarding', data.access)
+        createCookie('refreshToken_onboarding', data.refresh)
 
         getUserData()
 
