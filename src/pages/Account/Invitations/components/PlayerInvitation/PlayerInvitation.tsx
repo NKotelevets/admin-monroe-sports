@@ -151,11 +151,11 @@ export const PlayerInvitation = (props: TInviteProps): ReactElement => {
   }
 
   if (invitationStatus === 'accepted') {
-    return <PlayerInvitationAccepted teamName={invite?.team?.name || 'team'} />
+    return <PlayerInvitationAccepted teamName={invite?.team?.name || 'the team'} />
   }
 
   if (invitationStatus === 'denied') {
-    return <InvitationDenied teamName={invite?.team?.name || 'team'} role={'player'} />
+    return <InvitationDenied teamName={invite?.team?.name || 'the team'} role={'player'} />
   }
 
   if (accepted === true || accepted === false || !loaded) {

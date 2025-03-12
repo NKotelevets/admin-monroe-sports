@@ -18,7 +18,7 @@ import {
   PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PLAYER_DATA,
   PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD,
   PATH_TO_ACCOUNT_ONBOARDING_INVITATION,
-  PATH_TO_ACCOUNT_ONBOARDING_SIGNUP, PATH_TO_ACCOUNT_LOGIN
+  PATH_TO_ACCOUNT_ONBOARDING_SIGNUP
 } from '@/common/constants/paths.ts'
 import { IFEUser, IInvitation } from '@/common/interfaces/user.ts'
 
@@ -179,20 +179,20 @@ export const useInvitation = (): TUseInvitation => {
         !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PLAYER_DATA)
       ) {
         newPath = `${PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PLAYER_DATA}/${token}${acceptedValue}`
-      } else if ((status === 'requestLogin' && !location.pathname.includes(PATH_TO_ACCOUNT_INVITATIONS)) || access) {
-        newPath = `${PATH_TO_ACCOUNT_LOGIN}?prev=${PATH_TO_ACCOUNT_INVITATIONS}/${token}${acceptedValue}`
-      } else if (status === 'pending' && !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_INVITATION) && !access) {
-        newPath = `${PATH_TO_ACCOUNT_ONBOARDING_INVITATION}/${token}${acceptedValue}`
-      } else if (status === 'under16' && !location.pathname.includes(PATH_TO_ACCOUNT_INVITE_PARENT)) {
-        newPath = `${PATH_TO_ACCOUNT_INVITE_PARENT}/${token}${acceptedValue}`
-      } else if (status === 'signUp') {
-        newPath = `${PATH_TO_ACCOUNT_ONBOARDING_SIGNUP}/${token}${acceptedValue}`
       } else if (status === 'expired') {
         newPath = `${PATH_TO_ACCOUNT_INVITATION_EXPIRED}/${token}${acceptedValue}`
       } else if (status === 'accepted' && !location.pathname.includes(PATH_TO_ACCOUNT_INVITATION_ACCEPTED)) {
         newPath = `${PATH_TO_ACCOUNT_INVITATION_ACCEPTED}/${token}${acceptedValue}`
       } else if (status === 'rejected' && !location.pathname.includes(PATH_TO_ACCOUNT_INVITATION_DENIED)) {
         newPath = `${PATH_TO_ACCOUNT_INVITATION_DENIED}/${token}${acceptedValue}`
+      } else if ((status === 'requestLogin' && !location.pathname.includes(PATH_TO_ACCOUNT_INVITATIONS)) || access) {
+        newPath = `${PATH_TO_ACCOUNT_INVITATIONS}/${token}${acceptedValue}`
+      } else if (status === 'pending' && !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_INVITATION) && !access) {
+        newPath = `${PATH_TO_ACCOUNT_ONBOARDING_INVITATION}/${token}${acceptedValue}`
+      } else if (status === 'under16' && !location.pathname.includes(PATH_TO_ACCOUNT_INVITE_PARENT)) {
+        newPath = `${PATH_TO_ACCOUNT_INVITE_PARENT}/${token}${acceptedValue}`
+      } else if (status === 'signUp') {
+        newPath = `${PATH_TO_ACCOUNT_ONBOARDING_SIGNUP}/${token}${acceptedValue}`
       }
 
       if (newPath) {

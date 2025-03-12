@@ -1,10 +1,11 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
+import { accountApi } from '@/redux/account/account.api.ts'
 import { TRootState } from '@/redux/store.ts'
 
+import { INVITE_TYPE_NAMED } from '@/common/constants'
 import { IFEUser, IInvitation } from '@/common/interfaces/user.ts'
 import { TChildData, TPrefilledDataWithToken } from '@/common/types/users.ts'
-import { INVITE_TYPE_NAMED } from '@/common/constants'
 
 type TUpdatedUserData = Pick<
   TPrefilledDataWithToken['userData'],
@@ -56,6 +57,20 @@ export const receiveInvitationThunk = createAsyncThunk(
       }
     }
 
+    if (state.accountSlice?.status === 'accepted') {
+      return {
+        status: 'accepted',
+        payload,
+      }
+    }
+
+    if (state.accountSlice?.status === 'rejected') {
+      return {
+        status: 'rejected',
+        payload,
+      }
+    }
+
     if (!payload.invitation) {
       return {
         status: 'expired',
@@ -63,7 +78,10 @@ export const receiveInvitationThunk = createAsyncThunk(
       }
     }
 
-    if (payload.userData?.isNewUser && (!payload.userData.isChild || payload.invitation.inviteType == INVITE_TYPE_NAMED.SUPERVISED)) {
+    if (
+      payload.userData?.isNewUser &&
+      (!payload.userData.isChild || payload.invitation.inviteType == INVITE_TYPE_NAMED.SUPERVISED)
+    ) {
       return {
         status: 'createPassword',
         payload,
@@ -173,6 +191,10 @@ export const accountSlice = createSlice({
       state.user = action.payload.payload.userData
       state.invitation = action.payload.payload.invitation
       state.status = action.payload.status as InvitationState['status']
+    })
+    builder.addMatcher(accountApi.endpoints.getPrefilledData.matchFulfilled, (state, action) => {
+      state.user = action.payload.userData
+      state.invitation = action.payload.invitation
     })
   },
 })
