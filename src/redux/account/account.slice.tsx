@@ -4,6 +4,7 @@ import { TRootState } from '@/redux/store.ts'
 
 import { IFEUser, IInvitation } from '@/common/interfaces/user.ts'
 import { TChildData, TPrefilledDataWithToken } from '@/common/types/users.ts'
+import { INVITE_TYPE_NAMED } from '@/common/constants'
 
 type TUpdatedUserData = Pick<
   TPrefilledDataWithToken['userData'],
@@ -48,7 +49,7 @@ export const receiveInvitationThunk = createAsyncThunk(
   async (payload: Partial<TPrefilledDataWithToken>, { getState }) => {
     const state = getState() as TRootState
 
-    if (state.accountSlice?.status === 'signUp'){
+    if (state.accountSlice?.status === 'signUp') {
       return {
         status: 'signUp',
         payload,
@@ -62,7 +63,7 @@ export const receiveInvitationThunk = createAsyncThunk(
       }
     }
 
-    if (payload.userData?.isNewUser && !payload.userData.isChild) {
+    if (payload.userData?.isNewUser && (!payload.userData.isChild || payload.invitation.inviteType == INVITE_TYPE_NAMED.SUPERVISED)) {
       return {
         status: 'createPassword',
         payload,
@@ -146,8 +147,18 @@ export const accountSlice = createSlice({
       state.status = 'error'
     },
     resetInvitation: () => initialState, // Resets state if user closes the window
-    setUserData: (state, action: PayloadAction<TUpdatedUserData>) => {
-      state.updatedUserData = action.payload
+    setUserData: (state, action: PayloadAction<TUpdatedUserData & { dateOfBirth?: string }>) => {
+      const { birthDate, dateOfBirth, ...rest } = action.payload || { birthDate: undefined, dateOfBirth: undefined }
+      let value = { ...rest, birthDate }
+
+      if (birthDate) {
+        value = { ...value, birthDate }
+      }
+      if (dateOfBirth) {
+        value = { ...value, birthDate: dateOfBirth }
+      }
+
+      state.updatedUserData = value
     },
     setChildData: (state, action: PayloadAction<TChildData>) => {
       state.childData = action.payload
