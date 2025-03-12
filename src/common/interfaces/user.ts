@@ -87,6 +87,7 @@ export interface IFEUser {
   isActive: boolean
   isNewUser?: boolean
   isSuperuser: boolean
+  hasGuardian?: boolean
   isChild?: boolean
   roles: string[]
   teams: string[]
