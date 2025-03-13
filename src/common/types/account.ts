@@ -1,6 +1,6 @@
 import { Dayjs } from 'dayjs'
 
-import { IInvite } from '@/common/interfaces/user.ts'
+import { IInvitation } from '@/common/interfaces/user.ts'
 
 export type TChildFlowForm = {
   email: string
@@ -14,7 +14,7 @@ export type TSendInvitePayload = {
 }
 
 export type TInviteProps = {
-  invite?: IInvite
+  invite?: IInvitation
   callback?: () => void
   accepted?: boolean
   autoAccept?: boolean

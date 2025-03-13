@@ -6,7 +6,7 @@ import baseQueryWithReAuth from '@/redux/reauthBaseQuery.ts'
 
 import { removeEmptyStringAttributes, transformKeysToCamelCase, transformKeysToSnakeCase } from '@/utils'
 
-import { IBEPrefilledUserData, IInvite, IPrefilledUserData } from '@/common/interfaces/user.ts'
+import { IBEPrefilledUserData, IInvitation, IInvite, IPrefilledUserData } from '@/common/interfaces/user.ts'
 import {
   TCreateSupervisedUserPayload,
   TCreateSupervisedUserResponse,
@@ -103,11 +103,12 @@ export const accountApi = createApi({
      * @param {string} params.id - The ID of the user to fetch invites for.
      * @return {Object} A query object for retrieving the invite list.
      */
-    inviteList: builder.query<IInvite[], { id: string }>({
+    inviteList: builder.query<IInvitation[], { id: string }>({
       query: ({ id }) => ({
         url: `users/${id}/available-teams-to-join`,
         method: 'GET',
       }),
+      transformResponse: (response: IInvite[]) => transformKeysToCamelCase(response),
     }),
     /**
      * Fetches team information associated with a given invitation ID.
@@ -118,11 +119,12 @@ export const accountApi = createApi({
      * @param {string} args.id - The invitation ID.
      * @returns {Object} Query configuration for fetching the team info.
      */
-    getInviteById: builder.query<IInvite, { id: string }>({
+    getInviteById: builder.query<IInvitation, { id: string }>({
       query: ({ id }) => ({
         url: `users/get-team-info-by-invitation-id?invite_id=${decodeURIComponent(id)}`,
         method: 'GET',
       }),
+      transformResponse: (response: IInvite) => transformKeysToCamelCase(response),
     }),
     /**
      * Fetches user information based on a token (sent to user's email).

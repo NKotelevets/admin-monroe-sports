@@ -6,6 +6,7 @@ import { TRootState } from '@/redux/store.ts'
 import { INVITE_TYPE_NAMED } from '@/common/constants'
 import { IFEUser, IInvitation } from '@/common/interfaces/user.ts'
 import { TChildData, TPrefilledDataWithToken } from '@/common/types/users.ts'
+import { userApi } from '@/redux/user/user.api.ts'
 
 type TUpdatedUserData = Pick<
   TPrefilledDataWithToken['userData'],
@@ -116,25 +117,6 @@ export const accountSlice = createSlice({
   name: 'accountSlice',
   initialState: initialState,
   reducers: {
-    receiveInvitation: (state, action: PayloadAction<TPrefilledDataWithToken>) => {
-      state.token = action.payload.token
-      state.user = action.payload.userData
-      state.invitation = action.payload.invitation
-
-      if (state.user.isNewUser) {
-        state.status = 'createPassword'
-      } else {
-        state.status = 'requestLogin'
-      }
-
-      // if (!store.getState().authSlice?.access) {
-      //   state.status = 'requestLogin'
-      //   return
-      // }
-    },
-    setInvitationStatus: (state, action: PayloadAction<InvitationState['status']>) => {
-      state.status = action.payload
-    },
     setConfirmData: (state, action: PayloadAction<{ callback(x: boolean): void; params?: boolean }>) => {
       state.status = 'confirmData'
       const _params = action.payload.params === undefined ? true : action.payload.params
@@ -205,6 +187,16 @@ export const accountSlice = createSlice({
       if (action.payload?.userData && action.payload?.invitation) {
         state.user = action.payload.userData
         state.invitation = action.payload.invitation
+      }
+    })
+      .addMatcher(accountApi.endpoints.getInviteById.matchFulfilled, (state, action) => {
+        if (action.payload) {
+        state.invitation = action.payload
+      }
+    })
+      .addMatcher(userApi.endpoints.getUser.matchFulfilled, (state, action) => {
+      if (action.payload) {
+        state.user = action.payload
       }
     })
   },

@@ -20,7 +20,7 @@ import { useUserSlice } from '@/redux/hooks/useUserSlice.ts'
 import { useLazyGetUserQuery } from '@/redux/user/user.api.ts'
 
 import { INVITE_TYPE_NAMED } from '@/common/constants'
-import { IInvite } from '@/common/interfaces/user.ts'
+import { IInvitation } from '@/common/interfaces/user.ts'
 
 const {
   Page,
@@ -57,8 +57,8 @@ const Invitations = () => {
   const [getInviteByToken] = useLazyGetInviteByIdQuery()
   const [api, contextHolder] = notification.useNotification()
 
-  const [, setInvites] = useState<IInvite[]>([])
-  const [currentInvite, setCurrentInvite] = useState<undefined | null | IInvite>(undefined)
+  const [, setInvites] = useState<IInvitation[]>([])
+  const [currentInvite, setCurrentInvite] = useState<undefined | null | IInvitation>(undefined)
 
   const accepted = useMemo(() => {
     if (acceptedString === undefined) return undefined
@@ -172,28 +172,28 @@ const Invitations = () => {
   const pageContent = useMemo(() => {
     if (currentInvite === null) return <NoInvitations />
     if (currentInvite === undefined || !user) return <Spin indicator={<LoadingOutlined spin />} size="large" />
-    if (user.isChild && currentInvite.invite_type === INVITE_TYPE_NAMED.SUPERVISED)
+    if (user.isChild && currentInvite.inviteType === INVITE_TYPE_NAMED.SUPERVISED)
       return <ChildInvitation invite={currentInvite} accepted={accepted} />
 
     if (
-      currentInvite.invite_type === INVITE_TYPE_NAMED.SUPERVISED ||
-      currentInvite.invite_type === INVITE_TYPE_NAMED.SUPERVISOR
+      currentInvite.inviteType === INVITE_TYPE_NAMED.SUPERVISED ||
+      currentInvite.inviteType === INVITE_TYPE_NAMED.SUPERVISOR
     )
       return <FamilyInvitation invite={currentInvite} accepted={accepted} />
 
     if (
-      currentInvite.invite_type === INVITE_TYPE_NAMED.COACH ||
-      currentInvite.invite_type === INVITE_TYPE_NAMED.HEAD_COACH ||
-      currentInvite.invite_type === INVITE_TYPE_NAMED.TEAM_ADMIN
+      currentInvite.inviteType === INVITE_TYPE_NAMED.COACH ||
+      currentInvite.inviteType === INVITE_TYPE_NAMED.HEAD_COACH ||
+      currentInvite.inviteType === INVITE_TYPE_NAMED.TEAM_ADMIN
     ) {
       return <StaffInvitation invite={currentInvite} accepted={accepted} />
     }
 
     return <PlayerInvitation invite={currentInvite} accepted={accepted} />
-  }, [currentInvite, user, accepted])
+  }, [currentInvite?.inviteType, user, accepted])
 
   return (
-    <Page centered={!(user?.isChild || currentInvite?.invite_type === INVITE_TYPE_NAMED.PLAYER)}>
+    <Page centered={!(user?.isChild || currentInvite?.inviteType === INVITE_TYPE_NAMED.PLAYER)}>
       {contextHolder}
       <Body>{pageContent}</Body>
     </Page>

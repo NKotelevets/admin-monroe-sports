@@ -44,10 +44,10 @@ const Onboarding = () => {
   const { invitationExpired, hasErrors, loaded, navigateToCurrentStep, accepted, denyInvitation } = useInvitation()
 
   useEffect(() => {
-    if (loaded && accepted !== false) {
+    if (loaded && accepted !== false && !invitationExpired) {
       navigateToCurrentStep()
     }
-  }, [loaded, accepted])
+  }, [loaded, accepted, invitationExpired])
 
   useEffect(() => {
     if (loaded && accepted === false && !invitationExpired && !hasErrors) {
