@@ -99,7 +99,7 @@ export const useInvitation = (): TUseInvitation => {
    * Handles cases where the invitation is expired or errors occur during the process.
    */
   useEffect(() => {
-    if (!token || (userData && invitation) || access) {
+    if (!token || (userData && invitation && access)) {
       setLoaded(true)
       return
     }
@@ -180,10 +180,7 @@ export const useInvitation = (): TUseInvitation => {
       //   const end = `/${token}${acceptedValue}`
       //   newPath = `${PATH_TO_ACCOUNT_INVITATIONS}${end}`
       // } else
-      if (
-        status === 'createPassword' &&
-        !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD)
-      ) {
+      if (status === 'createPassword' && !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD)) {
         newPath = `${PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD}/${token}${acceptedValue}`
       } else if (status === 'confirmData' && !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA)) {
         newPath = `${PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA}/${token}${acceptedValue}`

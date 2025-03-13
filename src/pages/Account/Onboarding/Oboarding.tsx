@@ -41,19 +41,19 @@ const {
  * - Shows `InvitationExpired` or `InvitationError` components if applicable.
  */
 const Onboarding = () => {
-  const { invitationExpired, hasErrors, loaded, navigateToCurrentStep, accepted, denyInvitation } = useInvitation()
+  const { invitationExpired, hasErrors, loaded, navigateToCurrentStep, accepted, denyInvitation, invitation, userData } = useInvitation()
 
   useEffect(() => {
-    if (loaded && accepted !== false && !invitationExpired) {
+    if (loaded && !(accepted === false && invitation && userData) && !invitationExpired) {
       navigateToCurrentStep()
     }
   }, [loaded, accepted, invitationExpired])
 
   useEffect(() => {
-    if (loaded && accepted === false && !invitationExpired && !hasErrors) {
+    if (accepted === false && invitation && userData) {
       denyInvitation()
     }
-  }, [accepted, loaded, invitationExpired])
+  }, [accepted, invitation, userData])
 
   return (
     <Page centered>
