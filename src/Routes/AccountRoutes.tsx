@@ -37,6 +37,7 @@ import {
 import ConfirmPlayerData from '@/pages/Account/ConfirmPlayerData/ConfirmPlayerData.tsx'
 import AcceptedInvitation from '@/pages/Account/Onboarding/AcceptedInvitation.tsx'
 import InvitationDenied from '@/pages/Account/Onboarding/InvitationDenied.tsx'
+import { InvitationExpired } from '@/pages/Account/Onboarding/components/InvitationExpired.tsx'
 
 /**
  * Functional component routing the account-related pages.
@@ -100,7 +101,7 @@ export const AccountRoutes = () => {
         />
         <Route
           path={`${normalizePath(PATH_TO_ACCOUNT_INVITATION_EXPIRED)}/:token/:accepted?`}
-          element={<Onboarding />}
+          element={<InvitationExpired page />}
         />
       </Routes>
     </AuthProvider>

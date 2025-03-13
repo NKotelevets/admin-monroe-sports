@@ -11,7 +11,7 @@ const COOKIE_SETTINGS = {
   maxAge: MONTH_MILLISECONDS,
 }
 
-const COOKIES_LIST: TCookieName[] = ['accessToken', 'refreshToken',]
+const COOKIES_LIST: TCookieName[] = ['accessToken', 'refreshToken', 'accessToken_onboarding', 'refreshToken_onboarding']
 
 export const useCookies = () => {
   const [cookies, setCookie, removeCookie] = useReactCookie(COOKIES_LIST)

@@ -14,11 +14,12 @@ import {
   PATH_TO_ACCOUNT_INVITATION_DENIED,
   PATH_TO_ACCOUNT_INVITATION_EXPIRED,
   PATH_TO_ACCOUNT_INVITE_PARENT,
+  PATH_TO_ACCOUNT_LOGIN,
   PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA,
   PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_PLAYER_DATA,
   PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD,
   PATH_TO_ACCOUNT_ONBOARDING_INVITATION,
-  PATH_TO_ACCOUNT_ONBOARDING_SIGNUP, PATH_TO_ACCOUNT_LOGIN
+  PATH_TO_ACCOUNT_ONBOARDING_SIGNUP,
 } from '@/common/constants/paths.ts'
 import { IFEUser, IInvitation } from '@/common/interfaces/user.ts'
 
@@ -72,6 +73,7 @@ export const useInvitation = (): TUseInvitation => {
   } = useAccountSlice()
   const { access } = useAuthSlice()
   const { token, accepted: acceptedString } = useParams<{ token: string; accepted?: string }>()
+  const { invitation: _invitation } = useAccountSlice()
 
   const navigate = useNavigate()
   const location = useLocation()
@@ -83,7 +85,7 @@ export const useInvitation = (): TUseInvitation => {
   const [denyInvite, { isLoading: isLoadingDeny }] = useDenyInviteMutation()
 
   const [userData, setUserData] = useState<IFEUser | null>(null)
-  const [invitation, setInvitation] = useState<IInvitation | null>(null)
+  const [invitation, setInvitation] = useState<IInvitation | null>(_invitation || null)
   const [invitationExpired, setInvitationExpired] = useState(false)
   const [hasErrors, setHasErrors] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -97,7 +99,11 @@ export const useInvitation = (): TUseInvitation => {
    * Handles cases where the invitation is expired or errors occur during the process.
    */
   useEffect(() => {
-    if (!token || (userData && invitation)) return
+    if (!token || (userData && invitation) || access) {
+      setLoaded(true)
+      return
+    }
+
     const payload = { token: token?.split('?')[0]?.split('&')[0] || '' }
     getPrefilledData(payload)
       .unwrap()
@@ -170,7 +176,14 @@ export const useInvitation = (): TUseInvitation => {
       let newPath = null
       const acceptedValue = acceptedString ? `/${acceptedString}` : ''
 
-      if (status === 'createPassword' && !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD)) {
+      // if (access && token && status === 'idle' && !location.pathname.includes(PATH_TO_ACCOUNT_INVITATIONS)) {
+      //   const end = `/${token}${acceptedValue}`
+      //   newPath = `${PATH_TO_ACCOUNT_INVITATIONS}${end}`
+      // } else
+      if (
+        status === 'createPassword' &&
+        !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD)
+      ) {
         newPath = `${PATH_TO_ACCOUNT_ONBOARDING_CREATE_PASSWORD}/${token}${acceptedValue}`
       } else if (status === 'confirmData' && !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA)) {
         newPath = `${PATH_TO_ACCOUNT_ONBOARDING_CONFIRM_DATA}/${token}${acceptedValue}`
@@ -185,9 +198,13 @@ export const useInvitation = (): TUseInvitation => {
         newPath = `${PATH_TO_ACCOUNT_INVITATION_ACCEPTED}/${token}${acceptedValue}`
       } else if (status === 'rejected' && !location.pathname.includes(PATH_TO_ACCOUNT_INVITATION_DENIED)) {
         newPath = `${PATH_TO_ACCOUNT_INVITATION_DENIED}/${token}${acceptedValue}`
-      } else if ((status === 'requestLogin' && !location.pathname.includes(PATH_TO_ACCOUNT_INVITATIONS)) || access) {
+      } else if (status === 'requestLogin') {
         newPath = `${PATH_TO_ACCOUNT_LOGIN}?prev=${PATH_TO_ACCOUNT_INVITATIONS}/${token}${acceptedValue}`
-      } else if (status === 'pending' && !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_INVITATION) && !access) {
+      } else if (
+        status === 'pending' &&
+        !location.pathname.includes(PATH_TO_ACCOUNT_ONBOARDING_INVITATION) &&
+        !access
+      ) {
         newPath = `${PATH_TO_ACCOUNT_ONBOARDING_INVITATION}/${token}${acceptedValue}`
       } else if (status === 'under16' && !location.pathname.includes(PATH_TO_ACCOUNT_INVITE_PARENT)) {
         newPath = `${PATH_TO_ACCOUNT_INVITE_PARENT}/${token}${acceptedValue}`
@@ -202,27 +219,32 @@ export const useInvitation = (): TUseInvitation => {
     [status, loaded, hasErrors, invitationExpired, hasDispatched?.current, location.pathname, access],
   )
 
-  const acceptInvitation = (selectedAthletes?: string[]) => {
-    const payload = {
-      invite_id: invitation?.id || '',
-      users_ids: selectedAthletes,
-      password: tempPassword,
-      ...updatedUserData,
-      child_object: childData,
-    }
+  const acceptInvitation = useCallback(
+    (selectedAthletes?: string[]) => {
+      if (isLoadingAccept || !invitation) return
 
-    acceptInvite(payload)
-      .unwrap()
-      .then(() => {
-        setStatusAccepted()
-      })
-      .catch((error) => {
-        setHasErrors(true)
-        setHasErrors(true)
-        const message = typeof error.data === 'string' ? error.data : 'Something went wrong. Please try again later.'
-        setErrorMessage(error?.data?.detail || error?.data?.details || error?.data?.message || message)
-      })
-  }
+      const payload = {
+        invite_id: invitation?.id || '',
+        users_ids: selectedAthletes,
+        password: tempPassword,
+        ...updatedUserData,
+        child_object: childData,
+      }
+
+      acceptInvite(payload)
+        .unwrap()
+        .then(() => {
+          setStatusAccepted()
+        })
+        .catch((error) => {
+          setHasErrors(true)
+          setHasErrors(true)
+          const message = typeof error.data === 'string' ? error.data : 'Something went wrong. Please try again later.'
+          setErrorMessage(error?.data?.detail || error?.data?.details || error?.data?.message || message)
+        })
+    },
+    [isLoadingAccept, invitation, tempPassword, updatedUserData, childData],
+  )
 
   const denyInvitation = (selectedAthletes?: string[]) => {
     const { gender, ...rest } = updatedUserData || { gender: undefined }

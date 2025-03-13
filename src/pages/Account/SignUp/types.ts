@@ -4,7 +4,8 @@ export type TSignUpForm = {
 
   firstName: string
   lastName: string
-  dateOfBirth: string
+  dateOfBirth?: string
+  birthDate?: string
   gender: string
   zipCode: string
   password: string

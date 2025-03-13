@@ -1,5 +1,7 @@
+import { notification } from 'antd'
 import { Formik } from 'formik'
 import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { FirstStepSignUpForm } from '@/pages/Account/SignUp/components/FirstStepSignUpForm.tsx'
 import { SecondStepSignUpForm } from '@/pages/Account/SignUp/components/SecondStepSignUpForm.tsx'
@@ -9,11 +11,10 @@ import { signUpSchema } from '@/pages/Account/SignUp/validation.ts'
 import { Layout } from '@/layouts/PublicLayout'
 
 import { useSignUpMutation } from '@/redux/account/account.api.ts'
-import { useNavigate, useParams } from 'react-router-dom'
 import { useAuthSlice } from '@/redux/hooks/useAuthSlice.ts'
-import { PATH_TO_ACCOUNT_INVITATIONS } from '@/common/constants/paths.ts'
-import { notification } from 'antd'
 
+import { PATH_TO_ACCOUNT_INVITATIONS } from '@/common/constants/paths.ts'
+import { useCookies } from '@/hooks/useCookies.ts'
 
 const {
   Page,
@@ -28,6 +29,7 @@ const {
 const SignUp = () => {
   const { updateTokens } = useAuthSlice()
   const { token, accepted: acceptedString } = useParams<{ token: string; accepted?: string }>()
+  const { createCookie } = useCookies()
 
   const navigate = useNavigate()
 
@@ -101,9 +103,15 @@ const SignUp = () => {
    * @returns {void}
    */
   const onSubmit = (values: TSignUpForm): void => {
-    signUp(values)
+    const { dateOfBirth, ...rest } = values || { dateOfBirth: '' }
+    const payload = {
+      ...rest,
+      birthDate: dateOfBirth,
+    }
+
+    signUp(payload)
       .unwrap()
-      .then(response => {
+      .then((response) => {
         const data = response
 
         updateTokens({
@@ -111,12 +119,15 @@ const SignUp = () => {
           refresh: data.tokens.refresh,
         })
 
+        createCookie('refreshToken_onboarding', data.tokens.access)
+        createCookie('refreshToken_onboarding', data.tokens.refresh)
+
         if (token) {
-          navigate(`${PATH_TO_ACCOUNT_INVITATIONS}/${token}/${accepted}`)
+          const acceptedValue = accepted ? `/${accepted}` : ''
+          navigate(`${PATH_TO_ACCOUNT_INVITATIONS}/${token}${acceptedValue}`)
         } else {
           navigate(PATH_TO_ACCOUNT_INVITATIONS)
         }
-
       })
       .catch((error) => {
         api.error({

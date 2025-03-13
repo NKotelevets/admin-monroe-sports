@@ -35,55 +35,65 @@ const {
  * information about the invitation status and team details.
  */
 export const StaffInvitation = (props: TInviteProps): ReactElement => {
-  const { invite: _invite, autoAccept, callback } = props
-  const { invitation: _invitation, userData, accepted, acceptInvitation, denyInvitation, isLoadingAccept, isLoadingDeny } = useInvitation()
+  const { invite: _invite, autoAccept } = props
+  const {
+    invitation: _invitation,
+    userData: _userData,
+    accepted,
+    acceptInvitation,
+    denyInvitation,
+    isLoadingAccept,
+    isLoadingDeny,
+  } = useInvitation()
+
   const { user: _user } = useUserSlice()
 
-  const [invite, setInvite] = useState(_invite)
   const [user, setUser] = useState(_user)
+  const [invite, setInvite] = useState(_invite)
 
   useEffect(() => {
-    if (_invitation) {
+    if(_invitation) {
       setInvite(transformKeysToCamelCase(_invitation))
     }
   }, [_invitation])
 
   useEffect(() => {
-    if (userData) {
-      setUser(transformKeysToCamelCase(userData))
+    if(_userData) {
+      setUser(transformKeysToCamelCase(_userData))
     }
-  }, [userData])
+  }, [_userData])
+
+  useEffect(() => {
+    if (_user) {
+      setUser(_user)
+    }
+  }, [_user])
 
   /**
-   * Accepts an invitation for the user and handles possible errors during the process.
-   *
-   * @function
-   * @param {Object} user - The user object containing user details.
-   * @param {Object} invite - The invitation object containing invitation details.
-   * @returns {void}
+   * Handles the submission logic based on the state of the `accepted` variable.
+   * If `accepted` is undefined, the function exits early.
+   * If `accepted` is true, the `onSubmit` function is called.
    */
   useEffect(() => {
-    if (!user || !invite || accepted === false || autoAccept === false) return
+    if (accepted === undefined || autoAccept === false) return
 
-    acceptInvitation()
-  }, [user, invite, accepted, autoAccept])
-
-  useEffect(() => {
-    if (!user || !invite || accepted === true || accepted === undefined || !autoAccept) return
-
-    denyInvitation()
-  }, [user, invite, accepted, callback])
+    if (accepted) {
+      acceptInvitation()
+    } else {
+      denyInvitation()
+    }
+  }, [accepted])
 
   const role = useMemo(() => {
     if (!invite) return ''
 
-    if (invite.invite_type === INVITE_TYPE_NAMED.COACH) {
+    if (invite.inviteType === INVITE_TYPE_NAMED.COACH) {
       return 'coach'
     }
-    if (invite.invite_type === INVITE_TYPE_NAMED.HEAD_COACH) {
+    if (invite.inviteType === INVITE_TYPE_NAMED.HEAD_COACH) {
       return 'head coach'
     }
-    if (invite.invite_type === INVITE_TYPE_NAMED.TEAM_ADMIN) {
+    if (invite.inviteType === INVITE_TYPE_NAMED.TEAM_ADMIN) {
       return 'team admin'
     }
     return ''

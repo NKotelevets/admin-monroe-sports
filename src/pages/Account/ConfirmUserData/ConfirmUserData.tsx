@@ -64,10 +64,10 @@ const ConfirmUserData = (props: TConfirmUserDataProps): ReactElement => {
   )
 
   useEffect(() => {
-    if (ready) {
+    if (ready && loaded) {
       acceptInvitation()
     }
-  }, [ready])
+  }, [ready, loaded])
 
   useEffect(() => {
     if (hasErrors) {

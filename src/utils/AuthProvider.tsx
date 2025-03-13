@@ -9,7 +9,7 @@ import { useLazyGetUserQuery } from '@/redux/user/user.api'
 
 
 
-import { useCookies } from '@/hooks/useCookies'
+import { TCookieName, useCookies } from '@/hooks/useCookies'
 import { useLogout } from '@/hooks/useLogout'
 
 
@@ -50,6 +50,9 @@ const AuthProvider = (props: TAuthProviderProps): ReactElement => {
   const [searchParams] = useSearchParams()
   const prevRoute = searchParams.get('prev')
 
+  const accessTokenName = `accessToken${getCookieSuffix()}` as TCookieName
+  const refreshTokenName = `refreshToken${getCookieSuffix()}` as TCookieName
+
   /**
    * Logs the user out and redirects them to the login page if the "redirectToLogin" flag is true.
    */
@@ -66,8 +69,8 @@ const AuthProvider = (props: TAuthProviderProps): ReactElement => {
    */
   useEffect(() => {
     if (isUpdatedTokens && access) {
-      createCookie(`accessToken${getCookieSuffix()}`, access)
-      createCookie(`refreshToken${getCookieSuffix()}`, refresh)
+      createCookie(accessTokenName, access)
+      createCookie(refreshTokenName, refresh)
       setIsUpdatedTokens(false)
     }
   }, [isUpdatedTokens])
@@ -86,8 +89,8 @@ const AuthProvider = (props: TAuthProviderProps): ReactElement => {
   useEffect(() => {
     if (cookies.accessToken) {
       updateTokens({
-        access: cookies.accessToken,
-        refresh: cookies.refreshToken,
+        access: cookies[accessTokenName],
+        refresh: cookies[refreshTokenName],
       })
 
       getUserData()
@@ -105,10 +108,10 @@ const AuthProvider = (props: TAuthProviderProps): ReactElement => {
       }
     }
 
-    if (!cookies.accessToken && isProtectedPage) {
+    if (!cookies[accessTokenName] && isProtectedPage) {
       onLogOut()
     }
-  }, [cookies.accessToken])
+  }, [cookies[accessTokenName]])
 
   return <>{children}</>
 }
