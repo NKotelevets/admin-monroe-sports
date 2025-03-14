@@ -139,6 +139,16 @@ export const useInvitation = (): TUseInvitation => {
     }
   }, [acceptedString])
 
+  useEffect(() => {
+    navigateToCurrentStep(false)
+  }, [status])
+
+  useEffect(() => {
+    if (accepted === false && invitation && userData) {
+      denyInvitation()
+    }
+  }, [accepted, invitation, userData])
+
   const nextStep = () => {
     if (status === 'createPassword') {
       setConfirmData({ callback: navigateToCurrentStep, params: false })
@@ -150,10 +160,6 @@ export const useInvitation = (): TUseInvitation => {
       setCreatePassword({ callback: navigateToCurrentStep, params: false })
     }
   }
-
-  useEffect(() => {
-    navigateToCurrentStep(false)
-  }, [status])
 
   const navigateToCurrentStep = useCallback(
     (shouldDispatch = true) => {

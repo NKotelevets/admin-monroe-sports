@@ -123,7 +123,7 @@ const SignUp = () => {
         createCookie('refreshToken_onboarding', data.tokens.refresh)
 
         if (token) {
-          const acceptedValue = accepted ? `/${accepted}` : ''
+          const acceptedValue = typeof accepted === 'boolean' ? `/${accepted}` : ''
           navigate(`${PATH_TO_ACCOUNT_INVITATIONS}/${token}${acceptedValue}`)
         } else {
           navigate(PATH_TO_ACCOUNT_INVITATIONS)
