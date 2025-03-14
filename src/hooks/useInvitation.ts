@@ -249,15 +249,10 @@ export const useInvitation = (): TUseInvitation => {
     [isLoadingAccept, invitation, tempPassword, updatedUserData, childData],
   )
 
-  const denyInvitation = (selectedAthletes?: string[]) => {
-    const { gender, ...rest } = updatedUserData || { gender: undefined }
+  const denyInvitation = () => {
     denyInvite({
       userId: userData?.id || '',
-      inviteId: invitation?.id || '',
-      usersIds: selectedAthletes,
-      ...rest,
-      ...(gender ? { gender: `${gender}` } : {}),
-      childObject: childData,
+      inviteId: invitation?.id || ''
     })
       .unwrap()
       .then(() => {

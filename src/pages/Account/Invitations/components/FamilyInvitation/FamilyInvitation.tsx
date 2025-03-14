@@ -87,7 +87,7 @@ export const FamilyInvitation = (props: TInviteProps): ReactElement => {
   const onDenyInvite = () => {
     if (!user || !invite) return
 
-    denyInvite({ userId: user.id, inviteId: invite.id, usersIds: [user.id] })
+    denyInvite({ userId: user.id, inviteId: invite.id })
       .unwrap()
       .then(() => {
         api.success({
