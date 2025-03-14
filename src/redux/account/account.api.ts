@@ -4,7 +4,7 @@ import { TSignUpForm, TSignUpResponse, TSignUpResponseRaw } from '@/pages/Accoun
 
 import baseQueryWithReAuth from '@/redux/reauthBaseQuery.ts'
 
-import { removeEmptyStringAttributes, transformKeysToCamelCase, transformKeysToSnakeCase } from '@/utils'
+import { transformKeysToCamelCase, transformKeysToSnakeCase } from '@/utils'
 
 import { IBEPrefilledUserData, IInvitation, IInvite, IPrefilledUserData } from '@/common/interfaces/user.ts'
 import {
@@ -13,7 +13,6 @@ import {
   TSendInvitePayload
 } from '@/common/types/account.ts'
 import { TConfirmUserDataForm } from '@/pages/Account/ConfirmUserData/ConfirmUserData.tsx'
-import { TConfirmPlayerDataForm } from '@/pages/Account/ConfirmPlayerData/ConfirmPlayerData.tsx'
 
 const ACCOUNT_TAG = 'ACCOUNT_TAG'
 
@@ -184,13 +183,13 @@ export const accountApi = createApi({
      * @param {string[]} [body.usersIds] - Optional array of user IDs related to the invite.
      * @returns {void}
      */
-    denyInvite: builder.mutation<void, { userId: string; inviteId: string; usersIds?: string[]; childObject?: TConfirmPlayerDataForm } & Partial<TConfirmUserDataForm>>({
+    denyInvite: builder.mutation<void, { userId: string; inviteId: string; } & Partial<TConfirmUserDataForm>>({
       query: (body) => {
-        const _body = removeEmptyStringAttributes(body)
+        const { userId, inviteId } = body
 
         return ({
-          url: `users/${_body.userId}/decline-invite`,
-          body: transformKeysToSnakeCase(_body),
+          url: `users/${userId}/decline-invite`,
+          body: {invite_id: inviteId},
           method: 'POST',
         })
       },

@@ -21,6 +21,7 @@ import { useLazyGetUserQuery } from '@/redux/user/user.api.ts'
 
 import { INVITE_TYPE_NAMED } from '@/common/constants'
 import { IInvitation } from '@/common/interfaces/user.ts'
+import { useInvitation } from '@/hooks/useInvitation.ts'
 
 const {
   Page,
@@ -59,10 +60,14 @@ const Invitations = () => {
 
   const [, setInvites] = useState<IInvitation[]>([])
   const [currentInvite, setCurrentInvite] = useState<undefined | null | IInvitation>(undefined)
+  const [accepted, setAccepted] = useState<boolean | undefined>(undefined)
+  const { denyInvitation, acceptInvitation } = useInvitation()
 
-  const accepted = useMemo(() => {
-    if (acceptedString === undefined) return undefined
-    return acceptedString === 'true'
+  useEffect(() => {
+    if (acceptedString) {
+      const _accepted = acceptedString?.split('?')[0]?.split('&')[0]
+      setAccepted(_accepted === 'undefined' || _accepted === undefined ? undefined : _accepted === 'true')
+    }
   }, [acceptedString])
 
   /**
@@ -140,6 +145,16 @@ const Invitations = () => {
     }
   }, [user, access])
 
+  useEffect(() => {
+    if (accepted === undefined) return
+
+    if (accepted) {
+      acceptInvitation()
+    } else {
+      denyInvitation()
+    }
+  }, [accepted])
+
   /**
    * Navigates to the next invitation in the list of invites. If the current
    * invitation is the last one or no invites exist, sets the current invitation
@@ -171,7 +186,7 @@ const Invitations = () => {
    */
   const pageContent = useMemo(() => {
     if (currentInvite === null) return <NoInvitations />
-    if (currentInvite === undefined || !user) return <Spin indicator={<LoadingOutlined spin />} size="large" />
+    if (currentInvite === undefined || !user || typeof accepted === 'boolean') return <Spin indicator={<LoadingOutlined spin />} size="large" />
     if (user.isChild && currentInvite.inviteType === INVITE_TYPE_NAMED.SUPERVISED)
       return <ChildInvitation invite={currentInvite} accepted={accepted} />
 
