@@ -6,7 +6,6 @@ import { Layout } from '@/layouts/PublicLayout'
 
 import { useAccountSlice } from '@/redux/hooks/useAccountSlice.ts'
 
-
 import { INVITE_TYPE_NAMED } from '@/common/constants'
 
 const {
@@ -48,10 +47,7 @@ const InvitationDenied = () => {
   return (
     <Page>
       <Body>
-        <Denied
-          teamName={invitation?.team?.name || 'the team'}
-          role={invitationRole}
-        />
+        <Denied teamName={invitation?.team?.name || 'the team'} role={invitationRole} />
       </Body>
     </Page>
   )
