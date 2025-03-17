@@ -48,7 +48,10 @@ const InvitationDenied = () => {
   return (
     <Page>
       <Body>
-        <Denied teamName={invitation?.team?.name || 'the team'} role={invitationRole} />
+        <Denied
+          teamName={invitation?.team?.name || 'the team'}
+          role={invitationRole}
+        />
       </Body>
     </Page>
   )
