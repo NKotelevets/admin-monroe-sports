@@ -1,14 +1,15 @@
 import { DeleteOutlined, DownloadOutlined, PlusOutlined } from '@ant-design/icons'
-import { Button, Flex, Typography } from 'antd'
+import styled from '@emotion/styled'
+import { Flex } from 'antd'
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { useNavigate } from 'react-router-dom'
 
 import LeagueAndTournamentsTable from '@/pages/Protected/LeaguesAndTournaments/components/LeagueAndTournamentsTable'
 
-import ImportModal from '@/components/ImportTooltip'
+import { CreateNewEntityButton, ImportButton, MonroeDeleteButton, PageContainer } from '@/components/Elements'
+import ImportModal from '@/components/ImportModal.tsx'
 import Loader from '@/components/Loader'
-import MonroeButton from '@/components/MonroeButton'
 import MonroeModal from '@/components/MonroeModal'
 
 import BaseLayout from '@/layouts/BaseLayout'
@@ -18,18 +19,19 @@ import { useLeagueSlice } from '@/redux/hooks/useLeagueSlice'
 import { useImportLeaguesCSVMutation } from '@/redux/leagues/leagues.api'
 import { useBulkDeleteLeaguesMutation, useDeleteAllLeaguesMutation } from '@/redux/leagues/leagues.api'
 
+import { DEFAULT_IMPORT_MODAL_OPTIONS } from '@/common/constants/import'
 import {
-  PATH_TO_CREATE_LEAGUE_TOURNAMENT,
-  PATH_TO_LEAGUE_TOURNAMENT_DELETING_INFO,
-  PATH_TO_LEAGUE_TOURNAMENT_IMPORT_INFO,
-} from '@/constants/paths'
+  PATH_TO_CREATE_LEAGUE,
+  PATH_TO_LEAGUES_DELETING_INFO,
+  PATH_TO_LEAGUES_IMPORT_INFO,
+} from '@/common/constants/paths'
+import { IImportModalOptions } from '@/common/interfaces'
 
-interface IImportModalOptions {
-  filename: string
-  errorMessage?: string
-  status: 'loading' | 'red' | 'green' | 'yellow'
-  isOpen: boolean
-}
+const Title = styled.h1`
+  font-size: 20px;
+  font-weight: 500;
+  color: rgba(26, 22, 87, 0.85);
+`
 
 const LeaguesAndTournaments = () => {
   const navigate = useNavigate()
@@ -46,78 +48,44 @@ const LeaguesAndTournaments = () => {
   const leagueTournText = deleteRecordsModalCount > 1 ? 'leagues/tournaments' : 'league/tournament'
   const [showCreatedRecords, setShowCreatedRecords] = useState(false)
   const [importLeagues] = useImportLeaguesCSVMutation()
-  const [importModalOptions, setImportModalOptions] = useState<IImportModalOptions>({
-    filename: '',
-    isOpen: false,
-    status: 'loading',
-    errorMessage: '',
-  })
+  const [importModalOptions, setImportModalOptions] = useState<IImportModalOptions>(DEFAULT_IMPORT_MODAL_OPTIONS)
+  const [fileKey, setFileKey] = useState('')
 
-  const goToCreateLeagueTournamentPage = () => navigate(PATH_TO_CREATE_LEAGUE_TOURNAMENT)
+  const goToCreateLeagueTournamentPage = () => navigate(PATH_TO_CREATE_LEAGUE)
 
   const handleCloseModal = useCallback(() => setIsOpenModal(false), [])
 
   const handleDelete = async () => {
     handleCloseModal()
+    const deleteHandler = isDeleteAllRecords ? deleteAll() : bulkDelete({ ids: selectedRecordsIds })
+    await deleteHandler.unwrap().then((response) => {
+      setSelectedRecordsIds([])
+      setShowAdditionalHeader(false)
+      setIsDeleteAllRecords(false)
+      const message = `${response.success}/${response.total} ${response.total === 1 ? 'league/tournament' : 'leagues/tournaments'}  have been successfully removed.`
 
-    if (isDeleteAllRecords) {
-      await deleteAll()
-        .unwrap()
-        .then((response) => {
-          setSelectedRecordsIds([])
-          setShowAdditionalHeader(false)
-          setIsDeleteAllRecords(false)
-          const message = `${response.success}/${response.total} ${response.total === 1 ? 'league/tournament' : 'leagues/tournaments'}  have been successfully removed.`
-
-          if (response.status !== 'green') {
-            setInfoNotification({
-              actionLabel: 'More info..',
-              message,
-              redirectedPageUrl: PATH_TO_LEAGUE_TOURNAMENT_DELETING_INFO,
-            })
-
-            return
-          }
-
-          if (response.status === 'green') {
-            setAppNotification({
-              message,
-              timestamp: new Date().getTime(),
-              type: 'success',
-            })
-          }
+      if (response.status !== 'green') {
+        setInfoNotification({
+          actionLabel: 'More info..',
+          message,
+          redirectedPageUrl: PATH_TO_LEAGUES_DELETING_INFO,
         })
-    } else {
-      await bulkDelete({ ids: selectedRecordsIds })
-        .unwrap()
-        .then((response) => {
-          setSelectedRecordsIds([])
-          setShowAdditionalHeader(false)
-          setIsDeleteAllRecords(false)
-          const message = `${response.success}/${response.total} ${response.total === 1 ? 'league/tournament' : 'leagues/tournaments'}  have been successfully removed.`
 
-          if (response.status !== 'green') {
-            setInfoNotification({
-              actionLabel: 'More info..',
-              message,
-              redirectedPageUrl: PATH_TO_LEAGUE_TOURNAMENT_DELETING_INFO,
-            })
+        return
+      }
 
-            return
-          }
-
-          if (response.status === 'green') {
-            setAppNotification({
-              message,
-              timestamp: new Date().getTime(),
-              type: 'success',
-            })
-          }
+      if (response.status === 'green') {
+        setAppNotification({
+          message,
+          timestamp: new Date().getTime(),
+          type: 'success',
         })
-    }
+      }
+    })
   }
 
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    setImportModalOptions(DEFAULT_IMPORT_MODAL_OPTIONS)
     const file = event.target.files?.[0]
 
     if (file) {
@@ -134,32 +102,12 @@ const LeaguesAndTournaments = () => {
       await importLeagues(body)
         .unwrap()
         .then((response) => {
-          if (response.status === 'green') {
-            setImportModalOptions({
-              filename: file.name,
-              isOpen: true,
-              status: 'green',
-              errorMessage: '',
-            })
-          }
-
-          if (response.status === 'red') {
-            setImportModalOptions({
-              filename: file.name,
-              isOpen: true,
-              status: 'red',
-              errorMessage: '',
-            })
-          }
-
-          if (response.status === 'yellow') {
-            setImportModalOptions({
-              filename: file.name,
-              isOpen: true,
-              status: 'yellow',
-              errorMessage: '',
-            })
-          }
+          setImportModalOptions({
+            filename: file.name,
+            isOpen: true,
+            status: response.status,
+            errorMessage: '',
+          })
         })
         .catch((error) => {
           setImportModalOptions({
@@ -169,6 +117,8 @@ const LeaguesAndTournaments = () => {
             errorMessage: (error.data as { code: string; details: string }).details,
           })
         })
+
+      setFileKey(new Date().toISOString())
     }
   }
 
@@ -197,7 +147,7 @@ const LeaguesAndTournaments = () => {
           showInList={() => setShowCreatedRecords(true)}
           redirectToImportInfo={() => {
             setImportModalOptions((prev) => ({ ...prev, isOpen: false }))
-            navigate(PATH_TO_LEAGUE_TOURNAMENT_IMPORT_INFO)
+            navigate(PATH_TO_LEAGUES_IMPORT_INFO)
           }}
           onClose={() => setImportModalOptions((prev) => ({ ...prev, isOpen: false }))}
         />
@@ -211,58 +161,32 @@ const LeaguesAndTournaments = () => {
           title={`Delete ${deleteRecordsModalCount > 1 ? deleteRecordsModalCount : ''} ${leagueTournText}?`}
           type="warn"
           content={
-            <>
-              <p>
-                Are you sure you want to delete {deleteRecordsModalCount > 1 ? deleteRecordsModalCount : ''}{' '}
-                {leagueTournText}?
-              </p>
-            </>
+            <p>
+              Are you sure you want to delete {deleteRecordsModalCount > 1 ? deleteRecordsModalCount : ''}{' '}
+              {leagueTournText}?
+            </p>
           }
         />
       )}
 
       <BaseLayout>
-        <Flex
-          vertical
-          style={{
-            padding: '16px 24px',
-            overflow: 'auto',
-            height: '100%',
-          }}
-        >
-          <Flex
-            justify="space-between"
-            align="center"
-            vertical={false}
-            style={{
-              marginBottom: '24px',
-            }}
-          >
-            <Typography.Title
-              color="rgba(26, 22, 87, 0.85)"
-              style={{
-                fontSize: '20px',
-                fontWeight: 500,
-              }}
-            >
-              Leagues & Tournaments
-            </Typography.Title>
+        <PageContainer>
+          <Flex justify="space-between" align="center" className="mg-b24">
+            <Title>Leagues & Tournaments</Title>
 
             <Flex>
               {!!selectedRecordsIds.length && (
-                <MonroeButton
-                  isDisabled={false}
-                  label="Delete"
+                <MonroeDeleteButton
                   type="default"
                   icon={<DeleteOutlined />}
                   iconPosition="start"
                   onClick={() => setIsOpenModal(true)}
-                  className="view-delete-button"
-                />
+                >
+                  Delete
+                </MonroeDeleteButton>
               )}
 
-              <Button
-                className="import-button"
+              <ImportButton
                 icon={<DownloadOutlined />}
                 iconPosition="start"
                 type="default"
@@ -271,7 +195,7 @@ const LeaguesAndTournaments = () => {
                 }}
               >
                 Import CSV
-              </Button>
+              </ImportButton>
 
               <input
                 ref={(ref) => {
@@ -281,26 +205,18 @@ const LeaguesAndTournaments = () => {
                 name="leagues"
                 accept=".csv"
                 onChange={handleChange}
-                style={{ display: 'none' }}
+                className="d-n"
+                key={fileKey}
               />
 
-              <Button
+              <CreateNewEntityButton
                 icon={<PlusOutlined />}
                 iconPosition="start"
                 type="primary"
                 onClick={goToCreateLeagueTournamentPage}
-                style={{
-                  borderRadius: '2px',
-                  border: '1px solid #BC261B',
-                  background: '#BC261B',
-                  boxShadow: '0px 2px 0px 0px rgba(0, 0, 0, 0.04)',
-                  fontSize: '14px',
-                  fontWeight: 400,
-                  height: '32px',
-                }}
               >
                 Create new leagues/tourns
-              </Button>
+              </CreateNewEntityButton>
             </Flex>
           </Flex>
 
@@ -315,7 +231,7 @@ const LeaguesAndTournaments = () => {
               setIsDeleteAllRecords={setIsDeleteAllRecords}
             />
           </Flex>
-        </Flex>
+        </PageContainer>
       </BaseLayout>
     </>
   )

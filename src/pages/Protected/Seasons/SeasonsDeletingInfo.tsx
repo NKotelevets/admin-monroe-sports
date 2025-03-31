@@ -1,35 +1,29 @@
 import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined'
-import { Breadcrumb, Button, Flex, Table, Tooltip } from 'antd'
+import { Breadcrumb, Table } from 'antd'
 import type { GetProp, InputRef, TableColumnType, TableProps } from 'antd'
-import Input from 'antd/es/input/Input'
 import type { FilterDropdownProps, SorterResult } from 'antd/es/table/interface'
-import Typography from 'antd/es/typography'
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+
+import { MonroeBlueText } from '@/components/Elements'
+import { Container, Description, Title } from '@/components/Elements/deletingBlockingInfoElements'
+import CellText from '@/components/Table/CellText'
+import FilterDropDown from '@/components/Table/FilterDropDown'
+import TextWithTooltip from '@/components/TextWithTooltip'
 
 import BaseLayout from '@/layouts/BaseLayout'
 
 import { useSeasonSlice } from '@/redux/hooks/useSeasonSlice'
 
-import { containerStyles, descriptionStyle, titleStyle } from '@/constants/deleting-importing-info.styles'
-import { PATH_TO_LEAGUE_TOURNAMENT_PAGE, PATH_TO_SEASONS_PAGE } from '@/constants/paths'
-
+import { PATH_TO_LEAGUE_PAGE, PATH_TO_SEASONS, PATH_TO_SEASON_DETAILS } from '@/common/constants/paths'
 import { IDeletionSeasonItemError } from '@/common/interfaces/season'
 
 const BREADCRUMB_ITEMS = [
   {
-    title: <a href={PATH_TO_SEASONS_PAGE}>Seasons</a>,
+    title: <a href={PATH_TO_SEASONS}>Seasons</a>,
   },
   {
-    title: (
-      <Typography.Text
-        style={{
-          color: 'rgba(26, 22, 87, 0.85)',
-        }}
-      >
-        Deleting info
-      </Typography.Text>
-    ),
+    title: <MonroeBlueText>Deleting info</MonroeBlueText>,
   },
 ]
 
@@ -64,42 +58,8 @@ const SeasonsDeletingInfo = () => {
   const handleSearch = (confirm: FilterDropdownProps['confirm']) => confirm()
 
   const getColumnSearchProps = (dataIndex: TDataIndex): TableColumnType<IDeletionSeasonItemError> => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
-        <Input
-          ref={searchInput}
-          placeholder="Search name"
-          value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(confirm)}
-          style={{ marginBottom: 8, display: 'block' }}
-        />
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Button
-            type="primary"
-            onClick={() => handleSearch(confirm)}
-            style={{
-              marginRight: '8px',
-              flex: '1 1 auto',
-            }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => clearFilters && handleReset(clearFilters)}
-            style={{
-              flex: '1 1 auto',
-            }}
-          >
-            Reset
-          </Button>
-        </div>
-      </div>
+    filterDropdown: (props) => (
+      <FilterDropDown {...props} handleReset={handleReset} handleSearch={handleSearch} searchInput={searchInput} />
     ),
     filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? '#1A1657' : '#BDBCC2' }} />,
     onFilter: (value, record) =>
@@ -122,19 +82,14 @@ const SeasonsDeletingInfo = () => {
       filterMode: 'tree',
       onFilter: (value, record) => record.name.includes(value as string),
       fixed: 'left',
-      width: '20vw',
+      width: '240px',
       sorter: (a, b) => a.name.length - b.name.length,
       sortOrder: tableParams.sortOrder,
-      // ...getColumnSearchProps('name'),
-      render: (value) => (
-        <Typography.Text
-          style={{
-            color: '#3E34CA',
-            cursor: 'pointer',
-          }}
-        >
+      ...getColumnSearchProps('name'),
+      render: (value, record) => (
+        <CellText isLink onClick={() => navigate(PATH_TO_SEASON_DETAILS + '/' + record.id)}>
           {value}
-        </Typography.Text>
+        </CellText>
       ),
     },
     {
@@ -142,60 +97,24 @@ const SeasonsDeletingInfo = () => {
       dataIndex: '',
       filterSearch: true,
       filterMode: 'tree',
-      width: '20vw',
+      width: '240px',
       sorter: (a, b) => a.name.length - b.name.length,
       sortOrder: tableParams.sortOrder,
       ...getColumnSearchProps('league'),
       render: (_, record) => (
-        <Typography.Text
-          style={{
-            color: '#3E34CA',
-            cursor: 'pointer',
-          }}
-          onClick={() => navigate(`${PATH_TO_LEAGUE_TOURNAMENT_PAGE}/${record.league.id}`)}
-        >
+        <CellText isLink onClick={() => navigate(`${PATH_TO_LEAGUE_PAGE}/${record.league.id}`)}>
           {record.league.name}
-        </Typography.Text>
+        </CellText>
       ),
     },
     {
       title: 'Error info',
       dataIndex: 'error',
-      width: '200px',
-      render: (value) => (
-        <>
-          {value?.length > 30 ? (
-            <Tooltip
-              title={value}
-              placement="top"
-              color="rgba(62, 62, 72, 0.75)"
-              style={{
-                width: '250px',
-              }}
-            >
-              <Typography.Text
-                style={{
-                  color: 'rgba(26, 22, 87, 0.85)',
-                }}
-              >
-                {value.substring(0, 27).trim() + '...'}
-              </Typography.Text>
-            </Tooltip>
-          ) : (
-            <Typography.Text
-              style={{
-                color: 'rgba(26, 22, 87, 0.85)',
-              }}
-            >
-              {value}
-            </Typography.Text>
-          )}
-        </>
-      ),
+      render: (value) => <TextWithTooltip maxLength={100} text={value} />,
     },
   ]
 
-  const handleTableChange: TableProps['onChange'] = (pagination, filters, sorter) => {
+  const handleTableChange: TableProps<IDeletionSeasonItemError>['onChange'] = (pagination, filters, sorter) => {
     setTableParams({
       pagination,
       filters,
@@ -206,17 +125,15 @@ const SeasonsDeletingInfo = () => {
 
   return (
     <BaseLayout>
-      <Flex style={containerStyles} vertical>
+      <Container>
         <Breadcrumb items={BREADCRUMB_ITEMS} />
 
-        <Typography.Title level={1} style={titleStyle}>
-          Deleting info
-        </Typography.Title>
+        <Title>Deleting info</Title>
 
-        <Typography.Text style={descriptionStyle}>
+        <Description>
           This panel provides a summary of deleted seasons, listing the rows with errors. Click on the error to view the
           details and correct the error that is preventing deletion.
-        </Typography.Text>
+        </Description>
 
         <Table
           columns={columns}
@@ -225,10 +142,9 @@ const SeasonsDeletingInfo = () => {
           pagination={tableParams.pagination}
           onChange={handleTableChange}
         />
-      </Flex>
+      </Container>
     </BaseLayout>
   )
 }
 
 export default SeasonsDeletingInfo
-

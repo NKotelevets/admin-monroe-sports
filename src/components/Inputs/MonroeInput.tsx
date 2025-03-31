@@ -1,32 +1,35 @@
-import { Flex, Input, Typography } from 'antd'
-import { CSSProperties, ChangeEventHandler, FC } from 'react'
+import { Flex } from 'antd'
+import { CSSProperties, ChangeEventHandler, FC, ReactNode, InputHTMLAttributes } from 'react'
 
-import './monroe-input.style.css'
+import { InputError, InputLabel, StyledInput } from '@/components/Inputs/InputElements'
 
-interface IMonroeInputProps {
-  label?: string
+interface IMonroeInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
+  label?: string | ReactNode
   placeholder?: string
   value: string | number
-  onChange: ChangeEventHandler<HTMLInputElement>
+  onChange?: ChangeEventHandler<HTMLInputElement>
   name: string
   error?: string
-  inputClasses?: string
-  labelClasses?: string
   style?: CSSProperties
+  disabled?: boolean
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onBlur?: (e: React.FocusEvent<any>) => void
+  errorPosition?: 'top' | 'bottom'
+  className?: string
 }
 
-const MonroeInput: FC<IMonroeInputProps> = ({ label, error, inputClasses, labelClasses, ...rest }) => (
+const MonroeInput: FC<IMonroeInputProps> = ({ label, error, errorPosition = 'top', ...rest }) => (
   <>
     {label && (
       <Flex vertical={false} justify="space-between" align="center">
-        <Typography.Title className={`input-label ${labelClasses}`} level={4}>
-          {label}
-        </Typography.Title>
-        {error && <Typography.Text className="input-error">{error}</Typography.Text>}
+        {typeof label === 'string' ? <InputLabel>{label}</InputLabel> : label}
+        {error && errorPosition === 'top' && <InputError>{error}</InputError>}
       </Flex>
     )}
 
-    <Input className={`input ${inputClasses}`} {...rest} />
+    <StyledInput isError={!!error} {...rest} />
+
+    {error && errorPosition === 'bottom' && <InputError>{error}</InputError>}
   </>
 )
 

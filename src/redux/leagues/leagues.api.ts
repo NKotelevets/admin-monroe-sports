@@ -13,6 +13,7 @@ import {
   IImportLeagueResponse,
   ILeagueBulkDeleteResponse,
 } from '@/common/interfaces/league'
+import { leagueResponseMapper } from './mapper'
 
 const LEAGUE_TAG = 'LEAGUE_TAG'
 
@@ -26,24 +27,20 @@ export const leaguesApi = createApi({
         url: 'teams/leagues',
         params,
       }),
+      transformResponse: (data: IPaginationResponse<IBELeague[]>) => {
+        return ({
+          count: data?.count || 0,
+          leagues: data.results.map(leagueResponseMapper) as IFELeague[],
+        })
+      },
       providesTags: [LEAGUE_TAG],
-      transformResponse: (data: IPaginationResponse<IBELeague[]>) => ({
-        count: data.count,
-        leagues: data.results.map((league) => ({
-          id: league.id,
-          type: league.type === 0 ? 'League' : 'Tourn',
-          name: league.name,
-          description: league.description,
-          updatedAt: league.updated_at,
-          createdAt: league.created_at,
-          playoffFormat: league.playoff_format === 0 ? 'Best Record Wins' : 'Single Elimination Bracket',
-          standingsFormat: league.standings_format === 0 ? 'Winning %' : 'Points',
-          tiebreakersFormat: league.tiebreakers_format === 0 ? 'Winning %' : 'Points',
-          playoffsTeams: league.playoffs_teams,
-          welcomeNote: league.welcome_note,
-          seasons: league.league_seasons.map((season) => ({ id: season.id, name: season.name })),
-        })),
+    }),
+    getLeague: builder.query<IFELeague, string>({
+      query: (id) => ({
+        url: 'teams/leagues/' + id,
       }),
+      keepUnusedDataFor: 0.0001,
+      transformResponse: (league: IBELeague) => leagueResponseMapper(league) as IFELeague,
     }),
     createLeague: builder.mutation<IBELeague, IBECreateLeagueBody>({
       query: (body) => ({
@@ -67,26 +64,6 @@ export const leaguesApi = createApi({
         method: 'DELETE',
       }),
       invalidatesTags: [LEAGUE_TAG],
-    }),
-    getLeague: builder.query<IFELeague, string>({
-      query: (id) => ({
-        url: 'teams/leagues/' + id,
-      }),
-      keepUnusedDataFor: 0.0001,
-      transformResponse: (league: IBELeague) => ({
-        id: league.id,
-        type: league.type === 0 ? 'League' : 'Tourn',
-        name: league.name,
-        description: league.description,
-        updatedAt: league.updated_at,
-        createdAt: league.created_at,
-        playoffFormat: league.playoff_format === 0 ? 'Best Record Wins' : 'Single Elimination Bracket',
-        standingsFormat: league.standings_format === 0 ? 'Winning %' : 'Points',
-        tiebreakersFormat: league.tiebreakers_format === 0 ? 'Winning %' : 'Points',
-        playoffsTeams: league.playoffs_teams,
-        welcomeNote: league.welcome_note,
-        seasons: league.league_seasons.map((season) => ({ id: season.id, name: season.name })),
-      }),
     }),
     bulkDeleteLeagues: builder.mutation<ILeagueBulkDeleteResponse, { ids: string[] }>({
       query: ({ ids }) => ({
@@ -129,6 +106,7 @@ export const {
   useUpdateLeagueMutation,
   useGetLeaguesQuery,
   useLazyGetLeaguesQuery,
+  useLazyGetLeagueQuery,
   useGetLeagueQuery,
   useBulkDeleteLeaguesMutation,
   useDeleteAllLeaguesMutation,
